@@ -1,3 +1,7 @@
 export default function Dashboard() {
-  return <div className="mt-8">Dashboard</div>;
+  return (
+    <div className="flex justify-center items-center w-full h-screen">
+      Dashboard
+    </div>
+  );
 }
