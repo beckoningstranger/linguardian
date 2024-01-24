@@ -7,23 +7,33 @@ import {
 } from "react";
 
 type GlobalContextType = {
-  showSidebar: Boolean;
-  toggleSidebar?: MouseEventHandler;
+  showMobileMenu: Boolean;
+  toggleMobileMenuOff?: Function;
   userLanguages?: string[];
   currentlyActiveLanguage?: string;
   setCurrentlyActiveLanguage?: Function;
+  showMobileLanguageSelector?: Boolean;
+  toggleMobileLanguageSelectorOn?: MouseEventHandler;
 };
 
 export const GlobalContext = createContext<GlobalContextType>({
-  showSidebar: false,
+  showMobileMenu: false,
 });
 
 export function GlobalContextProvider({ children }: PropsWithChildren) {
-  const [showSidebar, setShowSideBar] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showMobileLanguageSelector, setShowMobileLanguageSelector] =
+    useState(false);
   const [currentlyActiveLanguage, setCurrentlyActiveLanguage] = useState("FR");
 
-  function toggleSidebar() {
-    setShowSideBar((topMenuOpen) => !topMenuOpen);
+  function toggleMobileMenuOff() {
+    setShowMobileMenu(false);
+    setShowMobileLanguageSelector(false);
+  }
+
+  function toggleMobileLanguageSelectorOn() {
+    setShowMobileLanguageSelector(true);
+    setShowMobileMenu(true);
   }
 
   const userLanguages = ["DE", "FR", "GB", "CN"];
@@ -31,11 +41,13 @@ export function GlobalContextProvider({ children }: PropsWithChildren) {
   return (
     <GlobalContext.Provider
       value={{
-        showSidebar,
-        toggleSidebar,
+        showMobileMenu,
+        toggleMobileMenuOff,
         userLanguages,
         currentlyActiveLanguage,
         setCurrentlyActiveLanguage,
+        showMobileLanguageSelector,
+        toggleMobileLanguageSelectorOn,
       }}
     >
       {children}

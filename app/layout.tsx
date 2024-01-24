@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import TopMenu from "@/components/TopMenu";
 import { GlobalContextProvider } from "./context/GlobalContext";
-import SideBarNavigation from "@/components/SideBarNavigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,9 +19,8 @@ export default function RootLayout({
     <html lang="en">
       <GlobalContextProvider>
         <body className={inter.className}>
-          <TopMenu />
-          <SideBarNavigation />
           <main>{children}</main>
+          <div id="PortalOutlet" />
         </body>
       </GlobalContextProvider>
     </html>

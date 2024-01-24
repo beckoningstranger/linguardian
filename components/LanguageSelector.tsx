@@ -4,8 +4,10 @@ import useGlobalContext from "@/app/hooks/useGlobalContext";
 import { useState } from "react";
 import Flag from "react-world-flags";
 import { useOutsideClick } from "@/app/hooks/useOutsideClick";
+import CurrentlyActiveFlag from "./LanguageSelector/CurrentlyActiveFlag";
+import MobileMenu from "./MobileMenu";
 
-export default function LanguageSelector({ classes }: any) {
+export default function LanguageSelector() {
   const {
     userLanguages: languages,
     currentlyActiveLanguage,
@@ -23,16 +25,14 @@ export default function LanguageSelector({ classes }: any) {
   const handleFlagSelected = (language: String): void => {
     setActive((active) => !active);
     setCurrentlyActiveLanguage!(language);
-    console.log("Toggled");
   };
 
   return (
-    <div ref={ref} className={`${classes}`}>
+    <div ref={ref} className="hidden md:block">
       <div>
-        <Flag
-          code={currentlyActiveLanguage!}
-          onClick={() => handleFlagSelected(currentlyActiveLanguage!)}
-          className={`rounded-full object-cover w-[80px] h-[80px] md:w-[50px] md:h-[50px] m-0 border-2 border-slate-300`}
+        <CurrentlyActiveFlag
+          currentlyActiveLanguage={currentlyActiveLanguage!}
+          handleFlagSelected={handleFlagSelected}
         />
       </div>
       <div className={`absolute `}>
