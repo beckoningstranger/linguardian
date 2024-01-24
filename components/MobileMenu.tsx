@@ -1,17 +1,19 @@
 "use client";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Logo from "./Logo";
 import { RxCrossCircled } from "react-icons/rx";
 import useGlobalContext from "@/app/hooks/useGlobalContext";
 
 interface MobileMenuProps {
-  children: ReactNode;
+  children: ReactNode[];
 }
 
 export default function MobileMenu({ children }: MobileMenuProps) {
   const ref = useRef<Element | null>(null);
   const { showMobileMenu, toggleMobileMenuOff } = useGlobalContext();
+
+  console.log(children!.length);
 
   useEffect(() => {
     ref.current = document.querySelector<HTMLElement>("#PortalOutlet");
@@ -20,13 +22,15 @@ export default function MobileMenu({ children }: MobileMenuProps) {
   if (typeof window === "object" && showMobileMenu) {
     return ref.current
       ? createPortal(
-          <div className="absolute flex flex-col justify-center w-full h-full -translate-y-1/2 top-1/2 backdrop-blur-md">
-            {/* <Logo /> */}
-            {children}
-            <RxCrossCircled
-              className="self-center my-4 text-5xl text-slate-600"
-              onClick={() => toggleMobileMenuOff!()}
-            />
+          <div className="absolute flex flex-col justify-center items-center w-full h-full  backdrop-blur-md">
+            <div className="flex flex-col gap-3 items-center justify-center animate-fold-out overflow-hidden">
+            {children!.length < 4 && <Logo />}
+              {children}
+              <RxCrossCircled
+                className="self-center my-4 text-6xl text-slate-600"
+                onClick={() => toggleMobileMenuOff!()}
+              />
+            </div>
           </div>,
           document.querySelector("#PortalOutlet") as HTMLElement
         )

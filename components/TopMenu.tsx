@@ -25,7 +25,7 @@ export default function TopMenu({ toggleSidebar, showSidebar }: TopMenuProps) {
   return (
     <header className="absolute top-0 flex items-center justify-between w-full text-xl bg-opacity-25 select-none bg-slate-200">
       <div
-        className={`flex gap-2 justify-center items-center h-20 w-20 md:w-48 mx-2 
+        className={`flex gap-2 justify-center items-center h-20 w-20 md:w-48 m-2 
         ${showSidebar && "invisible"}
         `}
         onClick={toggleSidebar}
@@ -40,23 +40,19 @@ export default function TopMenu({ toggleSidebar, showSidebar }: TopMenuProps) {
         onClick={toggleMobileLanguageSelectorOn}
       />
       <MobileMenu>
-        {showMobileMenu && (
-          <div className="flex flex-col items-center gap-10">
-            {languages!.map((language) => {
-              return (
-                <Flag
-                  key={language}
-                  code={language}
-                  onClick={() => {
-                    setCurrentlyActiveLanguage!(language);
-                    toggleMobileMenuOff!();
-                  }}
-                  className={`transition-all rounded-full object-cover w-24 h-24 border-2  border-slate-300`}
-                />
-              );
-            })}
-          </div>
-        )}
+        {languages!.map((language) => {
+          return (
+            <Flag
+              key={language}
+              code={language}
+              onClick={() => {
+                setCurrentlyActiveLanguage!(language);
+                toggleMobileMenuOff!();
+              }}
+              className={`rounded-full object-cover w-24 h-24 border-2 border-slate-300`}
+            />
+          );
+        })}
       </MobileMenu>
       <div className="flex items-center justify-between gap-2 mx-2">
         <LanguageSelector /> <UserMenu />

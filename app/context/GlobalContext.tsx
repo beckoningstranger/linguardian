@@ -36,7 +36,7 @@ export function GlobalContextProvider({ children }: PropsWithChildren) {
     setShowMobileMenu(true);
   }
 
-  const userLanguages = ["DE", "FR", "GB", "CN"];
+  const userLanguages = ["FR", "DE", "GB", "CN", "SE"];
 
   return (
     <GlobalContext.Provider

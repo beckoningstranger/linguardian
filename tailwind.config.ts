@@ -8,6 +8,16 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      animation: {
+        "fold-out": "fold-out .2s ease-in-out forwards",
+      },
+      keyframes: {
+        "fold-out": {
+          "0%": { width: "100%", height: "1rem" },
+          "30%": { height: "1rem" },
+          "100%": { width: "100%", height: "100%" },
+        },
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
