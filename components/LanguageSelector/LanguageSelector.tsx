@@ -4,6 +4,7 @@ import useGlobalContext from "@/app/hooks/useGlobalContext";
 import { useState } from "react";
 import Flag from "react-world-flags";
 import { useOutsideClick } from "@/app/hooks/useOutsideClick";
+import AddNewLanguageOption from "./AddNewLanguageOption";
 
 export default function LanguageSelector() {
   const {
@@ -31,7 +32,7 @@ export default function LanguageSelector() {
         <Flag
           code={currentlyActiveLanguage!}
           onClick={() => handleFlagSelected(currentlyActiveLanguage!)}
-          className={`rounded-full object-cover w-[80px] h-[80px] md:w-[50px] md:h-[50px] m-0 border-2 border-slate-300`}
+          className={`rounded-full object-cover w-[50px] h-[50px] m-0 border-2 border-slate-300`}
         />
       </div>
       <div className={`absolute `}>
@@ -42,9 +43,8 @@ export default function LanguageSelector() {
                 key={language}
                 code={language}
                 onClick={() => handleFlagSelected(language)}
-                className={`scale-0 transition-all rounded-full object-cover w-[80px] md:w-[50px] ${
-                  active &&
-                  "scale-100 h-[80px] md:h-[50px] my-2 border-2 border-slate-300"
+                className={`scale-0 transition-all rounded-full object-cover w-12 ${
+                  active && "scale-100 h-12 my-2 border-2 border-slate-300"
                 }  
                 h-0 w-0
                 `}
@@ -52,6 +52,7 @@ export default function LanguageSelector() {
             );
           }
         })}
+        {active && languages!.length < 6 && <AddNewLanguageOption />}
       </div>
     </div>
   );

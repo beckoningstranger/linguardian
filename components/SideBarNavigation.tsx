@@ -17,8 +17,8 @@ export default function SideBarNavigation({
   return (
     <div
       className={`flex text-xl backdrop-blur-md absolute top-0 h-full ${
-        showSidebar ? "w-full md:w-48" : "-translate-x-[300px]"
-      } transition-all flex-col justify-center md:justify-start md:items-start md:space-between`}
+        showSidebar ? "w-full md:w-auto" : "-translate-x-[300px]"
+      } transition-all flex-col justify-center md:bg-slate-100 md:justify-start md:items-start md:space-between border-r-2`}
       ref={ref}
     >
       {children}

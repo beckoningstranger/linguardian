@@ -15,12 +15,14 @@ export default function SidebarItem({
 }: SidebarProps) {
   return (
     <div
-      className={`flex gap-2 w-full h-14 p-10 items-center justify-center md:justify-start 
-      select-none hover:text-slate-200 ${classes}`}
+      className={`flex w-full h-14 md:m-2 md:p-10 md:border-none
+      select-none hover:text-slate-200 justify-center md:justify-start my-2 ${classes}`}
       onClick={action}
     >
-      {icon}
-      {label && <div>{label}</div>}
+      <div className="flex gap-4 items-center w-48">
+        {icon}
+        {label && <div className="text-2xl md:text-xl">{label}</div>}
+      </div>
     </div>
   );
 }

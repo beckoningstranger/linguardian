@@ -29,11 +29,6 @@ export default function Home() {
             action={toggleSidebar}
             classes="invisible md:visible"
           />
-          <SidebarItem
-            icon={<RxCrossCircled />}
-            classes="md:hidden text-5xl text-slate-600"
-            action={toggleSidebar}
-          />
 
           <SidebarItem icon={<RxAllSides />} label="Your Profile" />
           <SidebarItem icon={<RxAllSides />} label="Courses" />
@@ -44,6 +39,11 @@ export default function Home() {
           <SidebarItem icon={<RxAllSides />} label="About" />
           <SidebarItem icon={<RxAllSides />} label="Logout" />
         </footer>
+        <SidebarItem
+          icon={<RxCrossCircled className="mx-auto" />}
+          classes="md:hidden text-5xl text-slate-600"
+          action={toggleSidebar}
+        />
       </SideBarNavigation>
       <Dashboard />
     </>

@@ -1,11 +1,12 @@
 "use client";
-import LanguageSelector from "./LanguageSelector";
+import LanguageSelector from "./LanguageSelector/LanguageSelector";
 import UserMenu from "./UserMenu";
 import HamburgerMenu from "./HamburgerMenu";
 import useGlobalContext from "@/app/hooks/useGlobalContext";
-import { MouseEventHandler, useEffect, useState } from "react";
+import { MouseEventHandler } from "react";
 import Flag from "react-world-flags";
 import MobileMenu from "./MobileMenu";
+import MobileLanguageSelector from "./LanguageSelector/MobileLanguageSelector";
 
 interface TopMenuProps {
   toggleSidebar: MouseEventHandler;
@@ -17,7 +18,6 @@ export default function TopMenu({ toggleSidebar, showSidebar }: TopMenuProps) {
     currentlyActiveLanguage,
     setCurrentlyActiveLanguage,
     toggleMobileLanguageSelectorOn,
-    showMobileMenu,
     userLanguages: languages,
     toggleMobileMenuOff,
   } = useGlobalContext();
@@ -40,19 +40,11 @@ export default function TopMenu({ toggleSidebar, showSidebar }: TopMenuProps) {
         onClick={toggleMobileLanguageSelectorOn}
       />
       <MobileMenu>
-        {languages!.map((language) => {
-          return (
-            <Flag
-              key={language}
-              code={language}
-              onClick={() => {
-                setCurrentlyActiveLanguage!(language);
-                toggleMobileMenuOff!();
-              }}
-              className={`rounded-full object-cover w-24 h-24 border-2 border-slate-300`}
-            />
-          );
-        })}
+        <MobileLanguageSelector
+          languages={languages!}
+          setCurrentlyActiveLanguage={setCurrentlyActiveLanguage!}
+          toggleMobileMenuOff={toggleMobileMenuOff!}
+        />
       </MobileMenu>
       <div className="flex items-center justify-between gap-2 mx-2">
         <LanguageSelector /> <UserMenu />
