@@ -20,7 +20,7 @@ export default function SidebarItem({
       onClick={action}
     >
       <div className="flex gap-4 items-center w-48">
-        {icon}
+        <div className="text-3xl">{icon}</div>
         {label && <div className="text-2xl md:text-xl">{label}</div>}
       </div>
     </div>

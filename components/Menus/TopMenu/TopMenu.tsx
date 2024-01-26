@@ -1,12 +1,12 @@
 "use client";
-import LanguageSelector from "./LanguageSelector/LanguageSelector";
-import UserMenu from "./UserMenu";
+import LanguageSelector from "../LanguageSelector/LanguageSelector";
+import UserMenu from "../UserMenu";
 import HamburgerMenu from "./HamburgerMenu";
 import useGlobalContext from "@/app/hooks/useGlobalContext";
 import { MouseEventHandler } from "react";
 import Flag from "react-world-flags";
-import MobileMenu from "./MobileMenu";
-import MobileLanguageSelector from "./LanguageSelector/MobileLanguageSelector";
+import MobileMenu from "../MobileMenu/MobileMenu";
+import MobileLanguageSelector from "../LanguageSelector/MobileLanguageSelector";
 
 interface TopMenuProps {
   toggleSidebar: MouseEventHandler;

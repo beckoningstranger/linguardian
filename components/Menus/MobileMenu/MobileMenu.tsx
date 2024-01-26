@@ -1,9 +1,9 @@
 "use client";
 import { ReactNode, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import Logo from "./Logo";
-import { RxCrossCircled } from "react-icons/rx";
+import Logo from "../../Logo";
 import useGlobalContext from "@/app/hooks/useGlobalContext";
+import MobileMenuCloseButton from "./MobileMenuCloseButton";
 
 interface MobileMenuProps {
   children: ReactNode;
@@ -29,12 +29,9 @@ export default function MobileMenu({ children }: MobileMenuProps) {
              animate-fold-out overflow-hidden"
             >
               <Logo />
-              <div className="flex  flex-col justify-center">
+              <div className="flex flex-col justify-center">
                 {children}
-                <RxCrossCircled
-                  className="self-center my-4 text-6xl text-slate-600"
-                  onClick={() => toggleMobileMenuOff!()}
-                />
+                <MobileMenuCloseButton close={toggleMobileMenuOff!} />
               </div>
             </div>
           </div>,

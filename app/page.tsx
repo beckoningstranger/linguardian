@@ -1,9 +1,10 @@
 "use client";
 import Dashboard from "@/components/Dashboard";
 import Logo from "@/components/Logo";
-import SidebarItem from "@/components/SideBarItem";
-import SideBarNavigation from "@/components/SideBarNavigation";
-import TopMenu from "@/components/TopMenu";
+import MobileMenuCloseButton from "@/components/Menus/MobileMenu/MobileMenuCloseButton";
+import SidebarItem from "@/components/Menus/Sidebar/SideBarItem";
+import SideBarNavigation from "@/components/Menus/Sidebar/SideBarNavigation";
+import TopMenu from "@/components/Menus/TopMenu/TopMenu";
 import { useState } from "react";
 import { RxAllSides, RxCrossCircled, RxHamburgerMenu } from "react-icons/rx";
 
@@ -39,11 +40,7 @@ export default function Home() {
           <SidebarItem icon={<RxAllSides />} label="About" />
           <SidebarItem icon={<RxAllSides />} label="Logout" />
         </footer>
-        <SidebarItem
-          icon={<RxCrossCircled className="mx-auto" />}
-          classes="md:hidden text-5xl text-slate-600"
-          action={toggleSidebar}
-        />
+        <MobileMenuCloseButton close={toggleSidebar} />
       </SideBarNavigation>
       <Dashboard />
     </>
