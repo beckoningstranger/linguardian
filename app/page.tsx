@@ -23,7 +23,7 @@ export default function Home() {
         toggleSidebar={toggleSidebar}
       >
         <Logo />
-        <nav>
+        <nav className="last:mb-0">
           <SidebarItem
             icon={<RxHamburgerMenu />}
             label="Linguardian"
@@ -36,7 +36,7 @@ export default function Home() {
           <SidebarItem icon={<RxAllSides />} label="Dictionary" />
           <SidebarItem icon={<RxAllSides />} label="Social" />
         </nav>
-        <footer>
+        <footer className="first:mt-0">
           <SidebarItem icon={<RxAllSides />} label="About" />
           <SidebarItem icon={<RxAllSides />} label="Logout" />
         </footer>

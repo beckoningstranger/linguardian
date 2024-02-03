@@ -27,12 +27,12 @@ export default function LanguageSelector() {
   };
 
   return (
-    <div ref={ref} className="hidden md:block">
+    <div ref={ref} className="hidden md:block z-50">
       <div>
         <Flag
           code={currentlyActiveLanguage!}
           onClick={() => handleFlagSelected(currentlyActiveLanguage!)}
-          className={`rounded-full object-cover w-[50px] h-[50px] m-0 border-2 border-slate-300`}
+          className={`transition-all rounded-full object-cover w-[50px] h-[50px] m-0 border-2 border-slate-300 hover:scale-125`}
         />
       </div>
       <div className={`absolute `}>
@@ -43,7 +43,7 @@ export default function LanguageSelector() {
                 key={language}
                 code={language}
                 onClick={() => handleFlagSelected(language)}
-                className={`scale-0 transition-all rounded-full object-cover w-12 ${
+                className={`scale-0 transition-all rounded-full object-cover hover:scale-125 w-12 ${
                   active && "scale-100 h-12 my-2 border-2 border-slate-300"
                 }  
                 h-0 w-0
