@@ -81,7 +81,7 @@ export default function ListCard({ title, status, stats }: ListCardProps) {
   }
 
   return (
-    <div className="mx-6 lg:mx-6 bg-slate-200 rounded-md relative">
+    <div className="mx-6 lg:mx-3 xl:mx-6 bg-slate-200 rounded-md relative">
       <ContextMenu
         show={showContextMenu}
         toggleContextMenu={() => setShowContextMenu(false)}
@@ -120,7 +120,7 @@ export default function ListCard({ title, status, stats }: ListCardProps) {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row justify-center md:w-full md:px-2 my-3 md:my-3 md:mx-0 px-2">
+      <div className="flex flex-col md:flex-row justify-evenly md:w-full my-3 md:mx-0 md:px-2 xl:px-0">
         <div className="md:hidden">
           <ListBarChart stats={stats} />
         </div>

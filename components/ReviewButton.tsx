@@ -65,7 +65,7 @@ export default function ReviewButton({
 
   return (
     <button
-      className={`p-2 m-1 ${color} text-white rounded-lg text-3xl border-4 border-white hover:border-slate-400`}
+      className={`p-2 m-1 ${color} text-white rounded-lg text-3xl border-4 border-white hover:border-slate-200 hover:scale-125 transition-all`}
       onClick={action}
     >
       {icon}

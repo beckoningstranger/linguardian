@@ -29,7 +29,7 @@ export default function ListPieChart({ stats }: ListBarChartProps) {
               total: {
                 show: true,
                 showAlways: false,
-                label: "Words total",
+                label: "Items total",
                 fontWeight: 600,
                 color: "#000",
               },

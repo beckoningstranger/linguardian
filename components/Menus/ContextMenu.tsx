@@ -20,7 +20,7 @@ export default function ContextMenu({
     <div ref={ref}>
       {show && (
         <div
-          className={`bg-slate-100 absolute rounded-md z-40 py-4 md:p-4 md:w-auto max-h-fit md:h-full flex flex-col justify-center ${positionClasses}`}
+          className={`bg-slate-100 absolute rounded-md z-40 py-4 md:p-4 md:w-auto max-h-fit h-full flex flex-col justify-center ${positionClasses} transition-all`}
         >
           {children}
         </div>
