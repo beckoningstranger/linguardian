@@ -7,15 +7,15 @@ import { useLoaded } from "@/app/hooks/useLoaded";
 import { ListStats } from "./Dashboard";
 import ListBarChart from "@/components/Charts/ListBarChart";
 import ListPieChart from "./Charts/ListPieChart";
-// import ListPieChart from "./Charts/ListPieChart";
 
 interface ListCardProps {
   title: string;
+  id: number;
   status: string;
   stats: ListStats;
 }
 
-export default function ListCard({ title, status, stats }: ListCardProps) {
+export default function ListCard({ title, status, stats, id }: ListCardProps) {
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [showAllReviewModes, setShowAllReviewModes] = useState(false);
   const loaded = useLoaded();
@@ -28,52 +28,48 @@ export default function ListCard({ title, status, stats }: ListCardProps) {
   if (status === "review") {
     renderedButtons = (
       <div className="flex md:flex-col justify-around">
-        <ReviewButton mode="translation" />
-        <ReviewButton mode={loaded ? randomMode1 : "spinner"} />
+        <ReviewButton id={id} mode="translation" />
+        <ReviewButton id={id} mode={loaded ? randomMode1 : "spinner"} />
         <div className="md:hidden">
-          <ReviewButton mode={loaded ? randomMode2 : "spinner"} />
+          <ReviewButton id={id} mode={loaded ? randomMode2 : "spinner"} />
         </div>
-        <div
-          onClick={() => {
-            setShowAllReviewModes(true);
-          }}
-        >
-          <ReviewButton mode="more" />
-        </div>
+
+        <ReviewButton
+          id={id}
+          mode="more"
+          showAllModes={setShowAllReviewModes}
+        />
       </div>
     );
   } else if (status === "add") {
     renderedButtons = (
       <div className="flex md:flex-col justify-around">
-        <ReviewButton mode="learn" />
-        <ReviewButton mode={loaded ? randomMode1 : "spinner"} />
+        <ReviewButton id={id} mode="learn" />
+        <ReviewButton id={id} mode={loaded ? randomMode1 : "spinner"} />
         <div className="md:hidden">
-          <ReviewButton mode={loaded ? randomMode2 : "spinner"} />
+          <ReviewButton id={id} mode={loaded ? randomMode2 : "spinner"} />
         </div>
-        <div
-          onClick={() => {
-            setShowAllReviewModes(true);
-          }}
-        >
-          <ReviewButton mode="more" />
-        </div>
+
+        <ReviewButton
+          id={id}
+          mode="more"
+          showAllModes={setShowAllReviewModes}
+        />
       </div>
     );
   } else if (status === "practice") {
     renderedButtons = (
       <div className="flex md:flex-col justify-around">
-        <ReviewButton mode={loaded ? randomMode1 : "spinner"} />
-        <ReviewButton mode={loaded ? randomMode2 : "spinner"} />
+        <ReviewButton id={id} mode={loaded ? randomMode1 : "spinner"} />
+        <ReviewButton id={id} mode={loaded ? randomMode2 : "spinner"} />
         <div className="md:hidden">
-          <ReviewButton mode={loaded ? randomMode3 : "spinner"} />
+          <ReviewButton id={id} mode={loaded ? randomMode3 : "spinner"} />
         </div>
-        <div
-          onClick={() => {
-            setShowAllReviewModes(true);
-          }}
-        >
-          <ReviewButton mode="more" />
-        </div>
+        <ReviewButton
+          id={id}
+          mode="more"
+          showAllModes={setShowAllReviewModes}
+        />
       </div>
     );
   } else {
@@ -100,12 +96,12 @@ export default function ListCard({ title, status, stats }: ListCardProps) {
         positionClasses="bottom-0 right-0 w-full"
       >
         <div className="grid grid-cols-3 md:grid-cols-2 place-items-center md:h-full">
-          <ReviewButton mode="learn" />
-          <ReviewButton mode="translation" />
-          <ReviewButton mode="dictionary" />
-          <ReviewButton mode="context" />
-          <ReviewButton mode="visual" />
-          <ReviewButton mode="spelling" />
+          <ReviewButton id={id} mode="learn" />
+          <ReviewButton id={id} mode="translation" />
+          <ReviewButton id={id} mode="dictionary" />
+          <ReviewButton id={id} mode="context" />
+          <ReviewButton id={id} mode="visual" />
+          <ReviewButton id={id} mode="spelling" />
         </div>
       </ContextMenu>
       <div className="flex items-center m-3 justify-between">
@@ -120,7 +116,7 @@ export default function ListCard({ title, status, stats }: ListCardProps) {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row justify-evenly md:w-full my-3 md:mx-0 md:px-2 xl:px-0">
+      <div className="flex flex-col md:flex-row justify-evenly md:w-full my-3 md:mx-0 xl:px-0 px-2">
         <div className="md:hidden">
           <ListBarChart stats={stats} />
         </div>

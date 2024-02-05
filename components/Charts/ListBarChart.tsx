@@ -1,7 +1,6 @@
 import { ListStats } from "../Dashboard";
 import dynamic from "next/dynamic";
 
-// Found this on https://stackoverflow.com/questions/68596778/next-js-window-is-not-defined
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });

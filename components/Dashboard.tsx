@@ -222,6 +222,7 @@ export default function Dashboard() {
         return (
           <ListCard
             key={list.id}
+            id={list.id}
             title={list.title}
             stats={list.stats}
             status="practice"

@@ -12,25 +12,26 @@ import {
   FaSpinner,
 } from "react-icons/fa6"; // Context and Spelling Bee Mode
 import { RxDotsHorizontal, RxDotsVertical } from "react-icons/rx"; // More button
+import Link from "next/link";
 
 interface ReviewButtonProps {
   mode: string;
   showAllModes?: Function;
+  id: number;
 }
 
 export default function ReviewButton({
   mode,
   showAllModes,
+  id,
 }: ReviewButtonProps) {
   let icon;
-  let action;
   let color;
 
   switch (mode) {
     case "translation":
       icon = <GiWateringCan />;
       color = "bg-blue-500";
-      // define action here and in other cases
       break;
     case "learn":
       icon = <GiSeedling />;
@@ -60,15 +61,21 @@ export default function ReviewButton({
       icon = <FaSpinner className="animate-spin" />;
       color = "bg-slate-300";
     default:
-      "BURP";
+      throw new Error("Unknown learning mode");
   }
 
-  return (
+  const renderedButton = (
     <button
       className={`p-2 m-1 ${color} text-white rounded-lg text-3xl border-4 border-white hover:border-slate-200 hover:scale-125 transition-all`}
-      onClick={action}
+      onClick={mode === "more" ? () => showAllModes!(true) : () => {}}
     >
       {icon}
     </button>
+  );
+
+  return mode === "more" ? (
+    renderedButton
+  ) : (
+    <Link href={`/learn/${mode}/${id}`}>{renderedButton}</Link>
   );
 }
