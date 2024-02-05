@@ -1,5 +1,9 @@
-interface LearnNewWordsModeProps {}
+interface LearnNewWordsModeProps {
+  id: number;
+  source: string;
+  target: string;
+}
 
-export default function LearnNewWordsMode({}: LearnNewWordsModeProps) {
+export default function LearnNewWordsMode({ id }: LearnNewWordsModeProps) {
   return <div>Learn New Words Mode</div>;
 }

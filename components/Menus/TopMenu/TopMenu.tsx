@@ -18,9 +18,11 @@ export default function TopMenu({ toggleSidebar, showSidebar }: TopMenuProps) {
     currentlyActiveLanguage,
     setCurrentlyActiveLanguage,
     toggleMobileLanguageSelectorOn,
-    userLanguages: languages,
+    user,
     toggleMobileMenuOff,
   } = useGlobalContext();
+
+  const languages = user.languages.map((lang) => lang.name);
 
   return (
     <header className="absolute top-0 flex items-center justify-between w-full text-xl bg-opacity-25 select-none bg-slate-200">

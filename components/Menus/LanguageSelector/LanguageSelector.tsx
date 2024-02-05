@@ -7,12 +7,10 @@ import { useOutsideClick } from "@/app/hooks/useOutsideClick";
 import AddNewLanguageOption from "./AddNewLanguageOption";
 
 export default function LanguageSelector() {
-  const {
-    userLanguages: languages,
-    currentlyActiveLanguage,
-    setCurrentlyActiveLanguage,
-  } = useGlobalContext();
+  const { user, currentlyActiveLanguage, setCurrentlyActiveLanguage } =
+    useGlobalContext();
 
+  const languages = user.languages.map((lang) => lang.name);
   const [active, setActive] = useState(false);
 
   const toggleLanguageSelector = () => {

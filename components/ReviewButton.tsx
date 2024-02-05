@@ -13,6 +13,8 @@ import {
 } from "react-icons/fa6"; // Context and Spelling Bee Mode
 import { RxDotsHorizontal, RxDotsVertical } from "react-icons/rx"; // More button
 import Link from "next/link";
+import { useContext } from "react";
+import { GlobalContext } from "@/app/context/GlobalContext";
 
 interface ReviewButtonProps {
   mode: string;
@@ -25,6 +27,11 @@ export default function ReviewButton({
   showAllModes,
   id,
 }: ReviewButtonProps) {
+  const { user, currentlyActiveLanguage } = useContext(GlobalContext);
+
+  const native = user.native;
+  const pair = user.native + "-" + currentlyActiveLanguage;
+
   let icon;
   let color;
 
@@ -60,6 +67,7 @@ export default function ReviewButton({
     case "spinner":
       icon = <FaSpinner className="animate-spin" />;
       color = "bg-slate-300";
+      break;
     default:
       throw new Error("Unknown learning mode");
   }
@@ -76,6 +84,6 @@ export default function ReviewButton({
   return mode === "more" ? (
     renderedButton
   ) : (
-    <Link href={`/learn/${mode}/${id}`}>{renderedButton}</Link>
+    <Link href={`/learn/${pair}/${mode}/${id}`}>{renderedButton}</Link>
   );
 }
