@@ -1,9 +1,10 @@
+import { Item, SupportedLanguage } from "@/app/context/GlobalContext";
+
 interface LearnNewWordsModeProps {
-  id: number;
-  source: string;
-  target: string;
+  items: Item[];
+  listName?: string;
 }
 
-export default function LearnNewWordsMode({ id }: LearnNewWordsModeProps) {
+export default function LearnNewWordsMode({}: LearnNewWordsModeProps) {
   return <div>Learn New Words Mode</div>;
 }

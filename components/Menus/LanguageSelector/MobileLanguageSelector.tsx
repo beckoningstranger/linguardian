@@ -15,6 +15,8 @@ export default function MobileLanguageSelector({
   return (
     <div className="grid grid-cols-2 grid-rows-3 gap-8 pt-28">
       {languages!.map((language) => {
+        // Whenever a language code does not equal its flag code, we need to account for this here:
+        if (language === "EN") language = "GB";
         return (
           <Flag
             key={language}

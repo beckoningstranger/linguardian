@@ -14,7 +14,7 @@ import {
 import { RxDotsHorizontal, RxDotsVertical } from "react-icons/rx"; // More button
 import Link from "next/link";
 import { useContext } from "react";
-import { GlobalContext } from "@/app/context/GlobalContext";
+import { GlobalContext, SupportedLanguage } from "@/app/context/GlobalContext";
 
 interface ReviewButtonProps {
   mode: string;
@@ -28,9 +28,6 @@ export default function ReviewButton({
   id,
 }: ReviewButtonProps) {
   const { user, currentlyActiveLanguage } = useContext(GlobalContext);
-
-  const native = user.native;
-  const pair = user.native + "-" + currentlyActiveLanguage;
 
   let icon;
   let color;
@@ -84,6 +81,6 @@ export default function ReviewButton({
   return mode === "more" ? (
     renderedButton
   ) : (
-    <Link href={`/learn/${pair}/${mode}/${id}`}>{renderedButton}</Link>
+    <Link href={`/learn/${mode}/${id}`}>{renderedButton}</Link>
   );
 }

@@ -10,7 +10,11 @@ export default function LanguageSelector() {
   const { user, currentlyActiveLanguage, setCurrentlyActiveLanguage } =
     useGlobalContext();
 
-  const languages = user.languages.map((lang) => lang.name);
+  const languages = user.languages.map((lang) => {
+    // Whenever a language code does not equal its flag code, we need to account for this here:
+    if (lang.name === "EN") return "GB";
+    return lang.name;
+  });
   const [active, setActive] = useState(false);
 
   const toggleLanguageSelector = () => {

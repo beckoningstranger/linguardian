@@ -6,11 +6,31 @@ import {
   useState,
 } from "react";
 
+export type SupportedLanguage = "DE" | "EN" | "FR" | "CN" | "SE" | "NOR";
+
+export type partOfSpeech =
+  | "noun"
+  | "pronoun"
+  | "verb"
+  | "adjective"
+  | "adverb"
+  | "preposition"
+  | "conjunction"
+  | "determiner"
+  | "interjection"
+  | "particle";
+
 interface LearnedItem {
   itemId: number;
   itemLevel: number;
   nextReview: Date;
   // itemHistory
+}
+
+export interface Item {
+  partOfSpeech: partOfSpeech;
+  gender: Partial<Record<SupportedLanguage, string>>;
+  meaning: Partial<Record<SupportedLanguage, string[]>>;
 }
 
 const defaultReviewTimes = {
@@ -45,7 +65,7 @@ interface SSRSettings {
 }
 
 interface LearnedLanguage {
-  name: string;
+  name: SupportedLanguage;
   learnedItems?: LearnedItem[];
   learnedListIds: number[];
   SSRSettings: SSRSettings;
@@ -64,7 +84,7 @@ interface Profile {}
 interface User {
   id: number;
   alias: string;
-  native: string; // maybe use an enum here. This should be the same 2 or 3-letter combinations we use for flags, i.e. GB, NOR, FR, CN, etc.
+  native: SupportedLanguage;
   languages: LearnedLanguage[]; // will have to make sure this is set at user creation
   addendums?: Addendum[];
   learningHistory?: LearningHistory;
@@ -79,7 +99,7 @@ const user: User = {
   native: "DE",
   languages: [
     {
-      name: "GB",
+      name: "EN",
       learnedListIds: [1, 2],
       learnedItems: [
         { itemId: 1, itemLevel: 1, nextReview: new Date() },
@@ -131,7 +151,7 @@ const user: User = {
 type GlobalContextType = {
   showMobileMenu: Boolean;
   toggleMobileMenuOff?: Function;
-  currentlyActiveLanguage?: string;
+  currentlyActiveLanguage?: SupportedLanguage;
   setCurrentlyActiveLanguage?: Function;
   showMobileLanguageSelector?: Boolean;
   toggleMobileLanguageSelectorOn?: MouseEventHandler;
@@ -147,7 +167,8 @@ export function GlobalContextProvider({ children }: PropsWithChildren) {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showMobileLanguageSelector, setShowMobileLanguageSelector] =
     useState(false);
-  const [currentlyActiveLanguage, setCurrentlyActiveLanguage] = useState("FR");
+  const [currentlyActiveLanguage, setCurrentlyActiveLanguage] =
+    useState<SupportedLanguage>("FR");
 
   function toggleMobileMenuOff() {
     setShowMobileMenu(false);
