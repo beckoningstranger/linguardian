@@ -1,23 +1,27 @@
 "use client";
 
-import { Item, SupportedLanguage } from "@/app/context/GlobalContext";
-import { useState } from "react";
-
-import convertCodeToLanguageName from "@/app/helpers/convertLanguageCodeToName";
+import { GlobalContext, Item } from "@/app/context/GlobalContext";
+import useConvertCodeToLanguageName from "@/app/hooks/useConvertCodeToLanguageName";
+import { useContext, useState } from "react";
 
 interface TranslationModeProps {
   items: Item[];
   listName?: string;
-  target: SupportedLanguage;
-  native: SupportedLanguage;
 }
 
 export default function TranslationMode({
   listName,
   items,
-  target,
-  native,
 }: TranslationModeProps) {
+  // This is where we look up targetLanguage (currentlyActiveLanguage) and source language (user's native language)
+  const {
+    user: { native },
+    currentlyActiveLanguage,
+  } = useContext(GlobalContext);
+
+  const target = currentlyActiveLanguage!;
+  const targetLanguageName = useConvertCodeToLanguageName(target);
+
   const [reviewedItems, setReviewedItems] = useState(0);
   const [activeItem, setActiveItem] = useState(items[reviewedItems]);
   const [solution, setSolution] = useState("");
@@ -26,7 +30,7 @@ export default function TranslationMode({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSolution("");
-    const success = activeItem.meaning[target]!.includes(solution);
+    const success = activeItem.meaning[target]?.includes(solution);
 
     setInputFieldColor(success ? "bg-green-300" : "bg-red-400");
     // This is where we can update the backend for this item, i.e. learningHistory and most of all new level and next review time
@@ -45,7 +49,7 @@ export default function TranslationMode({
     }, 1000);
   };
 
-  if (typeof activeItem.meaning !== undefined) {
+  if (typeof activeItem.meaning !== undefined && typeof target !== undefined) {
     return (
       <div className="flex flex-col justify-center transition-all">
         <div id="TopBar" className="bg-slate-200 text-center w-full text-xl">
@@ -69,7 +73,7 @@ export default function TranslationMode({
         >
           <input
             type="text"
-            placeholder={`Translate to ${convertCodeToLanguageName(target)}`}
+            placeholder={`Translate to ${targetLanguageName}`}
             value={solution}
             onChange={(e) => setSolution(e.target.value)}
             className={`m-3 pt-2 bg-transparent text-xl text-center mx-auto w-11/12 focus:outline-none focus:border-b-2 border-b-black`}

@@ -1,4 +1,4 @@
-import { Item, SupportedLanguage } from "@/app/context/GlobalContext";
+import { Item } from "@/app/context/GlobalContext";
 
 interface LearnNewWordsModeProps {
   items: Item[];

@@ -6,7 +6,7 @@ import SidebarItem from "@/components/Menus/Sidebar/SideBarItem";
 import SideBarNavigation from "@/components/Menus/Sidebar/SideBarNavigation";
 import TopMenu from "@/components/Menus/TopMenu/TopMenu";
 import { useState } from "react";
-import { RxAllSides, RxCrossCircled, RxHamburgerMenu } from "react-icons/rx";
+import { RxAllSides, RxHamburgerMenu } from "react-icons/rx";
 
 export default function Home() {
   const [showSidebar, setShowSidebar] = useState(false);

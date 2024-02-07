@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 
-export type SupportedLanguage = "DE" | "EN" | "FR" | "CN" | "SE" | "NOR";
+export type SupportedLanguage = "DE" | "EN" | "FR";
 
 export type partOfSpeech =
   | "noun"
@@ -26,6 +26,49 @@ interface LearnedItem {
   nextReview: Date;
   // itemHistory
 }
+
+type Gender = "masculine" | "feminine" | "neuter";
+
+interface LanguageFeatures {
+  name: string;
+  code: SupportedLanguage;
+  flagCode: string;
+  requiresHelperKeys?: string[];
+  hasGender?: Partial<Gender>[];
+}
+
+const languageFeatures: LanguageFeatures[] = [
+  {
+    name: "German",
+    code: "DE",
+    flagCode: "DE",
+    requiresHelperKeys: ["ö", "Ö", "ä", "Ä", "ü", "Ü", "ß", "ẞ"],
+    hasGender: ["feminine", "masculine", "neuter"],
+  },
+  {
+    name: "French",
+    code: "FR",
+    flagCode: "FR",
+    requiresHelperKeys: [
+      "à",
+      "â",
+      "ç",
+      "Ç",
+      "è",
+      "é",
+      "ê",
+      "ë",
+      "î",
+      "ï",
+      "ô",
+      "ù",
+      "û",
+      "œ",
+    ],
+    hasGender: ["feminine", "masculine"],
+  },
+  { name: "English", code: "EN", flagCode: "GB" },
+];
 
 export interface Item {
   partOfSpeech: partOfSpeech;
@@ -124,22 +167,6 @@ const user: User = {
         itemsPerSession: defaultItemsPerSession,
       },
     },
-    {
-      name: "SE",
-      learnedListIds: [],
-      SSRSettings: {
-        reviewTimes: defaultReviewTimes,
-        itemsPerSession: defaultItemsPerSession,
-      },
-    },
-    {
-      name: "CN",
-      learnedListIds: [],
-      SSRSettings: {
-        reviewTimes: defaultReviewTimes,
-        itemsPerSession: defaultItemsPerSession,
-      },
-    },
   ],
   addendums: [{}],
   learningHistory: {},
@@ -156,11 +183,13 @@ type GlobalContextType = {
   showMobileLanguageSelector?: Boolean;
   toggleMobileLanguageSelectorOn?: MouseEventHandler;
   user: User;
+  languageFeatures: LanguageFeatures[];
 };
 
 export const GlobalContext = createContext<GlobalContextType>({
   showMobileMenu: false,
   user: user,
+  languageFeatures: languageFeatures,
 });
 
 export function GlobalContextProvider({ children }: PropsWithChildren) {
@@ -190,6 +219,7 @@ export function GlobalContextProvider({ children }: PropsWithChildren) {
         showMobileLanguageSelector,
         toggleMobileLanguageSelectorOn,
         user,
+        languageFeatures,
       }}
     >
       {children}
