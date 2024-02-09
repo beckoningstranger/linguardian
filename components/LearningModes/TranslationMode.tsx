@@ -1,7 +1,10 @@
 "use client";
 
-import { GlobalContext, Item } from "@/app/context/GlobalContext";
-import useConvertCodeToLanguageName from "@/app/hooks/useConvertCodeToLanguageName";
+import {
+  GlobalContext,
+  Item,
+  languageFeatures,
+} from "@/app/context/GlobalContext";
 import { useContext, useState } from "react";
 
 interface TranslationModeProps {
@@ -16,11 +19,8 @@ export default function TranslationMode({
   // This is where we look up targetLanguage (currentlyActiveLanguage) and source language (user's native language)
   const {
     user: { native },
-    currentlyActiveLanguage,
+    currentlyActiveLanguage: target,
   } = useContext(GlobalContext);
-
-  const target = currentlyActiveLanguage!;
-  const targetLanguageName = useConvertCodeToLanguageName(target);
 
   const [reviewedItems, setReviewedItems] = useState(0);
   const [activeItem, setActiveItem] = useState(items[reviewedItems]);
@@ -29,7 +29,6 @@ export default function TranslationMode({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSolution("");
     const success = activeItem.meaning[target]?.includes(solution);
 
     setInputFieldColor(success ? "bg-green-300" : "bg-red-400");
@@ -38,6 +37,7 @@ export default function TranslationMode({
     // This is where we can trigger additional reviews for this item, i.e. gender
 
     setTimeout(() => {
+      setSolution("");
       setInputFieldColor("bg-slate-200");
       if (items[reviewedItems + 1]) {
         setReviewedItems(reviewedItems + 1);
@@ -73,10 +73,11 @@ export default function TranslationMode({
         >
           <input
             type="text"
-            placeholder={`Translate to ${targetLanguageName}`}
+            placeholder={`Translate to ${languageFeatures[target].name}`}
             value={solution}
             onChange={(e) => setSolution(e.target.value)}
             className={`m-3 pt-2 bg-transparent text-xl text-center mx-auto w-11/12 focus:outline-none focus:border-b-2 border-b-black`}
+            autoFocus
           />
         </form>
       </div>

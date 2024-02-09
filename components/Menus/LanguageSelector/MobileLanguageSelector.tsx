@@ -1,8 +1,12 @@
 import Flag from "react-world-flags";
 import AddNewLanguageOption from "./AddNewLanguageOption";
+import {
+  SupportedLanguage,
+  languageFeatures,
+} from "@/app/context/GlobalContext";
 
 interface MobileLanguageSelectorProps {
-  languages: string[];
+  languages: SupportedLanguage[];
   setCurrentlyActiveLanguage: Function;
   toggleMobileMenuOff: Function;
 }
@@ -12,24 +16,28 @@ export default function MobileLanguageSelector({
   setCurrentlyActiveLanguage,
   toggleMobileMenuOff,
 }: MobileLanguageSelectorProps) {
+  // This way, languagesAndFlag[index][0] will be the language code, and languages[index][1] will be the flag code
+  const languagesAndFlags = languages.map((lang) => [
+    lang,
+    languageFeatures[lang].flagCode,
+  ]);
+
   return (
     <div className="grid grid-cols-2 grid-rows-3 gap-8 pt-28">
-      {languages!.map((language) => {
-        // Whenever a language code does not equal its flag code, we need to account for this here:
-        if (language === "EN") language = "GB";
+      {languagesAndFlags.map((lang, index) => {
         return (
           <Flag
-            key={language}
-            code={language}
+            key={languagesAndFlags[index][0]}
+            code={languagesAndFlags[index][1]}
             onClick={() => {
-              setCurrentlyActiveLanguage!(language);
+              setCurrentlyActiveLanguage!(languagesAndFlags[index][0]);
               toggleMobileMenuOff!();
             }}
             className={`rounded-full object-cover w-24 h-24 border-2 border-slate-300`}
           />
         );
       })}
-      {languages!.length < 6 && <AddNewLanguageOption />}
+      {languages.length < 6 && <AddNewLanguageOption />}
     </div>
   );
 }

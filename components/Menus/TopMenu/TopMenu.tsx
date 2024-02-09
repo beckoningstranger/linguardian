@@ -7,6 +7,7 @@ import { MouseEventHandler } from "react";
 import Flag from "react-world-flags";
 import MobileMenu from "../MobileMenu/MobileMenu";
 import MobileLanguageSelector from "../LanguageSelector/MobileLanguageSelector";
+import { languageFeatures } from "@/app/context/GlobalContext";
 
 interface TopMenuProps {
   toggleSidebar: MouseEventHandler;
@@ -22,7 +23,7 @@ export default function TopMenu({ toggleSidebar, showSidebar }: TopMenuProps) {
     toggleMobileMenuOff,
   } = useGlobalContext();
 
-  const languages = user.languages.map((lang) => lang.name);
+  const languages = user.languages.map((lang) => lang.code);
 
   return (
     <header className="absolute top-0 flex items-center justify-between w-full text-xl bg-opacity-25 select-none bg-slate-200">
@@ -37,13 +38,13 @@ export default function TopMenu({ toggleSidebar, showSidebar }: TopMenuProps) {
       </div>
       <div className="hidden md:block">Courses | Dictionaries | Social</div>
       <Flag
-        code={currentlyActiveLanguage!}
+        code={languageFeatures[currentlyActiveLanguage].flagCode}
         className={`md:hidden rounded-full object-cover w-16 h-16 m-0 border-2 border-slate-300`}
         onClick={toggleMobileLanguageSelectorOn}
       />
       <MobileMenu>
         <MobileLanguageSelector
-          languages={languages!}
+          languages={languages}
           setCurrentlyActiveLanguage={setCurrentlyActiveLanguage!}
           toggleMobileMenuOff={toggleMobileMenuOff!}
         />

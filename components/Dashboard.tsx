@@ -82,13 +82,13 @@ export default function Dashboard() {
 
   // Check what index number of the user object the currently active language has
   user.languages.map((language, index) => {
-    if (language.name === currentlyActiveLanguage) {
+    if (language.code === currentlyActiveLanguage) {
       currentLanguageIndex = index;
     }
   });
 
   // Get all the learned lists for the currently active language
-  if (user.languages[currentLanguageIndex].name === currentlyActiveLanguage) {
+  if (user.languages[currentLanguageIndex].code === currentlyActiveLanguage) {
     user.languages[currentLanguageIndex].learnedListIds.map((list) =>
       learnedLists.push(list)
     );

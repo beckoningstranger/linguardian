@@ -8,11 +8,11 @@ const items: Item[] = [
   {
     partOfSpeech: "noun",
     gender: {
-      DE: "n",
-      FR: "f",
+      DE: "neuter",
+      FR: "feminine",
     },
     meaning: {
-      DE: ["Auto", "Wagen"],
+      DE: ["Auto"],
       EN: ["car"],
       FR: ["voiture"],
     },
@@ -20,8 +20,8 @@ const items: Item[] = [
   {
     partOfSpeech: "noun",
     gender: {
-      DE: "m",
-      FR: "f",
+      DE: "masculine",
+      FR: "feminine",
     },
     meaning: {
       DE: ["Kopf"],
@@ -31,7 +31,7 @@ const items: Item[] = [
   },
   {
     partOfSpeech: "noun",
-    gender: { DE: "f", FR: "m" },
+    gender: { DE: "feminine", FR: "masculine" },
     meaning: { DE: ["Liebe"], EN: ["love"], FR: ["amour"] },
   },
 ];

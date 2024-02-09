@@ -13,8 +13,6 @@ import {
 } from "react-icons/fa6"; // Context and Spelling Bee Mode
 import { RxDotsHorizontal, RxDotsVertical } from "react-icons/rx"; // More button
 import Link from "next/link";
-import { useContext } from "react";
-import { GlobalContext, SupportedLanguage } from "@/app/context/GlobalContext";
 
 interface ReviewButtonProps {
   mode: string;
@@ -27,8 +25,6 @@ export default function ReviewButton({
   showAllModes,
   id,
 }: ReviewButtonProps) {
-  const { user, currentlyActiveLanguage } = useContext(GlobalContext);
-
   let icon;
   let color;
 

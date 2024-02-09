@@ -27,27 +27,30 @@ interface LearnedItem {
   // itemHistory
 }
 
-type Gender = "masculine" | "feminine" | "neuter";
+type Gender =
+  | "masculine"
+  | "feminine"
+  | "neuter"
+  | "common"
+  | "animate"
+  | "inanimate";
 
 interface LanguageFeatures {
   name: string;
-  code: SupportedLanguage;
   flagCode: string;
   requiresHelperKeys?: string[];
   hasGender?: Partial<Gender>[];
 }
 
-const languageFeatures: LanguageFeatures[] = [
-  {
+export const languageFeatures: Record<SupportedLanguage, LanguageFeatures> = {
+  DE: {
     name: "German",
-    code: "DE",
     flagCode: "DE",
     requiresHelperKeys: ["ö", "Ö", "ä", "Ä", "ü", "Ü", "ß", "ẞ"],
     hasGender: ["feminine", "masculine", "neuter"],
   },
-  {
+  FR: {
     name: "French",
-    code: "FR",
     flagCode: "FR",
     requiresHelperKeys: [
       "à",
@@ -67,29 +70,36 @@ const languageFeatures: LanguageFeatures[] = [
     ],
     hasGender: ["feminine", "masculine"],
   },
-  { name: "English", code: "EN", flagCode: "GB" },
-];
+  EN: {
+    name: "English",
+    flagCode: "GB",
+  },
+};
 
 export interface Item {
   partOfSpeech: partOfSpeech;
-  gender: Partial<Record<SupportedLanguage, string>>;
+  gender: Partial<Record<SupportedLanguage, Gender>>;
   meaning: Partial<Record<SupportedLanguage, string[]>>;
 }
 
-const defaultReviewTimes = {
-  1: 4 * 60 * 60 * 1000, // Level 1: 4 hours
-  2: 10 * 60 * 60 * 1000, // 10 hours
-  3: 24 * 60 * 60 * 1000, // 1 day
-  4: 2 * 24 * 60 * 60 * 1000, // 2 days
-  5: 4 * 24 * 60 * 60 * 1000, // 4 days
-  6: 8 * 24 * 60 * 60 * 1000, // 8 days
-  7: 14 * 24 * 60 * 60 * 1000, // 14 days
-  8: 30 * 24 * 60 * 60 * 1000, // 1 month
-  9: 90 * 24 * 60 * 60 * 1000, // 3 months
-  10: 180 * 24 * 60 * 60 * 1000, // 6 months
+const defaultSSRSettings: SSRSettings = {
+  reviewTimes: {
+    1: 4 * 60 * 60 * 1000, // Level 1: 4 hours
+    2: 10 * 60 * 60 * 1000, // 10 hours
+    3: 24 * 60 * 60 * 1000, // 1 day
+    4: 2 * 24 * 60 * 60 * 1000, // 2 days
+    5: 4 * 24 * 60 * 60 * 1000, // 4 days
+    6: 8 * 24 * 60 * 60 * 1000, // 8 days
+    7: 14 * 24 * 60 * 60 * 1000, // 14 days
+    8: 30 * 24 * 60 * 60 * 1000, // 1 month
+    9: 90 * 24 * 60 * 60 * 1000, // 3 months
+    10: 180 * 24 * 60 * 60 * 1000, // 6 months
+  },
+  itemsPerSession: {
+    learning: 5,
+    reviewing: 20,
+  },
 };
-
-const defaultItemsPerSession = { learning: 5, reviewing: 20 };
 
 interface SSRSettings {
   reviewTimes: {
@@ -108,7 +118,7 @@ interface SSRSettings {
 }
 
 interface LearnedLanguage {
-  name: SupportedLanguage;
+  code: SupportedLanguage;
   learnedItems?: LearnedItem[];
   learnedListIds: number[];
   SSRSettings: SSRSettings;
@@ -128,7 +138,7 @@ interface User {
   id: number;
   alias: string;
   native: SupportedLanguage;
-  languages: LearnedLanguage[]; // will have to make sure this is set at user creation
+  languages: LearnedLanguage[];
   addendums?: Addendum[];
   learningHistory?: LearningHistory;
   settings: Settings;
@@ -142,7 +152,7 @@ const user: User = {
   native: "DE",
   languages: [
     {
-      name: "EN",
+      code: "EN",
       learnedListIds: [1, 2],
       learnedItems: [
         { itemId: 1, itemLevel: 1, nextReview: new Date() },
@@ -150,12 +160,12 @@ const user: User = {
         { itemId: 4, itemLevel: 1, nextReview: new Date() },
       ],
       SSRSettings: {
-        reviewTimes: defaultReviewTimes,
-        itemsPerSession: defaultItemsPerSession,
+        reviewTimes: defaultSSRSettings.reviewTimes,
+        itemsPerSession: defaultSSRSettings.itemsPerSession,
       },
     },
     {
-      name: "FR",
+      code: "FR",
       learnedListIds: [1, 2, 3],
       learnedItems: [
         { itemId: 1, itemLevel: 1, nextReview: new Date() },
@@ -163,8 +173,8 @@ const user: User = {
         { itemId: 4, itemLevel: 1, nextReview: new Date() },
       ],
       SSRSettings: {
-        reviewTimes: defaultReviewTimes,
-        itemsPerSession: defaultItemsPerSession,
+        reviewTimes: defaultSSRSettings.reviewTimes,
+        itemsPerSession: defaultSSRSettings.itemsPerSession,
       },
     },
   ],
@@ -178,18 +188,20 @@ const user: User = {
 type GlobalContextType = {
   showMobileMenu: Boolean;
   toggleMobileMenuOff?: Function;
-  currentlyActiveLanguage?: SupportedLanguage;
+  currentlyActiveLanguage: SupportedLanguage;
   setCurrentlyActiveLanguage?: Function;
-  showMobileLanguageSelector?: Boolean;
+  showMobileLanguageSelector: Boolean;
   toggleMobileLanguageSelectorOn?: MouseEventHandler;
   user: User;
-  languageFeatures: LanguageFeatures[];
+  languageFeatures: Record<SupportedLanguage, LanguageFeatures>;
 };
 
 export const GlobalContext = createContext<GlobalContextType>({
   showMobileMenu: false,
   user: user,
+  currentlyActiveLanguage: user.languages[0].code,
   languageFeatures: languageFeatures,
+  showMobileLanguageSelector: false,
 });
 
 export function GlobalContextProvider({ children }: PropsWithChildren) {
@@ -197,7 +209,7 @@ export function GlobalContextProvider({ children }: PropsWithChildren) {
   const [showMobileLanguageSelector, setShowMobileLanguageSelector] =
     useState(false);
   const [currentlyActiveLanguage, setCurrentlyActiveLanguage] =
-    useState<SupportedLanguage>("FR");
+    useState<SupportedLanguage>(user.languages[0].code);
 
   function toggleMobileMenuOff() {
     setShowMobileMenu(false);
