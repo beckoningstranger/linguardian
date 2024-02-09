@@ -5,7 +5,9 @@ import {
   Item,
   languageFeatures,
 } from "@/app/context/GlobalContext";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
+import MobileMenu from "../Menus/MobileMenu/MobileMenu";
+import MobileHelperKeysSelector from "../Menus/MobileMenu/MobileHelperKeysSelector";
 
 interface TranslationModeProps {
   items: Item[];
@@ -22,10 +24,16 @@ export default function TranslationMode({
     currentlyActiveLanguage: target,
   } = useContext(GlobalContext);
 
-  const [reviewedItems, setReviewedItems] = useState(0);
-  const [activeItem, setActiveItem] = useState(items[reviewedItems]);
-  const [solution, setSolution] = useState("");
-  const [inputFieldColor, setInputFieldColor] = useState("bg-slate-200");
+  const [reviewedItems, setReviewedItems] = useState<number>(0);
+  const [activeItem, setActiveItem] = useState<Item>(items[reviewedItems]);
+  const [solution, setSolution] = useState<string>("");
+  const [inputFieldColor, setInputFieldColor] =
+    useState<string>("bg-slate-200");
+  const [showHelperKeys, setShowHelperKeys] = useState<boolean>(false);
+  const [showMobileHelperKeys, setShowMobileHelperKeys] =
+    useState<boolean>(false);
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +57,12 @@ export default function TranslationMode({
     }, 1000);
   };
 
+  const handleHelperKeyClick = (e: React.MouseEvent) => {
+    setSolution(solution + (e.target as HTMLButtonElement).innerText);
+    setShowHelperKeys(false);
+    if (inputRef.current) inputRef.current.focus();
+  };
+
   if (typeof activeItem.meaning !== undefined && typeof target !== undefined) {
     return (
       <div className="flex flex-col justify-center transition-all">
@@ -58,28 +72,50 @@ export default function TranslationMode({
             {reviewedItems + 1} / {items.length} items
           </h2>
         </div>
-        <div
-          id="Prompt"
-          className={`bg-slate-200 text-center w-95 m-6 rounded-md p-3`}
-        >
-          <h3 className="my-3 text-2xl">
-            {activeItem.meaning[native]?.join(", ")}
-          </h3>
-          <p className="text-sm">{activeItem.partOfSpeech}</p>
+        <div className="w-95 mx-6">
+          <div
+            id="Prompt"
+            className={`bg-slate-200 text-center w-95 rounded-md`}
+          >
+            <h3 className="my-3 text-2xl">{activeItem.meaning[native]}</h3>
+            <p className="text-sm">{activeItem.partOfSpeech}</p>
+          </div>
+          {languageFeatures[target].requiresHelperKeys && !showHelperKeys && (
+            <div
+              className="bg-slate-200 p-2 my-2 text-center hidden md:block"
+              onClick={() => setShowHelperKeys(true)}
+            >
+              Need help entering special characters?
+            </div>
+          )}
+          {languageFeatures[target].requiresHelperKeys && showHelperKeys && (
+            <div className="flex justify-center flex-wrap">
+              {languageFeatures[target].requiresHelperKeys?.map((key) => (
+                <button
+                  key={key}
+                  className="m-2 bg-slate-200 p-1 w-10 h-10 border-2 border-black rounded-md"
+                  onClick={(e) => handleHelperKeyClick(e)}
+                >
+                  {key}
+                </button>
+              ))}
+            </div>
+          )}
+          <form
+            onSubmit={handleSubmit}
+            className={`mt-0 ${inputFieldColor} flex justify-stretch transition-all rounded-md`}
+          >
+            <input
+              type="text"
+              placeholder={`Translate to ${languageFeatures[target].name}`}
+              value={solution}
+              onChange={(e) => setSolution(e.target.value)}
+              className={`m-3 pt-2 bg-transparent text-xl text-center mx-auto w-11/12 focus:outline-none focus:border-b-2 border-b-black`}
+              autoFocus
+              ref={inputRef}
+            />
+          </form>
         </div>
-        <form
-          onSubmit={handleSubmit}
-          className={`w-95 mb-6 mx-6 rounded-md ${inputFieldColor} flex justify-stretch transition-all`}
-        >
-          <input
-            type="text"
-            placeholder={`Translate to ${languageFeatures[target].name}`}
-            value={solution}
-            onChange={(e) => setSolution(e.target.value)}
-            className={`m-3 pt-2 bg-transparent text-xl text-center mx-auto w-11/12 focus:outline-none focus:border-b-2 border-b-black`}
-            autoFocus
-          />
-        </form>
       </div>
     );
   }

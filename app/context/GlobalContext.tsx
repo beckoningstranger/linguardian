@@ -77,9 +77,12 @@ export const languageFeatures: Record<SupportedLanguage, LanguageFeatures> = {
 };
 
 export interface Item {
+  id: number;
   partOfSpeech: partOfSpeech;
   gender: Partial<Record<SupportedLanguage, Gender>>;
-  meaning: Partial<Record<SupportedLanguage, string[]>>;
+  meaning: Partial<Record<SupportedLanguage, string>>;
+  alternativemeaning?: Partial<Record<SupportedLanguage, string[]>>;
+  plural?: Partial<Record<SupportedLanguage, string>>;
 }
 
 const defaultSSRSettings: SSRSettings = {

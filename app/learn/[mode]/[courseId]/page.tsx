@@ -6,33 +6,47 @@ import { useParams } from "next/navigation";
 
 const items: Item[] = [
   {
+    id: 1,
     partOfSpeech: "noun",
     gender: {
       DE: "neuter",
-      FR: "feminine",
+      FR: "masculine",
     },
     meaning: {
-      DE: ["Auto"],
-      EN: ["car"],
-      FR: ["voiture"],
+      DE: "Auge",
+      EN: "eye",
+      FR: "oeil",
+    },
+    plural: {
+      DE: "Augen",
+      EN: "eyes",
+      FR: "yeux",
     },
   },
   {
+    id: 2,
     partOfSpeech: "noun",
     gender: {
       DE: "masculine",
       FR: "feminine",
     },
     meaning: {
-      DE: ["Kopf"],
-      EN: ["head"],
-      FR: ["tête"],
+      DE: "Kopf",
+      EN: "head",
+      FR: "tête",
+    },
+    plural: {
+      DE: "Köpfe",
+      EN: "heads",
+      FR: "têtes",
     },
   },
   {
+    id: 3,
     partOfSpeech: "noun",
     gender: { DE: "feminine", FR: "masculine" },
-    meaning: { DE: ["Liebe"], EN: ["love"], FR: ["amour"] },
+    meaning: { DE: "Liebe", EN: "love", FR: "amour" },
+    plural: { DE: "Lieben", EN: "loves", FR: "amours" },
   },
 ];
 
@@ -46,7 +60,7 @@ export default function ReviewPage() {
   const courseId = Number(listIdString);
 
   // This is where we look up the list's name based on the passed listIdString
-  const listName = "Example course";
+  const listName = "Example list";
 
   // This is where we read the list data to see what items need to be reviewed / can be learned
   // and then fetch all of them to then pass this information on into a Learning Mode.
