@@ -7,7 +7,7 @@ import {
 } from "@/app/context/GlobalContext";
 import { useContext, useRef, useState } from "react";
 import MobileMenu from "../Menus/MobileMenu/MobileMenu";
-import MobileHelperKeysSelector from "../Menus/MobileMenu/MobileHelperKeysSelector";
+import HelperKeysSelector from "../Menus/HelperKeysSelector";
 
 interface TranslationModeProps {
   items: Item[];
@@ -22,6 +22,7 @@ export default function TranslationMode({
   const {
     user: { native },
     currentlyActiveLanguage: target,
+    toggleMobileMenu,
   } = useContext(GlobalContext);
 
   const [reviewedItems, setReviewedItems] = useState<number>(0);
@@ -30,8 +31,6 @@ export default function TranslationMode({
   const [inputFieldColor, setInputFieldColor] =
     useState<string>("bg-slate-200");
   const [showHelperKeys, setShowHelperKeys] = useState<boolean>(false);
-  const [showMobileHelperKeys, setShowMobileHelperKeys] =
-    useState<boolean>(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -72,34 +71,47 @@ export default function TranslationMode({
             {reviewedItems + 1} / {items.length} items
           </h2>
         </div>
-        <div className="w-95 mx-6">
+        <div className="w-95 mx-6 flex flex-col mt-3 gap-3">
           <div
             id="Prompt"
-            className={`bg-slate-200 text-center w-95 rounded-md`}
+            className={`bg-slate-200 text-center w-95 rounded-md py-2`}
           >
             <h3 className="my-3 text-2xl">{activeItem.meaning[native]}</h3>
             <p className="text-sm">{activeItem.partOfSpeech}</p>
           </div>
           {languageFeatures[target].requiresHelperKeys && !showHelperKeys && (
-            <div
-              className="bg-slate-200 p-2 my-2 text-center hidden md:block"
-              onClick={() => setShowHelperKeys(true)}
-            >
-              Need help entering special characters?
-            </div>
+            <>
+              <div
+                className="bg-slate-200 p-2 my-2 text-center hidden md:block rounded-md"
+                onClick={() => setShowHelperKeys(true)}
+              >
+                Need help entering special characters?
+              </div>
+              <div
+                className="bg-slate-200 p-2 my-2 text-center md:hidden rounded-md"
+                onClick={() => toggleMobileMenu!()}
+              >
+                Need help entering special characters?
+              </div>
+            </>
           )}
+
+          <MobileMenu>
+            <HelperKeysSelector
+              target={target}
+              handleHelperKeyClick={handleHelperKeyClick}
+              toggleMobileMenu={toggleMobileMenu!}
+              languageFeatures={languageFeatures}
+              mobile={true}
+            />
+          </MobileMenu>
           {languageFeatures[target].requiresHelperKeys && showHelperKeys && (
-            <div className="flex justify-center flex-wrap">
-              {languageFeatures[target].requiresHelperKeys?.map((key) => (
-                <button
-                  key={key}
-                  className="m-2 bg-slate-200 p-1 w-10 h-10 border-2 border-black rounded-md"
-                  onClick={(e) => handleHelperKeyClick(e)}
-                >
-                  {key}
-                </button>
-              ))}
-            </div>
+            <HelperKeysSelector
+              target={target}
+              handleHelperKeyClick={handleHelperKeyClick}
+              languageFeatures={languageFeatures}
+              mobile={false}
+            />
           )}
           <form
             onSubmit={handleSubmit}
@@ -110,9 +122,14 @@ export default function TranslationMode({
               placeholder={`Translate to ${languageFeatures[target].name}`}
               value={solution}
               onChange={(e) => setSolution(e.target.value)}
-              className={`m-3 pt-2 bg-transparent text-xl text-center mx-auto w-11/12 focus:outline-none focus:border-b-2 border-b-black`}
+              className={`m-3 pt-2 bg-transparent text-xl text-center mx-auto w-11/12 focus:outline-none ${
+                inputFieldColor !== "bg-slate-200"
+                  ? "focus: border-b-inherit"
+                  : "focus:border-b-2"
+              } border-b-black`}
               autoFocus
               ref={inputRef}
+              readOnly={inputFieldColor !== "bg-slate-200"}
             />
           </form>
         </div>

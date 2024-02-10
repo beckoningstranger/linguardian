@@ -30,7 +30,7 @@ type Gender =
   | "animate"
   | "inanimate";
 
-interface LanguageFeatures {
+export interface LanguageFeatures {
   name: string;
   flagCode: string;
   requiresHelperKeys?: string[];
