@@ -8,13 +8,13 @@ import {
 interface MobileLanguageSelectorProps {
   languages: SupportedLanguage[];
   setCurrentlyActiveLanguage: Function;
-  toggleMobileMenuOff: Function;
+  toggleMobileMenu: Function;
 }
 
 export default function MobileLanguageSelector({
   languages,
   setCurrentlyActiveLanguage,
-  toggleMobileMenuOff,
+  toggleMobileMenu,
 }: MobileLanguageSelectorProps) {
   // This way, languagesAndFlag[index][0] will be the language code, and languages[index][1] will be the flag code
   const languagesAndFlags = languages.map((lang) => [
@@ -31,7 +31,7 @@ export default function MobileLanguageSelector({
             code={languagesAndFlags[index][1]}
             onClick={() => {
               setCurrentlyActiveLanguage!(languagesAndFlags[index][0]);
-              toggleMobileMenuOff!();
+              toggleMobileMenu();
             }}
             className={`rounded-full object-cover w-24 h-24 border-2 border-slate-300`}
           />

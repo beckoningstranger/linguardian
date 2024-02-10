@@ -18,9 +18,8 @@ export default function TopMenu({ toggleSidebar, showSidebar }: TopMenuProps) {
   const {
     currentlyActiveLanguage,
     setCurrentlyActiveLanguage,
-    toggleMobileLanguageSelectorOn,
+    toggleMobileMenu,
     user,
-    toggleMobileMenuOff,
   } = useGlobalContext();
 
   const languages = user.languages.map((lang) => lang.code);
@@ -40,13 +39,13 @@ export default function TopMenu({ toggleSidebar, showSidebar }: TopMenuProps) {
       <Flag
         code={languageFeatures[currentlyActiveLanguage].flagCode}
         className={`md:hidden rounded-full object-cover w-16 h-16 m-0 border-2 border-slate-300`}
-        onClick={toggleMobileLanguageSelectorOn}
+        onClick={toggleMobileMenu as MouseEventHandler}
       />
       <MobileMenu>
         <MobileLanguageSelector
           languages={languages}
           setCurrentlyActiveLanguage={setCurrentlyActiveLanguage!}
-          toggleMobileMenuOff={toggleMobileMenuOff!}
+          toggleMobileMenu={toggleMobileMenu!}
         />
       </MobileMenu>
       <div className="flex items-center justify-between gap-2 mx-2">

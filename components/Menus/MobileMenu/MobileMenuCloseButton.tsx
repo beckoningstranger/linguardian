@@ -10,7 +10,7 @@ export default function MobileMenuCloseButton({
   return (
     <div
       className="self-center md:hidden my-4 text-6xl text-slate-600 hover:text-slate-400 transition-all"
-      onClick={() => close()}
+      onClick={() => close(false)}
     >
       <RxCrossCircled />
     </div>

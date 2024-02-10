@@ -1,10 +1,5 @@
 "use client";
-import {
-  MouseEventHandler,
-  PropsWithChildren,
-  createContext,
-  useState,
-} from "react";
+import { PropsWithChildren, createContext, useState } from "react";
 
 export type SupportedLanguage = "DE" | "EN" | "FR";
 
@@ -190,11 +185,9 @@ const user: User = {
 
 type GlobalContextType = {
   showMobileMenu: Boolean;
-  toggleMobileMenuOff?: Function;
   currentlyActiveLanguage: SupportedLanguage;
   setCurrentlyActiveLanguage?: Function;
-  showMobileLanguageSelector: Boolean;
-  toggleMobileLanguageSelectorOn?: MouseEventHandler;
+  toggleMobileMenu?: Function;
   user: User;
   languageFeatures: Record<SupportedLanguage, LanguageFeatures>;
 };
@@ -204,35 +197,24 @@ export const GlobalContext = createContext<GlobalContextType>({
   user: user,
   currentlyActiveLanguage: user.languages[0].code,
   languageFeatures: languageFeatures,
-  showMobileLanguageSelector: false,
 });
 
 export function GlobalContextProvider({ children }: PropsWithChildren) {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [showMobileLanguageSelector, setShowMobileLanguageSelector] =
-    useState(false);
   const [currentlyActiveLanguage, setCurrentlyActiveLanguage] =
     useState<SupportedLanguage>(user.languages[0].code);
 
-  function toggleMobileMenuOff() {
-    setShowMobileMenu(false);
-    setShowMobileLanguageSelector(false);
-  }
-
-  function toggleMobileLanguageSelectorOn() {
-    setShowMobileLanguageSelector(true);
-    setShowMobileMenu(true);
+  function toggleMobileMenu() {
+    setShowMobileMenu((active) => !active);
   }
 
   return (
     <GlobalContext.Provider
       value={{
         showMobileMenu,
-        toggleMobileMenuOff,
+        toggleMobileMenu,
         currentlyActiveLanguage,
         setCurrentlyActiveLanguage,
-        showMobileLanguageSelector,
-        toggleMobileLanguageSelectorOn,
         user,
         languageFeatures,
       }}

@@ -11,7 +11,7 @@ interface MobileMenuProps {
 
 export default function MobileMenu({ children }: MobileMenuProps) {
   const ref = useRef<Element | null>(null);
-  const { showMobileMenu, toggleMobileMenuOff } = useGlobalContext();
+  const { showMobileMenu, toggleMobileMenu } = useGlobalContext();
 
   useEffect(() => {
     ref.current = document.querySelector<HTMLElement>("#PortalOutlet");
@@ -31,7 +31,7 @@ export default function MobileMenu({ children }: MobileMenuProps) {
               <Logo />
               <div className="flex flex-col justify-center">
                 {children}
-                <MobileMenuCloseButton close={toggleMobileMenuOff!} />
+                <MobileMenuCloseButton close={toggleMobileMenu!} />
               </div>
             </div>
           </div>,
