@@ -1,13 +1,16 @@
 "use client";
 
+import { useContext, useEffect, useRef, useState } from "react";
+
 import {
+  Gender,
   GlobalContext,
   Item,
   languageFeatures,
 } from "@/app/context/GlobalContext";
-import { useContext, useEffect, useRef, useState } from "react";
 import MobileMenu from "../Menus/MobileMenu/MobileMenu";
 import HelperKeysSelector from "../Menus/HelperKeysSelector";
+import GenderReview from "./GenderReview";
 
 interface TranslationModeProps {
   items: Item[];
@@ -37,10 +40,12 @@ export default function TranslationMode({
     form: "mt-0 flex justify-stretch transition-all rounded-md bg-slate-200",
   });
   const [showHelperKeys, setShowHelperKeys] = useState<boolean>(false);
+  const [genderReview, setGenderReview] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const genderInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleWordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (activeItem.meaning[target] === solution) {
       setReviewStatus("correct");
@@ -48,9 +53,19 @@ export default function TranslationMode({
       setReviewStatus("incorrect");
     }
 
-    // This is where we can update the backend for this item, i.e. learningHistory and most of all new level and next review time
-
     // This is where we can trigger additional reviews for this item, i.e. gender
+    if (
+      activeItem.partOfSpeech === "noun" &&
+      activeItem.meaning[target] === solution
+    ) {
+      setGenderReview(true);
+      return;
+    }
+    finalizeReview();
+  };
+
+  function finalizeReview() {
+    // This is where we can update the backend for this item, i.e. learningHistory and most of all new level and next review time
 
     setTimeout(() => {
       setSolution("");
@@ -62,7 +77,15 @@ export default function TranslationMode({
         console.log("Session complete");
         // This is where we navigate back to the dashboard and load fresh data from backend
       }
-    }, 1000);
+    }, 1500);
+  }
+
+  const handleGenderSubmit = (gender: Gender) => {
+    setSolution(solution + ` (${gender})`);
+    if (activeItem.gender && gender !== activeItem.gender[target])
+      setReviewStatus("incorrect");
+    setGenderReview(false);
+    finalizeReview();
   };
 
   const handleHelperKeyClick = (e: React.MouseEvent) => {
@@ -114,22 +137,24 @@ export default function TranslationMode({
           <h3 className="my-3 text-2xl">{activeItem.meaning[native]}</h3>
           <p className="text-sm">{activeItem.partOfSpeech}</p>
         </div>
-        {languageFeatures[target].requiresHelperKeys && !showHelperKeys && (
-          <>
-            <div
-              className="bg-slate-200 p-2 my-2 text-center hidden md:block rounded-md"
-              onClick={() => setShowHelperKeys(true)}
-            >
-              Need help entering special characters?
-            </div>
-            <div
-              className="bg-slate-200 p-2 my-2 text-center md:hidden rounded-md"
-              onClick={() => toggleMobileMenu!()}
-            >
-              Need help entering special characters?
-            </div>
-          </>
-        )}
+        {languageFeatures[target].requiresHelperKeys &&
+          !showHelperKeys &&
+          !genderReview && (
+            <>
+              <div
+                className="bg-slate-200 p-2 text-center hidden md:block rounded-md"
+                onClick={() => setShowHelperKeys(true)}
+              >
+                Need help entering special characters?
+              </div>
+              <div
+                className="bg-slate-200 p-2 text-center md:hidden rounded-md"
+                onClick={() => toggleMobileMenu!()}
+              >
+                Need help entering special characters?
+              </div>
+            </>
+          )}
 
         <MobileMenu>
           <HelperKeysSelector
@@ -148,18 +173,30 @@ export default function TranslationMode({
             mobile={false}
           />
         )}
-        <form onSubmit={handleSubmit} className={inputStyling.form}>
-          <input
-            type="text"
-            placeholder={`Translate to ${languageFeatures[target].name}`}
-            value={solution}
-            onChange={(e) => setSolution(e.target.value)}
-            className={inputStyling.input}
-            autoFocus
-            ref={inputRef}
-            readOnly={reviewStatus !== "neutral"}
+
+        {!genderReview && (
+          <form onSubmit={handleWordSubmit} className={inputStyling.form}>
+            <input
+              type="text"
+              placeholder={`Translate to ${languageFeatures[target].name}`}
+              value={solution}
+              onChange={(e) => setSolution(e.target.value)}
+              className={inputStyling.input}
+              autoFocus
+              ref={inputRef}
+              readOnly={reviewStatus !== "neutral"}
+            />
+          </form>
+        )}
+        {genderReview && (
+          <GenderReview
+            genderInputRef={genderInputRef}
+            activeItem={activeItem}
+            target={target}
+            languageFeatures={languageFeatures}
+            handleGenderSubmit={handleGenderSubmit}
           />
-        </form>
+        )}
       </div>
     </div>
   );

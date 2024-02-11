@@ -48,6 +48,11 @@ const items: Item[] = [
     meaning: { DE: "Liebe", EN: "love", FR: "amour" },
     plural: { DE: "Lieben", EN: "loves", FR: "amours" },
   },
+  {
+    id: 4,
+    partOfSpeech: "adjective",
+    meaning: { DE: "dick", EN: "fat", FR: "gros" },
+  },
 ];
 
 export default function ReviewPage() {

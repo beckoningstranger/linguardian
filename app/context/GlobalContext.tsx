@@ -22,7 +22,7 @@ interface LearnedItem {
   // itemHistory
 }
 
-type Gender =
+export type Gender =
   | "masculine"
   | "feminine"
   | "neuter"
@@ -74,7 +74,7 @@ export const languageFeatures: Record<SupportedLanguage, LanguageFeatures> = {
 export interface Item {
   id: number;
   partOfSpeech: partOfSpeech;
-  gender: Partial<Record<SupportedLanguage, Gender>>;
+  gender?: Partial<Record<SupportedLanguage, Gender>>;
   meaning: Partial<Record<SupportedLanguage, string>>;
   alternativemeaning?: Partial<Record<SupportedLanguage, string[]>>;
   plural?: Partial<Record<SupportedLanguage, string>>;
@@ -147,7 +147,7 @@ interface User {
 const user: User = {
   id: 1,
   alias: "User1",
-  native: "DE",
+  native: "FR",
   languages: [
     {
       code: "EN",
@@ -163,7 +163,7 @@ const user: User = {
       },
     },
     {
-      code: "FR",
+      code: "DE",
       learnedListIds: [1, 2, 3],
       learnedItems: [
         { itemId: 1, itemLevel: 1, nextReview: new Date() },
@@ -202,7 +202,7 @@ export const GlobalContext = createContext<GlobalContextType>({
 export function GlobalContextProvider({ children }: PropsWithChildren) {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [currentlyActiveLanguage, setCurrentlyActiveLanguage] =
-    useState<SupportedLanguage>(user.languages[0].code);
+    useState<SupportedLanguage>(user.languages[1].code);
 
   function toggleMobileMenu() {
     setShowMobileMenu((active) => !active);
