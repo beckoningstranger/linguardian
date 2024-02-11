@@ -56,6 +56,7 @@ export default function TranslationMode({
     // This is where we can trigger additional reviews for this item, i.e. gender
     if (
       activeItem.partOfSpeech === "noun" &&
+      languageFeatures[target].hasGender &&
       activeItem.meaning[target] === solution
     ) {
       setGenderReview(true);
