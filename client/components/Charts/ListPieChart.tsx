@@ -36,7 +36,7 @@ export default function ListPieChart({ stats }: ListBarChartProps) {
           },
         },
       },
-      legend: { position: "bottom", fontSize: "16px" },
+      legend: { position: "bottom" as const, fontSize: "16px" },
       grid: { padding: { top: 0, bottom: 0, left: -50, right: -50 } },
 
       labels: ["Ready to water", "Mature", "Growing", "Seeds left"],

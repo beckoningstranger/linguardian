@@ -5,11 +5,17 @@ import MobileMenuCloseButton from "@/components/Menus/MobileMenu/MobileMenuClose
 import SidebarItem from "@/components/Menus/Sidebar/SideBarItem";
 import SideBarNavigation from "@/components/Menus/Sidebar/SideBarNavigation";
 import TopMenu from "@/components/Menus/TopMenu/TopMenu";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { RxAllSides, RxHamburgerMenu } from "react-icons/rx";
 
 export default function Home() {
   const [showSidebar, setShowSidebar] = useState(false);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/home")
+      .then((response) => response.json())
+      .then((data) => console.log(data.message));
+  }, []);
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
