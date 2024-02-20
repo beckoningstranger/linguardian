@@ -1,7 +1,4 @@
-import {
-  SupportedLanguage,
-  LanguageFeatures,
-} from "@/app/context/GlobalContext";
+import { SupportedLanguage, LanguageFeatures } from "@/types";
 
 interface HelperKeysSelectorProps {
   languageFeatures: Record<SupportedLanguage, LanguageFeatures>;

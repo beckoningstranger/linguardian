@@ -1,41 +1,11 @@
 "use client";
 import { PropsWithChildren, createContext, useState } from "react";
-
-export type SupportedLanguage = "DE" | "EN" | "FR";
-
-export type partOfSpeech =
-  | "noun"
-  | "pronoun"
-  | "verb"
-  | "adjective"
-  | "adverb"
-  | "preposition"
-  | "conjunction"
-  | "determiner"
-  | "interjection"
-  | "particle";
-
-interface LearnedItem {
-  itemId: number;
-  itemLevel: number;
-  nextReview: Date;
-  // itemHistory
-}
-
-export type Gender =
-  | "masculine"
-  | "feminine"
-  | "neuter"
-  | "common"
-  | "animate"
-  | "inanimate";
-
-export interface LanguageFeatures {
-  name: string;
-  flagCode: string;
-  requiresHelperKeys?: string[];
-  hasGender?: Partial<Gender>[];
-}
+import {
+  SupportedLanguage,
+  LanguageFeatures,
+  SSRSettings,
+  User,
+} from "@/types";
 
 export const languageFeatures: Record<SupportedLanguage, LanguageFeatures> = {
   DE: {
@@ -71,15 +41,6 @@ export const languageFeatures: Record<SupportedLanguage, LanguageFeatures> = {
   },
 };
 
-export interface Item {
-  id: number;
-  partOfSpeech: partOfSpeech;
-  gender?: Partial<Record<SupportedLanguage, Gender>>;
-  meaning: Partial<Record<SupportedLanguage, string>>;
-  alternativemeaning?: Partial<Record<SupportedLanguage, string[]>>;
-  plural?: Partial<Record<SupportedLanguage, string>>;
-}
-
 const defaultSSRSettings: SSRSettings = {
   reviewTimes: {
     1: 4 * 60 * 60 * 1000, // Level 1: 4 hours
@@ -98,51 +59,6 @@ const defaultSSRSettings: SSRSettings = {
     reviewing: 20,
   },
 };
-
-interface SSRSettings {
-  reviewTimes: {
-    1: number;
-    2: number;
-    3: number;
-    4: number;
-    5: number;
-    6: number;
-    7: number;
-    8: number;
-    9: number;
-    10: number;
-  };
-  itemsPerSession: { learning: number; reviewing: number };
-}
-
-interface LearnedLanguage {
-  code: SupportedLanguage;
-  learnedItems?: LearnedItem[];
-  learnedListIds: number[];
-  SSRSettings: SSRSettings;
-}
-
-interface Addendum {}
-
-interface LearningHistory {}
-
-interface Settings {}
-
-interface Credentials {}
-
-interface Profile {}
-
-interface User {
-  id: number;
-  alias: string;
-  native: SupportedLanguage;
-  languages: LearnedLanguage[];
-  addendums?: Addendum[];
-  learningHistory?: LearningHistory;
-  settings: Settings;
-  credentials: Credentials;
-  profile: Profile;
-}
 
 const user: User = {
   id: 1,

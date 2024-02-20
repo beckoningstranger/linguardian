@@ -1,8 +1,4 @@
-import {
-  Item,
-  LanguageFeatures,
-  SupportedLanguage,
-} from "@/app/context/GlobalContext";
+import { Item, LanguageFeatures, SupportedLanguage } from "@/types";
 import { RefObject } from "react";
 
 interface GenderReviewProps {

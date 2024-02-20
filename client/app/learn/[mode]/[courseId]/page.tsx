@@ -1,5 +1,5 @@
 "use client";
-import { Item } from "@/app/context/GlobalContext";
+import { Item } from "@/types";
 import LearnNewWordsMode from "@/components/LearningModes/LearnNewWordsMode";
 import TranslationMode from "@/components/LearningModes/TranslationMode";
 import { useParams } from "next/navigation";

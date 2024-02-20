@@ -2,12 +2,8 @@
 
 import { useContext, useEffect, useRef, useState } from "react";
 
-import {
-  Gender,
-  GlobalContext,
-  Item,
-  languageFeatures,
-} from "@/app/context/GlobalContext";
+import { Gender, Item } from "@/types";
+import { GlobalContext, languageFeatures } from "@/app/context/GlobalContext";
 import MobileMenu from "../Menus/MobileMenu/MobileMenu";
 import HelperKeysSelector from "../Menus/HelperKeysSelector";
 import GenderReview from "./GenderReview";

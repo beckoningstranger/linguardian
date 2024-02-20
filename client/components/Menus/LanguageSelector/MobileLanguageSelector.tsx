@@ -1,9 +1,7 @@
 import Flag from "react-world-flags";
 import AddNewLanguageOption from "./AddNewLanguageOption";
-import {
-  SupportedLanguage,
-  languageFeatures,
-} from "@/app/context/GlobalContext";
+import { languageFeatures } from "@/app/context/GlobalContext";
+import { SupportedLanguage } from "@/types";
 
 interface MobileLanguageSelectorProps {
   languages: SupportedLanguage[];

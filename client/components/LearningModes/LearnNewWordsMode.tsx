@@ -1,4 +1,4 @@
-import { Item } from "@/app/context/GlobalContext";
+import { Item } from "@/types";
 
 interface LearnNewWordsModeProps {
   items: Item[];

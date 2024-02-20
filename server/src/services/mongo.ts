@@ -2,7 +2,8 @@ import { MongooseError } from "mongoose";
 
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-dotenv.config();
+import path from "path";
+dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
 const MONGO_URL = process.env.MONGO_URL;
 

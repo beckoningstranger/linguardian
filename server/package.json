@@ -5,7 +5,8 @@
   "main": "server.ts",
   "scripts": {
     "start": "npx tsc && node dist/server.js",
-    "dev": "npx tsc --watch --noEmit"
+    "watch-compiler": "npx tsc --watch --noEmit",
+    "dev": "npx tsx src/server.ts"
   },
   "author": "",
   "license": "ISC",
