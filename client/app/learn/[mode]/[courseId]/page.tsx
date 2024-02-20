@@ -6,52 +6,48 @@ import { useParams } from "next/navigation";
 
 const items: Item[] = [
   {
-    id: 1,
+    name: "Auge",
+    lang: "DE",
+    pluralForm: "Augen",
+    gender: "neuter",
     partOfSpeech: "noun",
-    gender: {
-      DE: "neuter",
-      FR: "masculine",
-    },
-    meaning: {
-      DE: "Auge",
-      EN: "eye",
+    translation: {
       FR: "oeil",
+      EN: "eye",
     },
-    plural: {
-      DE: "Augen",
-      EN: "eyes",
-      FR: "yeux",
-    },
+    definition: {},
   },
   {
-    id: 2,
+    name: "Kopf",
+    lang: "DE",
+    pluralForm: "Köpfe",
+    gender: "masculine",
     partOfSpeech: "noun",
-    gender: {
-      DE: "masculine",
-      FR: "feminine",
-    },
-    meaning: {
-      DE: "Kopf",
-      EN: "head",
+    translation: {
       FR: "tête",
+      EN: "head",
     },
-    plural: {
-      DE: "Köpfe",
-      EN: "heads",
-      FR: "têtes",
-    },
+    definition: {},
   },
   {
-    id: 3,
+    name: "Liebe",
+    lang: "DE",
+    pluralForm: "Lieben",
+    gender: "feminine",
     partOfSpeech: "noun",
-    gender: { DE: "feminine", FR: "masculine" },
-    meaning: { DE: "Liebe", EN: "love", FR: "amour" },
-    plural: { DE: "Lieben", EN: "loves", FR: "amours" },
+    translation: {
+      FR: "amour",
+      EN: "love",
+    },
   },
   {
-    id: 4,
+    name: "dick",
+    lang: "DE",
     partOfSpeech: "adjective",
-    meaning: { DE: "dick", EN: "fat", FR: "gros" },
+    translation: {
+      FR: "gros, épais",
+      EN: "thick, fat",
+    },
   },
 ];
 

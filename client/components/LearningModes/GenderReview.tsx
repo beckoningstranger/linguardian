@@ -36,7 +36,7 @@ export default function GenderReview({
       />
       <div className="text-center text-xl">
         <p>Very good!</p>
-        <p>What is {activeItem.meaning[target]}&apos;s gender?</p>
+        <p>What is {activeItem.name}&apos;s gender?</p>
       </div>
       <div className="flex justify-around my-2">
         {languageFeatures[target].hasGender?.map((gender) => {

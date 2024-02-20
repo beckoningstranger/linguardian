@@ -1,4 +1,6 @@
-type SupportedLanguage = "DE" | "EN" | "FR";
+import mongoose from "mongoose";
+
+type SupportedLanguage = "DE" | "EN" | "FR" | "CN";
 
 type PartOfSpeech =
   | "noun"
@@ -16,7 +18,6 @@ interface LearnedItem {
   itemId: number;
   itemLevel: number;
   nextReview: Date;
-  // itemHistory
 }
 
 type Gender =
@@ -34,13 +35,43 @@ interface LanguageFeatures {
   hasGender?: Partial<Gender>[];
 }
 
+type Case =
+  | "nominative"
+  | "genitive"
+  | "dative"
+  | "accusative"
+  | "instrumental"
+  | "locative"
+  | "vocative"
+  | "genitive & dative";
+
+type Tags = "intransitive" | "archaic" | "literary" | "slang" | "humorous";
+
+type Frequency =
+  | "extremely rare"
+  | "rare"
+  | "medium"
+  | "high"
+  | "extremely high";
+
 interface Item {
-  id: number;
+  name: string;
+  lang: SupportedLanguage;
   partOfSpeech: PartOfSpeech;
-  gender?: Partial<Record<SupportedLanguage, Gender>>;
-  meaning: Partial<Record<SupportedLanguage, string>>;
-  alternativemeaning?: Partial<Record<SupportedLanguage, string[]>>;
-  plural?: Partial<Record<SupportedLanguage, string>>;
+  lemma?: [{ type: mongoose.Schema.Types.ObjectId; ref: "Lemmas" }];
+  definition?: Partial<Record<SupportedLanguage, string>>;
+  translation: Partial<Record<SupportedLanguage, string>>; // would actually need an Array of ObjectIDs
+  gender?: Gender;
+  pluralForm?: string;
+  case?: Case;
+  audio?: string[];
+  pics?: string[];
+  vids?: string[];
+  IPA?: string[];
+  tags?: Tags[];
+  frequency?: Frequency;
+  featuresInList?: [{ type: mongoose.Schema.Types.ObjectId; ref: "Lists" }];
+  collocations?: [{ type: mongoose.Schema.Types.ObjectId; ref: "Items" }];
 }
 
 interface SSRSettings {

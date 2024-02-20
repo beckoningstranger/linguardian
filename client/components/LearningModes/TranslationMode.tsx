@@ -43,7 +43,7 @@ export default function TranslationMode({
 
   const handleWordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (activeItem.meaning[target] === solution) {
+    if (activeItem.name === solution) {
       setReviewStatus("correct");
     } else {
       setReviewStatus("incorrect");
@@ -53,7 +53,7 @@ export default function TranslationMode({
     if (
       activeItem.partOfSpeech === "noun" &&
       languageFeatures[target].hasGender &&
-      activeItem.meaning[target] === solution
+      activeItem.name === solution
     ) {
       setGenderReview(true);
       return;
@@ -79,7 +79,7 @@ export default function TranslationMode({
 
   const handleGenderSubmit = (gender: Gender) => {
     setSolution(solution + ` (${gender})`);
-    if (activeItem.gender && gender !== activeItem.gender[target])
+    if (activeItem.gender && gender !== activeItem.gender)
       setReviewStatus("incorrect");
     setGenderReview(false);
     finalizeReview();
@@ -131,7 +131,7 @@ export default function TranslationMode({
           id="Prompt"
           className={`bg-slate-200 text-center w-95 rounded-md py-2`}
         >
-          <h3 className="my-3 text-2xl">{activeItem.meaning[native]}</h3>
+          <h3 className="my-3 text-2xl">{activeItem.translation[native]}</h3>
           <p className="text-sm">{activeItem.partOfSpeech}</p>
         </div>
         {languageFeatures[target].requiresHelperKeys &&
