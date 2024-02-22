@@ -39,6 +39,10 @@ export const languageFeatures: Record<SupportedLanguage, LanguageFeatures> = {
     name: "English",
     flagCode: "GB",
   },
+  CN: {
+    name: "Chinese",
+    flagCode: "CN",
+  },
 };
 
 const defaultSSRSettings: SSRSettings = {

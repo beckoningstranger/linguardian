@@ -56,11 +56,16 @@ type Frequency =
 
 interface Item {
   name: string;
-  lang: SupportedLanguage;
+  language: SupportedLanguage;
   partOfSpeech: PartOfSpeech;
   lemma?: [{ type: mongoose.Schema.Types.ObjectId; ref: "Lemmas" }];
-  definition?: Partial<Record<SupportedLanguage, string>>;
-  translation: Partial<Record<SupportedLanguage, string>>; // would actually need an Array of ObjectIDs
+  definition?: string;
+  translation?: Partial<
+    Record<
+      SupportedLanguage,
+      [{ type: mongoose.Schema.Types.ObjectId; ref: "Items" }]
+    >
+  >;
   gender?: Gender;
   pluralForm?: string;
   case?: Case;
@@ -72,6 +77,12 @@ interface Item {
   frequency?: Frequency;
   featuresInList?: [{ type: mongoose.Schema.Types.ObjectId; ref: "Lists" }];
   collocations?: [{ type: mongoose.Schema.Types.ObjectId; ref: "Items" }];
+}
+
+interface Lemma {
+  language: SupportedLanguage;
+  name: string;
+  items?: [{ type: mongoose.Schema.Types.ObjectId; ref: "Items" }];
 }
 
 interface SSRSettings {
@@ -127,11 +138,15 @@ export type {
   LearningHistory,
   Addendum,
   LearnedLanguage,
+  Lemma,
   SSRSettings,
   Item,
   LanguageFeatures,
   Gender,
   PartOfSpeech,
   LearnedItem,
+  Case,
   SupportedLanguage,
+  Frequency,
+  Tags,
 };

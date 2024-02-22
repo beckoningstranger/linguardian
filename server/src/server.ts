@@ -3,6 +3,7 @@ import http from "http";
 import dotenv from "dotenv";
 
 import { mongoConnect } from "./services/mongo.js";
+import { parseCSV } from "./models/item.model.js";
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.get("/api/home", (req, res) => {
 
 async function startServer() {
   await mongoConnect();
+  await parseCSV();
 
   server.listen(PORT, () => {
     console.log(`Listening on port ${PORT}...`);

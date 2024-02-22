@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 const items: Item[] = [
   {
     name: "Auge",
-    lang: "DE",
+    language: "DE",
     pluralForm: "Augen",
     gender: "neuter",
     partOfSpeech: "noun",
@@ -15,11 +15,10 @@ const items: Item[] = [
       FR: "oeil",
       EN: "eye",
     },
-    definition: {},
   },
   {
     name: "Kopf",
-    lang: "DE",
+    language: "DE",
     pluralForm: "Köpfe",
     gender: "masculine",
     partOfSpeech: "noun",
@@ -27,11 +26,10 @@ const items: Item[] = [
       FR: "tête",
       EN: "head",
     },
-    definition: {},
   },
   {
     name: "Liebe",
-    lang: "DE",
+    language: "DE",
     pluralForm: "Lieben",
     gender: "feminine",
     partOfSpeech: "noun",
@@ -42,7 +40,7 @@ const items: Item[] = [
   },
   {
     name: "dick",
-    lang: "DE",
+    language: "DE",
     partOfSpeech: "adjective",
     translation: {
       FR: "gros, épais",

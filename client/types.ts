@@ -56,10 +56,10 @@ type Frequency =
 
 interface Item {
   name: string;
-  lang: SupportedLanguage;
+  language: SupportedLanguage;
   partOfSpeech: PartOfSpeech;
   lemma?: [{ type: mongoose.Schema.Types.ObjectId; ref: "Lemmas" }];
-  definition?: Partial<Record<SupportedLanguage, string>>;
+  definition?: string;
   translation: Partial<Record<SupportedLanguage, string>>; // would actually need an Array of ObjectIDs
   gender?: Gender;
   pluralForm?: string;

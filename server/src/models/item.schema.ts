@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
-import { Item } from "../types";
+import { Item } from "../types.js";
 
 const itemsSchema = new mongoose.Schema<Item>({
   name: {
     type: String,
     required: true,
+    unique: true,
   },
-  lang: {
+  language: {
     type: String,
     required: true,
   },
@@ -36,22 +37,30 @@ const itemsSchema = new mongoose.Schema<Item>({
     },
   },
   translation: {
-    DE: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "Items",
-    },
-    EN: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "Items",
-    },
-    FR: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "Items",
-    },
-    CN: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "Items",
-    },
+    DE: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Items",
+      },
+    ],
+    EN: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Items",
+      },
+    ],
+    FR: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Items",
+      },
+    ],
+    CN: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Items",
+      },
+    ],
   },
   gender: {
     type: String,
@@ -74,9 +83,11 @@ const itemsSchema = new mongoose.Schema<Item>({
   IPA: {
     type: String,
   },
-  tags: {
-    type: String,
-  },
+  tags: [
+    {
+      type: String,
+    },
+  ],
   frequency: {
     type: String,
   },
