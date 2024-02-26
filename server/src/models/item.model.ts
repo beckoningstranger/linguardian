@@ -87,11 +87,11 @@ export function parseCSV() {
         formattedData = cleanUpTranslationProperty(formattedData);
 
         // Harvest and upload all possible lemmas from each parsed item
-        const lemmas = convertItemToLemmaArray(formattedData);
-        await UploadLemmaArray(lemmas);
+        const lemmas = convertItemToLemmas(formattedData);
+        await UploadLemmas(lemmas);
 
         // Harvest and upload all possible items from each parsed item
-        const harvestedItems: ItemInPrep[] = await uploadAllHarvestedItems(
+        const harvestedItems: ItemInPrep[] = await harvestAndUploadItems(
           formattedData
         );
         await uploadAsProperItems(harvestedItems);
@@ -111,7 +111,7 @@ interface LemmaItem {
 }
 const placeholders = ["jdm", "jdn", "etw", "sb", "sth", "qn", "qc"];
 
-function convertItemToLemmaArray(item: FormattedParsedData): LemmaItem[] {
+function convertItemToLemmas(item: FormattedParsedData): LemmaItem[] {
   const onlyLemmasArray: LemmaItem[] = [];
   const allWordsArray = item.name.split(" ");
   // Convert item itself to lemmas
@@ -143,7 +143,7 @@ function convertItemToLemmaArray(item: FormattedParsedData): LemmaItem[] {
   return onlyLemmasArray;
 }
 
-async function UploadLemmaArray(lemmaArray: LemmaItem[]): Promise<void> {
+async function UploadLemmas(lemmaArray: LemmaItem[]): Promise<void> {
   const lemmaUpload = lemmaArray.map(async (lemma) => {
     try {
       console.log(
@@ -161,16 +161,9 @@ async function UploadLemmaArray(lemmaArray: LemmaItem[]): Promise<void> {
   await Promise.all(lemmaUpload);
 }
 
-// THIS NEEDS CLEANING UP (DRY), BUT IT WORKS
-async function uploadAllHarvestedItems(
-  item: FormattedParsedData
-): Promise<ItemInPrep[]> {
-  const harvestedItems: ItemInPrep[] = [];
-  // Push item itself to harvestedItems
-
-  // Get all lemmas for the item itself
-  const allWordsinItemTranslation = item.name.split(" ");
-  const lemmasForCurrentItem = allWordsinItemTranslation.filter(
+async function getAllLemmaObjectIdsForItem(item: string) {
+  const allWordsinItem = item.split(" ");
+  const lemmasForCurrentItem = allWordsinItem.filter(
     (word) => !placeholders.includes(word)
   );
 
@@ -183,55 +176,54 @@ async function uploadAllHarvestedItems(
     (lemmaObject) => lemmaObject._id
   );
 
+  return allFoundLemmaObjectIds;
+}
+
+async function harvestAndUploadItems(
+  item: FormattedParsedData
+): Promise<ItemInPrep[]> {
+  const harvestedItems: ItemInPrep[] = [];
+  // Push item itself to harvestedItems
+
+  // Get all lemmas object ids for the item itself
+  const allFoundLemmaObjectIds = await getAllLemmaObjectIdsForItem(item.name);
+
+  // Add as harvested item
   harvestedItems.push({
-    name: item.name,
-    language: item.language,
-    partOfSpeech: item.partOfSpeech,
+    ...item,
     lemmas: allFoundLemmaObjectIds,
-    case: item.case,
-    gender: item.gender,
-    pluralForm: item.pluralForm,
-    frequency: item.frequency,
-    tags: item.tags,
-    translations: item.translations,
   });
 
   // Push item translations as own items to harvestedItems
-  const dodo = Object.entries(item.translations).map(async (language) => {
-    // Destructure into language name and translations
-    const [lang, translations] = language;
-    const dodo = translations.map(async (translation) => {
-      if (translation.length > 0) {
-        // Get all lemmas for this translation
-        const allWordsinItemTranslation = translation.split(" ");
-        const lemmasForCurrentItem = allWordsinItemTranslation.filter(
-          (word) => !placeholders.includes(word)
-        );
+  const iterateOverAllTranslations = Object.entries(item.translations).map(
+    async (language) => {
+      // Destructure into language name and translations
+      const [lang, translations] = language;
+      const addLemmaObjectIds = translations.map(async (translation) => {
+        if (translation.length > 0) {
+          // Get all lemma object ids for this translation
+          const allFoundLemmaObjectIds = await getAllLemmaObjectIdsForItem(
+            translation
+          );
 
-        // Look up ObjectIds for found lemmas up in Mongodb
-        const allFoundLemmaObjects = await Lemmas.find(
-          { name: { $in: lemmasForCurrentItem } },
-          { _id: 1 }
-        );
-        const allFoundLemmaObjectIds = allFoundLemmaObjects.map(
-          (lemmaObject) => lemmaObject._id
-        );
+          // Add as harvested item
+          const itemToPush: ItemInPrep = {
+            name: translation,
+            language: lang as SupportedLanguage,
+            partOfSpeech: item.partOfSpeech,
+            lemmas: allFoundLemmaObjectIds,
+            translations: {
+              [item.language]: [item.name],
+            },
+          };
+          harvestedItems.push(itemToPush);
+        }
+      });
+      await Promise.all(addLemmaObjectIds);
+    }
+  );
+  await Promise.all(iterateOverAllTranslations);
 
-        const itemToPush: ItemInPrep = {
-          name: translation,
-          language: lang as SupportedLanguage,
-          partOfSpeech: item.partOfSpeech,
-          lemmas: allFoundLemmaObjectIds,
-          translations: {
-            [item.language]: [item.name],
-          },
-        };
-        harvestedItems.push(itemToPush);
-      }
-    });
-    await Promise.all(dodo);
-  });
-  await Promise.all(dodo);
   const uploadHarvestedItemsWithoutTranslations = harvestedItems.map(
     async (item) => {
       try {
@@ -271,19 +263,23 @@ async function uploadAsProperItems(
       );
       const newTranslationProperty: Partial<
         Record<SupportedLanguage, Types.ObjectId[]>
-      > = { DE: [], EN: [], FR: [], CN: [] };
+      > = {};
       Object.entries(item.translations).map(async (translationProperty) => {
         const [language, translation] = translationProperty;
         // We get the object ids for every translation of each item...
-        const objectID = await Items.findOne(
-          { name: translation, language: language },
+        const objectIDsObject = await Items.find(
+          { name: { $in: translation }, language: language },
           { _id: 1 }
         );
-        if (objectID) {
-          // ... and save them in an object of type {SupportedLanguage: ObjectId[]}
-          newTranslationProperty[language as SupportedLanguage]?.push(
-            objectID._id
-          );
+        if (objectIDsObject) {
+          objectIDsObject.map((idObject) => {
+            // ... and save them in an object of type {SupportedLanguage: ObjectId[]}
+            if (!newTranslationProperty[language as SupportedLanguage])
+              newTranslationProperty[language as SupportedLanguage] = [];
+            newTranslationProperty[language as SupportedLanguage]?.push(
+              idObject._id
+            );
+          });
         }
 
         // This new object can now serve as the new translation property of the item we want to update
