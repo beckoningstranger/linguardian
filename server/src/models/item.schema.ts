@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
+import { model, Schema } from "mongoose";
 import { Item } from "../types.js";
 
-const itemsSchema = new mongoose.Schema<Item>({
+const itemSchema = new Schema<Item>({
   name: {
     type: String,
     required: true,
@@ -15,14 +15,14 @@ const itemsSchema = new mongoose.Schema<Item>({
     type: String,
     required: true,
   },
-  lemma: [
+  lemmas: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Lemmas",
+      type: Schema.Types.ObjectId,
+      ref: "Lemma",
       required: true,
     },
   ],
-  definition: {
+  definitions: {
     DE: {
       type: String,
     },
@@ -36,56 +36,56 @@ const itemsSchema = new mongoose.Schema<Item>({
       type: String,
     },
   },
-  translation: {
+  translations: {
     DE: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Items",
+        type: Schema.Types.ObjectId,
+        ref: "Item",
       },
     ],
     EN: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Items",
+        type: Schema.Types.ObjectId,
+        ref: "Item",
       },
     ],
     FR: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Items",
+        type: Schema.Types.ObjectId,
+        ref: "Item",
       },
     ],
     CN: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Items",
+        type: Schema.Types.ObjectId,
+        ref: "Item",
       },
     ],
   },
   gender: {
-    type: String,
+    type: [String],
   },
   pluralForm: {
-    type: String,
+    type: [String],
   },
   case: {
-    type: String,
+    type: [String],
   },
   audio: {
-    type: String,
+    type: [String],
   },
   pics: {
-    type: String,
+    type: [String],
   },
   vids: {
-    type: String,
+    type: [String],
   },
   IPA: {
-    type: String,
+    type: [String],
   },
   tags: [
     {
-      type: String,
+      type: [String],
     },
   ],
   frequency: {
@@ -93,20 +93,18 @@ const itemsSchema = new mongoose.Schema<Item>({
   },
   featuresInList: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Lists",
+      type: Schema.Types.ObjectId,
+      ref: "List",
       required: true,
     },
   ],
   collocations: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Items",
+      type: Schema.Types.ObjectId,
+      ref: "Item",
       required: true,
     },
   ],
 });
 
-const Items = mongoose.model("Items", itemsSchema);
-
-export default Items;
+export default model<Item>("Item", itemSchema);

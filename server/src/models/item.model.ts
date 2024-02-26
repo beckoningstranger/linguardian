@@ -2,6 +2,7 @@ import fs from "fs";
 import { parse } from "csv-parse";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
+import { Types } from "mongoose";
 
 import {
   PartOfSpeech,
@@ -9,6 +10,7 @@ import {
   Case,
   Gender,
   Frequency,
+  Tags,
 } from "../types.js";
 import Items from "./item.schema.js";
 import Lemmas from "./lemma.schema.js";
@@ -16,15 +18,14 @@ import Lemmas from "./lemma.schema.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-interface parsedData {
+interface ParsedData {
   name: string;
   language: SupportedLanguage;
   partOfSpeech: PartOfSpeech;
-  lemma: string;
-  case?: Case;
-  gender?: Gender;
+  lemmas: string;
+  case?: string;
+  gender?: string;
   pluralForm?: string;
-  collocations?: string;
   frequency?: Frequency;
   tags?: string;
   tDE?: string;
@@ -33,18 +34,30 @@ interface parsedData {
   tFR?: string;
 }
 
-interface formattedParsedData {
+interface FormattedParsedData {
   name: string;
   language: SupportedLanguage;
   partOfSpeech: PartOfSpeech;
-  lemma: string[];
-  case?: Case;
-  gender?: Gender;
-  pluralForm?: string;
-  collocations?: string[];
+  lemmas?: string[];
+  case?: Case[];
+  gender?: Gender[];
+  pluralForm?: string[];
   frequency?: Frequency;
-  tags?: string[];
-  translation: Partial<Record<SupportedLanguage, string[]>>;
+  tags?: Tags[];
+  translations: Partial<Record<SupportedLanguage, string[]>>;
+}
+
+interface ItemInPrep {
+  name: string;
+  language: SupportedLanguage;
+  partOfSpeech: PartOfSpeech;
+  lemmas: Types.ObjectId[];
+  case?: Case[];
+  gender?: Gender[];
+  pluralForm?: string[];
+  frequency?: Frequency;
+  tags?: Tags[];
+  translations?: Partial<Record<SupportedLanguage, string[]>>;
 }
 
 export function parseCSV() {
@@ -52,29 +65,36 @@ export function parseCSV() {
     // Parse csv file and create all needed lemmas in MongoDB
     fs.createReadStream(join(__dirname + "../../../data/course_sheet.csv"))
       .pipe(parse({ columns: true, comment: "#" }))
-      .on("data", async (data: parsedData) => {
-        const formattedData: formattedParsedData = {
+      .on("data", async (data: ParsedData) => {
+        let formattedData: FormattedParsedData = {
           name: data.name,
           language: data.language,
           partOfSpeech: data.partOfSpeech,
-          case: data.case,
-          gender: data.gender,
-          pluralForm: data.pluralForm,
+          case: data.case?.split(" ") as Case[],
+          gender: data.gender?.split(" ") as Gender[],
+          pluralForm: data.pluralForm?.split(", "),
           frequency: data.frequency,
-          tags: data.tags?.split(", "),
-          lemma: data.lemma.split(", "),
-          translation: {
+          tags: data.tags?.split(", ") as Tags[],
+          lemmas: data.lemmas?.split(", "),
+          translations: {
             DE: data.tDE?.split(", "),
             FR: data.tFR?.split(", "),
             EN: data.tEN?.split(", "),
             CN: data.tCN?.split(", "),
           },
-          // collocations: data.collocations?.split(", "),
         };
+        // Remove translations that are just empty strings
+        formattedData = cleanUpTranslationProperty(formattedData);
 
-        await upsertLemmas(formattedData);
-        await upsertTranslations(formattedData);
-        await saveParsedItem(formattedData);
+        // Harvest and upload all possible lemmas from each parsed item
+        const lemmas = convertItemToLemmaArray(formattedData);
+        await UploadLemmaArray(lemmas);
+
+        // Harvest and upload all possible items from each parsed item
+        const harvestedItems: ItemInPrep[] = await uploadAllHarvestedItems(
+          formattedData
+        );
+        await uploadAsProperItems(harvestedItems);
       })
       .on("error", (err) => {
         console.log(err);
@@ -85,88 +105,212 @@ export function parseCSV() {
   });
 }
 
-async function upsertLemmas(formattedData: formattedParsedData) {
-  const lemmaObjectIds: any = [];
-  const upsertLemmas = formattedData.lemma.map(async (lemma: string) => {
-    try {
-      await Lemmas.findOneAndUpdate(
-        { name: lemma, language: formattedData.language },
-        { $set: { name: lemma, language: formattedData.language } },
-        { upsert: true, new: true }
-      ).then((response) => {
-        lemmaObjectIds.push(response?._id);
-      });
-    } catch (err) {
-      console.error(`Error upserting lemma ${lemma}: ${err}`);
+interface LemmaItem {
+  name: string;
+  language: SupportedLanguage;
+}
+const placeholders = ["jdm", "jdn", "etw", "sb", "sth", "qn", "qc"];
+
+function convertItemToLemmaArray(item: FormattedParsedData): LemmaItem[] {
+  const onlyLemmasArray: LemmaItem[] = [];
+  const allWordsArray = item.name.split(" ");
+  // Convert item itself to lemmas
+  allWordsArray.map((word) => {
+    if (!placeholders.includes(word)) {
+      onlyLemmasArray.push({ name: word, language: item.language });
     }
   });
-  await Promise.all(upsertLemmas);
-  formattedData.lemma = lemmaObjectIds;
-}
 
-async function upsertTranslations(formattedData: formattedParsedData) {
-  const translationObjectIds: any = { DE: [], EN: [], FR: [], CN: [] };
-
-  interface translationItem {
-    name: string;
-    language: SupportedLanguage;
-    partOfSpeech: PartOfSpeech;
-  }
-
-  let translationItems: translationItem[] = [];
-
-  // Format translation as an array of items that we can then iterate over
-  Object.entries(formattedData.translation).map((language) => {
-    const [lang, items] = language;
-    items.map((item) => {
-      if (item.length > 0)
-        translationItems.push({
-          name: item,
-          language: lang as SupportedLanguage,
-          partOfSpeech: formattedData.partOfSpeech,
-        });
+  // Convert item translations to lemmas
+  // Iterate over all found translations
+  Object.entries(item.translations).map((language) => {
+    // Destructure into language name and translation
+    const [lang, translations] = language;
+    // Iterate over all translations, split them up into words
+    translations.map((translation) => {
+      const words = translation.split(" ");
+      words.map((word) => {
+        // Harvest everything that is not a placeholder
+        if (word.length > 0 && !placeholders.includes(word))
+          onlyLemmasArray.push({
+            name: word,
+            language: lang as SupportedLanguage,
+          });
+      });
     });
   });
 
-  const upsertTranslations = translationItems.map(async (item) => {
-    try {
-      await Items.findOneAndUpdate(
-        {
-          name: item.name,
-          language: item.language,
-          partOfSpeech: item.partOfSpeech,
-        },
-        {
-          $set: {
-            name: item.name,
-            language: item.language,
-            partOfSpeech: item.partOfSpeech,
-          },
-        },
-        { upsert: true, new: true }
-      ).then((response) => {
-        translationObjectIds[item.language].push(response?._id);
-      });
-    } catch (err) {
-      console.error(`Error upserting ${item.name}: ${err}`);
-    }
-  });
-
-  await Promise.all(upsertTranslations);
-  formattedData.translation = translationObjectIds;
+  return onlyLemmasArray;
 }
 
-async function saveParsedItem(formattedData: formattedParsedData) {
-  try {
-    await Items.findOneAndUpdate(
-      { name: formattedData.name, language: formattedData.language },
-      {
-        $set: { ...formattedData },
-      },
+async function UploadLemmaArray(lemmaArray: LemmaItem[]): Promise<void> {
+  const lemmaUpload = lemmaArray.map(async (lemma) => {
+    try {
+      console.log(
+        `${lemma.language}: Creating lemma entry for '${lemma.name}'.`
+      );
+      await Lemmas.findOneAndUpdate(
+        { name: lemma.name, language: lemma.language },
+        { $set: { name: lemma.name, language: lemma.language } },
+        { upsert: true }
+      );
+    } catch (err) {
+      console.error(`Error while processing lemma ${lemma}: ${err}`);
+    }
+  });
+  await Promise.all(lemmaUpload);
+}
 
-      { upsert: true, new: true }
-    ).then((response) => console.log("Uploaded", response.name));
-  } catch (err) {
-    console.error(`Error upserting ${formattedData.name}: ${err}`);
-  }
+// THIS NEEDS CLEANING UP (DRY), BUT IT WORKS
+async function uploadAllHarvestedItems(
+  item: FormattedParsedData
+): Promise<ItemInPrep[]> {
+  const harvestedItems: ItemInPrep[] = [];
+  // Push item itself to harvestedItems
+
+  // Get all lemmas for the item itself
+  const allWordsinItemTranslation = item.name.split(" ");
+  const lemmasForCurrentItem = allWordsinItemTranslation.filter(
+    (word) => !placeholders.includes(word)
+  );
+
+  // Look up ObjectIds for found lemmas up in Mongodb
+  const allFoundLemmaObjects = await Lemmas.find(
+    { name: { $in: lemmasForCurrentItem } },
+    { _id: 1 }
+  );
+  const allFoundLemmaObjectIds = allFoundLemmaObjects.map(
+    (lemmaObject) => lemmaObject._id
+  );
+
+  harvestedItems.push({
+    name: item.name,
+    language: item.language,
+    partOfSpeech: item.partOfSpeech,
+    lemmas: allFoundLemmaObjectIds,
+    case: item.case,
+    gender: item.gender,
+    pluralForm: item.pluralForm,
+    frequency: item.frequency,
+    tags: item.tags,
+    translations: item.translations,
+  });
+
+  // Push item translations as own items to harvestedItems
+  const dodo = Object.entries(item.translations).map(async (language) => {
+    // Destructure into language name and translations
+    const [lang, translations] = language;
+    const dodo = translations.map(async (translation) => {
+      if (translation.length > 0) {
+        // Get all lemmas for this translation
+        const allWordsinItemTranslation = translation.split(" ");
+        const lemmasForCurrentItem = allWordsinItemTranslation.filter(
+          (word) => !placeholders.includes(word)
+        );
+
+        // Look up ObjectIds for found lemmas up in Mongodb
+        const allFoundLemmaObjects = await Lemmas.find(
+          { name: { $in: lemmasForCurrentItem } },
+          { _id: 1 }
+        );
+        const allFoundLemmaObjectIds = allFoundLemmaObjects.map(
+          (lemmaObject) => lemmaObject._id
+        );
+
+        const itemToPush: ItemInPrep = {
+          name: translation,
+          language: lang as SupportedLanguage,
+          partOfSpeech: item.partOfSpeech,
+          lemmas: allFoundLemmaObjectIds,
+          translations: {
+            [item.language]: [item.name],
+          },
+        };
+        harvestedItems.push(itemToPush);
+      }
+    });
+    await Promise.all(dodo);
+  });
+  await Promise.all(dodo);
+  const uploadHarvestedItemsWithoutTranslations = harvestedItems.map(
+    async (item) => {
+      try {
+        console.log(
+          `${item.language}: Uploading item '${item.name}' without translation.`
+        );
+
+        await Items.findOneAndUpdate(
+          { name: item.name, language: item.language },
+          {
+            $set: {
+              name: item.name,
+              language: item.language,
+              partOfSpeech: item.partOfSpeech,
+              lemmas: item.lemmas,
+            },
+          },
+          { upsert: true }
+        );
+      } catch (err) {
+        console.error(`Error while processing item ${item}: ${err}`);
+      }
+    }
+  );
+  await Promise.all(uploadHarvestedItemsWithoutTranslations);
+  return harvestedItems;
+}
+
+async function uploadAsProperItems(
+  harvestedItems: ItemInPrep[]
+): Promise<void> {
+  // We iterate over every translation of every item
+  harvestedItems.map((item) => {
+    if (item.translations) {
+      console.log(
+        `${item.language}: Now filling in translations for item '${item.name}'`
+      );
+      const newTranslationProperty: Partial<
+        Record<SupportedLanguage, Types.ObjectId[]>
+      > = { DE: [], EN: [], FR: [], CN: [] };
+      Object.entries(item.translations).map(async (translationProperty) => {
+        const [language, translation] = translationProperty;
+        // We get the object ids for every translation of each item...
+        const objectID = await Items.findOne(
+          { name: translation, language: language },
+          { _id: 1 }
+        );
+        if (objectID) {
+          // ... and save them in an object of type {SupportedLanguage: ObjectId[]}
+          newTranslationProperty[language as SupportedLanguage]?.push(
+            objectID._id
+          );
+        }
+
+        // This new object can now serve as the new translation property of the item we want to update
+        await Items.findOneAndUpdate(
+          { name: item.name, language: item.language },
+          {
+            ...item,
+            translations: newTranslationProperty,
+          },
+          { upsert: true, new: true }
+        );
+      });
+    }
+  });
+}
+
+function cleanUpTranslationProperty(
+  formattedData: FormattedParsedData
+): FormattedParsedData {
+  // Delete non-existent translations
+  const supportedLanguages: SupportedLanguage[] = ["DE", "EN", "FR", "CN"];
+  supportedLanguages.map((lang) => {
+    if (formattedData.translations[lang]) {
+      if (formattedData.translations[lang]![0].length < 1) {
+        delete formattedData.translations[lang];
+      }
+    }
+  });
+  return formattedData;
 }

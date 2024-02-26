@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
+import { InferSchemaType, model, Schema } from "mongoose";
 import { Lemma } from "../types.js";
 
-const lemmaSchema = new mongoose.Schema<Lemma>({
+const lemmaSchema = new Schema<Lemma>({
   name: { type: String, required: true, unique: true },
   language: {
     type: String,
@@ -9,12 +9,10 @@ const lemmaSchema = new mongoose.Schema<Lemma>({
   },
   items: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Items",
     },
   ],
 });
 
-const Lemmas = mongoose.model("Lemmas", lemmaSchema);
-
-export default Lemmas;
+export default model<Lemma>("Lemma", lemmaSchema);
