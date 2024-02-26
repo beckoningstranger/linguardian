@@ -90,10 +90,13 @@ export function parseCSV() {
         const lemmas = convertItemToLemmas(formattedData);
         await UploadLemmas(lemmas);
 
-        // Harvest and upload all possible items from each parsed item
+        // Harvest all possible items from each parsed item
         const harvestedItems: ItemInPrep[] = await harvestAndUploadItems(
           formattedData
         );
+        // Link items to all of their lemmas
+        await linkItemsToLemmas(harvestedItems);
+        // Upload all harvested items with all the information supplied
         await uploadAsProperItems(harvestedItems);
       })
       .on("error", (err) => {
@@ -289,10 +292,37 @@ async function uploadAsProperItems(
             ...item,
             translations: newTranslationProperty,
           },
-          { upsert: true, new: true }
+          { upsert: true }
         );
       });
     }
+  });
+}
+
+async function linkItemsToLemmas(harvestedItems: ItemInPrep[]): Promise<void> {
+  harvestedItems.map(async (item) => {
+    const thisItemsObjectId = await Items.findOne(
+      { name: item.name, language: item.language },
+      { _id: 1 }
+    );
+    item.lemmas.map(async (lemma) => {
+      // Since we didn't populate, lemma is this lemma's ObjectId
+      try {
+        console.log(
+          `Adding item '${item.name}' to lemma with ObjectId '${lemma}'`
+        );
+        // We push the item's ObjectId to the lemmas items array if it's not in already
+        await Lemmas.findByIdAndUpdate(lemma, {
+          $addToSet: {
+            items: thisItemsObjectId,
+          },
+        });
+      } catch (err) {
+        console.error(
+          `Error linking item ${item.name} to lemma with ObjectId ${lemma}`
+        );
+      }
+    });
   });
 }
 

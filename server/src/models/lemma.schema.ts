@@ -10,7 +10,7 @@ const lemmaSchema = new Schema<Lemma>({
   items: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Items",
+      ref: "Item",
     },
   ],
 });
