@@ -12,8 +12,8 @@ import {
   Frequency,
   Tags,
 } from "../types.js";
-import Items from "./item.schema.js";
-import Lemmas from "./lemma.schema.js";
+import Items from "../models/item.schema.js";
+import Lemmas from "../models/lemma.schema.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

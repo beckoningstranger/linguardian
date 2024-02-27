@@ -1,5 +1,6 @@
-import { InferSchemaType, model, Schema } from "mongoose";
+import { model, Schema } from "mongoose";
 import { Lemma } from "../types.js";
+import Item from "./item.schema.js";
 
 const lemmaSchema = new Schema<Lemma>({
   name: { type: String, required: true, unique: true },
@@ -10,7 +11,7 @@ const lemmaSchema = new Schema<Lemma>({
   items: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Item",
+      ref: Item,
     },
   ],
 });
