@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Linguardian",
-  description: "Enrich your vocabulary with the power or spaced repetition",
+  description: "Enrich your vocabulary with the power of spaced repetition",
 };
 
 export default function RootLayout({

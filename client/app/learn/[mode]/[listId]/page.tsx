@@ -1,8 +1,6 @@
-"use client";
 import { Item } from "@/types";
 import LearnNewWordsMode from "@/components/LearningModes/LearnNewWordsMode";
 import TranslationMode from "@/components/LearningModes/TranslationMode";
-import { useParams } from "next/navigation";
 
 const items: Item[] = [
   {
@@ -49,16 +47,20 @@ const items: Item[] = [
   },
 ];
 
-export default function ReviewPage() {
-  type ReviewParams = {
-    pair: string;
+interface ReviewPageProps {
+  params: {
     mode: string;
-    listIdString: string;
+    listId: string;
   };
-  const { mode, listIdString } = useParams<ReviewParams>();
-  const courseId = Number(listIdString);
+}
 
-  // This is where we look up the list's name based on the passed listIdString
+// listId
+export default function ReviewPage({
+  params: { mode, listId },
+}: ReviewPageProps) {
+  const courseId = parseInt(listId);
+
+  // This is where we look up the list's name based on the passed listId
   const listName = "Example list";
 
   // This is where we read the list data to see what items need to be reviewed / can be learned
