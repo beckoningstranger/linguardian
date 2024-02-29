@@ -36,7 +36,7 @@ export default function LanguageSelector() {
         <Flag
           code={languageFeatures[currentlyActiveLanguage].flagCode}
           onClick={() => handleFlagSelected(currentlyActiveLanguage!)}
-          className={`transition-all rounded-full object-cover w-[50px] h-[50px] m-0 border-2 border-slate-300 hover:scale-125`}
+          className={`transition-all rounded-full object-cover md:w-[50px] md:h-[50px] border-2 border-slate-300 hover:scale-125`}
         />
       </div>
       <div className={`absolute `}>
@@ -49,8 +49,7 @@ export default function LanguageSelector() {
                 onClick={() => handleFlagSelected(languagesAndFlags[index][0])}
                 className={`scale-0 transition-all rounded-full object-cover hover:scale-125 w-12 ${
                   active && "scale-100 h-12 my-2 border-2 border-slate-300"
-                }  
-                h-0 w-0
+                }
                 `}
               />
             );

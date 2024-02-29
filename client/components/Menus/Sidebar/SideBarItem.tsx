@@ -4,19 +4,13 @@ interface SidebarProps {
   icon: ReactElement;
   label?: string;
   action?: MouseEventHandler;
-  classes?: string;
 }
 
-export default function SidebarItem({
-  icon,
-  label,
-  action,
-  classes,
-}: SidebarProps) {
+export default function SidebarItem({ icon, label, action }: SidebarProps) {
   return (
     <div
       className={`flex w-full h-14 md:p-10 md:border-none transition-all
-      select-none hover:bg-slate-300 justify-center md:justify-start my-2 md:my-0 ${classes}`}
+      select-none md:hover:bg-slate-300  md:hover:scale-100 justify-center md:justify-start my-2 md:my-0`}
       onClick={action}
     >
       <div className="flex gap-4 items-center w-48">

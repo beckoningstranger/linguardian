@@ -1,3 +1,4 @@
+"use client";
 import { useRef, useState } from "react";
 import { RxDotsVertical } from "react-icons/rx";
 

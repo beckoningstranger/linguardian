@@ -31,7 +31,7 @@ export default function MobileLanguageSelector({
               setCurrentlyActiveLanguage!(languagesAndFlags[index][0]);
               toggleMobileMenu();
             }}
-            className={`rounded-full object-cover w-24 h-24 border-2 border-slate-300`}
+            className={`rounded-full object-cover w-24 h-24 border-2 border-slate-300 hover:scale-125 transition-all`}
           />
         );
       })}
