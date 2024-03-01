@@ -3,7 +3,6 @@ import http from "http";
 import dotenv from "dotenv";
 
 import { mongoConnect } from "./services/mongo.js";
-import { parseCSV } from "./services/parsecsv.js";
 
 dotenv.config();
 

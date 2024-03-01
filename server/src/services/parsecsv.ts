@@ -11,9 +11,12 @@ import {
   Gender,
   Frequency,
   Tags,
+  List,
 } from "../types.js";
 import Items from "../models/item.schema.js";
 import Lemmas from "../models/lemma.schema.js";
+import Lists from "../models/list.schema.js";
+import { getLatestListNumber } from "../models/lists.model.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -60,8 +63,46 @@ interface ItemInPrep {
   translations?: Partial<Record<SupportedLanguage, string[]>>;
 }
 
-export function parseCSV(filename: string): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
+interface parseCSVProps {
+  filename: string;
+  listName: string;
+  language: SupportedLanguage;
+  // author: Types.ObjectId;
+  author: string;
+}
+
+export async function parseCSV({
+  filename,
+  listName,
+  language,
+  author,
+}: parseCSVProps): Promise<string> {
+  // Create a new list
+  // const authors: Types.ObjectId[] = [];
+  const authors: string[] = [];
+  authors.push(author);
+
+  const newList: List = {
+    name: listName,
+    listNumber: await getLatestListNumber(),
+    private: false,
+    language: language,
+    authors: authors,
+  };
+
+  const newUploadedList = await Lists.findOneAndUpdate(
+    {
+      listNumber: newList.listNumber,
+    },
+    newList,
+
+    { upsert: true, new: true }
+  );
+  const newListsId = newUploadedList?._id;
+  // Check if new list was created
+  if (!newListsId) throw new Error("Error creating new list");
+
+  return new Promise<string>((resolve, reject) => {
     // Parse csv file and create all needed lemmas in MongoDB
     fs.createReadStream(
       join(__dirname + `../../../data/csvUploads/${filename}`)
@@ -85,6 +126,7 @@ export function parseCSV(filename: string): Promise<void> {
             CN: data.tCN?.split(", "),
           },
         };
+
         // Remove translations that are just empty strings
         formattedData = cleanUpTranslationProperty(formattedData);
 
@@ -99,10 +141,10 @@ export function parseCSV(filename: string): Promise<void> {
         // Link items to all of their lemmas
         await linkItemsToLemmas(harvestedItems);
         // Upload all harvested items with all the information supplied
-        await uploadAsProperItems(harvestedItems);
+        await uploadAsProperItems(harvestedItems, newListsId);
       })
       .on("error", (err) => {
-        console.log(err);
+        console.error(err);
       })
       .on("end", () => {
         try {
@@ -117,7 +159,7 @@ export function parseCSV(filename: string): Promise<void> {
         } catch (err) {
           console.error(`Error deleting file ${filename}`);
         }
-        resolve();
+        resolve(newListsId as unknown as string);
       });
   });
 }
@@ -270,7 +312,8 @@ async function harvestAndUploadItems(
 }
 
 async function uploadAsProperItems(
-  harvestedItems: ItemInPrep[]
+  harvestedItems: ItemInPrep[],
+  listId: Types.ObjectId
 ): Promise<void> {
   // We iterate over every translation of every item
   harvestedItems.map((item) => {
@@ -300,11 +343,23 @@ async function uploadAsProperItems(
         }
 
         // This new object can now serve as the new translation property of the item we want to update
-        await Items.findOneAndUpdate(
+        const newUploadedItem = await Items.findOneAndUpdate(
           { name: item.name, language: item.language },
           {
             ...item,
             translations: newTranslationProperty,
+          },
+          { upsert: true }
+        );
+        const newUploadedItemId = newUploadedItem?._id;
+
+        await Lists.findByIdAndUpdate(
+          listId,
+          {
+            $addToSet: {
+              units: newUploadedItemId,
+              // learners: [author] needs to be added as ObjectId
+            },
           },
           { upsert: true }
         );

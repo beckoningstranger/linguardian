@@ -1,5 +1,9 @@
 import express from "express";
-import { httpPostCSV } from "./courses.controller.js";
+import {
+  httpGetAllListsForLanguage,
+  httpGetOneListByListNumber,
+  httpPostCSV,
+} from "./lists.controller.js";
 import multer from "multer";
 import path from "path";
 
@@ -17,6 +21,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-export const coursesRouter = express.Router();
+export const listsRouter = express.Router();
 
-coursesRouter.post("/uploadCSV", upload.single("csvfile"), httpPostCSV);
+listsRouter.post("/uploadCSV", upload.single("csvfile"), httpPostCSV);
+
+listsRouter.get("/showAll/:language", httpGetAllListsForLanguage);
+
+listsRouter.get("/show/:listNumber", httpGetOneListByListNumber);
