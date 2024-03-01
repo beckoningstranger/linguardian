@@ -60,10 +60,12 @@ interface ItemInPrep {
   translations?: Partial<Record<SupportedLanguage, string[]>>;
 }
 
-export function parseCSV() {
+export function parseCSV(filename: string): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     // Parse csv file and create all needed lemmas in MongoDB
-    fs.createReadStream(join(__dirname + "../../../data/course_sheet.csv"))
+    fs.createReadStream(
+      join(__dirname + `../../../data/csvUploads/${filename}`)
+    )
       .pipe(parse({ columns: true, comment: "#" }))
       .on("data", async (data: ParsedData) => {
         let formattedData: FormattedParsedData = {
@@ -103,6 +105,18 @@ export function parseCSV() {
         console.log(err);
       })
       .on("end", () => {
+        try {
+          fs.unlink(
+            join(__dirname + `../../../data/csvUploads/${filename}`),
+            () => {
+              console.log(
+                `Data has been read. Deleting uploaded file ${filename}.`
+              );
+            }
+          );
+        } catch (err) {
+          console.error(`Error deleting file ${filename}`);
+        }
         resolve();
       });
   });

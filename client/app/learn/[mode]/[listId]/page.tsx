@@ -2,50 +2,8 @@ import { Item } from "@/types";
 import LearnNewWordsMode from "@/components/LearningModes/LearnNewWordsMode";
 import TranslationMode from "@/components/LearningModes/TranslationMode";
 
-const items: Item[] = [
-  {
-    name: "Auge",
-    language: "DE",
-    pluralForm: "Augen",
-    gender: "neuter",
-    partOfSpeech: "noun",
-    translation: {
-      FR: "oeil",
-      EN: "eye",
-    },
-  },
-  {
-    name: "Kopf",
-    language: "DE",
-    pluralForm: "Köpfe",
-    gender: "masculine",
-    partOfSpeech: "noun",
-    translation: {
-      FR: "tête",
-      EN: "head",
-    },
-  },
-  {
-    name: "Liebe",
-    language: "DE",
-    pluralForm: "Lieben",
-    gender: "feminine",
-    partOfSpeech: "noun",
-    translation: {
-      FR: "amour",
-      EN: "love",
-    },
-  },
-  {
-    name: "dick",
-    language: "DE",
-    partOfSpeech: "adjective",
-    translation: {
-      FR: "gros, épais",
-      EN: "thick, fat",
-    },
-  },
-];
+// Fetch items here
+const items: Item[] = [];
 
 interface ReviewPageProps {
   params: {
@@ -54,7 +12,6 @@ interface ReviewPageProps {
   };
 }
 
-// listId
 export default function ReviewPage({
   params: { mode, listId },
 }: ReviewPageProps) {

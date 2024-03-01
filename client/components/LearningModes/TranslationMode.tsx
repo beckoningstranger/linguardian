@@ -43,7 +43,8 @@ export default function TranslationMode({
 
   const handleWordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (activeItem.name === solution) {
+    console.log(activeItem);
+    if (activeItem.translations[target] === solution) {
       setReviewStatus("correct");
     } else {
       setReviewStatus("incorrect");

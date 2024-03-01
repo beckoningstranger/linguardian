@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import { Types } from "mongoose";
 
 type SupportedLanguage = "DE" | "EN" | "FR" | "CN";
 
@@ -12,7 +12,8 @@ type PartOfSpeech =
   | "conjunction"
   | "determiner"
   | "interjection"
-  | "particle";
+  | "particle"
+  | "phrase";
 
 interface LearnedItem {
   itemId: number;
@@ -43,7 +44,7 @@ type Case =
   | "instrumental"
   | "locative"
   | "vocative"
-  | "genitive & dative";
+  | "accusative & dative";
 
 type Tags = "intransitive" | "archaic" | "literary" | "slang" | "humorous";
 
@@ -58,20 +59,26 @@ interface Item {
   name: string;
   language: SupportedLanguage;
   partOfSpeech: PartOfSpeech;
-  lemma?: [{ type: mongoose.Schema.Types.ObjectId; ref: "Lemmas" }];
-  definition?: string;
-  translation: Partial<Record<SupportedLanguage, string>>; // would actually need an Array of ObjectIDs
+  lemmas?: Types.ObjectId[];
+  definitions?: string;
+  translations?: Partial<Record<SupportedLanguage, Types.ObjectId[]>>;
   gender?: Gender;
   pluralForm?: string;
   case?: Case;
-  audio?: string[];
-  pics?: string[];
-  vids?: string[];
-  IPA?: string[];
-  tags?: Tags[];
+  audio?: Types.Array<string>;
+  pics?: Types.Array<string>;
+  vids?: Types.Array<string>;
+  IPA?: Types.Array<string>;
+  tags?: Types.Array<Tags>;
   frequency?: Frequency;
-  featuresInList?: [{ type: mongoose.Schema.Types.ObjectId; ref: "Lists" }];
-  collocations?: [{ type: mongoose.Schema.Types.ObjectId; ref: "Items" }];
+  featuresInList?: Types.ObjectId[];
+  collocations?: Types.ObjectId[];
+}
+
+interface Lemma {
+  language: SupportedLanguage;
+  name: string;
+  items?: Types.ObjectId[];
 }
 
 interface SSRSettings {
@@ -127,11 +134,15 @@ export type {
   LearningHistory,
   Addendum,
   LearnedLanguage,
+  Lemma,
   SSRSettings,
   Item,
   LanguageFeatures,
   Gender,
   PartOfSpeech,
   LearnedItem,
+  Case,
   SupportedLanguage,
+  Frequency,
+  Tags,
 };
