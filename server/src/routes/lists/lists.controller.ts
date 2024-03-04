@@ -51,8 +51,10 @@ export async function httpPostCSV(req: Request, res: Response) {
 
 export async function httpGetOneListByListNumber(req: Request, res: Response) {
   const listNumber = parseInt(req.params.listNumber);
+  const listData = await getOneListByListNumber(listNumber);
 
-  return res.status(200).json(await getOneListByListNumber(listNumber));
+  if (listData) return res.status(200).json(listData);
+  return res.status(404).json();
 }
 
 export async function httpGetAllListsForLanguage(req: Request, res: Response) {

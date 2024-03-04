@@ -103,6 +103,10 @@ interface List {
   learners?: Types.ObjectId[];
 }
 
+type PopulatedList = Omit<List, "units"> & {
+  units: Item[];
+};
+
 interface SSRSettings {
   reviewTimes: {
     1: number;
@@ -161,6 +165,7 @@ export type {
   Item,
   ReviewMode,
   List,
+  PopulatedList,
   LanguageFeatures,
   Gender,
   PartOfSpeech,

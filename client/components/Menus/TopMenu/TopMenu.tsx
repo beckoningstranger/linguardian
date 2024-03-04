@@ -9,6 +9,7 @@ import MobileLanguageSelector from "../LanguageSelector/MobileLanguageSelector";
 import { languageFeatures } from "@/app/context/GlobalContext";
 import SideBarNavigation from "../Sidebar/SideBarNavigation";
 import { RxHamburgerMenu } from "react-icons/rx";
+import Link from "next/link";
 
 export default function TopMenu() {
   const {
@@ -33,19 +34,38 @@ export default function TopMenu() {
           toggleSidebar={toggleSidebar}
           showSidebar={showSidebar}
         />
-        <div className="absolute top-0 flex items-center justify-between w-full h-20 text-xl bg-opacity-25 select-none bg-slate-200">
-          <div
-            className={`flex items-center md:w-52 transition-all hover:bg-slate-300 
-          ${showSidebar && "invisible"}
-          `}
-            onClick={toggleSidebar}
-          >
-            <div className="text-3xl h-20 flex items-center px-4 w-20 justify-center">
+        <div className="absolute top-0 flex items-center justify-between w-full h-20 text-xl bg-opacity-25 select-none bg-slate-300">
+          <div className={"flex items-center md:w-52"}>
+            <div
+              className="text-3xl h-20 flex items-center px-4 w-20 justify-center transition-all hover:bg-slate-300"
+              onClick={toggleSidebar}
+            >
               <RxHamburgerMenu />
             </div>
-            <div className="hidden md:block">Linguardian</div>
+            <div className="hidden md:flex items-center px-3 h-20 transition-all hover:bg-slate-300">
+              <Link href="/">Linguardian</Link>
+            </div>
           </div>
-          <div className="hidden md:block">Courses | Dictionaries | Social</div>
+          <div className="hidden md:flex">
+            <Link
+              href="/courses"
+              className="h-20 hover:bg-slate-300 flex items-center px-4"
+            >
+              Courses
+            </Link>
+            <Link
+              href="/dictionary"
+              className="h-20 hover:bg-slate-300 flex items-center px-4"
+            >
+              Dictionary
+            </Link>
+            <Link
+              href="/social"
+              className="h-20 hover:bg-slate-300 flex items-center px-4"
+            >
+              Social
+            </Link>
+          </div>
           <Flag
             code={languageFeatures[currentlyActiveLanguage].flagCode}
             className={`md:hidden rounded-full object-cover w-16 h-16 m-0 border-2 border-slate-300`}

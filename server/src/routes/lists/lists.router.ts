@@ -25,6 +25,6 @@ export const listsRouter = express.Router();
 
 listsRouter.post("/uploadCSV", upload.single("csvfile"), httpPostCSV);
 
-listsRouter.get("/showAll/:language", httpGetAllListsForLanguage);
+listsRouter.get("/getAll/:language", httpGetAllListsForLanguage);
 
-listsRouter.get("/show/:listNumber", httpGetOneListByListNumber);
+listsRouter.get("/get/:listNumber", httpGetOneListByListNumber);
