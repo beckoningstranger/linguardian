@@ -1,20 +1,16 @@
-import axios from "axios";
+"use client";
+import { useFormState } from "react-dom";
+import { uploadCSV } from "./action";
 
 export default function CreateCourse() {
-  const uploadFile = async (formData: FormData) => {
-    "use server";
-    await axios.post("http://localhost:8000/lists/uploadCSV", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-  };
-
+  const [formstate, action] = useFormState(uploadCSV, { message: "" });
   return (
     <div className="flex flex-col items-center justify-center">
       <h1 className="text-2xl text-center font-bold m-4">
         Here, you can upload CSVs to create courses
       </h1>
       <form
-        action={uploadFile}
+        action={action}
         className="flex flex-col text-center gap-3 bg-slate-300"
       >
         <label htmlFor="csvfile">Upload a CSV file</label>
@@ -44,6 +40,11 @@ export default function CreateCourse() {
         </select>
         {/* need to pass relevant information about author so the backend can identify user*/}
         <input type="hidden" name="author" value="Joe" />
+        {formstate.message !== "" ? (
+          <div className="p-2 bg-red-200 border rounded border-red-400">
+            {formstate.message}
+          </div>
+        ) : null}
         <button
           type="submit"
           className="border-2 border-black rounded p-3 m-2 hover:bg-slate-500 hover:text-white"

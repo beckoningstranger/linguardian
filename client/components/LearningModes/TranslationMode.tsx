@@ -44,11 +44,11 @@ export default function TranslationMode({
   const handleWordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log(activeItem);
-    if (activeItem.translations[target] === solution) {
-      setReviewStatus("correct");
-    } else {
-      setReviewStatus("incorrect");
-    }
+    // if (activeItem.translations[target] === solution) {
+    //   setReviewStatus("correct");
+    // } else {
+    //   setReviewStatus("incorrect");
+    // }
 
     // This is where we can trigger additional reviews for this item, i.e. gender
     if (
@@ -132,7 +132,7 @@ export default function TranslationMode({
           id="Prompt"
           className={`bg-slate-200 text-center w-95 rounded-md py-2`}
         >
-          <h3 className="my-3 text-2xl">{activeItem.translation[native]}</h3>
+          {/* <h3 className="my-3 text-2xl">{activeItem.translation[native]}</h3> */}
           <p className="text-sm">{activeItem.partOfSpeech}</p>
         </div>
         {languageFeatures[target].requiresHelperKeys &&

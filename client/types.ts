@@ -81,6 +81,28 @@ interface Lemma {
   items?: Types.ObjectId[];
 }
 
+type ReviewMode =
+  | "Translation"
+  | "Context"
+  | "SpellingBee"
+  | "Dictionary"
+  | "Visual";
+
+interface List {
+  name: string;
+  listNumber: number;
+  description?: string;
+  language: SupportedLanguage;
+  // authors: Types.ObjectId[];
+  authors: string[];
+  private: Boolean;
+  units?: Types.ObjectId[];
+  unlockedReviewModes?: Partial<
+    Record<SupportedLanguage, Types.Array<ReviewMode>>
+  >;
+  learners?: Types.ObjectId[];
+}
+
 interface SSRSettings {
   reviewTimes: {
     1: number;
@@ -137,6 +159,8 @@ export type {
   Lemma,
   SSRSettings,
   Item,
+  ReviewMode,
+  List,
   LanguageFeatures,
   Gender,
   PartOfSpeech,

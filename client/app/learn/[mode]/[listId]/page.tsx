@@ -24,7 +24,7 @@ export default function ReviewPage({
   // and then fetch all of them to then pass this information on into a Learning Mode.
   switch (mode) {
     case "translation":
-      return <TranslationMode items={items} listName={listName} />;
+      return "Go to TranslationMode "; //<TranslationMode items={items} listName={listName} />;
     case "learn":
       return <LearnNewWordsMode items={items} listName={listName} />;
     default:

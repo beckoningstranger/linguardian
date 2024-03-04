@@ -76,7 +76,7 @@ export async function parseCSV({
   listName,
   language,
   author,
-}: parseCSVProps): Promise<string> {
+}: parseCSVProps) {
   // Create a new list
   // const authors: Types.ObjectId[] = [];
   const authors: string[] = [];
@@ -102,66 +102,59 @@ export async function parseCSV({
   // Check if new list was created
   if (!newListsId) throw new Error("Error creating new list");
 
-  return new Promise<string>((resolve, reject) => {
-    // Parse csv file and create all needed lemmas in MongoDB
-    fs.createReadStream(
-      join(__dirname + `../../../data/csvUploads/${filename}`)
-    )
-      .pipe(parse({ columns: true, comment: "#" }))
-      .on("data", async (data: ParsedData) => {
-        let formattedData: FormattedParsedData = {
-          name: data.name,
-          language: data.language,
-          partOfSpeech: data.partOfSpeech,
-          case: data.case?.split(" ") as Case[],
-          gender: data.gender?.split(" ") as Gender[],
-          pluralForm: data.pluralForm?.split(", "),
-          frequency: data.frequency,
-          tags: data.tags?.split(", ") as Tags[],
-          lemmas: data.lemmas?.split(", "),
-          translations: {
-            DE: data.tDE?.split(", "),
-            FR: data.tFR?.split(", "),
-            EN: data.tEN?.split(", "),
-            CN: data.tCN?.split(", "),
-          },
-        };
+  return new Promise<{ newListId: Types.ObjectId; newListNumber: number }>(
+    (resolve, reject) => {
+      // Parse csv file and create all needed lemmas in MongoDB
+      fs.createReadStream(
+        join(__dirname + `../../../data/csvUploads/${filename}`)
+      )
+        .pipe(parse({ columns: true, comment: "#" }))
+        .on("data", async (data: ParsedData) => {
+          let formattedData: FormattedParsedData = {
+            name: data.name,
+            language: data.language,
+            partOfSpeech: data.partOfSpeech,
+            case: data.case?.split(" ") as Case[],
+            gender: data.gender?.split(" ") as Gender[],
+            pluralForm: data.pluralForm?.split(", "),
+            frequency: data.frequency,
+            tags: data.tags?.split(", ") as Tags[],
+            lemmas: data.lemmas?.split(", "),
+            translations: {
+              DE: data.tDE?.split(", "),
+              FR: data.tFR?.split(", "),
+              EN: data.tEN?.split(", "),
+              CN: data.tCN?.split(", "),
+            },
+          };
 
-        // Remove translations that are just empty strings
-        formattedData = cleanUpTranslationProperty(formattedData);
+          // Remove translations that are just empty strings
+          formattedData = cleanUpTranslationProperty(formattedData);
 
-        // Harvest and upload all possible lemmas from each parsed item
-        const lemmas = convertItemToLemmas(formattedData);
-        await UploadLemmas(lemmas);
+          // Harvest and upload all possible lemmas from each parsed item
+          const lemmas = convertItemToLemmas(formattedData);
+          await UploadLemmas(lemmas);
 
-        // Harvest all possible items from each parsed item
-        const harvestedItems: ItemInPrep[] = await harvestAndUploadItems(
-          formattedData
-        );
-        // Link items to all of their lemmas
-        await linkItemsToLemmas(harvestedItems);
-        // Upload all harvested items with all the information supplied
-        await uploadAsProperItems(harvestedItems, newListsId);
-      })
-      .on("error", (err) => {
-        console.error(err);
-      })
-      .on("end", () => {
-        try {
-          fs.unlink(
-            join(__dirname + `../../../data/csvUploads/${filename}`),
-            () => {
-              console.log(
-                `Data has been read. Deleting uploaded file ${filename}.`
-              );
-            }
+          // Harvest all possible items from each parsed item
+          const harvestedItems: ItemInPrep[] = await harvestAndUploadItems(
+            formattedData
           );
-        } catch (err) {
-          console.error(`Error deleting file ${filename}`);
-        }
-        resolve(newListsId as unknown as string);
-      });
-  });
+          // Link items to all of their lemmas
+          await linkItemsToLemmas(harvestedItems);
+          // Upload all harvested items with all the information supplied
+          await uploadAsProperItems(harvestedItems, newListsId);
+        })
+        .on("error", (err) => {
+          console.error(err);
+        })
+        .on("end", () => {
+          resolve({
+            newListId: newListsId,
+            newListNumber: newUploadedList.listNumber,
+          });
+        });
+    }
+  );
 }
 
 interface LemmaItem {
@@ -353,6 +346,7 @@ async function uploadAsProperItems(
         );
         const newUploadedItemId = newUploadedItem?._id;
 
+        // Now add the item to the list we are creating
         await Lists.findByIdAndUpdate(
           listId,
           {
