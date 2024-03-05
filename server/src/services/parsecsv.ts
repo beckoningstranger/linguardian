@@ -13,11 +13,15 @@ import {
   Tags,
   List,
   Item,
+  PopulatedList,
 } from "../types.js";
 import Items from "../models/item.schema.js";
 import Lemmas from "../models/lemma.schema.js";
 import Lists from "../models/list.schema.js";
-import { getLatestListNumber } from "../models/lists.model.js";
+import {
+  getLatestListNumber,
+  getOnePopulatedListByListId,
+} from "../models/lists.model.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -147,18 +151,21 @@ export async function parseCSV({
 
           // Add all relevant harvested items to the new list
           await addItemsToList(harvestedItems, newListsId, language);
+
+          // Define a tentative unit order
+          await defineUnitOrder(newListsId);
         })
         .on("error", (err) => {
           console.error(err);
         })
         .on("end", () => {
-          // Wait 10 seconds for parsing and uploading to finish
+          // Wait 15 seconds for parsing and uploading to finish
           setTimeout(() => {
             resolve({
               newListId: newListsId,
               newListNumber: newUploadedList.listNumber,
             });
-          }, 10000);
+          }, 15000);
         });
     }
   );
@@ -417,7 +424,7 @@ async function addItemsToList(
       if (itemInDatabase) {
         const itemId = itemInDatabase._id;
         // First make sure that the needed chapter exists
-        const addChapterResponse = await Lists.findByIdAndUpdate(
+        await Lists.findByIdAndUpdate(
           newListId,
           {
             $addToSet: { units: { unitName: item.unit, item: itemId } },
@@ -427,4 +434,21 @@ async function addItemsToList(
       }
     }
   });
+}
+
+async function defineUnitOrder(newListsId: Types.ObjectId) {
+  const newList = (await getOnePopulatedListByListId(
+    newListsId
+  )) as PopulatedList;
+  if (newList && newList.units) {
+    const foundUnitNames: string[] = [];
+    newList.units.map((item) => {
+      if (!foundUnitNames.includes(item.unitName)) {
+        foundUnitNames.push(item.unitName);
+      }
+    });
+    await Lists.findByIdAndUpdate(newListsId, {
+      $set: { unitOrder: foundUnitNames },
+    });
+  }
 }

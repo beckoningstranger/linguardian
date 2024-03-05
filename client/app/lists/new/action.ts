@@ -7,7 +7,7 @@ export async function uploadCSV(
   formState: { message: string },
   formData: FormData
 ) {
-  let newCourseNumber = 0;
+  let newListNumber = 0;
   try {
     const { data } = await axios.post(
       "http://localhost:8000/lists/uploadCSV",
@@ -16,11 +16,11 @@ export async function uploadCSV(
         headers: { "Content-Type": "multipart/form-data" },
       }
     );
-    newCourseNumber = data.message as number;
+    newListNumber = data.message as number;
   } catch (err) {
     if (err instanceof AxiosError) {
       return { message: err.response?.data.message };
     } else return { message: "Something went wrong" };
   }
-  redirect(`/courses/${newCourseNumber}`);
+  redirect(`/lists/${newListNumber}`);
 }

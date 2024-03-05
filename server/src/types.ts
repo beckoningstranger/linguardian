@@ -97,6 +97,7 @@ interface List {
   authors: string[];
   private: Boolean;
   units?: { unitName: string; item: Types.ObjectId };
+  unitOrder?: string[];
   unlockedReviewModes?: Partial<
     Record<SupportedLanguage, Types.Array<ReviewMode>>
   >;

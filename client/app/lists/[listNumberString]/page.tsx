@@ -1,34 +1,32 @@
-import DashboardContainer from "@/components/DashboardContainer";
-import TopMenu from "@/components/Menus/TopMenu/TopMenu";
 import { Item, PopulatedList } from "@/types";
 import axios from "axios";
 import Link from "next/link";
 
 interface ShowCourseProps {
   params: {
-    cNumber: string;
+    listNumberString: string;
   };
 }
 
-export default async function ShowCoursePage({
-  params: { cNumber },
+export default async function ListDetailPage({
+  params: { listNumberString },
 }: ShowCourseProps) {
-  const courseNumber = parseInt(cNumber);
+  const listNumber = parseInt(listNumberString);
 
-  async function getCourseData(courseNumber: number) {
+  async function getListData(lNumber: number) {
     "use server";
     try {
       return await axios.get<PopulatedList>(
-        `http://localhost:8000/lists/get/${courseNumber}`
+        `http://localhost:8000/lists/get/${lNumber}`
       );
     } catch (err) {
-      console.error(`Error fetching course number ${courseNumber}: ${err}`);
+      console.error(`Error fetching course number ${lNumber}: ${err}`);
     }
   }
 
-  const courseData = await getCourseData(courseNumber);
-  if (courseData) {
-    const { name, description, authors, units } = courseData.data;
+  const listData = await getListData(listNumber);
+  if (listData) {
+    const { name, description, authors, units } = listData.data;
 
     const agg: { [key: string]: Item[] } = {};
 
@@ -50,7 +48,6 @@ export default async function ShowCoursePage({
 
     return (
       <>
-        <TopMenu />
         <div className="mx-10 mt-24">
           <h1>{name}</h1>
           <h5>by {authors}</h5>
@@ -63,15 +60,12 @@ export default async function ShowCoursePage({
 
   return (
     <div>
-      <TopMenu />
-      <DashboardContainer>
-        <h1>Course not found</h1>
-        <p>This course does not exist yet. </p>
-        <div>
-          <Link href="/">Back to Dashboard</Link>{" "}
-          <Link href="/courses">Course Store</Link>
-        </div>
-      </DashboardContainer>
+      <h1>Course not found</h1>
+      <p>This course does not exist yet. </p>
+      <div>
+        <Link href="/">Back to Dashboard</Link>{" "}
+        <Link href="/courses">Course Store</Link>
+      </div>
     </div>
   );
 }

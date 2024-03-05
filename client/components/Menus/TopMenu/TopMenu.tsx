@@ -48,10 +48,10 @@ export default function TopMenu() {
           </div>
           <div className="hidden md:flex">
             <Link
-              href="/courses"
+              href="/lists"
               className="flex h-20 items-center px-4 hover:bg-slate-300"
             >
-              Courses
+              Lists
             </Link>
             <Link
               href="/dictionary"

@@ -38,8 +38,7 @@ export async function getAllListsForLanguage(language: SupportedLanguage) {
 
 export async function getLatestListNumber() {
   const latestList = await Lists.findOne().sort("-listNumber");
-  if (!latestList?.listNumber) return 1;
-  return latestList!.listNumber + 1;
+  return !latestList?.listNumber ? 1 : latestList.listNumber + 1;
 }
 
 export async function unlockReviewMode(
@@ -54,6 +53,14 @@ export async function unlockReviewMode(
     },
     { upsert: true }
   );
+}
+
+export async function getChapterNameByNumber(
+  chapterNumber: number,
+  listNumber: number
+) {
+  const list = await Lists.findOne({ listNumber: listNumber });
+  return list?.unitOrder ? list.unitOrder[chapterNumber - 1] : null;
 }
 
 export async function updateUnlockedReviewModes(listId: Types.ObjectId) {

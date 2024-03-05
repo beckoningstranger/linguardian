@@ -7,7 +7,7 @@ export default function CreateCourse() {
   return (
     <div className="flex flex-col items-center justify-center">
       <h1 className="m-4 text-center text-2xl font-bold">
-        Here, you can upload CSVs to create courses
+        Here, you can upload CSVs to create new lists
       </h1>
       <form
         action={action}
@@ -49,7 +49,7 @@ export default function CreateCourse() {
           type="submit"
           className="m-2 rounded border-2 border-black p-3 hover:bg-slate-500 hover:text-white"
         >
-          Create new course
+          Create new list
         </button>
       </form>
     </div>

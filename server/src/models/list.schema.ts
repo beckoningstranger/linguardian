@@ -37,6 +37,7 @@ const listSchema = new Schema<List>({
       item: { type: Schema.Types.ObjectId, ref: "Item" },
     },
   ],
+  unitOrder: [String],
   unlockedReviewModes: {
     DE: { type: [String] },
     EN: { type: [String] },

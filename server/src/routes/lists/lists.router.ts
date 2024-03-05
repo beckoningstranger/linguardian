@@ -1,7 +1,7 @@
 import express from "express";
 import {
   httpGetAllListsForLanguage,
-  httpGetOneListByListNumber,
+  httpGetOnePopulatedListByListNumber,
   httpPostCSV,
 } from "./lists.controller.js";
 import multer from "multer";
@@ -27,4 +27,4 @@ listsRouter.post("/uploadCSV", upload.single("csvfile"), httpPostCSV);
 
 listsRouter.get("/getAll/:language", httpGetAllListsForLanguage);
 
-listsRouter.get("/get/:listNumber", httpGetOneListByListNumber);
+listsRouter.get("/get/:listNumber", httpGetOnePopulatedListByListNumber);

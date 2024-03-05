@@ -8,16 +8,16 @@ const items: Item[] = [];
 interface ReviewPageProps {
   params: {
     mode: string;
-    listId: string;
+    listNumberString: string;
   };
 }
 
 export default function ReviewPage({
-  params: { mode, listId },
+  params: { mode, listNumberString },
 }: ReviewPageProps) {
-  const courseId = parseInt(listId);
+  const listNumber = parseInt(listNumberString);
 
-  // This is where we look up the list's name based on the passed listId
+  // This is where we look up the list's name based on the passed listNumber
   const listName = "Example list";
 
   // This is where we read the list data to see what items need to be reviewed / can be learned

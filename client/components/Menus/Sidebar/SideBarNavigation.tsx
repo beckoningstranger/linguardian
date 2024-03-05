@@ -2,7 +2,7 @@ import { useOutsideClick } from "@/app/hooks/useOutsideClick";
 import { MouseEventHandler } from "react";
 import Logo from "@/components/Logo";
 import SidebarItem from "./SideBarItem";
-import { RxAllSides, RxHamburgerMenu } from "react-icons/rx";
+import { RxHamburgerMenu } from "react-icons/rx";
 import { FaRegQuestionCircle, FaBookReader } from "react-icons/fa";
 import { FaPeopleRoof } from "react-icons/fa6";
 import { RiLogoutBoxLine, RiFileList3Fill } from "react-icons/ri";
@@ -36,11 +36,7 @@ export default function SideBarNavigation({
               href="/"
             />
           </div>
-          <SidebarItem
-            icon={<RiFileList3Fill />}
-            label="Courses"
-            href="/courses"
-          />
+          <SidebarItem icon={<RiFileList3Fill />} label="Lists" href="/lists" />
           <SidebarItem
             icon={<FaBookReader />}
             label="Dictionary"

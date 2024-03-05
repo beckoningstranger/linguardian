@@ -8,6 +8,7 @@ import {
   getAllListsForLanguage,
   getOnePopulatedListByListNumber,
   updateUnlockedReviewModes,
+  getChapterNameByNumber,
 } from "../../models/lists.model.js";
 import { SupportedLanguage } from "../../types.js";
 
@@ -49,7 +50,19 @@ export async function httpPostCSV(req: Request, res: Response) {
   }
 }
 
-export async function httpGetOneListByListNumber(req: Request, res: Response) {
+export async function httpGetChapterNameByNumber(req: Request, res: Response) {
+  const chapterNumber = parseInt(req.params.chapterNumber);
+  const listNumber = parseInt(req.params.listNumber);
+
+  const chapterName = await getChapterNameByNumber(chapterNumber, listNumber);
+  if (chapterName) return res.status(200).json(chapterName);
+  return res.status(404).json();
+}
+
+export async function httpGetOnePopulatedListByListNumber(
+  req: Request,
+  res: Response
+) {
   const listNumber = parseInt(req.params.listNumber);
   const listData = await getOnePopulatedListByListNumber(listNumber);
 
