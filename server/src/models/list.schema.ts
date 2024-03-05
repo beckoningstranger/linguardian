@@ -33,8 +33,8 @@ const listSchema = new Schema<List>({
   },
   units: [
     {
-      type: Schema.Types.ObjectId,
-      ref: "Item",
+      unitName: { type: String },
+      item: { type: Schema.Types.ObjectId, ref: "Item" },
     },
   ],
   unlockedReviewModes: {

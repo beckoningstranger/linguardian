@@ -12,6 +12,7 @@ import {
   Frequency,
   Tags,
   List,
+  Item,
 } from "../types.js";
 import Items from "../models/item.schema.js";
 import Lemmas from "../models/lemma.schema.js";
@@ -33,7 +34,7 @@ interface ParsedData {
   tEN?: string;
   tCN?: string;
   tFR?: string;
-  unit: number;
+  unit: string;
 }
 
 interface FormattedParsedData {
@@ -46,6 +47,7 @@ interface FormattedParsedData {
   frequency?: Frequency;
   tags?: Tags[];
   translations: Partial<Record<SupportedLanguage, string[]>>;
+  unit?: string;
 }
 
 interface ItemInPrep {
@@ -59,6 +61,7 @@ interface ItemInPrep {
   frequency?: Frequency;
   tags?: Tags[];
   translations?: Partial<Record<SupportedLanguage, string[]>>;
+  unit?: string;
 }
 
 interface parseCSVProps {
@@ -123,6 +126,7 @@ export async function parseCSV({
               EN: data.tEN?.split(", "),
               CN: data.tCN?.split(", "),
             },
+            unit: data.unit,
           };
 
           // Remove translations that are just empty strings
@@ -139,7 +143,10 @@ export async function parseCSV({
           // Link items to all of their lemmas
           await linkItemsToLemmas(harvestedItems);
           // Upload all harvested items with all the information supplied
-          await uploadAsProperItems(harvestedItems, newListsId, language);
+          await uploadAsProperItems(harvestedItems);
+
+          // Add all relevant harvested items to the new list
+          await addItemsToList(harvestedItems, newListsId, language);
         })
         .on("error", (err) => {
           console.error(err);
@@ -308,12 +315,10 @@ async function harvestAndUploadItems(
 }
 
 async function uploadAsProperItems(
-  harvestedItems: ItemInPrep[],
-  listId: Types.ObjectId,
-  listLanguage: SupportedLanguage
+  harvestedItems: ItemInPrep[]
 ): Promise<void> {
   // We iterate over every translation of every item
-  harvestedItems.map((item) => {
+  harvestedItems.map(async (item) => {
     if (item.translations) {
       console.log(
         `${item.language}: Now filling in translations for item '${item.name}'`
@@ -340,7 +345,7 @@ async function uploadAsProperItems(
         }
 
         // This new object can now serve as the new translation property of the item we want to update
-        const newUploadedItem = await Items.findOneAndUpdate(
+        await Items.findOneAndUpdate(
           { name: item.name, language: item.language },
           {
             ...item,
@@ -348,20 +353,6 @@ async function uploadAsProperItems(
           },
           { upsert: true }
         );
-        const newUploadedItemId = newUploadedItem?._id;
-
-        // Now add the item to the list we are creating
-        if (item.language == listLanguage)
-          await Lists.findByIdAndUpdate(
-            listId,
-            {
-              $addToSet: {
-                units: newUploadedItemId,
-                // learners: [author] needs to be added as ObjectId
-              },
-            },
-            { upsert: true }
-          );
       });
     }
   });
@@ -407,4 +398,33 @@ function cleanUpTranslationProperty(
     }
   });
   return formattedData;
+}
+
+interface FetchedItem extends Item {
+  _id: Types.ObjectId;
+}
+
+async function addItemsToList(
+  harvestedItems: ItemInPrep[],
+  newListId: Types.ObjectId,
+  listLanguage: SupportedLanguage
+) {
+  harvestedItems.map(async (item) => {
+    if (item.language === listLanguage) {
+      const itemInDatabase = (await Items.findOne({
+        name: item.name,
+      })) as FetchedItem;
+      if (itemInDatabase) {
+        const itemId = itemInDatabase._id;
+        // First make sure that the needed chapter exists
+        const addChapterResponse = await Lists.findByIdAndUpdate(
+          newListId,
+          {
+            $addToSet: { units: { unitName: item.unit, item: itemId } },
+          },
+          { upsert: true, new: true }
+        );
+      }
+    }
+  });
 }

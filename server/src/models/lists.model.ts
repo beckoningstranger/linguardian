@@ -1,13 +1,18 @@
 import { Types } from "mongoose";
-import { Item, ReviewMode, SupportedLanguage } from "../types.js";
+import {
+  Item,
+  PopulatedList,
+  ReviewMode,
+  SupportedLanguage,
+} from "../types.js";
 import Lists from "./list.schema.js";
 import { supportedLanguages } from "../services/languageInfo.js";
 
-export async function getOneListByListNumber(listNumber: number) {
+export async function getOnePopulatedListByListNumber(listNumber: number) {
   try {
     return await Lists.findOne({ listNumber: listNumber }).populate<{
-      units: Item[];
-    }>("units");
+      units: { unitName: string; item: Item }[];
+    }>("units.item");
   } catch (err) {
     console.error(`Error getting list with listNumber ${listNumber}`);
   }
@@ -15,9 +20,9 @@ export async function getOneListByListNumber(listNumber: number) {
 
 export async function getOnePopulatedListByListId(listId: Types.ObjectId) {
   try {
-    return await Lists.findOne({ _id: listId }).populate<{ units: Item[] }>(
-      "units"
-    );
+    return await Lists.findOne({ _id: listId }).populate<{
+      units: { unitName: string; item: Item }[];
+    }>("units.item");
   } catch (err) {
     console.error(`Error getting list with _id ${listId}`);
   }
@@ -52,7 +57,7 @@ export async function unlockReviewMode(
 }
 
 export async function updateUnlockedReviewModes(listId: Types.ObjectId) {
-  const response = await getOnePopulatedListByListId(listId);
+  const response = (await getOnePopulatedListByListId(listId)) as PopulatedList;
   if (response && response.units) {
     // This part checks for translation mode
     const allTranslationsExist: Partial<Record<SupportedLanguage, Boolean>> =
@@ -60,10 +65,14 @@ export async function updateUnlockedReviewModes(listId: Types.ObjectId) {
     supportedLanguages.map((language) => {
       // Let's assume it can be unlocked
       let languageCanBeUnlocked = true;
-      // Check every item for whether if has a translation in this langauge
+      // Check every item for whether if has a translation in this language
       response.units.map((item) => {
-        if (item && item.translations && item.translations[language])
-          if (!(item.translations[language]!.length > 0)) {
+        if (
+          item.item &&
+          item.item.translations &&
+          item.item.translations[language]
+        )
+          if (!(item.item.translations[language]!.length > 0)) {
             // It it doesn't, we can't unlock translation mode
             languageCanBeUnlocked = false;
           }

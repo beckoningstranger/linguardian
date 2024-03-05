@@ -1,6 +1,6 @@
 import DashboardContainer from "@/components/DashboardContainer";
 import TopMenu from "@/components/Menus/TopMenu/TopMenu";
-import { PopulatedList } from "@/types";
+import { Item, PopulatedList } from "@/types";
 import axios from "axios";
 import Link from "next/link";
 
@@ -28,10 +28,26 @@ export default async function ShowCoursePage({
 
   const courseData = await getCourseData(courseNumber);
   if (courseData) {
-    const { name, listNumber, description, authors, units } = courseData.data;
-    const renderedItems = units?.map((item) => (
-      <div key={item.language + item.name}>{item.name}</div>
-    ));
+    const { name, description, authors, units } = courseData.data;
+
+    const agg: { [key: string]: Item[] } = {};
+
+    units.map((item) => {
+      if (!Object.keys(agg).includes(item.unitName)) {
+        agg[item.unitName] = [];
+      }
+      agg[item.unitName].push(item.item);
+    });
+
+    console.log(Object.entries(agg));
+    const renderedItems = Object.keys(agg).map((unit) => {
+      return (
+        <Link href={unit} key="unit">
+          {unit}
+        </Link>
+      );
+    });
+
     return (
       <>
         <TopMenu />

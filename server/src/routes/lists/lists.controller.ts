@@ -6,7 +6,7 @@ import { Request, Response } from "express";
 import { parseCSV } from "../../services/parsecsv.js";
 import {
   getAllListsForLanguage,
-  getOneListByListNumber,
+  getOnePopulatedListByListNumber,
   updateUnlockedReviewModes,
 } from "../../models/lists.model.js";
 import { SupportedLanguage } from "../../types.js";
@@ -51,7 +51,7 @@ export async function httpPostCSV(req: Request, res: Response) {
 
 export async function httpGetOneListByListNumber(req: Request, res: Response) {
   const listNumber = parseInt(req.params.listNumber);
-  const listData = await getOneListByListNumber(listNumber);
+  const listData = await getOnePopulatedListByListNumber(listNumber);
 
   if (listData) return res.status(200).json(listData);
   return res.status(404).json();

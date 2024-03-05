@@ -96,7 +96,7 @@ interface List {
   // authors: Types.ObjectId[];
   authors: string[];
   private: Boolean;
-  units?: Types.ObjectId[];
+  units?: { unitName: string; item: Types.ObjectId };
   unlockedReviewModes?: Partial<
     Record<SupportedLanguage, Types.Array<ReviewMode>>
   >;
@@ -104,7 +104,7 @@ interface List {
 }
 
 type PopulatedList = Omit<List, "units"> & {
-  units: Item[];
+  units: { unitName: string; item: Item }[];
 };
 
 interface SSRSettings {
