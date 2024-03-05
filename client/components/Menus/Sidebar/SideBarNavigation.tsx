@@ -56,7 +56,7 @@ export default function SideBarNavigation({
             href="/logout"
           />
         </footer>
-        <MobileMenuCloseButton close={toggleSidebar} />
+        <MobileMenuCloseButton />
       </div>
     </>
   );

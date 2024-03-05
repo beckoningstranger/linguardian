@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode, useEffect, useRef } from "react";
+import { MouseEventHandler, ReactNode, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Logo from "../../Logo";
 import useGlobalContext from "@/app/hooks/useGlobalContext";
@@ -17,7 +17,7 @@ export default function MobileMenu({ children }: MobileMenuProps) {
     ref.current = document.querySelector<HTMLElement>("#PortalOutlet");
   }, [showMobileMenu]);
 
-  if (typeof window === "object" && showMobileMenu) {
+  if (typeof window === "object" && showMobileMenu && toggleMobileMenu) {
     return ref.current
       ? createPortal(
           // This returns a logo at the top, options (passed as children) in the middle and a button to close the menu at the bottom
@@ -25,9 +25,12 @@ export default function MobileMenu({ children }: MobileMenuProps) {
           <div className="absolute top-0 h-full w-full backdrop-blur-md">
             <div className="flex animate-fold-out flex-col items-center justify-center gap-3 overflow-hidden">
               <Logo />
-              <div className="flex flex-col justify-center">
+              <div
+                className="flex flex-col justify-center"
+                onClick={toggleMobileMenu as MouseEventHandler}
+              >
                 {children}
-                <MobileMenuCloseButton close={toggleMobileMenu!} />
+                <MobileMenuCloseButton />
               </div>
             </div>
           </div>,
