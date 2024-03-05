@@ -13,7 +13,7 @@ export async function getOneListByListNumber(listNumber: number) {
   }
 }
 
-export async function getOneListByListId(listId: Types.ObjectId) {
+export async function getOnePopulatedListByListId(listId: Types.ObjectId) {
   try {
     return await Lists.findOne({ _id: listId }).populate<{ units: Item[] }>(
       "units"
@@ -52,28 +52,31 @@ export async function unlockReviewMode(
 }
 
 export async function updateUnlockedReviewModes(listId: Types.ObjectId) {
-  // For the moment this checks only for translation mode
-  const response = await getOneListByListId(listId);
+  const response = await getOnePopulatedListByListId(listId);
   if (response && response.units) {
+    // This part checks for translation mode
     const allTranslationsExist: Partial<Record<SupportedLanguage, Boolean>> =
       {};
     supportedLanguages.map((language) => {
+      // Let's assume it can be unlocked
       let languageCanBeUnlocked = true;
+      // Check every item for whether if has a translation in this langauge
       response.units.map((item) => {
-        if (
-          !item.translations ||
-          !item.translations[language] ||
-          !(item.translations[language]!.length > 0)
-        )
-          languageCanBeUnlocked = false;
+        if (item && item.translations && item.translations[language])
+          if (!(item.translations[language]!.length > 0)) {
+            // It it doesn't, we can't unlock translation mode
+            languageCanBeUnlocked = false;
+          }
       });
+      if (languageCanBeUnlocked)
+        console.log(`Translation mode for ${language} will be unlocked!`);
       Object.assign(allTranslationsExist, {
-        language: languageCanBeUnlocked,
+        [language]: languageCanBeUnlocked,
       });
     });
     Object.entries(allTranslationsExist).map(async (language) => {
-      const [lang, yes] = language;
-      if (yes) {
+      const [lang, canBeUnlocked] = language;
+      if (canBeUnlocked) {
         await unlockReviewMode(
           listId,
           lang as SupportedLanguage,
@@ -81,5 +84,6 @@ export async function updateUnlockedReviewModes(listId: Types.ObjectId) {
         );
       }
     });
+    // Need to check for more review modes
   }
 }

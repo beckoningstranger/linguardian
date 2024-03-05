@@ -23,9 +23,7 @@ const __dirname = dirname(__filename);
 
 interface ParsedData {
   name: string;
-  language: SupportedLanguage;
   partOfSpeech: PartOfSpeech;
-  lemmas: string;
   case?: string;
   gender?: string;
   pluralForm?: string;
@@ -35,13 +33,13 @@ interface ParsedData {
   tEN?: string;
   tCN?: string;
   tFR?: string;
+  unit: number;
 }
 
 interface FormattedParsedData {
   name: string;
   language: SupportedLanguage;
   partOfSpeech: PartOfSpeech;
-  lemmas?: string[];
   case?: Case[];
   gender?: Gender[];
   pluralForm?: string[];
@@ -112,14 +110,13 @@ export async function parseCSV({
         .on("data", async (data: ParsedData) => {
           let formattedData: FormattedParsedData = {
             name: data.name,
-            language: data.language,
+            language: language,
             partOfSpeech: data.partOfSpeech,
             case: data.case?.split(" ") as Case[],
             gender: data.gender?.split(" ") as Gender[],
             pluralForm: data.pluralForm?.split(", "),
             frequency: data.frequency,
             tags: data.tags?.split(", ") as Tags[],
-            lemmas: data.lemmas?.split(", "),
             translations: {
               DE: data.tDE?.split(", "),
               FR: data.tFR?.split(", "),
@@ -142,16 +139,19 @@ export async function parseCSV({
           // Link items to all of their lemmas
           await linkItemsToLemmas(harvestedItems);
           // Upload all harvested items with all the information supplied
-          await uploadAsProperItems(harvestedItems, newListsId);
+          await uploadAsProperItems(harvestedItems, newListsId, language);
         })
         .on("error", (err) => {
           console.error(err);
         })
         .on("end", () => {
-          resolve({
-            newListId: newListsId,
-            newListNumber: newUploadedList.listNumber,
-          });
+          // Wait 10 seconds for parsing and uploading to finish
+          setTimeout(() => {
+            resolve({
+              newListId: newListsId,
+              newListNumber: newUploadedList.listNumber,
+            });
+          }, 10000);
         });
     }
   );
@@ -179,17 +179,18 @@ function convertItemToLemmas(item: FormattedParsedData): LemmaItem[] {
     // Destructure into language name and translation
     const [lang, translations] = language;
     // Iterate over all translations, split them up into words
-    translations.map((translation) => {
-      const words = translation.split(" ");
-      words.map((word) => {
-        // Harvest everything that is not a placeholder
-        if (word.length > 0 && !placeholders.includes(word))
-          onlyLemmasArray.push({
-            name: word,
-            language: lang as SupportedLanguage,
-          });
+    if (translations)
+      translations.map((translation) => {
+        const words = translation.split(" ");
+        words.map((word) => {
+          // Harvest everything that is not a placeholder
+          if (word.length > 0 && !placeholders.includes(word))
+            onlyLemmasArray.push({
+              name: word,
+              language: lang as SupportedLanguage,
+            });
+        });
       });
-    });
   });
 
   return onlyLemmasArray;
@@ -251,27 +252,29 @@ async function harvestAndUploadItems(
     async (language) => {
       // Destructure into language name and translations
       const [lang, translations] = language;
-      const addLemmaObjectIds = translations.map(async (translation) => {
-        if (translation.length > 0) {
-          // Get all lemma object ids for this translation
-          const allFoundLemmaObjectIds = await getAllLemmaObjectIdsForItem(
-            translation
-          );
+      if (translations) {
+        const addLemmaObjectIds = translations.map(async (translation) => {
+          if (translation.length > 0) {
+            // Get all lemma object ids for this translation
+            const allFoundLemmaObjectIds = await getAllLemmaObjectIdsForItem(
+              translation
+            );
 
-          // Add as harvested item
-          const itemToPush: ItemInPrep = {
-            name: translation,
-            language: lang as SupportedLanguage,
-            partOfSpeech: item.partOfSpeech,
-            lemmas: allFoundLemmaObjectIds,
-            translations: {
-              [item.language]: [item.name],
-            },
-          };
-          harvestedItems.push(itemToPush);
-        }
-      });
-      await Promise.all(addLemmaObjectIds);
+            // Add as harvested item
+            const itemToPush: ItemInPrep = {
+              name: translation,
+              language: lang as SupportedLanguage,
+              partOfSpeech: item.partOfSpeech,
+              lemmas: allFoundLemmaObjectIds,
+              translations: {
+                [item.language]: [item.name],
+              },
+            };
+            harvestedItems.push(itemToPush);
+          }
+        });
+        await Promise.all(addLemmaObjectIds);
+      }
     }
   );
   await Promise.all(iterateOverAllTranslations);
@@ -306,7 +309,8 @@ async function harvestAndUploadItems(
 
 async function uploadAsProperItems(
   harvestedItems: ItemInPrep[],
-  listId: Types.ObjectId
+  listId: Types.ObjectId,
+  listLanguage: SupportedLanguage
 ): Promise<void> {
   // We iterate over every translation of every item
   harvestedItems.map((item) => {
@@ -347,16 +351,17 @@ async function uploadAsProperItems(
         const newUploadedItemId = newUploadedItem?._id;
 
         // Now add the item to the list we are creating
-        await Lists.findByIdAndUpdate(
-          listId,
-          {
-            $addToSet: {
-              units: newUploadedItemId,
-              // learners: [author] needs to be added as ObjectId
+        if (item.language == listLanguage)
+          await Lists.findByIdAndUpdate(
+            listId,
+            {
+              $addToSet: {
+                units: newUploadedItemId,
+                // learners: [author] needs to be added as ObjectId
+              },
             },
-          },
-          { upsert: true }
-        );
+            { upsert: true }
+          );
       });
     }
   });
