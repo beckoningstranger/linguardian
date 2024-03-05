@@ -31,15 +31,15 @@ export default function LanguageSelector() {
   };
 
   return (
-    <div ref={ref} className="hidden md:block z-50">
+    <div ref={ref} className="z-50 hidden md:block">
       <div>
         <Flag
           code={languageFeatures[currentlyActiveLanguage].flagCode}
           onClick={() => handleFlagSelected(currentlyActiveLanguage!)}
-          className={`transition-all rounded-full object-cover md:w-[50px] md:h-[50px] border-2 border-slate-300 hover:scale-125`}
+          className={`rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125 md:h-[50px] md:w-[50px]`}
         />
       </div>
-      <div className={`absolute `}>
+      <div className={`absolute`}>
         {languagesAndFlags.map((flag, index) => {
           if (languagesAndFlags[index][0] !== currentlyActiveLanguage) {
             return (

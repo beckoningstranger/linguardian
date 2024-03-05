@@ -34,41 +34,41 @@ export default function TopMenu() {
           toggleSidebar={toggleSidebar}
           showSidebar={showSidebar}
         />
-        <div className="absolute top-0 flex items-center justify-between w-full h-20 text-xl bg-opacity-25 select-none bg-slate-300">
+        <div className="absolute top-0 flex h-20 w-full select-none items-center justify-between bg-slate-300 bg-opacity-25 text-xl">
           <div className={"flex items-center md:w-52"}>
             <div
-              className="text-3xl h-20 flex items-center px-4 w-20 justify-center transition-all hover:bg-slate-300"
+              className="flex h-20 w-20 items-center justify-center px-4 text-3xl transition-all hover:bg-slate-300"
               onClick={toggleSidebar}
             >
               <RxHamburgerMenu />
             </div>
-            <div className="hidden md:flex items-center px-3 h-20 transition-all hover:bg-slate-300">
+            <div className="hidden h-20 items-center px-3 transition-all hover:bg-slate-300 md:flex">
               <Link href="/">Linguardian</Link>
             </div>
           </div>
           <div className="hidden md:flex">
             <Link
               href="/courses"
-              className="h-20 hover:bg-slate-300 flex items-center px-4"
+              className="flex h-20 items-center px-4 hover:bg-slate-300"
             >
               Courses
             </Link>
             <Link
               href="/dictionary"
-              className="h-20 hover:bg-slate-300 flex items-center px-4"
+              className="flex h-20 items-center px-4 hover:bg-slate-300"
             >
               Dictionary
             </Link>
             <Link
               href="/social"
-              className="h-20 hover:bg-slate-300 flex items-center px-4"
+              className="flex h-20 items-center px-4 hover:bg-slate-300"
             >
               Social
             </Link>
           </div>
           <Flag
             code={languageFeatures[currentlyActiveLanguage].flagCode}
-            className={`md:hidden rounded-full object-cover w-16 h-16 m-0 border-2 border-slate-300`}
+            className={`m-0 h-16 w-16 rounded-full border-2 border-slate-300 object-cover md:hidden`}
             onClick={toggleMobileMenu as MouseEventHandler}
           />
           <MobileMenu>
@@ -78,7 +78,7 @@ export default function TopMenu() {
               toggleMobileMenu={toggleMobileMenu!}
             />
           </MobileMenu>
-          <div className="flex items-center justify-evenly md:gap-x-2 md:w-52 h-20 w-20">
+          <div className="flex h-20 w-20 items-center justify-evenly md:w-52 md:gap-x-2">
             <LanguageSelector /> <UserMenu />
           </div>
         </div>

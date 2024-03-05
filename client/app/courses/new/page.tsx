@@ -6,12 +6,12 @@ export default function CreateCourse() {
   const [formstate, action] = useFormState(uploadCSV, { message: "" });
   return (
     <div className="flex flex-col items-center justify-center">
-      <h1 className="text-2xl text-center font-bold m-4">
+      <h1 className="m-4 text-center text-2xl font-bold">
         Here, you can upload CSVs to create courses
       </h1>
       <form
         action={action}
-        className="flex flex-col text-center gap-3 bg-slate-300"
+        className="flex flex-col gap-3 bg-slate-300 text-center"
       >
         <label htmlFor="csvfile">Upload a CSV file</label>
         <input
@@ -41,13 +41,13 @@ export default function CreateCourse() {
         {/* need to pass relevant information about author so the backend can identify user*/}
         <input type="hidden" name="author" value="Joe" />
         {formstate.message !== "" ? (
-          <div className="p-2 bg-red-200 border rounded border-red-400">
+          <div className="rounded border border-red-400 bg-red-200 p-2">
             {formstate.message}
           </div>
         ) : null}
         <button
           type="submit"
-          className="border-2 border-black rounded p-3 m-2 hover:bg-slate-500 hover:text-white"
+          className="m-2 rounded border-2 border-black p-3 hover:bg-slate-500 hover:text-white"
         >
           Create new course
         </button>

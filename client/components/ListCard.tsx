@@ -28,7 +28,7 @@ export default function ListCard({ title, status, stats, id }: ListCardProps) {
 
   if (status === "review") {
     renderedButtons = (
-      <div className="flex md:flex-col justify-around">
+      <div className="flex justify-around md:flex-col">
         <ReviewButton id={id} mode="translation" />
         <ReviewButton id={id} mode={loaded ? randomMode1 : "spinner"} />
         <div className="md:hidden">
@@ -44,7 +44,7 @@ export default function ListCard({ title, status, stats, id }: ListCardProps) {
     );
   } else if (status === "add") {
     renderedButtons = (
-      <div className="flex md:flex-col justify-around">
+      <div className="flex justify-around md:flex-col">
         <ReviewButton id={id} mode="learn" />
         <ReviewButton id={id} mode={loaded ? randomMode1 : "spinner"} />
         <div className="md:hidden">
@@ -60,7 +60,7 @@ export default function ListCard({ title, status, stats, id }: ListCardProps) {
     );
   } else if (status === "practice") {
     renderedButtons = (
-      <div className="flex md:flex-col justify-around">
+      <div className="flex justify-around md:flex-col">
         <ReviewButton id={id} mode={loaded ? randomMode1 : "spinner"} />
         <ReviewButton id={id} mode={loaded ? randomMode2 : "spinner"} />
         <div className="md:hidden">
@@ -78,7 +78,7 @@ export default function ListCard({ title, status, stats, id }: ListCardProps) {
   }
 
   return (
-    <div className="mx-6 lg:mx-3 xl:mx-6 bg-slate-200 rounded-md relative">
+    <div className="relative mx-6 rounded-md bg-slate-200 lg:mx-3 xl:mx-6">
       <ContextMenu
         show={showContextMenu}
         toggleContextMenu={() => setShowContextMenu(false)}
@@ -96,7 +96,7 @@ export default function ListCard({ title, status, stats, id }: ListCardProps) {
         toggleContextMenu={() => setShowAllReviewModes(false)}
         positionClasses="bottom-0 right-0 w-full"
       >
-        <div className="grid grid-cols-3 md:grid-cols-2 place-items-center md:h-full">
+        <div className="grid grid-cols-3 place-items-center md:h-full md:grid-cols-2">
           <ReviewButton id={id} mode="learn" />
           <ReviewButton id={id} mode="translation" />
           <ReviewButton id={id} mode="dictionary" />
@@ -105,19 +105,19 @@ export default function ListCard({ title, status, stats, id }: ListCardProps) {
           <ReviewButton id={id} mode="spelling" />
         </div>
       </ContextMenu>
-      <div className="flex items-center m-3 justify-between">
+      <div className="m-3 flex items-center justify-between">
         <div
-          className="hover:text-white py-2 pr-2 text-2xl"
+          className="py-2 pr-2 text-2xl hover:text-white"
           onClick={() => setShowContextMenu(true)}
         >
           <RxDotsVertical />
         </div>
         <div className="w-full pl-2">
-          <h2 className="font-semibold text-lg">{title}</h2>
+          <h2 className="text-lg font-semibold">{title}</h2>
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row justify-evenly md:w-full my-3 md:mx-0 xl:px-0 px-2">
+      <div className="my-3 flex flex-col justify-evenly px-2 md:mx-0 md:w-full md:flex-row xl:px-0">
         <div className="md:hidden">
           <ListBarChart stats={stats} />
         </div>

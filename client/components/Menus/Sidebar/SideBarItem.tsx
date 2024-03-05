@@ -11,12 +11,11 @@ export default function SidebarItem({ icon, label, href }: SidebarProps) {
   return (
     <Link
       href={href}
-      className={`flex w-full h-14 md:p-10 md:border-none transition-all
-      select-none md:hover:bg-slate-300  md:hover:scale-100 justify-center md:justify-start my-4 md:my-0`}
+      className={`my-4 flex h-14 w-full select-none justify-center transition-all md:my-0 md:justify-start md:border-none md:p-10 md:hover:scale-100 md:hover:bg-slate-300`}
     >
-      <div className="flex md:items-center w-48">
-        <div className="text-4xl md:pl-3 px-3">{icon}</div>
-        {label && <div className="text-4xl md:text-xl px-3">{label}</div>}
+      <div className="flex w-48 md:items-center">
+        <div className="px-3 text-4xl md:pl-3">{icon}</div>
+        {label && <div className="px-3 text-4xl md:text-xl">{label}</div>}
       </div>
     </Link>
   );

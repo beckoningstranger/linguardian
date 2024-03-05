@@ -124,7 +124,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex justify-center">
-      <div className="grid grid-cols-1 max-w-xl md:max-w-full 2xl:max-w-[1500px] 2xl:mx-8 2xl:gap-x-6 md:grid-cols-2 lg:grid-cols-3 justify-center items-stretch w-full py-4 gap-y-3">
+      <div className="grid w-full max-w-xl grid-cols-1 items-stretch justify-center gap-y-3 py-4 md:max-w-full md:grid-cols-2 lg:grid-cols-3 2xl:mx-8 2xl:max-w-[1500px] 2xl:gap-x-6">
         {renderedLists}
         <AddNewListOption />
       </div>

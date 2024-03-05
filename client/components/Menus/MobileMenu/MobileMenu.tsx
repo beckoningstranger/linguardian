@@ -22,12 +22,8 @@ export default function MobileMenu({ children }: MobileMenuProps) {
       ? createPortal(
           // This returns a logo at the top, options (passed as children) in the middle and a button to close the menu at the bottom
 
-          <div className="absolute top-0 w-full h-full backdrop-blur-md">
-            <div
-              className="
-            flex flex-col gap-3 items-center justify-center
-             animate-fold-out overflow-hidden"
-            >
+          <div className="absolute top-0 h-full w-full backdrop-blur-md">
+            <div className="flex animate-fold-out flex-col items-center justify-center gap-3 overflow-hidden">
               <Logo />
               <div className="flex flex-col justify-center">
                 {children}

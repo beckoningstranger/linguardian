@@ -121,16 +121,16 @@ export default function TranslationMode({
 
   return (
     <div className="flex flex-col justify-center transition-all">
-      <div id="TopBar" className="bg-slate-200 text-center w-full text-xl">
+      <div id="TopBar" className="w-full bg-slate-200 text-center text-xl">
         <h1 className="font-semibold">Reviewing {listName}</h1>
         <h2>
           {reviewedItems + 1} / {items.length} items
         </h2>
       </div>
-      <div className="w-95 mx-6 flex flex-col mt-3 gap-3">
+      <div className="w-95 mx-6 mt-3 flex flex-col gap-3">
         <div
           id="Prompt"
-          className={`bg-slate-200 text-center w-95 rounded-md py-2`}
+          className={`w-95 rounded-md bg-slate-200 py-2 text-center`}
         >
           {/* <h3 className="my-3 text-2xl">{activeItem.translation[native]}</h3> */}
           <p className="text-sm">{activeItem.partOfSpeech}</p>
@@ -140,13 +140,13 @@ export default function TranslationMode({
           !genderReview && (
             <>
               <div
-                className="bg-slate-200 p-2 text-center hidden md:block rounded-md"
+                className="hidden rounded-md bg-slate-200 p-2 text-center md:block"
                 onClick={() => setShowHelperKeys(true)}
               >
                 Need help entering special characters?
               </div>
               <div
-                className="bg-slate-200 p-2 text-center md:hidden rounded-md"
+                className="rounded-md bg-slate-200 p-2 text-center md:hidden"
                 onClick={() => toggleMobileMenu!()}
               >
                 Need help entering special characters?

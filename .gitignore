@@ -40,3 +40,4 @@ yarn-error.log*
 next-env.d.ts
 
 mongosh_connect.sh
+/tailwind.config.ts

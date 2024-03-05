@@ -1,7 +1,7 @@
 export default function Logo() {
   return (
     <div
-      className={`flex bg-red-400 items-center justify-center w-full absolute top-0 text-2xl font-bold h-28 -translate-x-2/4 left-[50%] md:hidden transition-all select-none`}
+      className={`absolute left-[50%] top-0 flex h-28 w-full -translate-x-2/4 select-none items-center justify-center bg-red-400 text-2xl font-bold transition-all md:hidden`}
     >
       Linguardian
     </div>

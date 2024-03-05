@@ -17,7 +17,7 @@ export default function GenderReview({
   handleGenderSubmit,
 }: GenderReviewProps) {
   return (
-    <div className="flex justify-center bg-slate-200 flex-col gap-2 items-around my-2 py-2 rounded-md">
+    <div className="items-around my-2 flex flex-col justify-center gap-2 rounded-md bg-slate-200 py-2">
       <input
         // This is so users can enter the gender with a single keystroke when using the keyboard
         type="text"
@@ -38,7 +38,7 @@ export default function GenderReview({
         <p>Very good!</p>
         <p>What is {activeItem.name}&apos;s gender?</p>
       </div>
-      <div className="flex justify-around my-2">
+      <div className="my-2 flex justify-around">
         {languageFeatures[target].hasGender?.map((gender) => {
           let buttonTag = (
             <span className="text-slate-600">
@@ -50,7 +50,7 @@ export default function GenderReview({
             <button
               key={gender}
               onClick={() => handleGenderSubmit(gender)}
-              className="p-2 border border-black rounded-md focus:border-red-400"
+              className="rounded-md border border-black p-2 focus:border-red-400"
             >
               {buttonTag}
             </button>

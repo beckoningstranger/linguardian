@@ -35,7 +35,7 @@ export default async function ShowCoursePage({
     return (
       <>
         <TopMenu />
-        <div className="mt-24 mx-10">
+        <div className="mx-10 mt-24">
           <h1>{name}</h1>
           <h5>by {authors}</h5>
           <h3>{description}</h3>
