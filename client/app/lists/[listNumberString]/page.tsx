@@ -1,8 +1,8 @@
-import { Item, PopulatedList } from "@/types";
+import { PopulatedList } from "@/types";
 import axios from "axios";
 import Link from "next/link";
 
-interface ShowCourseProps {
+interface ListDetailProps {
   params: {
     listNumberString: string;
   };
@@ -10,7 +10,7 @@ interface ShowCourseProps {
 
 export default async function ListDetailPage({
   params: { listNumberString },
-}: ShowCourseProps) {
+}: ListDetailProps) {
   const listNumber = parseInt(listNumberString);
 
   async function getListData(lNumber: number) {
@@ -25,37 +25,30 @@ export default async function ListDetailPage({
   }
 
   const listData = await getListData(listNumber);
-  if (listData) {
-    const { name, description, authors, units } = listData.data;
+  if (listData && listData.data) {
+    const { name, description, authors, unitOrder } = listData.data;
 
-    const agg: { [key: string]: Item[] } = {};
+    const numberOfUnits = unitOrder?.length;
 
-    units.map((item) => {
-      if (!Object.keys(agg).includes(item.unitName)) {
-        agg[item.unitName] = [];
-      }
-      agg[item.unitName].push(item.item);
-    });
-
-    console.log(Object.entries(agg));
-    const renderedItems = Object.keys(agg).map((unit) => {
+    const renderedUnits = unitOrder?.map((unit, index) => {
       return (
-        <Link href={unit} key="unit">
+        <Link key={unit} href={`/lists/${listNumber}/${index + 1}`}>
           {unit}
         </Link>
       );
     });
 
-    return (
-      <>
-        <div className="mx-10 mt-24">
-          <h1>{name}</h1>
-          <h5>by {authors}</h5>
-          <h3>{description}</h3>
-          <div>{renderedItems}</div>
-        </div>
-      </>
-    );
+    if (renderedUnits)
+      return (
+        <>
+          <div className="mx-10 mt-24">
+            <h1>{name}</h1>
+            <h5>by {authors}</h5>
+            <h3>{description}</h3>
+            <div>{renderedUnits}</div>
+          </div>
+        </>
+      );
   }
 
   return (

@@ -42,9 +42,13 @@ export default function TopMenu() {
             >
               <RxHamburgerMenu />
             </div>
-            <div className="hidden h-20 items-center px-3 transition-all hover:bg-slate-300 md:flex">
-              <Link href="/">Linguardian</Link>
-            </div>
+
+            <Link
+              href="/"
+              className="hidden h-20 items-center px-3 transition-all hover:bg-slate-300 md:flex"
+            >
+              Linguardian
+            </Link>
           </div>
           <div className="hidden md:flex">
             <Link

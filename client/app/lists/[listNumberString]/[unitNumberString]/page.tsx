@@ -2,7 +2,7 @@ import { Item, PopulatedList } from "@/types";
 import axios from "axios";
 import Link from "next/link";
 
-interface ShowCourseProps {
+interface UnitDetailsProps {
   params: {
     listNumberString: string;
     unitNumberString: string;
@@ -11,7 +11,7 @@ interface ShowCourseProps {
 
 export default async function UnitDetailPage({
   params: { listNumberString, unitNumberString },
-}: ShowCourseProps) {
+}: UnitDetailsProps) {
   const listNumber = parseInt(listNumberString);
   const unitNumber = parseInt(unitNumberString);
 
@@ -21,11 +21,13 @@ export default async function UnitDetailPage({
       const list = await axios.get<PopulatedList>(
         `http://localhost:8000/lists/get/${lNumber}`
       );
-      if (list && list.data && list.data.unitOrder) {
-        const unitNumber: number = list.data.unitOrder.reduce((a, curr) => {
-          return a;
-        }, 0 as number);
-        return "df";
+      if (list && list.data && list.data && list.data.unitOrder) {
+        const unitName = list.data.unitOrder[uNumber - 1];
+        const unitItems: Item[] = [];
+        list.data.units.map((item) => {
+          if (unitName === item.unitName) unitItems.push(item.item);
+        });
+        return unitItems;
       }
       return null;
     } catch (err) {
@@ -35,7 +37,11 @@ export default async function UnitDetailPage({
 
   const unitData = await getUnitData(listNumber, unitNumber);
   if (unitData) {
-    return "";
+    const renderedItems = unitData.map((item) => (
+      <div key={item.name + item.language}>{item.name}</div>
+    ));
+
+    return <div>{renderedItems}</div>;
   }
 
   return (
