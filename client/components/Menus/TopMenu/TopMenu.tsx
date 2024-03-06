@@ -15,14 +15,10 @@ import Link from "next/link";
 export default function TopMenu() {
   // These two variables are used so that the LanguageSelector show only on the specified URLs
   const currentBaseUrl = usePathname();
-  const LanguageSelectorOn = ["/dashboard", "/dictionary", "lists"];
+  const LanguageSelectorOn = ["/dashboard", "/dictionary", "/lists"];
 
-  const {
-    currentlyActiveLanguage,
-    setCurrentlyActiveLanguage,
-    toggleMobileMenu,
-    user,
-  } = useGlobalContext();
+  const { currentlyActiveLanguage, toggleMobileMenu, user } =
+    useGlobalContext();
 
   const [showSidebar, setShowSidebar] = useState(false);
 
@@ -38,6 +34,7 @@ export default function TopMenu() {
         <SideBarNavigation
           toggleSidebar={toggleSidebar}
           showSidebar={showSidebar}
+          currentlyActiveLanguage={currentlyActiveLanguage}
         />
         <div className="absolute top-0 flex h-20 w-full select-none items-center justify-between bg-slate-300 bg-opacity-25 text-xl">
           <div className={"flex items-center"}>
@@ -49,7 +46,7 @@ export default function TopMenu() {
             </div>
 
             <Link
-              href="/dashboard"
+              href={`/dashboard?lang=${currentlyActiveLanguage}`}
               className="hidden h-20 items-center px-3 transition-all hover:bg-slate-300 md:flex"
             >
               Linguardian
@@ -57,13 +54,13 @@ export default function TopMenu() {
           </div>
           <div className="absolute left-1/2 hidden -translate-x-1/2 md:flex">
             <Link
-              href="/lists"
+              href={`/lists?lang=${currentlyActiveLanguage}`}
               className="flex h-20 items-center px-4 hover:bg-slate-300"
             >
               Lists
             </Link>
             <Link
-              href="/dictionary"
+              href={`/dictionary?lang=${currentlyActiveLanguage}`}
               className="flex h-20 items-center px-4 hover:bg-slate-300"
             >
               Dictionary
@@ -75,6 +72,8 @@ export default function TopMenu() {
               Social
             </Link>
           </div>
+
+          {/* The language selector will only be shown depending on the url, see above */}
           <div
             className={`${
               !LanguageSelectorOn.includes(currentBaseUrl) && "hidden"
@@ -86,11 +85,7 @@ export default function TopMenu() {
               onClick={toggleMobileMenu as MouseEventHandler}
             />
             <MobileMenu>
-              <MobileLanguageSelector
-                languages={languages}
-                setCurrentlyActiveLanguage={setCurrentlyActiveLanguage!}
-                toggleMobileMenu={toggleMobileMenu!}
-              />
+              <MobileLanguageSelector />
             </MobileMenu>
           </div>
           <div className="flex h-20 items-center justify-evenly">

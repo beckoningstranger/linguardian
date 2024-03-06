@@ -7,15 +7,18 @@ import { FaRegQuestionCircle, FaBookReader } from "react-icons/fa";
 import { FaPeopleRoof } from "react-icons/fa6";
 import { RiLogoutBoxLine, RiFileList3Fill } from "react-icons/ri";
 import MobileMenuCloseButton from "../MobileMenu/MobileMenuCloseButton";
+import { SupportedLanguage } from "@/types";
 
 interface SideBarNavigationProps {
   toggleSidebar: MouseEventHandler;
   showSidebar: Boolean;
+  currentlyActiveLanguage: SupportedLanguage;
 }
 
 export default function SideBarNavigation({
   toggleSidebar,
   showSidebar,
+  currentlyActiveLanguage,
 }: SideBarNavigationProps) {
   const ref = useOutsideClick(toggleSidebar, showSidebar);
   return (
@@ -32,14 +35,18 @@ export default function SideBarNavigation({
           <SidebarItem
             icon={<RxHamburgerMenu />}
             label="Dashboard"
-            href="/dashboard"
+            href={`/dashboard?lang=${currentlyActiveLanguage}`}
           />
 
-          <SidebarItem icon={<RiFileList3Fill />} label="Lists" href="/lists" />
+          <SidebarItem
+            icon={<RiFileList3Fill />}
+            label="Lists"
+            href={`/lists?lang=${currentlyActiveLanguage}`}
+          />
           <SidebarItem
             icon={<FaBookReader />}
             label="Dictionary"
-            href="/dictionary"
+            href={`/dictionary?lang=${currentlyActiveLanguage}`}
           />
           <SidebarItem icon={<FaPeopleRoof />} label="Social" href="/social" />
         </nav>

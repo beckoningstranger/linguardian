@@ -5,28 +5,40 @@ import { useState } from "react";
 import Flag from "react-world-flags";
 import { useOutsideClick } from "@/app/hooks/useOutsideClick";
 import AddNewLanguageOption from "./AddNewLanguageOption";
+import { usePathname } from "next/navigation";
 import { languageFeatures } from "@/app/context/GlobalContext";
+import { SupportedLanguage } from "@/types";
+import Link from "next/link";
 
 export default function LanguageSelector() {
+  const currentPath = usePathname();
   const { user, currentlyActiveLanguage, setCurrentlyActiveLanguage } =
     useGlobalContext();
 
-  // This way, languagesAndFlag[index][0] will be the language code, and languages[index][1] will be the flag code
-  const languagesAndFlags = user.languages.map((lang) => [
-    lang.code,
-    languageFeatures[lang.code].flagCode,
-  ]);
+  const languagesAndFlags: { name: SupportedLanguage; flagCode: string }[] = [];
+  user.languages.map((lang) =>
+    languagesAndFlags.push({
+      name: lang.code,
+      flagCode: languageFeatures[lang.code].flagCode,
+    })
+  );
 
-  const [active, setActive] = useState(false);
+  const [showAllLanguageOptions, setShowAllLanguageOptions] = useState(false);
 
   const toggleLanguageSelector = () => {
-    setActive((active) => !active);
+    setShowAllLanguageOptions(
+      (showAllLanguageOptions) => !showAllLanguageOptions
+    );
   };
 
-  const ref = useOutsideClick(toggleLanguageSelector!, active);
+  const ref = useOutsideClick(toggleLanguageSelector!, showAllLanguageOptions);
 
   const handleFlagSelected = (language: string): void => {
-    setActive((active) => !active);
+    // Close language selector
+    setShowAllLanguageOptions(
+      (showAllLanguageOptions) => !showAllLanguageOptions
+    );
+    // Set new currently active language
     if (setCurrentlyActiveLanguage) setCurrentlyActiveLanguage(language);
   };
 
@@ -40,22 +52,29 @@ export default function LanguageSelector() {
         />
       </div>
       <div className={`absolute`}>
-        {languagesAndFlags.map((flag, index) => {
-          if (languagesAndFlags[index][0] !== currentlyActiveLanguage) {
+        {languagesAndFlags.map((lang) => {
+          if (lang.name !== currentlyActiveLanguage) {
             return (
-              <Flag
-                key={languagesAndFlags[index][1]}
-                code={languagesAndFlags[index][1]}
-                onClick={() => handleFlagSelected(languagesAndFlags[index][0])}
-                className={`scale-0 transition-all rounded-full object-cover hover:scale-125 w-12 ${
-                  active && "scale-100 h-12 my-2 border-2 border-slate-300"
-                }
+              <Link
+                key={lang.flagCode}
+                href={`${currentPath}?lang=${lang.name}`}
+              >
+                <Flag
+                  code={lang.flagCode}
+                  onClick={() => handleFlagSelected(lang.name)}
+                  className={`scale-0 transition-all rounded-full object-cover hover:scale-125 w-12 ${
+                    showAllLanguageOptions &&
+                    "scale-100 h-12 my-2 border-2 border-slate-300"
+                  }
                 `}
-              />
+                />
+              </Link>
             );
           }
         })}
-        {active && languagesAndFlags.length < 6 && <AddNewLanguageOption />}
+        {showAllLanguageOptions && languagesAndFlags.length < 6 && (
+          <AddNewLanguageOption />
+        )}
       </div>
     </div>
   );

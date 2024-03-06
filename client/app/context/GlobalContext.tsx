@@ -68,10 +68,10 @@ const defaultSSRSettings: SSRSettings = {
 const user: User = {
   id: 1,
   alias: "User1",
-  native: "FR",
+  native: "DE",
   languages: [
     {
-      code: "EN",
+      code: "FR",
       learnedListIds: [1, 2],
       learnedItems: [
         { itemId: 1, itemLevel: 1, nextReview: new Date() },
