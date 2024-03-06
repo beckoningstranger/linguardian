@@ -25,11 +25,8 @@ export default function MobileMenu({ children }: MobileMenuProps) {
           <div className="absolute top-0 h-full w-full backdrop-blur-md">
             <div className="flex animate-fold-out flex-col items-center justify-center gap-3 overflow-hidden">
               <Logo />
-              <div
-                className="flex flex-col justify-center"
-                onClick={toggleMobileMenu as MouseEventHandler}
-              >
-                {children}
+              <div className="flex flex-col justify-center">{children}</div>
+              <div onClick={toggleMobileMenu as MouseEventHandler}>
                 <MobileMenuCloseButton />
               </div>
             </div>

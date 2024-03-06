@@ -29,13 +29,8 @@ export default function SideBarNavigation({
       >
         <Logo />
         <nav className="last:mb-0">
-          <div className="invisible md:visible" onClick={toggleSidebar}>
-            <SidebarItem
-              icon={<RxHamburgerMenu />}
-              label="Linguardian"
-              href="/"
-            />
-          </div>
+          <SidebarItem icon={<RxHamburgerMenu />} label="Dashboard" href="/" />
+
           <SidebarItem icon={<RiFileList3Fill />} label="Lists" href="/lists" />
           <SidebarItem
             icon={<FaBookReader />}
@@ -56,7 +51,12 @@ export default function SideBarNavigation({
             href="/logout"
           />
         </footer>
-        <MobileMenuCloseButton />
+        <div
+          onClick={toggleSidebar}
+          className="absolute bottom-5 left-1/2 -translate-x-1/2"
+        >
+          <MobileMenuCloseButton />
+        </div>
       </div>
     </>
   );
