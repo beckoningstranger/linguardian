@@ -3,6 +3,7 @@ import LanguageSelector from "../LanguageSelector/LanguageSelector";
 import UserMenu from "../UserMenu";
 import useGlobalContext from "@/app/hooks/useGlobalContext";
 import { MouseEventHandler, useState } from "react";
+import { usePathname } from "next/navigation";
 import Flag from "react-world-flags";
 import MobileMenu from "../MobileMenu/MobileMenu";
 import MobileLanguageSelector from "../LanguageSelector/MobileLanguageSelector";
@@ -12,6 +13,10 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import Link from "next/link";
 
 export default function TopMenu() {
+  // These two variables are used to hide the languageSelector on the specified URLs
+  const currentBaseUrl = usePathname();
+  const noLanguageSelector = ["/social", "/about"];
+
   const {
     currentlyActiveLanguage,
     setCurrentlyActiveLanguage,
@@ -35,7 +40,7 @@ export default function TopMenu() {
           showSidebar={showSidebar}
         />
         <div className="absolute top-0 flex h-20 w-full select-none items-center justify-between bg-slate-300 bg-opacity-25 text-xl">
-          <div className={"flex items-center md:w-52"}>
+          <div className={"flex items-center"}>
             <div
               className="flex h-20 w-20 items-center justify-center px-4 text-3xl transition-all hover:bg-slate-300"
               onClick={toggleSidebar}
@@ -50,7 +55,7 @@ export default function TopMenu() {
               Linguardian
             </Link>
           </div>
-          <div className="hidden md:flex">
+          <div className="absolute left-1/2 hidden -translate-x-1/2 md:flex">
             <Link
               href="/lists"
               className="flex h-20 items-center px-4 hover:bg-slate-300"
@@ -70,20 +75,34 @@ export default function TopMenu() {
               Social
             </Link>
           </div>
-          <Flag
-            code={languageFeatures[currentlyActiveLanguage].flagCode}
-            className={`m-0 h-16 w-16 rounded-full border-2 border-slate-300 object-cover md:hidden`}
-            onClick={toggleMobileMenu as MouseEventHandler}
-          />
-          <MobileMenu>
-            <MobileLanguageSelector
-              languages={languages}
-              setCurrentlyActiveLanguage={setCurrentlyActiveLanguage!}
-              toggleMobileMenu={toggleMobileMenu!}
+          <div
+            className={`${
+              noLanguageSelector.includes(currentBaseUrl) && "hidden"
+            }`}
+          >
+            <Flag
+              code={languageFeatures[currentlyActiveLanguage].flagCode}
+              className={`m-0 h-16 w-16 rounded-full border-2 border-slate-300 object-cover md:hidden`}
+              onClick={toggleMobileMenu as MouseEventHandler}
             />
-          </MobileMenu>
-          <div className="flex h-20 w-20 items-center justify-evenly md:w-52 md:gap-x-2">
-            <LanguageSelector /> <UserMenu />
+            <MobileMenu>
+              <MobileLanguageSelector
+                languages={languages}
+                setCurrentlyActiveLanguage={setCurrentlyActiveLanguage!}
+                toggleMobileMenu={toggleMobileMenu!}
+              />
+            </MobileMenu>
+          </div>
+          <div className="flex h-20 items-center justify-evenly">
+            <div
+              className={`${
+                noLanguageSelector.includes(currentBaseUrl) && "hidden"
+              }`}
+            >
+              <LanguageSelector />
+            </div>
+
+            <UserMenu />
           </div>
         </div>
       </header>
