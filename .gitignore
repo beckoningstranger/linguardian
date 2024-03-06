@@ -42,3 +42,4 @@ next-env.d.ts
 mongosh_connect.sh
 /tailwind.config.ts
 /server/data/csvUploads*
+/client/types.ts

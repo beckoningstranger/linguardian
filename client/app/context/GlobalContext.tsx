@@ -23,6 +23,7 @@ export const languageFeatures: Record<SupportedLanguage, LanguageFeatures> = {
       "ç",
       "Ç",
       "è",
+      "É",
       "é",
       "ê",
       "ë",
