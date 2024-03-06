@@ -13,9 +13,9 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import Link from "next/link";
 
 export default function TopMenu() {
-  // These two variables are used to hide the languageSelector on the specified URLs
+  // These two variables are used so that the LanguageSelector show only on the specified URLs
   const currentBaseUrl = usePathname();
-  const noLanguageSelector = ["/social", "/about"];
+  const LanguageSelectorOn = ["/dashboard", "/dictionary", "lists"];
 
   const {
     currentlyActiveLanguage,
@@ -49,7 +49,7 @@ export default function TopMenu() {
             </div>
 
             <Link
-              href="/"
+              href="/dashboard"
               className="hidden h-20 items-center px-3 transition-all hover:bg-slate-300 md:flex"
             >
               Linguardian
@@ -77,7 +77,7 @@ export default function TopMenu() {
           </div>
           <div
             className={`${
-              noLanguageSelector.includes(currentBaseUrl) && "hidden"
+              !LanguageSelectorOn.includes(currentBaseUrl) && "hidden"
             }`}
           >
             <Flag
@@ -96,8 +96,8 @@ export default function TopMenu() {
           <div className="flex h-20 items-center justify-evenly">
             <div
               className={`${
-                noLanguageSelector.includes(currentBaseUrl) && "hidden"
-              }`}
+                !LanguageSelectorOn.includes(currentBaseUrl) && "hidden"
+              } z-50`}
             >
               <LanguageSelector />
             </div>

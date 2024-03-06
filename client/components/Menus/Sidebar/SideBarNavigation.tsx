@@ -29,7 +29,11 @@ export default function SideBarNavigation({
       >
         <Logo />
         <nav className="last:mb-0">
-          <SidebarItem icon={<RxHamburgerMenu />} label="Dashboard" href="/" />
+          <SidebarItem
+            icon={<RxHamburgerMenu />}
+            label="Dashboard"
+            href="/dashboard"
+          />
 
           <SidebarItem icon={<RiFileList3Fill />} label="Lists" href="/lists" />
           <SidebarItem

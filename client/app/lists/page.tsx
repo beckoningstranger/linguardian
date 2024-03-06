@@ -1,18 +1,21 @@
 import Link from "next/link";
 
-export default function Store() {
+interface ListStoreProps {
+  searchParams: { [key: string]: string | string[] | undefined };
+}
+
+export default function ListStore({ searchParams }: ListStoreProps) {
+  console.log(searchParams);
   return (
     <div className="m-3 p-2">
       <p className="m-4">List Store</p>
 
-      <div>
-        <Link
-          href="/lists/new"
-          className="m-2 rounded border border-black bg-slate-200 p-3"
-        >
-          Upload CSV
-        </Link>
-      </div>
+      <Link
+        href="/lists/new"
+        className="m-2 rounded border border-black bg-slate-200 p-3"
+      >
+        Upload CSV
+      </Link>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import useGlobalContext from "@/app/hooks/useGlobalContext";
 import ListCard from "./ListCard";
 import { ReactNode } from "react";
 import AddNewListOption from "./Menus/AddNewListOption";
+import { SupportedLanguage } from "@/types";
 
 interface List {
   id: number;
@@ -74,7 +75,7 @@ export interface ListStats {
 }
 
 export default function Dashboard() {
-  const { currentlyActiveLanguage, user } = useGlobalContext();
+  const { user, currentlyActiveLanguage } = useGlobalContext();
 
   let learnedLists: number[] = [];
   let currentLanguageIndex: number = 0;
