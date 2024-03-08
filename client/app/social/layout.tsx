@@ -1,5 +1,5 @@
 import DashboardContainer from "@/components/DashboardContainer";
-import TopMenu from "@/components/Menus/TopMenu/TopMenu";
+import TopMenu from "@/components/Menus/TopMenu";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

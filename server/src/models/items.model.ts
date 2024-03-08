@@ -1,12 +1,26 @@
 import { SupportedLanguage } from "../types.js";
+import { Types } from "mongoose";
 import Items from "./item.schema.js";
 
-export async function getOneItem(item: string, language: SupportedLanguage) {
+export async function getOneItemByName(
+  name: string,
+  language: SupportedLanguage
+) {
   try {
-    const response = await Items.findOne({ name: item, language: language });
+    const response = await Items.findOne({ name: name, language: language });
     if (response) return response;
     throw new Error("Item not found");
   } catch (err) {
-    console.error(`Error getting item '${item}': ${err}`);
+    console.error(`Error getting item '${name}': ${err}`);
+  }
+}
+
+export async function getOneItemById(id: string) {
+  try {
+    const response = await Items.findOne({ _id: id });
+    if (response) return response;
+    throw new Error("Item not found");
+  } catch (err) {
+    console.error(`Error getting item with id ${id}: ${err}`);
   }
 }

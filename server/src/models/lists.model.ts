@@ -6,7 +6,7 @@ import {
   SupportedLanguage,
 } from "../types.js";
 import Lists from "./list.schema.js";
-import { supportedLanguages } from "../services/languageInfo.js";
+import { getSupportedLanguages } from "./settings.model.js";
 
 export async function getOnePopulatedListByListNumber(listNumber: number) {
   try {
@@ -20,9 +20,12 @@ export async function getOnePopulatedListByListNumber(listNumber: number) {
 
 export async function getOnePopulatedListByListId(listId: Types.ObjectId) {
   try {
+    // return await Lists.findOne({ _id: listId }).populate<{
+    //   units: { unitName: string; item: Item }[];
+    // }>({ path: "units.item", populate: { path: "item.translations.DE" } });
     return await Lists.findOne({ _id: listId }).populate<{
       units: { unitName: string; item: Item }[];
-    }>("units.item");
+    }>({ path: "units.item" });
   } catch (err) {
     console.error(`Error getting list with _id ${listId}`);
   }
@@ -65,7 +68,8 @@ export async function getChapterNameByNumber(
 
 export async function updateUnlockedReviewModes(listId: Types.ObjectId) {
   const response = (await getOnePopulatedListByListId(listId)) as PopulatedList;
-  if (response && response.units) {
+  const supportedLanguages = await getSupportedLanguages();
+  if (response && response.units && supportedLanguages) {
     // This part checks for translation mode
     const allTranslationsExist: Partial<Record<SupportedLanguage, Boolean>> =
       {};

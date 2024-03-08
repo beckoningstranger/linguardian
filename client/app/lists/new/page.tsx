@@ -2,7 +2,7 @@
 import { useFormState } from "react-dom";
 import { uploadCSV } from "./action";
 
-export default function CreateCourse() {
+export default function CreateList() {
   const [formstate, action] = useFormState(uploadCSV, { message: "" });
   return (
     <div className="flex flex-col items-center justify-center">

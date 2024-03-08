@@ -1,14 +1,13 @@
 "use client";
-import LanguageSelector from "../LanguageSelector/LanguageSelector";
-import UserMenu from "../UserMenu";
+import LanguageSelector from "./LanguageSelector/LanguageSelector";
+import UserMenu from "./UserMenu";
 import useGlobalContext from "@/app/hooks/useGlobalContext";
 import { MouseEventHandler, useState } from "react";
 import { usePathname } from "next/navigation";
 import Flag from "react-world-flags";
-import MobileMenu from "../MobileMenu/MobileMenu";
-import MobileLanguageSelector from "../LanguageSelector/MobileLanguageSelector";
-import { languageFeatures } from "@/app/context/GlobalContext";
-import SideBarNavigation from "../Sidebar/SideBarNavigation";
+import MobileMenu from "./MobileMenu/MobileMenu";
+import MobileLanguageSelector from "./LanguageSelector/MobileLanguageSelector";
+import SideBarNavigation from "./Sidebar/SideBarNavigation";
 import { RxHamburgerMenu } from "react-icons/rx";
 import Link from "next/link";
 
@@ -17,16 +16,13 @@ export default function TopMenu() {
   const currentBaseUrl = usePathname();
   const LanguageSelectorOn = ["/dashboard", "/dictionary", "/lists"];
 
-  const { currentlyActiveLanguage, toggleMobileMenu, user } =
-    useGlobalContext();
+  const { currentlyActiveLanguage, toggleMobileMenu } = useGlobalContext();
 
   const [showSidebar, setShowSidebar] = useState(false);
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
   };
-
-  const languages = user.languages.map((lang) => lang.code);
 
   return (
     <>
@@ -80,7 +76,13 @@ export default function TopMenu() {
             }`}
           >
             <Flag
-              code={languageFeatures[currentlyActiveLanguage].flagCode}
+              // There is a bug here because there is no EN flag, just GB and US, we need to get the flagcode from languageFeatures is global settings
+              // This is a temporary workaround as there will be more languages for which we need a different flag code
+              code={
+                currentlyActiveLanguage === "EN"
+                  ? "GB"
+                  : currentlyActiveLanguage
+              }
               className={`m-0 h-16 w-16 rounded-full border-2 border-slate-300 object-cover md:hidden`}
               onClick={toggleMobileMenu as MouseEventHandler}
             />

@@ -1,7 +1,7 @@
-import { Item } from "@/types";
+import { ItemsPopulatedWithTranslations } from "@/types";
 
 interface LearnNewWordsModeProps {
-  items: Item[];
+  items: ItemsPopulatedWithTranslations[];
   listName?: string;
 }
 

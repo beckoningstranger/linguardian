@@ -31,7 +31,7 @@ export default async function UnitDetailPage({
       }
       return null;
     } catch (err) {
-      console.error(`Error fetching course number ${lNumber}: ${err}`);
+      console.error(`Error fetching list number ${lNumber}: ${err}`);
     }
   }
 
@@ -46,11 +46,11 @@ export default async function UnitDetailPage({
 
   return (
     <div>
-      <h1>Course not found</h1>
-      <p>This course does not exist yet. </p>
+      <h1>List not found</h1>
+      <p>This list does not exist yet. </p>
       <div>
         <Link href="/">Back to Dashboard</Link>{" "}
-        <Link href="/courses">Course Store</Link>
+        <Link href="/lists">List Store</Link>
       </div>
     </div>
   );

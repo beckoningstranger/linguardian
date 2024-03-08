@@ -1,7 +1,5 @@
 import { Types } from "mongoose";
 
-type SupportedLanguage = "DE" | "EN" | "FR" | "CN";
-
 type PartOfSpeech =
   | "noun"
   | "pronoun"
@@ -28,13 +26,6 @@ type Gender =
   | "common"
   | "animate"
   | "inanimate";
-
-interface LanguageFeatures {
-  name: string;
-  flagCode: string;
-  requiresHelperKeys?: string[];
-  hasGender?: Partial<Gender>[];
-}
 
 type Case =
   | "nominative"
@@ -75,6 +66,10 @@ interface Item {
   collocations?: Types.ObjectId[];
 }
 
+type ItemsPopulatedWithTranslations = Omit<Item, "translations"> & {
+  translations: Record<SupportedLanguage, Item>;
+};
+
 interface Lemma {
   language: SupportedLanguage;
   name: string;
@@ -98,15 +93,15 @@ interface List {
   private: Boolean;
   units?: { unitName: string; item: Types.ObjectId };
   unitOrder?: string[];
-  unlockedReviewModes?: Partial<
-    Record<SupportedLanguage, Types.Array<ReviewMode>>
-  >;
+  unlockedReviewModes?: Record<SupportedLanguage, Types.Array<ReviewMode>>;
   learners?: Types.ObjectId[];
 }
 
 type PopulatedList = Omit<List, "units"> & {
   units: { unitName: string; item: Item }[];
 };
+
+type SupportedLanguage = "DE" | "EN" | "FR" | "CN";
 
 interface SSRSettings {
   reviewTimes: {
@@ -124,46 +119,46 @@ interface SSRSettings {
   itemsPerSession: { learning: number; reviewing: number };
 }
 
-interface LearnedLanguage {
-  code: SupportedLanguage;
-  learnedItems?: LearnedItem[];
-  learnedListIds: number[];
-  SSRSettings: SSRSettings;
+interface LanguageFeatures {
+  langName: string;
+  langCode: SupportedLanguage;
+  flagCode: string;
+  requiresHelperKeys?: string[];
+  hasGender?: Gender[];
+  hasCases?: Case[];
 }
 
-interface Addendum {}
+interface GlobalSettings {
+  id: number;
+  supportedLanguages: SupportedLanguage[];
+  languageFeatures: LanguageFeatures[];
+  defaultSSRSettings: SSRSettings;
+  user: User;
+}
 
-interface LearningHistory {}
-
-interface Settings {}
-
-interface Credentials {}
-
-interface Profile {}
+interface LearnedLanguage {
+  code: SupportedLanguage;
+  flag: string;
+  learnedItems?: LearnedItem[];
+  learnedListIds?: number[];
+  customSSRSettings?: SSRSettings;
+}
 
 interface User {
   id: number;
   alias: string;
   native: SupportedLanguage;
   languages: LearnedLanguage[];
-  addendums?: Addendum[];
-  learningHistory?: LearningHistory;
-  settings: Settings;
-  credentials: Credentials;
-  profile: Profile;
 }
 
 export type {
   User,
-  Profile,
-  Credentials,
-  Settings,
-  LearningHistory,
-  Addendum,
+  GlobalSettings,
   LearnedLanguage,
   Lemma,
   SSRSettings,
   Item,
+  ItemsPopulatedWithTranslations,
   ReviewMode,
   List,
   PopulatedList,

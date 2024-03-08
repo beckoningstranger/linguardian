@@ -2,15 +2,20 @@
 
 import { useContext, useEffect, useRef, useState } from "react";
 
-import { Gender, Item } from "@/types";
-import { GlobalContext, languageFeatures } from "@/app/context/GlobalContext";
+import {
+  Gender,
+  ItemsPopulatedWithTranslations,
+  LanguageFeatures,
+} from "@/types";
+import { GlobalContext } from "@/app/context/GlobalContext";
 import MobileMenu from "../Menus/MobileMenu/MobileMenu";
 import HelperKeysSelector from "../Menus/HelperKeysSelector";
 import GenderReview from "./GenderReview";
 
 interface TranslationModeProps {
-  items: Item[];
-  listName?: string;
+  items: ItemsPopulatedWithTranslations[];
+  listName: string;
+  targetLanguageFeatures: LanguageFeatures;
 }
 
 type ReviewStatus = "neutral" | "correct" | "incorrect";
@@ -18,16 +23,14 @@ type ReviewStatus = "neutral" | "correct" | "incorrect";
 export default function TranslationMode({
   listName,
   items,
+  targetLanguageFeatures,
 }: TranslationModeProps) {
-  // Look up targetLanguage and user's native language
-  const {
-    user: { native },
-    currentlyActiveLanguage: target,
-    toggleMobileMenu,
-  } = useContext(GlobalContext);
+  const { toggleMobileMenu } = useContext(GlobalContext);
 
   const [reviewedItems, setReviewedItems] = useState<number>(0);
-  const [activeItem, setActiveItem] = useState<Item>(items[reviewedItems]);
+  const [activeItem, setActiveItem] = useState<ItemsPopulatedWithTranslations>(
+    items[reviewedItems]
+  );
   const [solution, setSolution] = useState<string>("");
   const [reviewStatus, setReviewStatus] = useState<ReviewStatus>("neutral");
   const [inputStyling, setInputStyling] = useState({
@@ -43,17 +46,16 @@ export default function TranslationMode({
 
   const handleWordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(activeItem);
-    // if (activeItem.translations[target] === solution) {
-    //   setReviewStatus("correct");
-    // } else {
-    //   setReviewStatus("incorrect");
-    // }
+    if (activeItem.name === solution) {
+      setReviewStatus("correct");
+    } else {
+      setReviewStatus("incorrect");
+    }
 
     // This is where we can trigger additional reviews for this item, i.e. gender
     if (
       activeItem.partOfSpeech === "noun" &&
-      languageFeatures[target].hasGender &&
+      targetLanguageFeatures.hasGender &&
       activeItem.name === solution
     ) {
       setGenderReview(true);
@@ -135,7 +137,7 @@ export default function TranslationMode({
           {/* <h3 className="my-3 text-2xl">{activeItem.translation[native]}</h3> */}
           <p className="text-sm">{activeItem.partOfSpeech}</p>
         </div>
-        {languageFeatures[target].requiresHelperKeys &&
+        {targetLanguageFeatures.requiresHelperKeys &&
           !showHelperKeys &&
           !genderReview && (
             <>
@@ -156,18 +158,18 @@ export default function TranslationMode({
 
         <MobileMenu>
           <HelperKeysSelector
-            target={target}
+            target={targetLanguageFeatures.langCode}
             handleHelperKeyClick={handleHelperKeyClick}
             toggleMobileMenu={toggleMobileMenu!}
-            languageFeatures={languageFeatures}
+            targetLanguageFeatures={targetLanguageFeatures}
             mobile={true}
           />
         </MobileMenu>
-        {languageFeatures[target].requiresHelperKeys && showHelperKeys && (
+        {targetLanguageFeatures.requiresHelperKeys && showHelperKeys && (
           <HelperKeysSelector
-            target={target}
+            target={targetLanguageFeatures.langCode}
             handleHelperKeyClick={handleHelperKeyClick}
-            languageFeatures={languageFeatures}
+            targetLanguageFeatures={targetLanguageFeatures}
             mobile={false}
           />
         )}
@@ -176,7 +178,7 @@ export default function TranslationMode({
           <form onSubmit={handleWordSubmit} className={inputStyling.form}>
             <input
               type="text"
-              placeholder={`Translate to ${languageFeatures[target].name}`}
+              placeholder={`Translate to ${targetLanguageFeatures.langName}`}
               value={solution}
               onChange={(e) => setSolution(e.target.value)}
               className={inputStyling.input}
@@ -190,8 +192,8 @@ export default function TranslationMode({
           <GenderReview
             genderInputRef={genderInputRef}
             activeItem={activeItem}
-            target={target}
-            languageFeatures={languageFeatures}
+            target={targetLanguageFeatures.langCode}
+            targetLanguageFeatures={targetLanguageFeatures}
             handleGenderSubmit={handleGenderSubmit}
           />
         )}

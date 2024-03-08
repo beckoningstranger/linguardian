@@ -1,19 +1,22 @@
-import { Item, LanguageFeatures, SupportedLanguage } from "@/types";
+import {
+  ItemsPopulatedWithTranslations,
+  LanguageFeatures,
+  SupportedLanguage,
+} from "@/types";
 import { RefObject } from "react";
 
 interface GenderReviewProps {
   genderInputRef: RefObject<HTMLInputElement>;
-  activeItem: Item;
+  activeItem: ItemsPopulatedWithTranslations;
   target: SupportedLanguage;
-  languageFeatures: Record<SupportedLanguage, LanguageFeatures>;
+  targetLanguageFeatures: LanguageFeatures;
   handleGenderSubmit: Function;
 }
 
 export default function GenderReview({
   genderInputRef,
   activeItem,
-  target,
-  languageFeatures,
+  targetLanguageFeatures,
   handleGenderSubmit,
 }: GenderReviewProps) {
   return (
@@ -24,8 +27,7 @@ export default function GenderReview({
         onKeyDown={(e) =>
           handleKeyDown(
             e,
-            languageFeatures,
-            target,
+            targetLanguageFeatures,
             handleGenderSubmit,
             genderInputRef
           )
@@ -39,7 +41,7 @@ export default function GenderReview({
         <p>What is {activeItem.name}&apos;s gender?</p>
       </div>
       <div className="my-2 flex justify-around">
-        {languageFeatures[target].hasGender?.map((gender) => {
+        {targetLanguageFeatures.hasGender?.map((gender) => {
           let buttonTag = (
             <span className="text-slate-600">
               <strong className="text-slate-900">{gender[0]}</strong>
@@ -63,34 +65,33 @@ export default function GenderReview({
 
 function handleKeyDown(
   e: React.KeyboardEvent,
-  languageFeatures: Record<SupportedLanguage, LanguageFeatures>,
-  target: SupportedLanguage,
+  targetLanguageFeatures: LanguageFeatures,
   handleGenderSubmit: Function,
   genderInputRef: RefObject<HTMLInputElement>
 ) {
   switch (e.key) {
     case "m":
-      if (languageFeatures[target].hasGender?.includes("masculine"))
+      if (targetLanguageFeatures.hasGender?.includes("masculine"))
         handleGenderSubmit("masculine");
       break;
     case "f":
-      if (languageFeatures[target].hasGender?.includes("feminine"))
+      if (targetLanguageFeatures.hasGender?.includes("feminine"))
         handleGenderSubmit("feminine");
       break;
     case "n":
-      if (languageFeatures[target].hasGender?.includes("neuter"))
+      if (targetLanguageFeatures.hasGender?.includes("neuter"))
         handleGenderSubmit("neuter");
       break;
     case "c":
-      if (languageFeatures[target].hasGender?.includes("common"))
+      if (targetLanguageFeatures.hasGender?.includes("common"))
         handleGenderSubmit("common");
       break;
     case "i":
-      if (languageFeatures[target].hasGender?.includes("inanimate"))
+      if (targetLanguageFeatures.hasGender?.includes("inanimate"))
         handleGenderSubmit("inanimate");
       break;
     case "a":
-      if (languageFeatures[target].hasGender?.includes("animate"))
+      if (targetLanguageFeatures.hasGender?.includes("animate"))
         handleGenderSubmit("animate");
       break;
     default:

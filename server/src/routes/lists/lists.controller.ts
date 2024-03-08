@@ -10,7 +10,7 @@ import {
   updateUnlockedReviewModes,
   getChapterNameByNumber,
 } from "../../models/lists.model.js";
-import { SupportedLanguage } from "../../types.js";
+import { PopulatedList, SupportedLanguage } from "../../types.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -64,7 +64,9 @@ export async function httpGetOnePopulatedListByListNumber(
   res: Response
 ) {
   const listNumber = parseInt(req.params.listNumber);
-  const listData = await getOnePopulatedListByListNumber(listNumber);
+  const listData = (await getOnePopulatedListByListNumber(
+    listNumber
+  )) as PopulatedList;
 
   if (listData) return res.status(200).json(listData);
   return res.status(404).json();

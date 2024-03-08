@@ -2,7 +2,6 @@
 
 import Flag from "react-world-flags";
 import AddNewLanguageOption from "./AddNewLanguageOption";
-import { languageFeatures } from "@/app/context/GlobalContext";
 import { SupportedLanguage } from "@/types";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -16,7 +15,7 @@ export default function MobileLanguageSelector() {
   user.languages.map((lang) =>
     languagesAndFlags.push({
       name: lang.code,
-      flagCode: languageFeatures[lang.code].flagCode,
+      flagCode: lang.code === "EN" ? "GB" : lang.code,
     })
   );
 

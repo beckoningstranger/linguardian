@@ -1,9 +1,8 @@
-"use client";
-import useGlobalContext from "@/app/hooks/useGlobalContext";
 import ListCard from "./ListCard";
 import { ReactNode } from "react";
-import AddNewListOption from "./Menus/AddNewListOption";
-import { SupportedLanguage } from "@/types";
+import Link from "next/link";
+import { HiOutlinePlusCircle } from "react-icons/hi2";
+import { SupportedLanguage, User } from "@/types";
 
 interface List {
   id: number;
@@ -19,10 +18,10 @@ const fakeListsData: List[] = [
   {
     id: 1,
     authorId: 1,
-    title: "Example course 1",
+    title: "Example list 1",
     private: false,
     items: [[1, 3, 4, 6]],
-    description: "Example course 1 description",
+    description: "Example list 1 description",
     // These stats will be calculated after fetching the list from the server
     stats: {
       unlearned: 20,
@@ -35,10 +34,10 @@ const fakeListsData: List[] = [
   {
     id: 2,
     authorId: 2,
-    title: "Example course 2 with a long course title",
+    title: "Example list 2 with a long list title",
     private: false,
     items: [[2, 4, 5]],
-    description: "Example course 2 description",
+    description: "Example list 2 description",
     // These stats will be calculated after fetching the list from the server
     stats: {
       unlearned: 20,
@@ -51,10 +50,10 @@ const fakeListsData: List[] = [
   {
     id: 3,
     authorId: 2,
-    title: "Example course 3",
+    title: "Example list 3",
     private: false,
     items: [[2, 4, 5]],
-    description: "Example course 2 description",
+    description: "Example list 2 description",
     // These stats will be calculated after fetching the list from the server
     stats: {
       unlearned: 20,
@@ -74,9 +73,15 @@ export interface ListStats {
   ignored: number;
 }
 
-export default function Dashboard() {
-  const { user, currentlyActiveLanguage } = useGlobalContext();
+interface DashboardProps {
+  user: User;
+  currentlyActiveLanguage: SupportedLanguage;
+}
 
+export default function Dashboard({
+  user,
+  currentlyActiveLanguage,
+}: DashboardProps) {
   let learnedLists: number[] = [];
   let currentLanguageIndex: number = 0;
 
@@ -91,7 +96,7 @@ export default function Dashboard() {
 
   // Get all the learned lists for the currently active language
   if (user.languages[currentLanguageIndex].code === currentlyActiveLanguage) {
-    user.languages[currentLanguageIndex].learnedListIds.map((list) =>
+    user.languages[currentLanguageIndex].learnedListIds?.map((list) =>
       learnedLists.push(list)
     );
   }
@@ -121,6 +126,19 @@ export default function Dashboard() {
         );
       }
     });
+  }
+
+  function AddNewListOption() {
+    return (
+      <Link
+        href={`/lists?lang=${currentlyActiveLanguage}`}
+        className="relative mx-6 flex h-full min-h-40 items-center justify-center rounded-md bg-slate-200 md:min-h-80 lg:mx-3 xl:mx-6"
+      >
+        <div className="flex size-4/5 items-center justify-center rounded-md bg-slate-100 text-6xl text-slate-600 transition-all hover:scale-110 md:text-8xl">
+          <HiOutlinePlusCircle />
+        </div>
+      </Link>
+    );
   }
 
   return (

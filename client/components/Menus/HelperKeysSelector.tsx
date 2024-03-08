@@ -1,7 +1,7 @@
 import { SupportedLanguage, LanguageFeatures } from "@/types";
 
 interface HelperKeysSelectorProps {
-  languageFeatures: Record<SupportedLanguage, LanguageFeatures>;
+  targetLanguageFeatures: LanguageFeatures;
   handleHelperKeyClick: Function;
   target: SupportedLanguage;
   toggleMobileMenu?: Function;
@@ -9,8 +9,7 @@ interface HelperKeysSelectorProps {
 }
 
 export default function HelperKeysSelector({
-  languageFeatures,
-  target,
+  targetLanguageFeatures,
   handleHelperKeyClick,
   toggleMobileMenu,
   mobile,
@@ -23,7 +22,7 @@ export default function HelperKeysSelector({
           : "flex justify-center flex-wrap"
       }`}
     >
-      {languageFeatures[target].requiresHelperKeys?.map((key) => (
+      {targetLanguageFeatures.requiresHelperKeys?.map((key) => (
         <button
           key={key}
           className={`m-2 bg-slate-300 border p-1 ${
