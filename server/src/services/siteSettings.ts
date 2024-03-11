@@ -85,7 +85,7 @@ const user: User = {
     {
       code: "FR",
       flag: "FR",
-      learnedListIds: [2],
+      learnedListIds: [1],
       learnedItems: [
         { itemId: 1, itemLevel: 1, nextReview: new Date() },
         { itemId: 3, itemLevel: 1, nextReview: new Date() },

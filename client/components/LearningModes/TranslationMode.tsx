@@ -12,6 +12,7 @@ import { GlobalContext } from "@/app/context/GlobalContext";
 import MobileMenu from "../Menus/MobileMenu/MobileMenu";
 import HelperKeysSelector from "../Menus/HelperKeysSelector";
 import GenderReview from "./GenderReview";
+import { useRouter } from "next/navigation";
 
 interface TranslationModeProps {
   items: ItemPopulatedWithTranslations[];
@@ -29,6 +30,8 @@ export default function TranslationMode({
   userNative,
 }: TranslationModeProps) {
   const { toggleMobileMenu } = useContext(GlobalContext);
+
+  const router = useRouter();
 
   const [reviewedItems, setReviewedItems] = useState<number>(0);
   const [activeItem, setActiveItem] = useState<ItemPopulatedWithTranslations>(
@@ -64,6 +67,14 @@ export default function TranslationMode({
       setGenderReview(true);
       return;
     }
+
+    if (
+      activeItem.partOfSpeech === "preposition" &&
+      targetLanguageFeatures.hasCases &&
+      activeItem.name === solution
+    )
+      console.log("Trigger Case review");
+
     finalizeReview();
   };
 
@@ -78,6 +89,7 @@ export default function TranslationMode({
         setActiveItem(items[reviewedItems + 1]);
       } else {
         console.log("Session complete");
+        router.push(`/dashboard?lang=${targetLanguageFeatures.langCode}`);
         // This is where we navigate back to the dashboard and load fresh data from backend
       }
     }, 1500);

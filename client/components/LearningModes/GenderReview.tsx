@@ -1,5 +1,4 @@
 import {
-  Gender,
   ItemPopulatedWithTranslations,
   LanguageFeatures,
   SupportedLanguage,
