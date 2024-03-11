@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import {
   Item,
+  ItemPopulatedWithTranslations,
   PopulatedList,
   ReviewMode,
   SupportedLanguage,
@@ -11,8 +12,8 @@ import { getSupportedLanguages } from "./settings.model.js";
 export async function getOnePopulatedListByListNumber(listNumber: number) {
   try {
     return await Lists.findOne({ listNumber: listNumber }).populate<{
-      units: { unitName: string; item: Item }[];
-    }>("units.item");
+      units: { unitName: string; item: ItemPopulatedWithTranslations }[];
+    }>({ path: "units.item", populate: { path: "translations.DE" } });
   } catch (err) {
     console.error(`Error getting list with listNumber ${listNumber}`);
   }
@@ -20,9 +21,6 @@ export async function getOnePopulatedListByListNumber(listNumber: number) {
 
 export async function getOnePopulatedListByListId(listId: Types.ObjectId) {
   try {
-    // return await Lists.findOne({ _id: listId }).populate<{
-    //   units: { unitName: string; item: Item }[];
-    // }>({ path: "units.item", populate: { path: "item.translations.DE" } });
     return await Lists.findOne({ _id: listId }).populate<{
       units: { unitName: string; item: Item }[];
     }>({ path: "units.item" });

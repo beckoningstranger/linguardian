@@ -1,5 +1,6 @@
 import {
-  ItemsPopulatedWithTranslations,
+  Gender,
+  ItemPopulatedWithTranslations,
   LanguageFeatures,
   SupportedLanguage,
 } from "@/types";
@@ -7,7 +8,7 @@ import { RefObject } from "react";
 
 interface GenderReviewProps {
   genderInputRef: RefObject<HTMLInputElement>;
-  activeItem: ItemsPopulatedWithTranslations;
+  activeItem: ItemPopulatedWithTranslations;
   target: SupportedLanguage;
   targetLanguageFeatures: LanguageFeatures;
   handleGenderSubmit: Function;

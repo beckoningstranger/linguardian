@@ -10,7 +10,7 @@ import {
   updateUnlockedReviewModes,
   getChapterNameByNumber,
 } from "../../models/lists.model.js";
-import { PopulatedList, SupportedLanguage } from "../../types.js";
+import { FullyPopulatedList, SupportedLanguage } from "../../types.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -28,10 +28,10 @@ export async function httpPostCSV(req: Request, res: Response) {
 
       // Now check whether we can unlock review modes
       await updateUnlockedReviewModes(newListId);
-      res.status(200).json({ message: newListNumber });
+      return res.status(200).json({ message: newListNumber });
     }
   } catch (err) {
-    res.status(400).json({
+    return res.status(400).json({
       message: `Unable to parse CSV! ${err}`,
     });
   } finally {
@@ -66,7 +66,7 @@ export async function httpGetOnePopulatedListByListNumber(
   const listNumber = parseInt(req.params.listNumber);
   const listData = (await getOnePopulatedListByListNumber(
     listNumber
-  )) as PopulatedList;
+  )) as FullyPopulatedList;
 
   if (listData) return res.status(200).json(listData);
   return res.status(404).json();

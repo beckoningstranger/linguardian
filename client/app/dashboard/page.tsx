@@ -20,7 +20,8 @@ export default async function DashboardPage({
   if (
     passedLanguage &&
     supportedLanguages &&
-    supportedLanguages.includes(passedLanguage)
+    supportedLanguages.includes(passedLanguage) &&
+    user
   ) {
     return (
       <>

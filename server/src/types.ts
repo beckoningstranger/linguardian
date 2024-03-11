@@ -66,8 +66,8 @@ interface Item {
   collocations?: Types.ObjectId[];
 }
 
-type ItemsPopulatedWithTranslations = Omit<Item, "translations"> & {
-  translations: Record<SupportedLanguage, Item>;
+type ItemPopulatedWithTranslations = Omit<Item, "translations"> & {
+  translations: Record<SupportedLanguage, ItemPopulatedWithTranslations[]>;
 };
 
 interface Lemma {
@@ -96,6 +96,10 @@ interface List {
   unlockedReviewModes?: Record<SupportedLanguage, Types.Array<ReviewMode>>;
   learners?: Types.ObjectId[];
 }
+
+type FullyPopulatedList = Omit<List, "units"> & {
+  units: { unitName: string; item: ItemPopulatedWithTranslations }[];
+};
 
 type PopulatedList = Omit<List, "units"> & {
   units: { unitName: string; item: Item }[];
@@ -158,10 +162,11 @@ export type {
   Lemma,
   SSRSettings,
   Item,
-  ItemsPopulatedWithTranslations,
+  ItemPopulatedWithTranslations,
   ReviewMode,
   List,
   PopulatedList,
+  FullyPopulatedList,
   LanguageFeatures,
   Gender,
   PartOfSpeech,

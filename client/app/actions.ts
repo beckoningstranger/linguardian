@@ -1,6 +1,11 @@
 "use server";
 
-import { LanguageFeatures, PopulatedList, SupportedLanguage } from "@/types";
+import {
+  FullyPopulatedList,
+  LanguageFeatures,
+  SupportedLanguage,
+  User,
+} from "@/types";
 import axios from "axios";
 
 export async function getSupportedLanguages() {
@@ -31,7 +36,9 @@ export async function getLanguageFeaturesForLanguage(
 
 export async function getUser() {
   try {
-    const response = await axios.get(`http://localhost:8000/settings/user`);
+    const response = await axios.get<User>(
+      `http://localhost:8000/settings/user`
+    );
     return response.data;
   } catch (err) {
     console.error(`Error getting user: ${err}`);
@@ -40,13 +47,13 @@ export async function getUser() {
 
 export async function getOnePopulatedListByListNumber(listNumber: number) {
   try {
-    const response = await axios.get(
+    const response = await axios.get<FullyPopulatedList>(
       `http://localhost:8000/lists/get/${listNumber}`
     );
-    return response.data as PopulatedList;
+    return response.data;
   } catch (err) {
     console.error(
-      `Error gettin list data for list number ${listNumber}: ${err}`
+      `Error getting list data for list number ${listNumber}: ${err}`
     );
   }
 }

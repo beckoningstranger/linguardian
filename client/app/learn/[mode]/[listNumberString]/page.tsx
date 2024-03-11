@@ -1,9 +1,10 @@
-import { ItemsPopulatedWithTranslations, SupportedLanguage } from "@/types";
+import { ItemPopulatedWithTranslations, LanguageFeatures, User } from "@/types";
 import LearnNewWordsMode from "@/components/LearningModes/LearnNewWordsMode";
 import TranslationMode from "@/components/LearningModes/TranslationMode";
 import {
   getLanguageFeaturesForLanguage,
   getOnePopulatedListByListNumber,
+  getUser,
 } from "@/app/actions";
 
 interface ReviewPageProps {
@@ -11,38 +12,39 @@ interface ReviewPageProps {
     mode: string;
     listNumberString: string;
   };
-  targetLanguage: SupportedLanguage;
 }
 
 export default async function ReviewPage({
   params: { mode, listNumberString },
-  targetLanguage,
 }: ReviewPageProps) {
   const listNumber = parseInt(listNumberString);
-  const targetLanguageFeatures = await getLanguageFeaturesForLanguage(
-    targetLanguage
-  );
 
-  const items: ItemsPopulatedWithTranslations[] = [];
+  const user: User | undefined = await getUser();
 
   // Fetch items here
   const listData = await getOnePopulatedListByListNumber(listNumber);
 
-  // console.log(listData?.units.map((x) => x.item.translations?.DE));
-  // console.log(listData?.units[0].item.translations?.DE);
-  // const items: ItemsPopulatedWithTranslations = [];
-  // if (listData && listData.units) listData?.units.map((item) => item.item);
+  const targetLanguageFeatures: LanguageFeatures | undefined =
+    await getLanguageFeaturesForLanguage(listData!.language);
+
+  const items: ItemPopulatedWithTranslations[] = [];
+  if (listData && listData.units) {
+    listData.units.map((item) => items.push(item.item));
+  }
 
   // This is where we read the list data to see what items need to be reviewed / can be learned
   // and then fetch all of them to then pass this information on into a Learning Mode.
-  if (targetLanguageFeatures && listData && listData.name)
+  if (targetLanguageFeatures && listData && listData.name && user)
     switch (mode) {
       case "translation":
-        <TranslationMode
-          targetLanguageFeatures={targetLanguageFeatures}
-          items={items}
-          listName={listData.name}
-        />;
+        return (
+          <TranslationMode
+            targetLanguageFeatures={targetLanguageFeatures}
+            items={items}
+            listName={listData.name}
+            userNative={user.native}
+          />
+        );
       case "learn":
         return <LearnNewWordsMode items={items} listName={listData.name} />;
       default:

@@ -4,8 +4,9 @@ import { useContext, useEffect, useRef, useState } from "react";
 
 import {
   Gender,
-  ItemsPopulatedWithTranslations,
+  ItemPopulatedWithTranslations,
   LanguageFeatures,
+  SupportedLanguage,
 } from "@/types";
 import { GlobalContext } from "@/app/context/GlobalContext";
 import MobileMenu from "../Menus/MobileMenu/MobileMenu";
@@ -13,9 +14,10 @@ import HelperKeysSelector from "../Menus/HelperKeysSelector";
 import GenderReview from "./GenderReview";
 
 interface TranslationModeProps {
-  items: ItemsPopulatedWithTranslations[];
+  items: ItemPopulatedWithTranslations[];
   listName: string;
   targetLanguageFeatures: LanguageFeatures;
+  userNative: SupportedLanguage;
 }
 
 type ReviewStatus = "neutral" | "correct" | "incorrect";
@@ -24,11 +26,12 @@ export default function TranslationMode({
   listName,
   items,
   targetLanguageFeatures,
+  userNative,
 }: TranslationModeProps) {
   const { toggleMobileMenu } = useContext(GlobalContext);
 
   const [reviewedItems, setReviewedItems] = useState<number>(0);
-  const [activeItem, setActiveItem] = useState<ItemsPopulatedWithTranslations>(
+  const [activeItem, setActiveItem] = useState<ItemPopulatedWithTranslations>(
     items[reviewedItems]
   );
   const [solution, setSolution] = useState<string>("");
@@ -82,7 +85,7 @@ export default function TranslationMode({
 
   const handleGenderSubmit = (gender: Gender) => {
     setSolution(solution + ` (${gender})`);
-    if (activeItem.gender && gender !== activeItem.gender)
+    if (activeItem.gender && !activeItem.gender.includes(gender))
       setReviewStatus("incorrect");
     setGenderReview(false);
     finalizeReview();
@@ -121,6 +124,13 @@ export default function TranslationMode({
     });
   }, [reviewStatus]);
 
+  const promptString = activeItem.translations[userNative]
+    .reduce((a, curr) => {
+      a.push(curr.name);
+      return a;
+    }, [] as string[])
+    .join(", ");
+
   return (
     <div className="flex flex-col justify-center transition-all">
       <div id="TopBar" className="w-full bg-slate-200 text-center text-xl">
@@ -134,7 +144,7 @@ export default function TranslationMode({
           id="Prompt"
           className={`w-95 rounded-md bg-slate-200 py-2 text-center`}
         >
-          {/* <h3 className="my-3 text-2xl">{activeItem.translation[native]}</h3> */}
+          <h3 className="my-3 text-2xl">{promptString}</h3>
           <p className="text-sm">{activeItem.partOfSpeech}</p>
         </div>
         {targetLanguageFeatures.requiresHelperKeys &&
