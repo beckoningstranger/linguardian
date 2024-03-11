@@ -9,7 +9,7 @@ import {
 import Lists from "./list.schema.js";
 import { getSupportedLanguages } from "./settings.model.js";
 
-export async function getOnePopulatedListByListNumber(
+export async function getOneFullyPopulatedListByListNumber(
   userNative: SupportedLanguage,
   listNumber: number
 ) {
@@ -32,6 +32,16 @@ export async function getOnePopulatedListByListId(listId: Types.ObjectId) {
     }>({ path: "units.item" });
   } catch (err) {
     console.error(`Error getting list with _id ${listId}`);
+  }
+}
+
+export async function getOnePopulatedListByListNumber(listNumber: number) {
+  try {
+    return await Lists.findOne({ listNumber: listNumber }).populate<{
+      units: { unitName: string; item: Item }[];
+    }>({ path: "units.item" });
+  } catch (err) {
+    console.error(`Error getting list with listNumber ${listNumber}`);
   }
 }
 
@@ -68,6 +78,10 @@ export async function getChapterNameByNumber(
 ) {
   const list = await Lists.findOne({ listNumber: listNumber });
   return list?.unitOrder ? list.unitOrder[chapterNumber - 1] : null;
+}
+
+export async function getBasicListData(listNumber: number) {
+  return await Lists.findOne({ listNumber: listNumber });
 }
 
 export async function updateUnlockedReviewModes(listId: Types.ObjectId) {

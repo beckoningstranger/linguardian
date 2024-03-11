@@ -3,6 +3,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 
 import {
+  Case,
   Gender,
   ItemPopulatedWithTranslations,
   LanguageFeatures,
@@ -11,7 +12,7 @@ import {
 import { GlobalContext } from "@/app/context/GlobalContext";
 import MobileMenu from "../Menus/MobileMenu/MobileMenu";
 import HelperKeysSelector from "../Menus/HelperKeysSelector";
-import GenderReview from "./GenderReview";
+import MoreReviews, { MoreReviewsMode } from "./MoreReviews";
 import { useRouter } from "next/navigation";
 
 interface TranslationModeProps {
@@ -45,10 +46,10 @@ export default function TranslationMode({
     form: "mt-0 flex justify-stretch transition-all rounded-md bg-slate-200",
   });
   const [showHelperKeys, setShowHelperKeys] = useState<boolean>(false);
-  const [genderReview, setGenderReview] = useState<boolean>(false);
+  const [moreReviews, setMoreReviews] = useState<MoreReviewsMode | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const genderInputRef = useRef<HTMLInputElement>(null);
+  const moreReviewsInputRef = useRef<HTMLInputElement>(null);
 
   const [sessionEnd, setSessionEnd] = useState(false);
 
@@ -60,22 +61,25 @@ export default function TranslationMode({
       setReviewStatus("incorrect");
     }
 
-    // This is where we can trigger additional reviews for this item, i.e. gender
+    // This is where we can trigger additional reviews for this item, i.e. gender...
     if (
       activeItem.partOfSpeech === "noun" &&
       targetLanguageFeatures.hasGender &&
       activeItem.name === solution
     ) {
-      setGenderReview(true);
+      setMoreReviews("gender");
       return;
     }
 
+    // ...or case
     if (
       activeItem.partOfSpeech === "preposition" &&
       targetLanguageFeatures.hasCases &&
       activeItem.name === solution
-    )
-      console.log("Trigger Case review");
+    ) {
+      setMoreReviews("case");
+      return;
+    }
 
     finalizeReview();
   };
@@ -90,7 +94,6 @@ export default function TranslationMode({
         setReviewedItems(reviewedItems + 1);
         setActiveItem(items[reviewedItems + 1]);
       } else {
-        console.log("Session complete");
         setSessionEnd(true);
         router.push(`/dashboard?lang=${targetLanguageFeatures.langCode}`);
         // This is where we navigate back to the dashboard and load fresh data from backend
@@ -98,11 +101,23 @@ export default function TranslationMode({
     }, 1500);
   }
 
-  const handleGenderSubmit = (gender: Gender) => {
-    setSolution(solution + ` (${gender})`);
-    if (activeItem.gender && !activeItem.gender.includes(gender))
-      setReviewStatus("incorrect");
-    setGenderReview(false);
+  const handleMoreReviewsSubmit = (
+    mode: MoreReviewsMode,
+    moreReviewsSolution: Gender | Case
+  ) => {
+    if (mode === "gender") {
+      setSolution(`${solution} (${moreReviewsSolution})`);
+      if (activeItem.gender && !activeItem.gender.includes(moreReviewsSolution))
+        setReviewStatus("incorrect");
+    }
+
+    if (mode === "case") {
+      setSolution(`${solution} (${moreReviewsSolution})`);
+      if (activeItem.case && !activeItem.case.includes(moreReviewsSolution))
+        setReviewStatus("incorrect");
+    }
+
+    setMoreReviews(null);
     finalizeReview();
   };
 
@@ -164,7 +179,7 @@ export default function TranslationMode({
         </div>
         {targetLanguageFeatures.requiresHelperKeys &&
           !showHelperKeys &&
-          !genderReview && (
+          !moreReviews && (
             <>
               <div
                 className="hidden rounded-md bg-slate-200 p-2 text-center md:block"
@@ -199,7 +214,7 @@ export default function TranslationMode({
           />
         )}
 
-        {!genderReview && (
+        {!moreReviews && (
           <form onSubmit={handleWordSubmit} className={inputStyling.form}>
             <input
               type="text"
@@ -214,13 +229,24 @@ export default function TranslationMode({
             />
           </form>
         )}
-        {genderReview && (
-          <GenderReview
-            genderInputRef={genderInputRef}
+        {moreReviews === "gender" && (
+          <MoreReviews
+            mode={moreReviews}
+            moreReviewsInputRef={moreReviewsInputRef}
             activeItem={activeItem}
             target={targetLanguageFeatures.langCode}
             targetLanguageFeatures={targetLanguageFeatures}
-            handleGenderSubmit={handleGenderSubmit}
+            handleSubmit={handleMoreReviewsSubmit}
+          />
+        )}
+        {moreReviews === "case" && (
+          <MoreReviews
+            mode={moreReviews}
+            moreReviewsInputRef={moreReviewsInputRef}
+            activeItem={activeItem}
+            target={targetLanguageFeatures.langCode}
+            targetLanguageFeatures={targetLanguageFeatures}
+            handleSubmit={handleMoreReviewsSubmit}
           />
         )}
       </div>

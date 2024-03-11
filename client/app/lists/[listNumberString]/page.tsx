@@ -1,5 +1,4 @@
-import { PopulatedList } from "@/types";
-import axios from "axios";
+import { getBasicListData } from "@/app/actions";
 import Link from "next/link";
 
 interface ListDetailProps {
@@ -13,23 +12,10 @@ export default async function ListDetailPage({
 }: ListDetailProps) {
   const listNumber = parseInt(listNumberString);
 
-  async function getListData(lNumber: number) {
-    "use server";
-    try {
-      return await axios.get<PopulatedList>(
-        `http://localhost:8000/lists/get/${lNumber}`
-      );
-    } catch (err) {
-      console.error(`Error fetching list number ${lNumber}: ${err}`);
-    }
-  }
+  const listData = await getBasicListData(listNumber);
 
-  const listData = await getListData(listNumber);
   if (listData && listData.data) {
     const { name, description, authors, unitOrder } = listData.data;
-
-    const numberOfUnits = unitOrder?.length;
-
     const renderedUnits = unitOrder?.map((unit, index) => {
       return (
         <Link key={unit} href={`/lists/${listNumber}/${index + 1}`}>

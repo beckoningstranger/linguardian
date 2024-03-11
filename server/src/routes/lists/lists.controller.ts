@@ -9,8 +9,15 @@ import {
   getOnePopulatedListByListNumber,
   updateUnlockedReviewModes,
   getChapterNameByNumber,
+  getBasicListData,
+  getOneFullyPopulatedListByListNumber,
 } from "../../models/lists.model.js";
-import { FullyPopulatedList, SupportedLanguage } from "../../types.js";
+import {
+  FullyPopulatedList,
+  Item,
+  PopulatedList,
+  SupportedLanguage,
+} from "../../types.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -59,13 +66,13 @@ export async function httpGetChapterNameByNumber(req: Request, res: Response) {
   return res.status(404).json();
 }
 
-export async function httpGetOnePopulatedListByListNumber(
+export async function httpGetOneFullyPopulatedListByListNumber(
   req: Request,
   res: Response
 ) {
   const userNative = req.params.userNative as SupportedLanguage;
   const listNumber = parseInt(req.params.listNumber);
-  const listData = (await getOnePopulatedListByListNumber(
+  const listData = (await getOneFullyPopulatedListByListNumber(
     userNative,
     listNumber
   )) as FullyPopulatedList;
@@ -78,4 +85,29 @@ export async function httpGetAllListsForLanguage(req: Request, res: Response) {
   const language = req.params.language as SupportedLanguage;
 
   return res.status(200).json(await getAllListsForLanguage(language));
+}
+
+export async function httpGetBasicListData(req: Request, res: Response) {
+  const listNumber = parseInt(req.params.listNumber);
+
+  return res.status(200).json(await getBasicListData(listNumber));
+}
+
+export async function httpGetUnitData(req: Request, res: Response) {
+  const listNumber = parseInt(req.params.listNumber);
+  const unitNumber = parseInt(req.params.unitNumber);
+
+  const listData = (await getOnePopulatedListByListNumber(
+    listNumber
+  )) as PopulatedList;
+
+  if (listData && listData.unitOrder) {
+    const unitName = listData.unitOrder[unitNumber - 1];
+    const unitItems: Item[] = [];
+    listData.units.map((item) => {
+      if (unitName === item.unitName) unitItems.push(item.item);
+    });
+    return res.status(200).json(unitItems);
+  }
+  return res.status(404).json();
 }
