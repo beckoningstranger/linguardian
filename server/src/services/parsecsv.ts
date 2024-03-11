@@ -229,7 +229,10 @@ async function UploadLemmas(lemmaArray: LemmaItem[]): Promise<void> {
   await Promise.all(lemmaUpload);
 }
 
-async function getAllLemmaObjectIdsForItem(item: string) {
+async function getAllLemmaObjectIdsForItem(
+  item: string,
+  itemLanguage: SupportedLanguage
+) {
   const allWordsinItem = item.split(" ");
   const lemmasForCurrentItem = allWordsinItem.filter(
     (word) => !placeholders.includes(word)
@@ -237,7 +240,7 @@ async function getAllLemmaObjectIdsForItem(item: string) {
 
   // Look up ObjectIds for found lemmas up in Mongodb
   const allFoundLemmaObjects = await Lemmas.find(
-    { name: { $in: lemmasForCurrentItem } },
+    { name: { $in: lemmasForCurrentItem }, language: itemLanguage },
     { _id: 1 }
   );
   const allFoundLemmaObjectIds = allFoundLemmaObjects.map(
@@ -254,7 +257,10 @@ async function harvestAndUploadItems(
   // Push item itself to harvestedItems
 
   // Get all lemmas object ids for the item itself
-  const allFoundLemmaObjectIds = await getAllLemmaObjectIdsForItem(item.name);
+  const allFoundLemmaObjectIds = await getAllLemmaObjectIdsForItem(
+    item.name,
+    item.language
+  );
 
   // Add as harvested item
   harvestedItems.push({
@@ -272,7 +278,8 @@ async function harvestAndUploadItems(
           if (translation.length > 0) {
             // Get all lemma object ids for this translation
             const allFoundLemmaObjectIds = await getAllLemmaObjectIdsForItem(
-              translation
+              translation,
+              lang as SupportedLanguage
             );
 
             // Add as harvested item
