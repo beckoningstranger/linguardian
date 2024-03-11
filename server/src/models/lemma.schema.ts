@@ -3,7 +3,7 @@ import { Lemma } from "../types.js";
 import Item from "./item.schema.js";
 
 const lemmaSchema = new Schema<Lemma>({
-  name: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
   language: {
     type: String,
     required: true,

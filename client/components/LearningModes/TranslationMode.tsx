@@ -50,6 +50,8 @@ export default function TranslationMode({
   const inputRef = useRef<HTMLInputElement>(null);
   const genderInputRef = useRef<HTMLInputElement>(null);
 
+  const [sessionEnd, setSessionEnd] = useState(false);
+
   const handleWordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (activeItem.name === solution) {
@@ -89,6 +91,7 @@ export default function TranslationMode({
         setActiveItem(items[reviewedItems + 1]);
       } else {
         console.log("Session complete");
+        setSessionEnd(true);
         router.push(`/dashboard?lang=${targetLanguageFeatures.langCode}`);
         // This is where we navigate back to the dashboard and load fresh data from backend
       }
@@ -207,6 +210,7 @@ export default function TranslationMode({
               autoFocus
               ref={inputRef}
               readOnly={reviewStatus !== "neutral"}
+              disabled={sessionEnd}
             />
           </form>
         )}

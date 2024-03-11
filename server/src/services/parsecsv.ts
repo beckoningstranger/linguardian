@@ -151,16 +151,15 @@ export async function parseCSV({
 
           // Add all relevant harvested items to the new list
           await addItemsToList(harvestedItems, newListsId, language);
-
-          // Define a tentative unit order
-          await defineUnitOrder(newListsId);
         })
         .on("error", (err) => {
           console.error(err);
         })
         .on("end", () => {
           // Wait 15 seconds for parsing and uploading to finish
-          setTimeout(() => {
+          setTimeout(async () => {
+            // Define a tentative unit order
+            await defineUnitOrder(newListsId);
             resolve({
               newListId: newListsId,
               newListNumber: newUploadedList.listNumber,
@@ -222,7 +221,9 @@ async function UploadLemmas(lemmaArray: LemmaItem[]): Promise<void> {
         { upsert: true }
       );
     } catch (err) {
-      console.error(`Error while processing lemma ${lemma}: ${err}`);
+      console.error(
+        `Error while processing lemma ${JSON.stringify(lemma)}: ${err}`
+      );
     }
   });
   await Promise.all(lemmaUpload);
@@ -313,7 +314,9 @@ async function harvestAndUploadItems(
           { upsert: true }
         );
       } catch (err) {
-        console.error(`Error while processing item ${item}: ${err}`);
+        console.error(
+          `Error while processing item ${JSON.stringify(item)}: ${err}`
+        );
       }
     }
   );

@@ -5,7 +5,6 @@ const itemSchema = new Schema<Item>({
   name: {
     type: String,
     required: true,
-    unique: true,
   },
   language: {
     type: String,
