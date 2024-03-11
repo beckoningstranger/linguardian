@@ -27,4 +27,7 @@ listsRouter.post("/uploadCSV", upload.single("csvfile"), httpPostCSV);
 
 listsRouter.get("/getAll/:language", httpGetAllListsForLanguage);
 
-listsRouter.get("/get/:listNumber", httpGetOnePopulatedListByListNumber);
+listsRouter.get(
+  "/get/:userNative/:listNumber",
+  httpGetOnePopulatedListByListNumber
+);

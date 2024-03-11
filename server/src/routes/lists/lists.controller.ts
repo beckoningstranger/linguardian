@@ -63,8 +63,10 @@ export async function httpGetOnePopulatedListByListNumber(
   req: Request,
   res: Response
 ) {
+  const userNative = req.params.userNative as SupportedLanguage;
   const listNumber = parseInt(req.params.listNumber);
   const listData = (await getOnePopulatedListByListNumber(
+    userNative,
     listNumber
   )) as FullyPopulatedList;
 

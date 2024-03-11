@@ -9,11 +9,17 @@ import {
 import Lists from "./list.schema.js";
 import { getSupportedLanguages } from "./settings.model.js";
 
-export async function getOnePopulatedListByListNumber(listNumber: number) {
+export async function getOnePopulatedListByListNumber(
+  userNative: SupportedLanguage,
+  listNumber: number
+) {
   try {
     return await Lists.findOne({ listNumber: listNumber }).populate<{
       units: { unitName: string; item: ItemPopulatedWithTranslations }[];
-    }>({ path: "units.item", populate: { path: "translations.DE" } });
+    }>({
+      path: "units.item",
+      populate: { path: "translations." + userNative },
+    });
   } catch (err) {
     console.error(`Error getting list with listNumber ${listNumber}`);
   }

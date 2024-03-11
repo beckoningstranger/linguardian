@@ -22,7 +22,10 @@ export default async function ReviewPage({
   const user: User | undefined = await getUser();
 
   // Fetch items here
-  const listData = await getOnePopulatedListByListNumber(listNumber);
+  const listData = await getOnePopulatedListByListNumber(
+    user!.native,
+    listNumber
+  );
 
   const targetLanguageFeatures: LanguageFeatures | undefined =
     await getLanguageFeaturesForLanguage(listData!.language);

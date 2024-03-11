@@ -45,10 +45,13 @@ export async function getUser() {
   }
 }
 
-export async function getOnePopulatedListByListNumber(listNumber: number) {
+export async function getOnePopulatedListByListNumber(
+  userNative: SupportedLanguage,
+  listNumber: number
+) {
   try {
     const response = await axios.get<FullyPopulatedList>(
-      `http://localhost:8000/lists/get/${listNumber}`
+      `http://localhost:8000/lists/get/${userNative}/${listNumber}`
     );
     return response.data;
   } catch (err) {

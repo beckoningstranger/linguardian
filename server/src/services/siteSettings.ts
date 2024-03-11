@@ -80,7 +80,7 @@ const supportedLanguages: SupportedLanguage[] = ["DE", "EN", "FR", "CN"];
 const user: User = {
   id: 1,
   alias: "User1",
-  native: "DE",
+  native: "FR",
   languages: [
     {
       code: "FR",
