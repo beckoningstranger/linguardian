@@ -51,7 +51,7 @@ interface Item {
   language: SupportedLanguage;
   partOfSpeech: PartOfSpeech;
   lemmas?: Types.ObjectId[];
-  definitions?: string;
+  definition?: string;
   translations?: Partial<Record<SupportedLanguage, Types.ObjectId[]>>;
   gender?: Gender;
   pluralForm?: string;
@@ -62,7 +62,6 @@ interface Item {
   IPA?: Types.Array<string>;
   tags?: Types.Array<Tags>;
   frequency?: Frequency;
-  featuresInList?: Types.ObjectId[];
   collocations?: Types.ObjectId[];
 }
 
@@ -83,11 +82,20 @@ type ReviewMode =
   | "Dictionary"
   | "Visual";
 
+type Difficulty =
+  | "Novice"
+  | "Advanced Beginner"
+  | "Intermediate"
+  | "Advanced"
+  | "Afficionado";
+
 interface List {
   name: string;
   listNumber: number;
   description?: string;
+  image?: string;
   language: SupportedLanguage;
+  difficulty?: Difficulty;
   // authors: Types.ObjectId[];
   authors: string[];
   private: Boolean;

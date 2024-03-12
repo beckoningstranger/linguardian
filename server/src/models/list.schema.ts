@@ -14,9 +14,15 @@ const listSchema = new Schema<List>({
   description: {
     type: String,
   },
+  image: {
+    type: String,
+  },
   language: {
     type: String,
     required: true,
+  },
+  difficulty: {
+    type: String,
   },
   // authors: [
   //   {

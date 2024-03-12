@@ -21,19 +21,8 @@ const itemSchema = new Schema<Item>({
       required: true,
     },
   ],
-  definitions: {
-    DE: {
-      type: String,
-    },
-    EN: {
-      type: String,
-    },
-    CN: {
-      type: String,
-    },
-    FR: {
-      type: String,
-    },
+  definition: {
+    type: String,
   },
   translations: {
     DE: [
@@ -90,13 +79,6 @@ const itemSchema = new Schema<Item>({
   frequency: {
     type: String,
   },
-  featuresInList: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "List",
-      required: true,
-    },
-  ],
   collocations: [
     {
       type: Schema.Types.ObjectId,
