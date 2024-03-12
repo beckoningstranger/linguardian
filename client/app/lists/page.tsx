@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { PopulatedList, SupportedLanguage } from "@/types";
 import { getSupportedLanguages } from "../actions";
+import ListStoreCard from "@/components/ListStoreCard";
 
 interface ListStoreProps {
   // searchParams?: { [key: string]: string | string[] | undefined };
@@ -24,25 +25,32 @@ export default async function ListStore({ searchParams }: ListStoreProps) {
     )) as PopulatedList[];
 
     const renderedLists = data.map((list) => (
-      <Link href={`/lists/${list.listNumber}`} key={list.listNumber}>
-        {list.name} ({list.units.length} items to learn)
-      </Link>
+      <ListStoreCard
+        authors={list.authors}
+        title={list.name}
+        description={list.description}
+        image={list.image}
+        numberOfItems={list.units.length}
+        numberOfUnits={list.unitOrder?.length}
+        difficulty={list.difficulty}
+        listNumber={list.listNumber}
+        key={list.listNumber}
+      />
     ));
 
     return (
-      <div className="m-3 flex flex-col p-2">
-        <p className="m-4">List Store</p>
-
-        <div className="m-4">
+      <div>
+        <div className="m-3 grid justify-center p-2 md:justify-normal">
+          {renderedLists}
+        </div>
+        <div>
           <Link
             href="/lists/new"
-            className="m-2 rounded border border-black bg-slate-200 p-3"
+            className="absolute bottom-1 left-1 m-4 rounded border border-black bg-slate-200 p-3"
           >
             Upload CSV
           </Link>
         </div>
-        <div>Our lists for this language:</div>
-        <div>{renderedLists}</div>
       </div>
     );
   } else {

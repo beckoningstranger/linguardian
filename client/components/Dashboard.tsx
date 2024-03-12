@@ -1,4 +1,4 @@
-import ListCard from "./ListCard";
+import ListDashboardCard from "./ListDashboardCard";
 import { ReactNode } from "react";
 import Link from "next/link";
 import { HiOutlinePlusCircle } from "react-icons/hi2";
@@ -116,7 +116,7 @@ export default function Dashboard({
         // so we can pass this information down
         // Possible statuses are "review", "add" and "practice"
         return (
-          <ListCard
+          <ListDashboardCard
             key={list.id}
             id={list.id}
             title={list.title}

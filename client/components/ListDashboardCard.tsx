@@ -9,14 +9,19 @@ import { ListStats } from "./Dashboard";
 import ListBarChart from "@/components/Charts/ListBarChart";
 import ListPieChart from "./Charts/ListPieChart";
 
-interface ListCardProps {
+interface ListDashboardCardProps {
   title: string;
   id: number;
   status: string;
   stats: ListStats;
 }
 
-export default function ListCard({ title, status, stats, id }: ListCardProps) {
+export default function ListDashboardCard({
+  title,
+  status,
+  stats,
+  id,
+}: ListDashboardCardProps) {
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [showAllReviewModes, setShowAllReviewModes] = useState(false);
   const loaded = useLoaded();
