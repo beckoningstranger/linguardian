@@ -1,8 +1,7 @@
-import axios, { AxiosError } from "axios";
 import Link from "next/link";
 
 import { PopulatedList, SupportedLanguage } from "@/types";
-import { getSupportedLanguages } from "../actions";
+import { getListsByLanguage, getSupportedLanguages } from "../actions";
 import ListStoreCard from "@/components/ListStoreCard";
 
 interface ListStoreProps {
@@ -14,17 +13,15 @@ export default async function ListStore({ searchParams }: ListStoreProps) {
   // Make sure passed language is a supported language
   const supportedLanguages = (await getSupportedLanguages()) as string[];
   const passedLanguage = searchParams?.lang?.toUpperCase() as SupportedLanguage;
+  const listsForLanguage = await getListsByLanguage(passedLanguage);
 
   if (
     passedLanguage &&
     supportedLanguages &&
-    supportedLanguages.includes(passedLanguage)
+    supportedLanguages.includes(passedLanguage) &&
+    listsForLanguage
   ) {
-    const data = (await fetchListsByLanguage(
-      passedLanguage
-    )) as PopulatedList[];
-
-    const renderedLists = data.map((list) => (
+    const renderedLists = listsForLanguage.map((list) => (
       <ListStoreCard
         authors={list.authors}
         title={list.name}
@@ -55,20 +52,5 @@ export default async function ListStore({ searchParams }: ListStoreProps) {
     );
   } else {
     return "Invalid language";
-  }
-}
-
-async function fetchListsByLanguage(language: SupportedLanguage) {
-  "use server";
-  try {
-    const { data } = await axios.get(
-      `http://localhost:8000/lists/getAll/${language}`
-    );
-    const fetchedLists = data;
-    return fetchedLists;
-  } catch (err) {
-    if (err instanceof AxiosError) {
-      return { message: err.response?.data.message };
-    } else return { message: "Something went wrong" };
   }
 }

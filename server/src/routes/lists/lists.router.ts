@@ -1,10 +1,11 @@
 import express from "express";
 import {
   httpGetAllListsForLanguage,
-  httpGetBasicListData,
-  httpGetOneFullyPopulatedListByListNumber,
-  httpGetUnitData,
+  httpGetPopulatedList,
+  httpGetFullyPopulatedListByListNumber,
+  httpGetUnitItems,
   httpPostCSV,
+  httpGetList,
 } from "./lists.controller.js";
 import multer from "multer";
 import path from "path";
@@ -27,13 +28,15 @@ export const listsRouter = express.Router();
 
 listsRouter.post("/uploadCSV", upload.single("csvfile"), httpPostCSV);
 
-listsRouter.get("/getAll/:language", httpGetAllListsForLanguage);
+listsRouter.get("/getAllLists/:language", httpGetAllListsForLanguage);
 
-listsRouter.get("/getBasicListData/:listNumber", httpGetBasicListData);
+listsRouter.get("/getList/:listNumber", httpGetList);
 
-listsRouter.get("/getUnitData/:listNumber/:unitNumber", httpGetUnitData);
+listsRouter.get("/getPopulatedList/:listNumber", httpGetPopulatedList);
 
 listsRouter.get(
-  "/get/:userNative/:listNumber",
-  httpGetOneFullyPopulatedListByListNumber
+  "/getFullyPopulatedList/:userNative/:listNumber",
+  httpGetFullyPopulatedListByListNumber
 );
+
+listsRouter.get("/getUnitItems/:listNumber/:unitNumber", httpGetUnitItems);

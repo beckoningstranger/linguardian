@@ -16,7 +16,7 @@ export default function ListStoreCard({
   authors,
   title,
   description = "No description entered yet...",
-  image = "https:/picsum.photos/150",
+  image = "https:/picsum.photos/150?grayscale",
   numberOfItems,
   numberOfUnits = 1,
   difficulty = "Undetermined",
@@ -49,7 +49,7 @@ export default function ListStoreCard({
               <Image
                 width={50}
                 height={50}
-                src="https://picsum.photos/50"
+                src="https://picsum.photos/50?grayscale"
                 alt="Icon for Items"
                 className="rounded-md"
               />

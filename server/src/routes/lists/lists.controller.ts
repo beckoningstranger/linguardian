@@ -9,8 +9,9 @@ import {
   getOnePopulatedListByListNumber,
   updateUnlockedReviewModes,
   getChapterNameByNumber,
-  getBasicListData,
-  getOneFullyPopulatedListByListNumber,
+  getList,
+  getPopulatedList,
+  getFullyPopulatedListByListNumber,
 } from "../../models/lists.model.js";
 import {
   FullyPopulatedList,
@@ -66,19 +67,34 @@ export async function httpGetChapterNameByNumber(req: Request, res: Response) {
   return res.status(404).json();
 }
 
-export async function httpGetOneFullyPopulatedListByListNumber(
+export async function httpGetFullyPopulatedListByListNumber(
   req: Request,
   res: Response
 ) {
   const userNative = req.params.userNative as SupportedLanguage;
   const listNumber = parseInt(req.params.listNumber);
-  const listData = (await getOneFullyPopulatedListByListNumber(
+  const listData = (await getFullyPopulatedListByListNumber(
     userNative,
     listNumber
   )) as FullyPopulatedList;
 
-  if (listData) return res.status(200).json(listData);
+  if (listData)
+    return res
+      .status(200)
+      .json(await getFullyPopulatedListByListNumber(userNative, listNumber));
   return res.status(404).json();
+}
+
+export async function httpGetPopulatedList(req: Request, res: Response) {
+  const listNumber = parseInt(req.params.listNumber);
+
+  return res.status(200).json(await getPopulatedList(listNumber));
+}
+
+export async function httpGetList(req: Request, res: Response) {
+  const listNumber = parseInt(req.params.listNumber);
+
+  return res.status(200).json(await getList(listNumber));
 }
 
 export async function httpGetAllListsForLanguage(req: Request, res: Response) {
@@ -87,13 +103,7 @@ export async function httpGetAllListsForLanguage(req: Request, res: Response) {
   return res.status(200).json(await getAllListsForLanguage(language));
 }
 
-export async function httpGetBasicListData(req: Request, res: Response) {
-  const listNumber = parseInt(req.params.listNumber);
-
-  return res.status(200).json(await getBasicListData(listNumber));
-}
-
-export async function httpGetUnitData(req: Request, res: Response) {
+export async function httpGetUnitItems(req: Request, res: Response) {
   const listNumber = parseInt(req.params.listNumber);
   const unitNumber = parseInt(req.params.unitNumber);
 

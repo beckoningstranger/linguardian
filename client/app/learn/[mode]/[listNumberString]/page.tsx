@@ -3,7 +3,7 @@ import LearnNewWordsMode from "@/components/LearningModes/LearnNewWordsMode";
 import TranslationMode from "@/components/LearningModes/TranslationMode";
 import {
   getLanguageFeaturesForLanguage,
-  getOnePopulatedListByListNumber,
+  getFullyPopulatedListByListNumber,
   getUser,
 } from "@/app/actions";
 
@@ -22,7 +22,7 @@ export default async function ReviewPage({
   const user: User | undefined = await getUser();
 
   // Fetch items here
-  const listData = await getOnePopulatedListByListNumber(
+  const listData = await getFullyPopulatedListByListNumber(
     user!.native,
     listNumber
   );

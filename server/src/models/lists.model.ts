@@ -9,7 +9,7 @@ import {
 import Lists from "./list.schema.js";
 import { getSupportedLanguages } from "./settings.model.js";
 
-export async function getOneFullyPopulatedListByListNumber(
+export async function getFullyPopulatedListByListNumber(
   userNative: SupportedLanguage,
   listNumber: number
 ) {
@@ -21,7 +21,17 @@ export async function getOneFullyPopulatedListByListNumber(
       populate: { path: "translations." + userNative },
     });
   } catch (err) {
-    console.error(`Error getting list with listNumber ${listNumber}`);
+    console.error(
+      `Error getting fully populated list with listNumber ${listNumber}`
+    );
+  }
+}
+
+export async function getList(listNumber: number) {
+  try {
+    return await Lists.findOne({ listNumber: listNumber });
+  } catch (err) {
+    console.error(`Error getting list with listNumber ${listNumber} `);
   }
 }
 
@@ -31,7 +41,7 @@ export async function getOnePopulatedListByListId(listId: Types.ObjectId) {
       units: { unitName: string; item: Item }[];
     }>({ path: "units.item" });
   } catch (err) {
-    console.error(`Error getting list with _id ${listId}`);
+    console.error(`Error getting populated list with _id ${listId}`);
   }
 }
 
@@ -41,7 +51,7 @@ export async function getOnePopulatedListByListNumber(listNumber: number) {
       units: { unitName: string; item: Item }[];
     }>({ path: "units.item" });
   } catch (err) {
-    console.error(`Error getting list with listNumber ${listNumber}`);
+    console.error(`Error getting populated list with listNumber ${listNumber}`);
   }
 }
 
@@ -80,7 +90,7 @@ export async function getChapterNameByNumber(
   return list?.unitOrder ? list.unitOrder[chapterNumber - 1] : null;
 }
 
-export async function getBasicListData(listNumber: number) {
+export async function getPopulatedList(listNumber: number) {
   return await Lists.findOne({ listNumber: listNumber });
 }
 
