@@ -1,4 +1,4 @@
-import { GlobalSettings } from "../types.js";
+import { GlobalSettings, SupportedLanguage } from "../types.js";
 import Settings from "./settings.schema.js";
 
 export async function getAllSettings() {
@@ -33,7 +33,19 @@ export async function getLanguageFeatures() {
       return response.languageFeatures;
     }
   } catch (err) {
-    console.error(`Error getting supported Languages: ${err}`);
+    console.error(`Error getting language features: ${err}`);
+  }
+}
+
+export async function getLanguageFeaturesForLanguage(
+  language: SupportedLanguage
+) {
+  const allLanguageFeatures = await getLanguageFeatures();
+  if (allLanguageFeatures) {
+    const [featuresForLanguage] = allLanguageFeatures.filter(
+      (lang) => lang.langCode === language
+    );
+    return featuresForLanguage;
   }
 }
 
@@ -43,6 +55,6 @@ export async function updateSiteSettings(updatedSettings: GlobalSettings) {
       upsert: true,
     });
   } catch (err) {
-    console.log(`Error updating settings: ${err}`);
+    console.error(`Error updating settings: ${err}`);
   }
 }

@@ -99,7 +99,7 @@ interface List {
   // authors: Types.ObjectId[];
   authors: string[];
   private: Boolean;
-  units?: { unitName: string; item: Types.ObjectId };
+  units?: { unitName: string; item: Types.ObjectId }[];
   unitOrder?: string[];
   unlockedReviewModes?: Record<SupportedLanguage, Types.Array<ReviewMode>>;
   learners?: Types.ObjectId[];
@@ -163,8 +163,8 @@ interface LearnedLanguage {
   code: SupportedLanguage;
   name: string;
   flag: string;
-  learnedItems?: LearnedItem[];
-  learnedLists?: Types.ObjectId[];
+  learnedItems: LearnedItem[];
+  learnedLists: Types.ObjectId[];
   customSRSettings?: SRSettings;
 }
 

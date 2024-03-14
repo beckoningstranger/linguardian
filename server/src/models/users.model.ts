@@ -1,4 +1,15 @@
-import { LearnedItem, List, SupportedLanguage, User } from "../types.js";
+import {
+  LearnedItem,
+  LearnedLanguageWithPopulatedLists,
+  List,
+  SupportedLanguage,
+  User,
+} from "../types.js";
+import { getList } from "./lists.model.js";
+import {
+  getAllSettings,
+  getLanguageFeaturesForLanguage,
+} from "./settings.model.js";
 import Users from "./users.schema.js";
 
 export async function getUserById(id: number) {
@@ -29,15 +40,56 @@ export async function getUserWithPopulatedLearnedLists(
       { id: userId },
       { languages: 1, _id: 0 }
     ).populate<{
-      languages: {
-        code: SupportedLanguage;
-        name: string;
-        flag: string;
-        learnedItems: LearnedItem[];
-        learnedLists: List[];
-      };
-    }>({ path: `languages.${language}.learnedLists` });
+      languages: LearnedLanguageWithPopulatedLists[];
+    }>(`languages.learnedLists`);
   } catch (err) {
     console.error(`Error getting learned lists for language ${language}`);
+  }
+}
+
+export async function addListToDashboard(userId: number, listNumber: number) {
+  try {
+    const list = await getList(listNumber);
+    return await Users.updateOne(
+      { id: userId, "languages.code": list?.language },
+      {
+        $push: { "languages.$.learnedLists": list?._id },
+      }
+    );
+  } catch (err) {
+    console.error(
+      `Error adding list ${listNumber} to user ${userId}'s dashboard: ${err}`
+    );
+  }
+}
+
+export async function addNewLanguage(
+  userId: number,
+  language: SupportedLanguage
+) {
+  try {
+    const languageFeatures = await getLanguageFeaturesForLanguage(language);
+    const siteSettings = await getAllSettings();
+    if (languageFeatures) {
+      return await Users.updateOne(
+        { id: userId },
+        {
+          $push: {
+            languages: {
+              name: languageFeatures.langName,
+              code: languageFeatures.langCode,
+              flag: languageFeatures.flagCode,
+              learnedItems: [],
+              learnedLists: [],
+              customSRSettings: siteSettings?.defaultSRSettings,
+            },
+          },
+        }
+      );
+    }
+  } catch (err) {
+    console.error(
+      `Error adding language ${language} for user ${userId}: ${err}`
+    );
   }
 }

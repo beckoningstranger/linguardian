@@ -1,4 +1,10 @@
-import { getPopulatedList, getUserById } from "@/app/actions";
+import {
+  getLanguageFeaturesForLanguage,
+  getLearnedLanguageData,
+  getPopulatedList,
+  getUserById,
+} from "@/app/actions";
+import { LearnedLanguageWithPopulatedLists, SupportedLanguage } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -25,7 +31,11 @@ export default async function ListDetailPage({
       unitOrder,
       units,
       language,
+      listNumber,
     } = listData.data;
+
+    const languageFeatures = await getLanguageFeaturesForLanguage(language);
+    const learnedLanguageData = await getLearnedLanguageData(user.id, language);
 
     const renderedUnits = unitOrder?.map((unitName, index) => {
       const noOfItemsInUnit = units.reduce((a, itemInUnit) => {
@@ -59,9 +69,29 @@ export default async function ListDetailPage({
     // Calculate how many words the user already knows
     const learned = 20;
 
-    if (renderedUnits)
+    if (renderedUnits && languageFeatures)
       return (
-        <>
+        <div className="flex flex-col">
+          {!learnedLanguageData && (
+            <Link
+              href={`/lists/add?lang=${language}&user=${user.id}&list=${listNumber}&newLanguage=yes`}
+              className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
+            >
+              Start learning {languageFeatures.langName} with this list!
+            </Link>
+          )}
+          {learnedLanguageData &&
+            userIsNotAlreadyLearningThisList(
+              learnedLanguageData,
+              listNumber
+            ) && (
+              <Link
+                href={`/lists/add?lang=${language}&user=${user.id}&list=${listNumber}`}
+                className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
+              >
+                Add this list to your dashboard
+              </Link>
+            )}
           <div
             id="header"
             className="relative flex border-y-2 border-slate-300"
@@ -92,18 +122,36 @@ export default async function ListDetailPage({
           <div id="units" className="flex flex-col items-center gap-y-2">
             {renderedUnits}
           </div>
-        </>
+        </div>
       );
   }
 
   return (
     <div>
       <h1>List not found</h1>
-      <p>This list does not exist yet. </p>
+      <p>
+        Either the list does not exist yet or there was a problem fetching it
+        from the database.
+      </p>
       <div>
-        <Link href="/">Back to Dashboard</Link>{" "}
+        <Link href="/">Back to Dashboard</Link>
         <Link href="/lists">List Store</Link>
       </div>
     </div>
   );
+}
+
+function userIsNotAlreadyLearningThisList(
+  learnedLanguageData: LearnedLanguageWithPopulatedLists | undefined,
+  listNumber: number
+) {
+  if (learnedLanguageData) {
+    const allListNumberssLearnedByUser: number[] =
+      learnedLanguageData.learnedLists.map((list) => list.listNumber);
+    if (allListNumberssLearnedByUser.includes(listNumber)) return false;
+  }
+
+  console.log("userIsNotAlreadyLearningThisList, returning true");
+
+  return true;
 }

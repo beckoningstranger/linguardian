@@ -11,6 +11,7 @@ import {
   User,
 } from "@/types";
 import axios from "axios";
+import { revalidatePath } from "next/cache";
 
 export async function getSupportedLanguages() {
   try {
@@ -110,18 +111,51 @@ export async function getListsByLanguage(language: SupportedLanguage) {
   }
 }
 
-export async function getPopulatedLearnedLists(
+export async function getLearnedLanguageData(
   userId: number,
   language: SupportedLanguage
 ) {
   try {
     const response = await axios.get<LearnedLanguageWithPopulatedLists>(
-      `http://localhost:8000/users/getLearnedLists/${language}/${userId}`
+      `http://localhost:8000/users/getLearnedLanguageData/${language}/${userId}`
     );
     return response.data;
   } catch (err) {
     console.error(
       `Error fetching learned lists for language ${language} for user ${userId}: ${err}`
+    );
+  }
+}
+
+export async function addListToDashboard(userId: number, listId: number) {
+  try {
+    await axios.post(
+      `http://localhost:8000/users/addListToDashboard/${userId}/${listId}`
+    );
+    revalidatePath("/dashboard");
+    revalidatePath(`/lists/${listId}`);
+  } catch (err) {
+    console.error(
+      `Error adding list number ${listId} user ${userId}'s dashboard.}`
+    );
+  }
+}
+
+export async function addNewLanguageToLearn(
+  userId: number,
+  language: SupportedLanguage
+) {
+  try {
+    await axios.post(
+      `http://localhost:8000/users/addNewLanguage/${userId}/${language}`
+    );
+    revalidatePath("/dashboard");
+    revalidatePath("/dictionary");
+    revalidatePath("/lists");
+    revalidatePath("/languages/new");
+  } catch (err) {
+    console.error(
+      `Error adding ${language} as a new language for user ${userId}: ${err}`
     );
   }
 }

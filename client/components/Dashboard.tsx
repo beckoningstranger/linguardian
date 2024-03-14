@@ -8,7 +8,7 @@ import {
   SupportedLanguage,
   User,
 } from "@/types";
-import { getPopulatedLearnedLists } from "@/app/actions";
+import { getLearnedLanguageData } from "@/app/actions";
 
 const fakeListsData: ListWithStats[] = [
   {
@@ -27,38 +27,38 @@ const fakeListsData: ListWithStats[] = [
       ignored: 3,
     },
   },
-  {
-    listNumber: 2,
-    authors: ["Joe"],
-    name: "Example list 2 with a long list title",
-    private: false,
-    language: "DE",
-    description: "Example list 2 description",
-    // These stats will be calculated after fetching the list from the server
-    stats: {
-      unlearned: 20,
-      readyToReview: 33,
-      learned: 50,
-      learning: 20,
-      ignored: 3,
-    },
-  },
-  {
-    listNumber: 3,
-    authors: ["Joe"],
-    name: "Example list 3",
-    private: false,
-    language: "FR",
-    description: "Example list 2 description",
-    // These stats will be calculated after fetching the list from the server
-    stats: {
-      unlearned: 20,
-      readyToReview: 33,
-      learned: 0,
-      learning: 40,
-      ignored: 3,
-    },
-  },
+  // {
+  //   listNumber: 2,
+  //   authors: ["Joe"],
+  //   name: "Example list 2 with a long list title",
+  //   private: false,
+  //   language: "DE",
+  //   description: "Example list 2 description",
+  //   // These stats will be calculated after fetching the list from the server
+  //   stats: {
+  //     unlearned: 20,
+  //     readyToReview: 33,
+  //     learned: 50,
+  //     learning: 20,
+  //     ignored: 3,
+  //   },
+  // },
+  // {
+  //   listNumber: 3,
+  //   authors: ["Joe"],
+  //   name: "Example list 3",
+  //   private: false,
+  //   language: "FR",
+  //   description: "Example list 2 description",
+  //   // These stats will be calculated after fetching the list from the server
+  //   stats: {
+  //     unlearned: 20,
+  //     readyToReview: 33,
+  //     learned: 0,
+  //     learning: 40,
+  //     ignored: 3,
+  //   },
+  // },
 ];
 
 interface DashboardProps {
@@ -76,7 +76,7 @@ export default async function Dashboard({
   // Get all the learned lists for the currently active language
   const userLearningDataForActiveLanguage:
     | LearnedLanguageWithPopulatedLists
-    | undefined = await getPopulatedLearnedLists(
+    | undefined = await getLearnedLanguageData(
     user.id,
     currentlyActiveLanguage
   );

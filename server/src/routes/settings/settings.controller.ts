@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import {
   getAllSettings,
-  getLanguageFeatures,
+  getLanguageFeaturesForLanguage,
   getSupportedLanguages,
 } from "../../models/settings.model.js";
+import { SupportedLanguage } from "../../types.js";
 
 export async function httpGetAllSettings(req: Request, res: Response) {
   return res.status(200).json(await getAllSettings());
@@ -17,14 +18,9 @@ export async function httpGetLanguageFeaturesForLanguage(
   req: Request,
   res: Response
 ) {
-  const requestedLanguage = req.params.language;
+  const requestedLanguage = req.params.language as SupportedLanguage;
 
-  const allLanguageFeatures = await getLanguageFeatures();
-  if (allLanguageFeatures) {
-    const [featuresForLanguage] = allLanguageFeatures.filter(
-      (lang) => lang.langCode === requestedLanguage
-    );
-    return res.status(200).json(featuresForLanguage);
-  }
-  return res.status(404).json();
+  return res
+    .status(200)
+    .json(await getLanguageFeaturesForLanguage(requestedLanguage));
 }

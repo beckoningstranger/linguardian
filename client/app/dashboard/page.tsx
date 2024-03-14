@@ -15,7 +15,7 @@ export default async function DashboardPage({
   // Make sure passed language is a supported language
   const supportedLanguages = await getSupportedLanguages();
   const passedLanguage = searchParams?.lang?.toUpperCase() as SupportedLanguage;
-  const user = await getUserById(3);
+  const user = await getUserById(1);
 
   if (
     passedLanguage &&

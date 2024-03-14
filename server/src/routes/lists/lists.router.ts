@@ -1,7 +1,7 @@
 import express from "express";
 import {
   httpGetAllListsForLanguage,
-  httpGetPopulatedList,
+  httpGetPopulatedListByListNumber,
   httpGetFullyPopulatedListByListNumber,
   httpGetUnitItems,
   httpPostCSV,
@@ -32,7 +32,10 @@ listsRouter.get("/getAllLists/:language", httpGetAllListsForLanguage);
 
 listsRouter.get("/getList/:listNumber", httpGetList);
 
-listsRouter.get("/getPopulatedList/:listNumber", httpGetPopulatedList);
+listsRouter.get(
+  "/getPopulatedList/:listNumber",
+  httpGetPopulatedListByListNumber
+);
 
 listsRouter.get(
   "/getFullyPopulatedList/:userNative/:listNumber",

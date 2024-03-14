@@ -20,7 +20,7 @@ import Lemmas from "../models/lemma.schema.js";
 import Lists from "../models/list.schema.js";
 import {
   getLatestListNumber,
-  getOnePopulatedListByListId,
+  getPopulatedListByObjectId,
 } from "../models/lists.model.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -447,7 +447,7 @@ async function addItemsToList(
 }
 
 async function defineUnitOrder(newListsId: Types.ObjectId) {
-  const newList = (await getOnePopulatedListByListId(
+  const newList = (await getPopulatedListByObjectId(
     newListsId
   )) as PopulatedList;
   if (newList && newList.units) {
