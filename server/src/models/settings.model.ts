@@ -46,17 +46,3 @@ export async function updateSiteSettings(updatedSettings: GlobalSettings) {
     console.log(`Error updating settings: ${err}`);
   }
 }
-
-export async function getUser() {
-  try {
-    const response = await Settings.findOne<GlobalSettings>(
-      { id: 1 },
-      { user: 1, _id: 0 }
-    );
-    if (response) {
-      return response.user;
-    }
-  } catch (err) {
-    console.error(`Error getting user: ${err}`);
-  }
-}

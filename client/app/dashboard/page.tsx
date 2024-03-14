@@ -2,7 +2,7 @@ import Dashboard from "@/components/Dashboard";
 import DashboardContainer from "@/components/DashboardContainer";
 import TopMenu from "@/components/Menus/TopMenu";
 import { SupportedLanguage } from "@/types";
-import { getSupportedLanguages, getUser } from "../actions";
+import { getSupportedLanguages, getUserById } from "../actions";
 
 interface DashboardPageProps {
   // searchParams?: { [key: string]: string | string[] | undefined };
@@ -15,7 +15,7 @@ export default async function DashboardPage({
   // Make sure passed language is a supported language
   const supportedLanguages = await getSupportedLanguages();
   const passedLanguage = searchParams?.lang?.toUpperCase() as SupportedLanguage;
-  const user = await getUser();
+  const user = await getUserById(3);
 
   if (
     passedLanguage &&

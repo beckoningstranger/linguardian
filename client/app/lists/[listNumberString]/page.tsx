@@ -1,4 +1,4 @@
-import { getPopulatedList, getUser } from "@/app/actions";
+import { getPopulatedList, getUserById } from "@/app/actions";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -15,7 +15,7 @@ export default async function ListDetailPage({
 
   const listData = await getPopulatedList(listNumber);
 
-  const user = await getUser();
+  const user = await getUserById(1);
 
   if (listData && listData.data && user) {
     const {

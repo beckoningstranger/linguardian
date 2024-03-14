@@ -14,8 +14,8 @@ type PartOfSpeech =
   | "phrase";
 
 interface LearnedItem {
-  itemId: number;
-  itemLevel: number;
+  id: Types.ObjectId;
+  level: number;
   nextReview: Date;
 }
 
@@ -105,6 +105,18 @@ interface List {
   learners?: Types.ObjectId[];
 }
 
+interface ListStats {
+  unlearned: number;
+  readyToReview: number;
+  learned: number;
+  learning: number;
+  ignored: number;
+}
+
+type ListWithStats = List & {
+  stats?: ListStats;
+};
+
 type FullyPopulatedList = Omit<List, "units"> & {
   units: { unitName: string; item: ItemPopulatedWithTranslations }[];
 };
@@ -115,7 +127,7 @@ type PopulatedList = Omit<List, "units"> & {
 
 type SupportedLanguage = "DE" | "EN" | "FR" | "CN";
 
-interface SSRSettings {
+interface SRSettings {
   reviewTimes: {
     1: number;
     2: number;
@@ -144,17 +156,24 @@ interface GlobalSettings {
   id: number;
   supportedLanguages: SupportedLanguage[];
   languageFeatures: LanguageFeatures[];
-  defaultSSRSettings: SSRSettings;
-  user: User;
+  defaultSRSettings: SRSettings;
 }
 
 interface LearnedLanguage {
   code: SupportedLanguage;
+  name: string;
   flag: string;
   learnedItems?: LearnedItem[];
-  learnedListIds?: number[];
-  customSSRSettings?: SSRSettings;
+  learnedLists?: Types.ObjectId[];
+  customSRSettings?: SRSettings;
 }
+
+type LearnedLanguageWithPopulatedLists = Omit<
+  LearnedLanguage,
+  "learnedLists"
+> & {
+  learnedLists: List[];
+};
 
 interface User {
   id: number;
@@ -167,12 +186,15 @@ export type {
   User,
   GlobalSettings,
   LearnedLanguage,
+  LearnedLanguageWithPopulatedLists,
   Lemma,
-  SSRSettings,
+  SRSettings,
   Item,
   ItemPopulatedWithTranslations,
   ReviewMode,
   List,
+  ListStats,
+  ListWithStats,
   PopulatedList,
   FullyPopulatedList,
   LanguageFeatures,

@@ -3,7 +3,6 @@ import {
   getAllSettings,
   getLanguageFeatures,
   getSupportedLanguages,
-  getUser,
 } from "../../models/settings.model.js";
 
 export async function httpGetAllSettings(req: Request, res: Response) {
@@ -27,11 +26,5 @@ export async function httpGetLanguageFeaturesForLanguage(
     );
     return res.status(200).json(featuresForLanguage);
   }
-  return res.status(404).json();
-}
-
-export async function httpGetUser(req: Request, res: Response) {
-  const response = await getUser();
-  if (response) return res.status(200).json(response);
   return res.status(404).json();
 }

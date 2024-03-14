@@ -4,6 +4,7 @@ import {
   FullyPopulatedList,
   Item,
   LanguageFeatures,
+  LearnedLanguageWithPopulatedLists,
   List,
   PopulatedList,
   SupportedLanguage,
@@ -37,10 +38,10 @@ export async function getLanguageFeaturesForLanguage(
   }
 }
 
-export async function getUser() {
+export async function getUserById(userId: number) {
   try {
     const response = await axios.get<User>(
-      `http://localhost:8000/settings/user`
+      `http://localhost:8000/users/get/${userId}`
     );
     return response.data;
   } catch (err) {
@@ -106,5 +107,21 @@ export async function getListsByLanguage(language: SupportedLanguage) {
     ).data;
   } catch (err) {
     console.error(`Error fetching all lists for language ${language}`);
+  }
+}
+
+export async function getPopulatedLearnedLists(
+  userId: number,
+  language: SupportedLanguage
+) {
+  try {
+    const response = await axios.get<LearnedLanguageWithPopulatedLists>(
+      `http://localhost:8000/users/getLearnedLists/${language}/${userId}`
+    );
+    return response.data;
+  } catch (err) {
+    console.error(
+      `Error fetching learned lists for language ${language} for user ${userId}: ${err}`
+    );
   }
 }
