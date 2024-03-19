@@ -1,9 +1,8 @@
 import {
   LanguageFeatures,
-  SSRSettings,
+  SRSettings,
   GlobalSettings,
   SupportedLanguage,
-  User,
 } from "../types.js";
 
 const languageFeatures: LanguageFeatures[] = [
@@ -56,7 +55,7 @@ const languageFeatures: LanguageFeatures[] = [
   },
 ];
 
-const defaultSSRSettings: SSRSettings = {
+const defaultSRSettings: SRSettings = {
   reviewTimes: {
     1: 4 * 60 * 60 * 1000, // Level 1: 4 hours
     2: 10 * 60 * 60 * 1000, // 10 hours
@@ -77,38 +76,9 @@ const defaultSSRSettings: SSRSettings = {
 
 const supportedLanguages: SupportedLanguage[] = ["DE", "EN", "FR", "CN"];
 
-const user: User = {
-  id: 1,
-  alias: "User1",
-  native: "FR",
-  languages: [
-    {
-      code: "FR",
-      flag: "FR",
-      learnedListIds: [1],
-      learnedItems: [
-        { itemId: 1, itemLevel: 1, nextReview: new Date() },
-        { itemId: 3, itemLevel: 1, nextReview: new Date() },
-        { itemId: 4, itemLevel: 1, nextReview: new Date() },
-      ],
-    },
-    {
-      code: "DE",
-      flag: "DE",
-      learnedListIds: [1, 2, 3],
-      learnedItems: [
-        { itemId: 1, itemLevel: 1, nextReview: new Date() },
-        { itemId: 3, itemLevel: 1, nextReview: new Date() },
-        { itemId: 4, itemLevel: 1, nextReview: new Date() },
-      ],
-    },
-  ],
-};
-
 export const siteSettings: GlobalSettings = {
   id: 1,
   supportedLanguages: supportedLanguages,
   languageFeatures: languageFeatures,
-  defaultSSRSettings: defaultSSRSettings,
-  user: user,
+  defaultSRSettings: defaultSRSettings,
 };

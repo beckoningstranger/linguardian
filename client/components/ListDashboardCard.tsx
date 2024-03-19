@@ -4,10 +4,10 @@ import { RxDotsVertical } from "react-icons/rx";
 
 import ContextMenu from "./Menus/ContextMenu";
 import ReviewButton from "./ReviewButton";
-import { useLoaded } from "@/app/hooks/useLoaded";
-import { ListStats } from "./Dashboard";
+import { useLoaded } from "@/hooks/useLoaded";
 import ListBarChart from "@/components/Charts/ListBarChart";
 import ListPieChart from "./Charts/ListPieChart";
+import { ListStats } from "@/types";
 
 interface ListDashboardCardProps {
   title: string;

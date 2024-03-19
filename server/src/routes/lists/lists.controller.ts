@@ -6,11 +6,10 @@ import { Request, Response } from "express";
 import { parseCSV } from "../../services/parsecsv.js";
 import {
   getAllListsForLanguage,
-  getOnePopulatedListByListNumber,
+  getPopulatedListByListNumber,
   updateUnlockedReviewModes,
   getChapterNameByNumber,
   getList,
-  getPopulatedList,
   getFullyPopulatedListByListNumber,
 } from "../../models/lists.model.js";
 import {
@@ -85,10 +84,13 @@ export async function httpGetFullyPopulatedListByListNumber(
   return res.status(404).json();
 }
 
-export async function httpGetPopulatedList(req: Request, res: Response) {
+export async function httpGetPopulatedListByListNumber(
+  req: Request,
+  res: Response
+) {
   const listNumber = parseInt(req.params.listNumber);
 
-  return res.status(200).json(await getPopulatedList(listNumber));
+  return res.status(200).json(await getPopulatedListByListNumber(listNumber));
 }
 
 export async function httpGetList(req: Request, res: Response) {
@@ -107,7 +109,7 @@ export async function httpGetUnitItems(req: Request, res: Response) {
   const listNumber = parseInt(req.params.listNumber);
   const unitNumber = parseInt(req.params.unitNumber);
 
-  const listData = (await getOnePopulatedListByListNumber(
+  const listData = (await getPopulatedListByListNumber(
     listNumber
   )) as PopulatedList;
 

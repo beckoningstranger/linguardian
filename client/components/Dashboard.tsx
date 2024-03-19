@@ -2,25 +2,21 @@ import ListDashboardCard from "./ListDashboardCard";
 import { ReactNode } from "react";
 import Link from "next/link";
 import { HiOutlinePlusCircle } from "react-icons/hi2";
-import { SupportedLanguage, User } from "@/types";
+import {
+  LearnedLanguageWithPopulatedLists,
+  ListWithStats,
+  SupportedLanguage,
+  User,
+} from "@/types";
+import { getLearnedLanguageData } from "@/app/actions";
 
-interface List {
-  id: number;
-  authorId: number;
-  title: string;
-  private: Boolean;
-  items: number[][];
-  description: string;
-  stats: ListStats;
-}
-
-const fakeListsData: List[] = [
+const fakeListsData: ListWithStats[] = [
   {
-    id: 1,
-    authorId: 1,
-    title: "Example list 1",
+    listNumber: 1,
+    authors: ["Joe"],
+    name: "Example list 1",
     private: false,
-    items: [[1, 3, 4, 6]],
+    language: "FR",
     description: "Example list 1 description",
     // These stats will be calculated after fetching the list from the server
     stats: {
@@ -31,75 +27,63 @@ const fakeListsData: List[] = [
       ignored: 3,
     },
   },
-  {
-    id: 2,
-    authorId: 2,
-    title: "Example list 2 with a long list title",
-    private: false,
-    items: [[2, 4, 5]],
-    description: "Example list 2 description",
-    // These stats will be calculated after fetching the list from the server
-    stats: {
-      unlearned: 20,
-      readyToReview: 33,
-      learned: 50,
-      learning: 20,
-      ignored: 3,
-    },
-  },
-  {
-    id: 3,
-    authorId: 2,
-    title: "Example list 3",
-    private: false,
-    items: [[2, 4, 5]],
-    description: "Example list 2 description",
-    // These stats will be calculated after fetching the list from the server
-    stats: {
-      unlearned: 20,
-      readyToReview: 33,
-      learned: 0,
-      learning: 40,
-      ignored: 3,
-    },
-  },
+  // {
+  //   listNumber: 2,
+  //   authors: ["Joe"],
+  //   name: "Example list 2 with a long list title",
+  //   private: false,
+  //   language: "DE",
+  //   description: "Example list 2 description",
+  //   // These stats will be calculated after fetching the list from the server
+  //   stats: {
+  //     unlearned: 20,
+  //     readyToReview: 33,
+  //     learned: 50,
+  //     learning: 20,
+  //     ignored: 3,
+  //   },
+  // },
+  // {
+  //   listNumber: 3,
+  //   authors: ["Joe"],
+  //   name: "Example list 3",
+  //   private: false,
+  //   language: "FR",
+  //   description: "Example list 2 description",
+  //   // These stats will be calculated after fetching the list from the server
+  //   stats: {
+  //     unlearned: 20,
+  //     readyToReview: 33,
+  //     learned: 0,
+  //     learning: 40,
+  //     ignored: 3,
+  //   },
+  // },
 ];
-
-export interface ListStats {
-  unlearned: number;
-  readyToReview: number;
-  learned: number;
-  learning: number;
-  ignored: number;
-}
 
 interface DashboardProps {
   user: User;
   currentlyActiveLanguage: SupportedLanguage;
 }
 
-export default function Dashboard({
+export default async function Dashboard({
   user,
   currentlyActiveLanguage,
 }: DashboardProps) {
-  let learnedLists: number[] = [];
-  let currentLanguageIndex: number = 0;
-
+  let learnedLists: ListWithStats[] = [];
   let renderedLists: ReactNode;
 
-  // Check what index number of the user object the currently active language has
-  user.languages.map((language, index) => {
-    if (language.code === currentlyActiveLanguage) {
-      currentLanguageIndex = index;
-    }
-  });
-
   // Get all the learned lists for the currently active language
-  if (user.languages[currentLanguageIndex].code === currentlyActiveLanguage) {
-    user.languages[currentLanguageIndex].learnedListIds?.map((list) =>
-      learnedLists.push(list)
-    );
-  }
+  const userLearningDataForActiveLanguage:
+    | LearnedLanguageWithPopulatedLists
+    | undefined = await getLearnedLanguageData(
+    user.id,
+    currentlyActiveLanguage
+  );
+
+  // Now compute the stats for the fetched lists
+
+  fakeListsData.map((list) => learnedLists.push(list));
 
   if (learnedLists.length > 0) {
     // for currently selected language, fetch list data for lists that user has already added
@@ -111,27 +95,28 @@ export default function Dashboard({
     // lists that the user has learned.
 
     renderedLists = fakeListsData.map((list) => {
-      if (learnedLists.includes(list.id)) {
-        // Here, or preferably earlier, is where we need to figure out how many items are due to review and if there are items to add
-        // so we can pass this information down
-        // Possible statuses are "review", "add" and "practice"
-        return (
-          <ListDashboardCard
-            key={list.id}
-            id={list.id}
-            title={list.title}
-            stats={list.stats}
-            status="practice"
-          />
-        );
-      }
+      // This check needs to be done with ObjectIds once we have that data on the user
+      // if (learnedLists.includes(list.id)) {
+      // Here, or preferably earlier, is where we need to figure out how many items are due to review and if there are items to add
+      // so we can pass this information down
+      // Possible statuses are "review", "add" and "practice"
+      return (
+        <ListDashboardCard
+          key={list.listNumber}
+          id={list.listNumber}
+          title={list.name}
+          stats={list.stats}
+          status="practice"
+        />
+      );
+      // }
     });
   }
 
   function AddNewListOption() {
     return (
       <Link
-        href={`/lists?lang=${currentlyActiveLanguage}`}
+        href={`/app/lists?lang=${currentlyActiveLanguage}`}
         className="relative mx-6 flex h-full min-h-40 items-center justify-center rounded-md bg-slate-200 md:min-h-80 lg:mx-3 xl:mx-6"
       >
         <div className="flex size-4/5 items-center justify-center rounded-md bg-slate-100 text-6xl text-slate-600 transition-all hover:scale-110 md:text-8xl">

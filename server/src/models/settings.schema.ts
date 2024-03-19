@@ -16,7 +16,7 @@ const settingsSchema = new Schema<GlobalSettings>({
       hasCases: { type: [String] },
     },
   ],
-  defaultSSRSettings: {
+  defaultSRSettings: {
     reviewTimes: {
       1: { type: Number },
       2: { type: Number },
@@ -33,39 +33,6 @@ const settingsSchema = new Schema<GlobalSettings>({
       learning: { type: Number },
       reviewing: { type: Number },
     },
-  },
-  user: {
-    id: { type: Number },
-    alias: { type: String },
-    native: { type: String },
-    languages: [
-      {
-        code: { type: String },
-        flag: { type: String },
-        learnedItems: [
-          {
-            itemId: { type: Number },
-            itemLevel: { type: Number },
-            nextReview: { type: Number },
-          },
-        ],
-        learnedListIds: { type: [Number] },
-        customSSRSettings: {
-          reviewTimes: {
-            1: { type: Number },
-            2: { type: Number },
-            3: { type: Number },
-            4: { type: Number },
-            5: { type: Number },
-            6: { type: Number },
-            7: { type: Number },
-            8: { type: Number },
-            9: { type: Number },
-            10: { type: Number },
-          },
-        },
-      },
-    ],
   },
 });
 

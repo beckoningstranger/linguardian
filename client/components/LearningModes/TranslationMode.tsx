@@ -9,11 +9,11 @@ import {
   LanguageFeatures,
   SupportedLanguage,
 } from "@/types";
-import { GlobalContext } from "@/app/context/GlobalContext";
 import MobileMenu from "../Menus/MobileMenu/MobileMenu";
 import HelperKeysSelector from "../Menus/HelperKeysSelector";
 import MoreReviews, { MoreReviewsMode } from "./MoreReviews";
 import { useRouter } from "next/navigation";
+import { MobileMenuContext } from "../Menus/MobileMenu/MobileMenuContext";
 
 interface TranslationModeProps {
   items: ItemPopulatedWithTranslations[];
@@ -30,7 +30,7 @@ export default function TranslationMode({
   targetLanguageFeatures,
   userNative,
 }: TranslationModeProps) {
-  const { toggleMobileMenu } = useContext(GlobalContext);
+  const { toggleMobileMenu } = useContext(MobileMenuContext);
 
   const router = useRouter();
 

@@ -3,7 +3,6 @@ import {
   httpGetAllSettings,
   httpGetLanguageFeaturesForLanguage,
   httpGetSupportedLanguages,
-  httpGetUser,
 } from "./settings.controller.js";
 
 export const settingsRouter = express.Router();
@@ -16,5 +15,3 @@ settingsRouter.get(
   "/languageFeatures/:language",
   httpGetLanguageFeaturesForLanguage
 );
-
-settingsRouter.get("/user", httpGetUser);

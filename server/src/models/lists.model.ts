@@ -9,6 +9,34 @@ import {
 import Lists from "./list.schema.js";
 import { getSupportedLanguages } from "./settings.model.js";
 
+export async function getList(listNumber: number) {
+  try {
+    return await Lists.findOne({ listNumber: listNumber });
+  } catch (err) {
+    console.error(`Error getting list with listNumber ${listNumber} `);
+  }
+}
+
+export async function getPopulatedListByObjectId(listId: Types.ObjectId) {
+  try {
+    return await Lists.findOne({ _id: listId }).populate<{
+      units: { unitName: string; item: Item }[];
+    }>({ path: "units.item" });
+  } catch (err) {
+    console.error(`Error getting populated list with _id ${listId}`);
+  }
+}
+
+export async function getPopulatedListByListNumber(listNumber: number) {
+  try {
+    return await Lists.findOne({ listNumber: listNumber }).populate<{
+      units: { unitName: string; item: Item }[];
+    }>({ path: "units.item" });
+  } catch (err) {
+    console.error(`Error getting populated list with listNumber ${listNumber}`);
+  }
+}
+
 export async function getFullyPopulatedListByListNumber(
   userNative: SupportedLanguage,
   listNumber: number
@@ -24,34 +52,6 @@ export async function getFullyPopulatedListByListNumber(
     console.error(
       `Error getting fully populated list with listNumber ${listNumber}`
     );
-  }
-}
-
-export async function getList(listNumber: number) {
-  try {
-    return await Lists.findOne({ listNumber: listNumber });
-  } catch (err) {
-    console.error(`Error getting list with listNumber ${listNumber} `);
-  }
-}
-
-export async function getOnePopulatedListByListId(listId: Types.ObjectId) {
-  try {
-    return await Lists.findOne({ _id: listId }).populate<{
-      units: { unitName: string; item: Item }[];
-    }>({ path: "units.item" });
-  } catch (err) {
-    console.error(`Error getting populated list with _id ${listId}`);
-  }
-}
-
-export async function getOnePopulatedListByListNumber(listNumber: number) {
-  try {
-    return await Lists.findOne({ listNumber: listNumber }).populate<{
-      units: { unitName: string; item: Item }[];
-    }>({ path: "units.item" });
-  } catch (err) {
-    console.error(`Error getting populated list with listNumber ${listNumber}`);
   }
 }
 
@@ -90,12 +90,8 @@ export async function getChapterNameByNumber(
   return list?.unitOrder ? list.unitOrder[chapterNumber - 1] : null;
 }
 
-export async function getPopulatedList(listNumber: number) {
-  return await Lists.findOne({ listNumber: listNumber });
-}
-
 export async function updateUnlockedReviewModes(listId: Types.ObjectId) {
-  const response = (await getOnePopulatedListByListId(listId)) as PopulatedList;
+  const response = (await getPopulatedListByObjectId(listId)) as PopulatedList;
   const supportedLanguages = await getSupportedLanguages();
   if (response && response.units && supportedLanguages) {
     // This part checks for translation mode

@@ -1,4 +1,4 @@
-import { ListStats } from "../Dashboard";
+import { ListStats } from "@/types";
 import dynamic from "next/dynamic";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
