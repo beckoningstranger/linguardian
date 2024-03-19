@@ -114,7 +114,7 @@ interface ListStats {
 }
 
 type ListWithStats = List & {
-  stats?: ListStats;
+  stats: ListStats;
 };
 
 type FullyPopulatedList = Omit<List, "units"> & {
