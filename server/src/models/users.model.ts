@@ -1,7 +1,5 @@
 import {
-  LearnedItem,
   LearnedLanguageWithPopulatedLists,
-  List,
   SupportedLanguage,
   User,
 } from "../types.js";
@@ -33,7 +31,6 @@ export async function createUser(user: User) {
 
 export async function getUserWithPopulatedLearnedLists(
   userId: number,
-  language: SupportedLanguage
 ) {
   try {
     return await Users.findOne<User>(
@@ -43,7 +40,7 @@ export async function getUserWithPopulatedLearnedLists(
       languages: LearnedLanguageWithPopulatedLists[];
     }>(`languages.learnedLists`);
   } catch (err) {
-    console.error(`Error getting learned lists for language ${language}`);
+    console.error(`Error getting learned lists for user ${userId}`);
   }
 }
 

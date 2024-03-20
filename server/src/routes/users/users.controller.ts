@@ -20,8 +20,11 @@ export async function httpGetLearnedLanguageData(req: Request, res: Response) {
   const language = req.params.language as SupportedLanguage;
   const userId = parseInt(req.params.userId);
 
-  const response = await getUserWithPopulatedLearnedLists(userId, language);
-  if (response) return res.status(200).json(response.languages[0]);
+  const response = await getUserWithPopulatedLearnedLists(userId);
+
+  const responseFilteredForLanguage = response?.languages.filter(lang => lang.code === language)[0]
+  
+  if (response) return res.status(200).json(responseFilteredForLanguage);
   return res.status(404).json();
 }
 

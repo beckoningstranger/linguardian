@@ -1,65 +1,17 @@
 import ListDashboardCard from "./ListDashboardCard";
-import { ReactNode } from "react";
 import Link from "next/link";
 import { HiOutlinePlusCircle } from "react-icons/hi2";
 import {
+  LearnedItem,
   LearnedLanguageWithPopulatedLists,
-  ListWithStats,
+  List,
+  ListStats,
+  ListStatus,
   SupportedLanguage,
   User,
 } from "@/types";
 import { getLearnedLanguageData } from "@/app/actions";
-
-const fakeListsData: ListWithStats[] = [
-  {
-    listNumber: 1,
-    authors: ["Joe"],
-    name: "Example list 1",
-    private: false,
-    language: "FR",
-    description: "Example list 1 description",
-    // These stats will be calculated after fetching the list from the server
-    stats: {
-      unlearned: 20,
-      readyToReview: 0,
-      learned: 50,
-      learning: 40,
-      ignored: 3,
-    },
-  },
-  // {
-  //   listNumber: 2,
-  //   authors: ["Joe"],
-  //   name: "Example list 2 with a long list title",
-  //   private: false,
-  //   language: "DE",
-  //   description: "Example list 2 description",
-  //   // These stats will be calculated after fetching the list from the server
-  //   stats: {
-  //     unlearned: 20,
-  //     readyToReview: 33,
-  //     learned: 50,
-  //     learning: 20,
-  //     ignored: 3,
-  //   },
-  // },
-  // {
-  //   listNumber: 3,
-  //   authors: ["Joe"],
-  //   name: "Example list 3",
-  //   private: false,
-  //   language: "FR",
-  //   description: "Example list 2 description",
-  //   // These stats will be calculated after fetching the list from the server
-  //   stats: {
-  //     unlearned: 20,
-  //     readyToReview: 33,
-  //     learned: 0,
-  //     learning: 40,
-  //     ignored: 3,
-  //   },
-  // },
-];
+import { Types } from "mongoose";
 
 interface DashboardProps {
   user: User;
@@ -70,9 +22,6 @@ export default async function Dashboard({
   user,
   currentlyActiveLanguage,
 }: DashboardProps) {
-  let learnedLists: ListWithStats[] = [];
-  let renderedLists: ReactNode;
-
   // Get all the learned lists for the currently active language
   const userLearningDataForActiveLanguage:
     | LearnedLanguageWithPopulatedLists
@@ -81,36 +30,29 @@ export default async function Dashboard({
     currentlyActiveLanguage
   );
 
-  // Now compute the stats for the fetched lists
+  let renderedLists: JSX.Element[] = [];
 
-  fakeListsData.map((list) => learnedLists.push(list));
+  if (userLearningDataForActiveLanguage?.learnedLists) {
+    renderedLists = userLearningDataForActiveLanguage?.learnedLists.map(
+      (list) => {
+        const stats = calculateListStats(
+          list,
+          userLearningDataForActiveLanguage.learnedItems,
+          userLearningDataForActiveLanguage.ignoredItems
+        );
+        const status = determineListStatus(stats);
 
-  if (learnedLists.length > 0) {
-    // for currently selected language, fetch list data for lists that user has already added
-    // fetched data should be an array of lists that we can map over below (right now fakeListsData)
-    // await .... lists based on user.languages[currentLanguageIndex].learnedListIds
-    // We'll get a list that we can simply map over without checking anything.
-    // SELECT * from Lists WHERE list.id equals [learnedLists]
-    // The current code assumes we fetch ALL lists, but this will not be efficient, instead we will fetch only the specific
-    // lists that the user has learned.
-
-    renderedLists = fakeListsData.map((list) => {
-      // This check needs to be done with ObjectIds once we have that data on the user
-      // if (learnedLists.includes(list.id)) {
-      // Here, or preferably earlier, is where we need to figure out how many items are due to review and if there are items to add
-      // so we can pass this information down
-      // Possible statuses are "review", "add" and "practice"
-      return (
-        <ListDashboardCard
-          key={list.listNumber}
-          id={list.listNumber}
-          title={list.name}
-          stats={list.stats}
-          status="practice"
-        />
-      );
-      // }
-    });
+        return (
+          <ListDashboardCard
+            key={list.listNumber}
+            id={list.listNumber}
+            title={list.name}
+            stats={stats}
+            status={status}
+          />
+        );
+      }
+    );
   }
 
   function AddNewListOption() {
@@ -134,4 +76,46 @@ export default async function Dashboard({
       </div>
     </div>
   );
+}
+
+function calculateListStats(
+  list: List,
+  learnedItems: LearnedItem[],
+  ignoredItems: Types.ObjectId[]
+): ListStats {
+  const itemIDsInList = list.units.map((unitItem) => unitItem.item);
+  const userlearnedItemIDs = learnedItems.map((item) => item.id);
+  const learnedItemsInList = userlearnedItemIDs.filter((id) =>
+    itemIDsInList.includes(id)
+  );
+
+  const ignoredItemsInList = ignoredItems.filter((id) =>
+    itemIDsInList.includes(id)
+  );
+
+  const readyToReview = learnedItems.filter(
+    (item) => item.nextReview < Date.now()
+  );
+
+  const learned = learnedItems.filter(
+    (item) => !readyToReview.includes(item) && item.level > 8
+  );
+
+  const learning = learnedItems.filter(
+    (item) => !readyToReview.includes(item) && item.level < 8
+  );
+
+  return {
+    unlearned: itemIDsInList.length - learnedItemsInList.length,
+    readyToReview: readyToReview.length,
+    learned: learned.length,
+    learning: learning.length,
+    ignored: ignoredItemsInList.length,
+  };
+}
+
+function determineListStatus(stats: ListStats): ListStatus {
+  if (stats.readyToReview > 0) return "review";
+  if (stats.readyToReview === 0 && stats.unlearned > 0) return "add";
+  return "practice";
 }

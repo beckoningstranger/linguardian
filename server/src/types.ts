@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-type PartOfSpeech =
+export type PartOfSpeech =
   | "noun"
   | "pronoun"
   | "verb"
@@ -13,13 +13,13 @@ type PartOfSpeech =
   | "particle"
   | "phrase";
 
-interface LearnedItem {
+export interface LearnedItem {
   id: Types.ObjectId;
   level: number;
-  nextReview: Date;
+  nextReview: number;
 }
 
-type Gender =
+export type Gender =
   | "masculine"
   | "feminine"
   | "neuter"
@@ -27,7 +27,7 @@ type Gender =
   | "animate"
   | "inanimate";
 
-type Case =
+export type Case =
   | "nominative"
   | "genitive"
   | "dative"
@@ -37,16 +37,16 @@ type Case =
   | "vocative"
   | "accusative & dative";
 
-type Tags = "intransitive" | "archaic" | "literary" | "slang" | "humorous";
+export type Tags = "intransitive" | "archaic" | "literary" | "slang" | "humorous";
 
-type Frequency =
+export type Frequency =
   | "extremely rare"
   | "rare"
   | "medium"
   | "high"
   | "extremely high";
 
-interface Item {
+export interface Item {
   name: string;
   language: SupportedLanguage;
   partOfSpeech: PartOfSpeech;
@@ -65,31 +65,31 @@ interface Item {
   collocations?: Types.ObjectId[];
 }
 
-type ItemPopulatedWithTranslations = Omit<Item, "translations"> & {
+export type ItemPopulatedWithTranslations = Omit<Item, "translations"> & {
   translations: Record<SupportedLanguage, ItemPopulatedWithTranslations[]>;
 };
 
-interface Lemma {
+export interface Lemma {
   language: SupportedLanguage;
   name: string;
   items?: Types.ObjectId[];
 }
 
-type ReviewMode =
+export type ReviewMode =
   | "Translation"
   | "Context"
   | "SpellingBee"
   | "Dictionary"
   | "Visual";
 
-type Difficulty =
+export type Difficulty =
   | "Novice"
   | "Advanced Beginner"
   | "Intermediate"
   | "Advanced"
   | "Afficionado";
 
-interface List {
+export interface List {
   name: string;
   listNumber: number;
   description?: string;
@@ -99,13 +99,13 @@ interface List {
   // authors: Types.ObjectId[];
   authors: string[];
   private: Boolean;
-  units?: { unitName: string; item: Types.ObjectId }[];
-  unitOrder?: string[];
+  units: { unitName: string; item: Types.ObjectId }[];
+  unitOrder: string[];
   unlockedReviewModes?: Record<SupportedLanguage, Types.Array<ReviewMode>>;
   learners?: Types.ObjectId[];
 }
 
-interface ListStats {
+export interface ListStats {
   unlearned: number;
   readyToReview: number;
   learned: number;
@@ -113,21 +113,23 @@ interface ListStats {
   ignored: number;
 }
 
-type ListWithStats = List & {
-  stats: ListStats;
-};
+export type ListStatus = "review" | "add" | "practice"
 
-type FullyPopulatedList = Omit<List, "units"> & {
+// export type ListWithStats = List & {
+//   stats: ListStats;
+// };
+
+export type FullyPopulatedList = Omit<List, "units"> & {
   units: { unitName: string; item: ItemPopulatedWithTranslations }[];
 };
 
-type PopulatedList = Omit<List, "units"> & {
+export type PopulatedList = Omit<List, "units"> & {
   units: { unitName: string; item: Item }[];
 };
 
-type SupportedLanguage = "DE" | "EN" | "FR" | "CN";
+export type SupportedLanguage = "DE" | "EN" | "FR" | "CN";
 
-interface SRSettings {
+export interface SRSettings {
   reviewTimes: {
     1: number;
     2: number;
@@ -143,7 +145,7 @@ interface SRSettings {
   itemsPerSession: { learning: number; reviewing: number };
 }
 
-interface LanguageFeatures {
+export interface LanguageFeatures {
   langName: string;
   langCode: SupportedLanguage;
   flagCode: string;
@@ -152,57 +154,34 @@ interface LanguageFeatures {
   hasCases?: Case[];
 }
 
-interface GlobalSettings {
+export interface GlobalSettings {
   id: number;
   supportedLanguages: SupportedLanguage[];
   languageFeatures: LanguageFeatures[];
   defaultSRSettings: SRSettings;
 }
 
-interface LearnedLanguage {
+export interface LearnedLanguage {
   code: SupportedLanguage;
   name: string;
   flag: string;
   learnedItems: LearnedItem[];
+  ignoredItems: Types.ObjectId[];
   learnedLists: Types.ObjectId[];
   customSRSettings?: SRSettings;
 }
 
-type LearnedLanguageWithPopulatedLists = Omit<
+export type LearnedLanguageWithPopulatedLists = Omit<
   LearnedLanguage,
   "learnedLists"
 > & {
   learnedLists: List[];
 };
 
-interface User {
+export interface User {
   id: number;
   alias: string;
   native: SupportedLanguage;
   languages: LearnedLanguage[];
 }
 
-export type {
-  User,
-  GlobalSettings,
-  LearnedLanguage,
-  LearnedLanguageWithPopulatedLists,
-  Lemma,
-  SRSettings,
-  Item,
-  ItemPopulatedWithTranslations,
-  ReviewMode,
-  List,
-  ListStats,
-  ListWithStats,
-  PopulatedList,
-  FullyPopulatedList,
-  LanguageFeatures,
-  Gender,
-  PartOfSpeech,
-  LearnedItem,
-  Case,
-  SupportedLanguage,
-  Frequency,
-  Tags,
-};

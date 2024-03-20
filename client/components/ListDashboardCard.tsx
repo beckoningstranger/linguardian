@@ -7,12 +7,12 @@ import ReviewButton from "./ReviewButton";
 import { useLoaded } from "@/hooks/useLoaded";
 import ListBarChart from "@/components/Charts/ListBarChart";
 import ListPieChart from "./Charts/ListPieChart";
-import { ListStats } from "@/types";
+import { ListStats, ListStatus } from "@/types";
 
 interface ListDashboardCardProps {
   title: string;
   id: number;
-  status: string;
+  status: ListStatus;
   stats: ListStats;
 }
 

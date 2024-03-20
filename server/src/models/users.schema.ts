@@ -22,11 +22,12 @@ const userSchema = new Schema<User>({
       flag: { type: String },
       learnedItems: [
         {
-          id: { type: Schema.Types.ObjectId },
+          id: { type: Schema.Types.ObjectId, ref: "Item" },
           level: { type: Number },
           nextReview: { type: Date },
         },
       ],
+      ignoredItems: [{type: Schema.Types.ObjectId, ref: "Item"}],
       learnedLists: [{ type: Schema.Types.ObjectId, ref: "List" }],
       customSRSettings: {
         reviewTimes: {

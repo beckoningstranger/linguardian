@@ -93,6 +93,8 @@ export async function parseCSV({
     private: false,
     language: language,
     authors: authors,
+    unitOrder: [],
+    units: []
   };
 
   const newUploadedList = await Lists.findOneAndUpdate(
