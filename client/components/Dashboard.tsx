@@ -1,6 +1,8 @@
-import ListDashboardCard from "./ListDashboardCard";
 import Link from "next/link";
+import { Types } from "mongoose";
 import { HiOutlinePlusCircle } from "react-icons/hi2";
+
+import ListDashboardCard from "./ListDashboardCard";
 import {
   LearnedItem,
   LearnedLanguageWithPopulatedLists,
@@ -11,7 +13,6 @@ import {
   User,
 } from "@/types";
 import { getLearnedLanguageData } from "@/app/actions";
-import { Types } from "mongoose";
 
 interface DashboardProps {
   user: User;
@@ -22,7 +23,6 @@ export default async function Dashboard({
   user,
   currentlyActiveLanguage,
 }: DashboardProps) {
-  // Get all the learned lists for the currently active language
   const userLearningDataForActiveLanguage:
     | LearnedLanguageWithPopulatedLists
     | undefined = await getLearnedLanguageData(

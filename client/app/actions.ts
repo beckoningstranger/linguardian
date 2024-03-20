@@ -39,6 +39,17 @@ export async function getLanguageFeaturesForLanguage(
   }
 }
 
+export async function getAllLanguageFeatures() {
+  try {
+    const response = await axios.get<LanguageFeatures[]>(
+      `http://localhost:8000/settings/allLanguageFeatures`
+    );
+    return response.data;
+  } catch (err) {
+    console.error(`Error getting all language features: ${err}`);
+  }
+}
+
 export async function getUserById(userId: number) {
   try {
     const response = await axios.get<User>(
@@ -158,4 +169,18 @@ export async function addNewLanguageToLearn(
       `Error adding ${language} as a new language for user ${userId}: ${err}`
     );
   }
+}
+
+export async function checkPassedLanguageAsync(
+  passedLanguage: string | undefined,
+) {
+  const supportedLanguages = await getSupportedLanguages()
+  if (
+    !passedLanguage ||
+    !supportedLanguages ||
+    !supportedLanguages.includes(passedLanguage as SupportedLanguage)
+  ) {
+    return false;
+  }
+  return passedLanguage as SupportedLanguage;
 }

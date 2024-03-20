@@ -115,10 +115,6 @@ export interface ListStats {
 
 export type ListStatus = "review" | "add" | "practice"
 
-// export type ListWithStats = List & {
-//   stats: ListStats;
-// };
-
 export type FullyPopulatedList = Omit<List, "units"> & {
   units: { unitName: string; item: ItemPopulatedWithTranslations }[];
 };

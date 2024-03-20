@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {
   getAllSettings,
+  getLanguageFeatures,
   getLanguageFeaturesForLanguage,
   getSupportedLanguages,
 } from "../../models/settings.model.js";
@@ -23,4 +24,8 @@ export async function httpGetLanguageFeaturesForLanguage(
   return res
     .status(200)
     .json(await getLanguageFeaturesForLanguage(requestedLanguage));
+}
+
+export async function httpGetAllLanguageFeatures(req: Request, res: Response) {
+  return res.status(200).json(await getLanguageFeatures())
 }

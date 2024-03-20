@@ -1,35 +1,35 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import Flag from "react-world-flags";
+
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import AddNewLanguageOption from "./AddNewLanguageOption";
-import { usePathname } from "next/navigation";
 import { SupportedLanguage, User } from "@/types";
-import Link from "next/link";
 
 interface LanguageSelectorProps {
   user: User;
-  currentlyActiveLanguage: SupportedLanguage;
   setCurrentlyActiveLanguage: Function;
+  languageAndFlag: { lang: SupportedLanguage; flag: string };
 }
 
 export default function LanguageSelector({
   user,
-  currentlyActiveLanguage,
   setCurrentlyActiveLanguage,
+  languageAndFlag,
 }: LanguageSelectorProps) {
   const currentPath = usePathname();
 
-  // This is used to determine which options need to be shown in the language selector
-  const usersLanguagesAndFlags: {
+  const allOfUsersLanguagesAndFlags: {
     name: SupportedLanguage;
     flagCode: string;
   }[] = user.languages.map((lang) => {
     return { name: lang.code, flagCode: lang.flag };
   });
-  const renderedLanguagesAndFlags = usersLanguagesAndFlags.filter(
-    (lang) => lang.name !== currentlyActiveLanguage
+  const renderedLanguagesAndFlags = allOfUsersLanguagesAndFlags.filter(
+    (lang) => lang.name !== languageAndFlag.lang
   );
 
   const [showAllLanguageOptions, setShowAllLanguageOptions] = useState(false);
@@ -46,10 +46,7 @@ export default function LanguageSelector({
     <div ref={ref} className="z-50 hidden md:block">
       <div>
         <Flag
-          // This is a workaround
-          code={
-            currentlyActiveLanguage === "EN" ? "GB" : currentlyActiveLanguage
-          }
+          code={languageAndFlag.flag}
           onClick={() =>
             setShowAllLanguageOptions(
               (showAllLanguageOptions) => !showAllLanguageOptions

@@ -1,31 +1,22 @@
 import Dashboard from "@/components/Dashboard";
-import { SupportedLanguage } from "@/types";
-import { getSupportedLanguages, getUserById } from "../../../actions";
-import { checkPassedLanguage } from "../layout";
+import { checkPassedLanguageAsync, getUserById } from "../../../actions";
 
 interface DashboardPageProps {
-  // searchParams?: { [key: string]: string | string[] | undefined };
-  searchParams?: { lang: SupportedLanguage };
+  searchParams?: { lang: string };
 }
 
 export default async function DashboardPage({
   searchParams,
 }: DashboardPageProps) {
-  // Make sure passed language is a supported language
-  const validPassedLanguage = await checkPassedLanguage(
-    searchParams?.lang?.toUpperCase()
-  );
+  const passedLanguage = searchParams?.lang?.toUpperCase();
+  const validPassedLanguage = await checkPassedLanguageAsync(passedLanguage);
   const user = await getUserById(1);
 
-  if (validPassedLanguage && user)
-    return (
-      <Dashboard user={user} currentlyActiveLanguage={validPassedLanguage} />
-    );
   if (user)
     return (
       <Dashboard
         user={user}
-        currentlyActiveLanguage={user?.languages[0].code}
+        currentlyActiveLanguage={validPassedLanguage || user.languages[0].code}
       />
     );
   if (!user) return "No user";

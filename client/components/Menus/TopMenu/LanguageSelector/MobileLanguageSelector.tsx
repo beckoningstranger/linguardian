@@ -1,10 +1,11 @@
 "use client";
 
-import Flag from "react-world-flags";
-import AddNewLanguageOption from "./AddNewLanguageOption";
-import { SupportedLanguage, User } from "@/types";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Flag from "react-world-flags";
+
+import AddNewLanguageOption from "./AddNewLanguageOption";
+import { SupportedLanguage, User } from "@/types";
 import useMobileMenuContext from "@/hooks/useMobileMenuContext";
 
 interface MobileLanguageSelectorProps {
@@ -19,10 +20,11 @@ export default function MobileLanguageSelector({
   const { toggleMobileMenu } = useMobileMenuContext();
   const currentPath = usePathname();
   const languagesAndFlags: { name: SupportedLanguage; flagCode: string }[] = [];
+
   user.languages.map((lang) =>
     languagesAndFlags.push({
       name: lang.code,
-      flagCode: lang.code === "EN" ? "GB" : lang.code,
+      flagCode: lang.flag,
     })
   );
 

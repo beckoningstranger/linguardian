@@ -1,3 +1,5 @@
+"use client";
+
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import { MouseEventHandler } from "react";
 import Logo from "@/components/Logo";
@@ -36,22 +38,26 @@ export default function SideBarNavigation({
             icon={<RxHamburgerMenu />}
             label="Dashboard"
             href={`/app/dashboard?lang=${currentlyActiveLanguage}`}
+            toggleSidebar={toggleSidebar as MouseEventHandler}
           />
 
           <SidebarItem
             icon={<RiFileList3Fill />}
             label="Lists"
             href={`/app/lists?lang=${currentlyActiveLanguage}`}
+            toggleSidebar={toggleSidebar as MouseEventHandler}
           />
           <SidebarItem
             icon={<FaBookReader />}
             label="Dictionary"
             href={`/app/dictionary?lang=${currentlyActiveLanguage}`}
+            toggleSidebar={toggleSidebar as MouseEventHandler}
           />
           <SidebarItem
             icon={<FaPeopleRoof />}
             label="Social"
             href="/app/social"
+            toggleSidebar={toggleSidebar as MouseEventHandler}
           />
         </nav>
         <footer className="first:mt-0">
@@ -59,11 +65,13 @@ export default function SideBarNavigation({
             icon={<FaRegQuestionCircle />}
             label="About"
             href="/app/about"
+            toggleSidebar={toggleSidebar as MouseEventHandler}
           />
           <SidebarItem
             icon={<RiLogoutBoxLine />}
             label="Logout"
             href="/app/logout"
+            toggleSidebar={toggleSidebar as MouseEventHandler}
           />
         </footer>
         <div

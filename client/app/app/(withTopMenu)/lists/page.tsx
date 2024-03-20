@@ -1,26 +1,26 @@
 import Link from "next/link";
 
-import { PopulatedList, SupportedLanguage } from "@/types";
-import { getListsByLanguage, getSupportedLanguages } from "../../../actions";
+import { SupportedLanguage } from "@/types";
+import {
+  checkPassedLanguageAsync,
+  getListsByLanguage,
+  getUserById,
+} from "../../../actions";
 import ListStoreCard from "@/components/ListStoreCard";
 
 interface ListStoreProps {
-  // searchParams?: { [key: string]: string | string[] | undefined };
-  searchParams?: { lang: SupportedLanguage };
+  searchParams?: { lang: string };
 }
 
 export default async function ListStore({ searchParams }: ListStoreProps) {
-  // Make sure passed language is a supported language
-  const supportedLanguages = (await getSupportedLanguages()) as string[];
+  const user = await getUserById(1);
   const passedLanguage = searchParams?.lang?.toUpperCase() as SupportedLanguage;
-  const listsForLanguage = await getListsByLanguage(passedLanguage);
+  const validPassedLanguage = await checkPassedLanguageAsync(passedLanguage);
+  const listsForLanguage = await getListsByLanguage(
+    validPassedLanguage ? validPassedLanguage : user?.languages[0].code!
+  );
 
-  if (
-    passedLanguage &&
-    supportedLanguages &&
-    supportedLanguages.includes(passedLanguage) &&
-    listsForLanguage
-  ) {
+  if (listsForLanguage) {
     const renderedLists = listsForLanguage.map((list) => (
       <ListStoreCard
         authors={list.authors}

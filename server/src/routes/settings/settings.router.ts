@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  httpGetAllLanguageFeatures,
   httpGetAllSettings,
   httpGetLanguageFeaturesForLanguage,
   httpGetSupportedLanguages,
@@ -15,3 +16,5 @@ settingsRouter.get(
   "/languageFeatures/:language",
   httpGetLanguageFeaturesForLanguage
 );
+
+settingsRouter.get("/allLanguageFeatures", httpGetAllLanguageFeatures)
