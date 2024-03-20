@@ -11,11 +11,13 @@ import Link from "next/link";
 interface LanguageSelectorProps {
   user: User;
   currentlyActiveLanguage: SupportedLanguage;
+  setCurrentlyActiveLanguage: Function;
 }
 
 export default function LanguageSelector({
   user,
   currentlyActiveLanguage,
+  setCurrentlyActiveLanguage,
 }: LanguageSelectorProps) {
   const currentPath = usePathname();
 
@@ -65,6 +67,7 @@ export default function LanguageSelector({
                 setShowAllLanguageOptions(
                   (showAllLanguageOptions) => !showAllLanguageOptions
                 );
+                setCurrentlyActiveLanguage(lang.name);
               }}
               className={`scale-0 transition-all rounded-full object-cover hover:scale-125 w-12 ${
                 showAllLanguageOptions &&

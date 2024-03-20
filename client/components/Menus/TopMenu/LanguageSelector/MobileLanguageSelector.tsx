@@ -9,10 +9,12 @@ import useMobileMenuContext from "@/hooks/useMobileMenuContext";
 
 interface MobileLanguageSelectorProps {
   user: User;
+  setCurrentlyActiveLanguage: Function;
 }
 
 export default function MobileLanguageSelector({
   user,
+  setCurrentlyActiveLanguage,
 }: MobileLanguageSelectorProps) {
   const { toggleMobileMenu } = useMobileMenuContext();
   const currentPath = usePathname();
@@ -34,6 +36,7 @@ export default function MobileLanguageSelector({
                 code={lang.flagCode}
                 onClick={() => {
                   toggleMobileMenu();
+                  setCurrentlyActiveLanguage(lang.name);
                 }}
                 className={`h-24 w-24 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125`}
               />

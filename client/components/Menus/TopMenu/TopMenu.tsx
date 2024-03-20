@@ -11,7 +11,6 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import Link from "next/link";
 import { SupportedLanguage, User } from "@/types";
 import useMobileMenuContext from "@/hooks/useMobileMenuContext";
-import { MobileMenuContextProvider } from "../MobileMenu/MobileMenuContext";
 
 interface TopMenuProps {
   user: User;
@@ -20,7 +19,7 @@ interface TopMenuProps {
 
 export default function TopMenu({
   user,
-  currentlyActiveLanguage,
+  currentlyActiveLanguage: passedLanguage,
 }: TopMenuProps) {
   // These two variables are used so that the LanguageSelector show only on the specified URLs
   const currentBaseUrl = usePathname();
@@ -29,6 +28,9 @@ export default function TopMenu({
     "/app/dictionary",
     "/app/lists",
   ];
+
+  const [currentlyActiveLanguage, setCurrentlyActiveLanguage] =
+    useState(passedLanguage);
 
   const { toggleMobileMenu } = useMobileMenuContext();
 
@@ -103,7 +105,10 @@ export default function TopMenu({
               onClick={toggleMobileMenu as MouseEventHandler}
             />
             <MobileMenu>
-              <MobileLanguageSelector user={user} />
+              <MobileLanguageSelector
+                user={user}
+                setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
+              />
             </MobileMenu>
           </div>
           <div className="flex h-20 items-center justify-evenly">
@@ -114,6 +119,7 @@ export default function TopMenu({
             >
               <LanguageSelector
                 currentlyActiveLanguage={currentlyActiveLanguage}
+                setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
                 user={user}
               />
             </div>
