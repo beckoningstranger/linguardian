@@ -112,7 +112,7 @@ export default async function ListDetailPage({
                 <h3 className="mx-2 text-sm sm:mx-6">{description}</h3>
               </div>
               <h5 className="absolute bottom-1 right-3 text-xs">
-                created by {authors}
+                created by {authors.map((author) => author.alias).join(" & ")}
               </h5>
             </div>
           </div>

@@ -3,8 +3,10 @@ import {
   Item,
   ItemPopulatedWithTranslations,
   PopulatedList,
+  PopulatedListNoAuthors,
   ReviewMode,
   SupportedLanguage,
+  User,
 } from "../types.js";
 import Lists from "./list.schema.js";
 import { getSupportedLanguages } from "./settings.model.js";
@@ -31,7 +33,7 @@ export async function getPopulatedListByListNumber(listNumber: number) {
   try {
     return await Lists.findOne({ listNumber: listNumber }).populate<{
       units: { unitName: string; item: Item }[];
-    }>({ path: "units.item" });
+    }>({ path: "units.item" }).populate<{authors: User[]}>({path: "authors"});
   } catch (err) {
     console.error(`Error getting populated list with listNumber ${listNumber}`);
   }
@@ -47,7 +49,7 @@ export async function getFullyPopulatedListByListNumber(
     }>({
       path: "units.item",
       populate: { path: "translations." + userNative },
-    });
+    }).populate<{authors: User[]}>({path: "authors"});
   } catch (err) {
     console.error(
       `Error getting fully populated list with listNumber ${listNumber}`
@@ -57,7 +59,7 @@ export async function getFullyPopulatedListByListNumber(
 
 export async function getAllListsForLanguage(language: SupportedLanguage) {
   try {
-    return await Lists.find({ language: language });
+    return await Lists.find({ language: language }).populate<{authors: User[]}>({path:"authors"});
   } catch (err) {
     console.error(`Error getting all lists for language ${language}`);
   }
@@ -91,7 +93,7 @@ export async function getChapterNameByNumber(
 }
 
 export async function updateUnlockedReviewModes(listId: Types.ObjectId) {
-  const response = (await getPopulatedListByObjectId(listId)) as PopulatedList;
+  const response = (await getPopulatedListByObjectId(listId)) as PopulatedListNoAuthors;
   const supportedLanguages = await getSupportedLanguages();
   if (response && response.units && supportedLanguages) {
     // This part checks for translation mode

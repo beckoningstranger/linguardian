@@ -13,11 +13,18 @@ import Users from "./users.schema.js";
 export async function getUserById(id: number) {
   try {
     const response = await Users.findOne<User>({ id: id }, { _id: 0 });
-    if (response) {
-      return response;
-    }
+    if (response) return response;
   } catch (err) {
     console.error(`Error getting user: ${err}`);
+  }
+}
+
+export async function getUserObjectIdById(id: number) {
+  try {
+    const response = await Users.findOne({id: id}, {_id: 1, __v: 0});
+    if (response) return response
+  } catch (err) {
+    console.error(`Error getting ObjectId for id ${id}: ${err}`)
   }
 }
 

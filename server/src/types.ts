@@ -96,14 +96,27 @@ export interface List {
   image?: string;
   language: SupportedLanguage;
   difficulty?: Difficulty;
-  // authors: Types.ObjectId[];
-  authors: string[];
+  authors: Types.ObjectId[];
   private: Boolean;
   units: { unitName: string; item: Types.ObjectId }[];
   unitOrder: string[];
   unlockedReviewModes?: Record<SupportedLanguage, Types.Array<ReviewMode>>;
   learners?: Types.ObjectId[];
 }
+
+export type FullyPopulatedList = Omit<List, "units" | "authors"> & {
+  units: { unitName: string; item: ItemPopulatedWithTranslations }[];
+  authors: User[]
+};
+
+export type PopulatedList = Omit<List, "units" | "authors"> & {
+  units: { unitName: string; item: Item }[];
+  authors: User[]
+};
+
+export type PopulatedListNoAuthors = Omit<List, "units"> & {
+  units: { unitName: string; item: Item }[];
+};
 
 export interface ListStats {
   unlearned: number;
@@ -115,13 +128,6 @@ export interface ListStats {
 
 export type ListStatus = "review" | "add" | "practice"
 
-export type FullyPopulatedList = Omit<List, "units"> & {
-  units: { unitName: string; item: ItemPopulatedWithTranslations }[];
-};
-
-export type PopulatedList = Omit<List, "units"> & {
-  units: { unitName: string; item: Item }[];
-};
 
 export type SupportedLanguage = "DE" | "EN" | "FR" | "CN";
 

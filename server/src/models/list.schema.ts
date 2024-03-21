@@ -24,16 +24,13 @@ const listSchema = new Schema<List>({
   difficulty: {
     type: String,
   },
-  // authors: [
-  //   {
-  //     type: Schema.Types.ObjectId,
-  //     required: true,
-  //     ref: "User",
-  //   },
-  // ],
-  authors: {
-    type: [String],
-  },
+  authors: [
+    {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
+  ],
   private: {
     type: Boolean,
   },

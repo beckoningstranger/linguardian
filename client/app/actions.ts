@@ -1,5 +1,9 @@
 "use server";
 
+import axios, { AxiosError } from "axios";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+
 import {
   FullyPopulatedList,
   Item,
@@ -10,8 +14,6 @@ import {
   SupportedLanguage,
   User,
 } from "@/types";
-import axios from "axios";
-import { revalidatePath } from "next/cache";
 
 export async function getSupportedLanguages() {
   try {
@@ -184,3 +186,29 @@ export async function checkPassedLanguageAsync(
   }
   return passedLanguage as SupportedLanguage;
 }
+
+  export async function uploadCSV(
+    formState: { message: string },
+    formData: FormData
+  ) {
+    let newListNumber = 0;
+    try {
+      const { data } = await axios.post(
+        "http://localhost:8000/lists/uploadCSV",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      newListNumber = data.message as number;
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        return { message: err.response?.data.message };
+      } else return { message: "Something went wrong" };
+    }    
+    revalidatePath("/dashboard");
+    revalidatePath("/dictionary");
+    revalidatePath("/lists");
+    revalidatePath("/languages/new");
+    redirect(`/lists/${newListNumber}`);
+  }

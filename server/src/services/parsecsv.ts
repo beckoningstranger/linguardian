@@ -13,7 +13,7 @@ import {
   Tags,
   List,
   Item,
-  PopulatedList,
+  PopulatedListNoAuthors,
 } from "../types.js";
 import Items from "../models/item.schema.js";
 import Lemmas from "../models/lemma.schema.js";
@@ -22,6 +22,7 @@ import {
   getLatestListNumber,
   getPopulatedListByObjectId,
 } from "../models/lists.model.js";
+import { getUserObjectIdById } from "../models/users.model.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -72,7 +73,6 @@ interface parseCSVProps {
   filename: string;
   listName: string;
   language: SupportedLanguage;
-  // author: Types.ObjectId;
   author: string;
 }
 
@@ -82,10 +82,11 @@ export async function parseCSV({
   language,
   author,
 }: parseCSVProps) {
-  // Create a new list
-  // const authors: Types.ObjectId[] = [];
-  const authors: string[] = [];
-  authors.push(author);
+  const authors: Types.ObjectId[] = [];
+  const authorData = await getUserObjectIdById(+author)
+  if (authorData) {
+    authors.push(authorData?._id);
+  } else {console.error('List will be added without author')}
 
   const newList: List = {
     name: listName,
@@ -451,7 +452,7 @@ async function addItemsToList(
 async function defineUnitOrder(newListsId: Types.ObjectId) {
   const newList = (await getPopulatedListByObjectId(
     newListsId
-  )) as PopulatedList;
+  )) as PopulatedListNoAuthors;
   if (newList && newList.units) {
     const foundUnitNames: string[] = [];
     newList.units.map((item) => {
