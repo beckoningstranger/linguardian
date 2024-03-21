@@ -58,7 +58,7 @@ export default async function Dashboard({
   function AddNewListOption() {
     return (
       <Link
-        href={`/app/lists?lang=${currentlyActiveLanguage}`}
+        href={`/lists?lang=${currentlyActiveLanguage}`}
         className="relative mx-6 flex h-full min-h-40 items-center justify-center rounded-md bg-slate-200 md:min-h-80 lg:mx-3 xl:mx-6"
       >
         <div className="flex size-4/5 items-center justify-center rounded-md bg-slate-100 text-6xl text-slate-600 transition-all hover:scale-110 md:text-8xl">

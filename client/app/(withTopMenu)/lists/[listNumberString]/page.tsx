@@ -48,7 +48,7 @@ export default async function ListDetailPage({
       return (
         <Link
           key={index}
-          href={`/app/lists/${listNumber}/${index + 1}`}
+          href={`/lists/${listNumber}/${index + 1}`}
           className="flex w-full justify-center"
         >
           <div
@@ -74,7 +74,7 @@ export default async function ListDetailPage({
         <div className="flex flex-col">
           {!learnedLanguageData && (
             <Link
-              href={`/app/lists/add?lang=${language}&user=${user.id}&list=${listNumber}&newLanguage=yes`}
+              href={`/lists/add?lang=${language}&user=${user.id}&list=${listNumber}&newLanguage=yes`}
               className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
             >
               Start learning {languageFeatures.langName} with this list!
@@ -86,7 +86,7 @@ export default async function ListDetailPage({
               listNumber
             ) && (
               <Link
-                href={`/app/lists/add?lang=${language}&user=${user.id}&list=${listNumber}`}
+                href={`/lists/add?lang=${language}&user=${user.id}&list=${listNumber}`}
                 className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
               >
                 Add this list to your dashboard
@@ -134,8 +134,8 @@ export default async function ListDetailPage({
         from the database.
       </p>
       <div>
-        <Link href="/app/dashboard">Back to Dashboard</Link>
-        <Link href="/app/lists">List Store</Link>
+        <Link href="/dashboard">Back to Dashboard</Link>
+        <Link href="/lists">List Store</Link>
       </div>
     </div>
   );

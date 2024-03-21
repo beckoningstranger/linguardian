@@ -95,7 +95,7 @@ export default function TranslationMode({
         setActiveItem(items[reviewedItems + 1]);
       } else {
         setSessionEnd(true);
-        router.push(`/app/dashboard?lang=${targetLanguageFeatures.langCode}`);
+        router.push(`/dashboard?lang=${targetLanguageFeatures.langCode}`);
         // This is where we navigate back to the dashboard and load fresh data from backend
       }
     }, 1500);

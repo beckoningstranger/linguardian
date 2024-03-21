@@ -77,6 +77,6 @@ export default function ReviewButton({
   return mode === "more" ? (
     renderedButton
   ) : (
-    <Link href={`/app/learn/${mode}/${id}`}>{renderedButton}</Link>
+    <Link href={`/learn/${mode}/${id}`}>{renderedButton}</Link>
   );
 }

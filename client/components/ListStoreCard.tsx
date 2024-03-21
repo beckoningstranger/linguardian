@@ -23,7 +23,7 @@ export default function ListStoreCard({
   listNumber,
 }: ListStoreCardProps) {
   return (
-    <Link href={`/app/lists/${listNumber}`}>
+    <Link href={`/lists/${listNumber}`}>
       <article className="flex w-[350px] flex-col justify-between rounded-md bg-slate-100 shadow-md transition-all hover:shadow-xl">
         <div
           id="title"

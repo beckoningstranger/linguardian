@@ -5,7 +5,7 @@ import {
   checkPassedLanguageAsync,
   getListsByLanguage,
   getUserById,
-} from "../../../actions";
+} from "@/app/actions";
 import ListStoreCard from "@/components/ListStoreCard";
 
 interface ListStoreProps {
@@ -42,7 +42,7 @@ export default async function ListStore({ searchParams }: ListStoreProps) {
         </div>
         <div>
           <Link
-            href="/app/lists/new"
+            href="/lists/new"
             className="absolute bottom-1 left-1 m-4 rounded border border-black bg-slate-200 p-3"
           >
             Upload CSV

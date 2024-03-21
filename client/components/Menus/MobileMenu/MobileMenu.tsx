@@ -1,7 +1,7 @@
 "use client";
 import { MouseEventHandler, ReactNode, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import Logo from "../../Logo";
+import Logo from "@/components/Logo";
 import MobileMenuCloseButton from "./MobileMenuCloseButton";
 import useMobileMenuContext from "@/hooks/useMobileMenuContext";
 

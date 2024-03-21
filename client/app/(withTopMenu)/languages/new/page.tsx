@@ -21,7 +21,7 @@ export default async function AddNewLanguageToLearn() {
 
       return (
         <div>
-          <Link key={lang} href={`/app/languages/add?lang=${lang}`}>
+          <Link key={lang} href={`/languages/add?lang=${lang}`}>
             <Flag
               code={languageFeatures?.flagCode}
               className={`my-2 h-24 w-24 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125`}

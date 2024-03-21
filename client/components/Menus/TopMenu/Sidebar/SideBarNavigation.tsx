@@ -8,7 +8,7 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { FaRegQuestionCircle, FaBookReader } from "react-icons/fa";
 import { FaPeopleRoof } from "react-icons/fa6";
 import { RiLogoutBoxLine, RiFileList3Fill } from "react-icons/ri";
-import CloseButton from "../../MobileMenu/MobileMenuCloseButton";
+import CloseButton from "@/components/Menus/MobileMenu/MobileMenuCloseButton";
 import { SupportedLanguage } from "@/types";
 
 interface SideBarNavigationProps {
@@ -37,26 +37,26 @@ export default function SideBarNavigation({
           <SidebarItem
             icon={<RxHamburgerMenu />}
             label="Dashboard"
-            href={`/app/dashboard?lang=${currentlyActiveLanguage}`}
+            href={`/dashboard?lang=${currentlyActiveLanguage}`}
             toggleSidebar={toggleSidebar as MouseEventHandler}
           />
 
           <SidebarItem
             icon={<RiFileList3Fill />}
             label="Lists"
-            href={`/app/lists?lang=${currentlyActiveLanguage}`}
+            href={`/lists?lang=${currentlyActiveLanguage}`}
             toggleSidebar={toggleSidebar as MouseEventHandler}
           />
           <SidebarItem
             icon={<FaBookReader />}
             label="Dictionary"
-            href={`/app/dictionary?lang=${currentlyActiveLanguage}`}
+            href={`/dictionary?lang=${currentlyActiveLanguage}`}
             toggleSidebar={toggleSidebar as MouseEventHandler}
           />
           <SidebarItem
             icon={<FaPeopleRoof />}
             label="Social"
-            href="/app/social"
+            href="/social"
             toggleSidebar={toggleSidebar as MouseEventHandler}
           />
         </nav>
@@ -64,13 +64,13 @@ export default function SideBarNavigation({
           <SidebarItem
             icon={<FaRegQuestionCircle />}
             label="About"
-            href="/app/about"
+            href="/about"
             toggleSidebar={toggleSidebar as MouseEventHandler}
           />
           <SidebarItem
             icon={<RiLogoutBoxLine />}
             label="Logout"
-            href="/app/logout"
+            href="/logout"
             toggleSidebar={toggleSidebar as MouseEventHandler}
           />
         </footer>

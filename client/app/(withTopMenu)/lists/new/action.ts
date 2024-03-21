@@ -22,5 +22,5 @@ export async function uploadCSV(
       return { message: err.response?.data.message };
     } else return { message: "Something went wrong" };
   }
-  redirect(`/app/lists/${newListNumber}`);
+  redirect(`/lists/${newListNumber}`);
 }

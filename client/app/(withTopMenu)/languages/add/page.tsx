@@ -15,7 +15,7 @@ export default async function AddNewLanguageToLearn({
     const { lang } = searchParams;
     await addNewLanguageToLearn(user.id, lang);
 
-    redirect(`/app/lists?lang=${lang}`);
+    redirect(`/lists?lang=${lang}`);
   } else {
     return "Page must be called with correct searchParams";
   }

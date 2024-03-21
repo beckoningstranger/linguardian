@@ -1,5 +1,5 @@
 import Dashboard from "@/components/Dashboard";
-import { checkPassedLanguageAsync, getUserById } from "../../../actions";
+import { checkPassedLanguageAsync, getUserById } from "@/app/actions";
 
 interface DashboardPageProps {
   searchParams?: { lang: string };

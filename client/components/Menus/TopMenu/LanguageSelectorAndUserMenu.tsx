@@ -25,11 +25,7 @@ export default function LanguageSelectorAndUserMenu({
   const { toggleMobileMenu } = useMobileMenuContext();
 
   const currentBaseUrl = usePathname();
-  const showLanguageSelectorOnlyOn = [
-    "/app/dashboard",
-    "/app/dictionary",
-    "/app/lists",
-  ];
+  const showLanguageSelectorOnlyOn = ["/dashboard", "/dictionary", "/lists"];
 
   return (
     <>

@@ -27,7 +27,7 @@ export default async function AddListToDashboard({
       await addNewLanguageToLearn(user.id, lang);
     await addListToDashboard(user.id, list);
 
-    redirect(`/app/dashboard?lang=${lang}`);
+    redirect(`/dashboard?lang=${lang}`);
   } else {
     return "Page must be called with correct searchParams";
   }

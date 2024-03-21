@@ -1,7 +1,6 @@
 import { getOneItemById, getOneItemByName } from "../../models/items.model.js";
 import { Request, Response } from "express";
 import { SupportedLanguage } from "../../types.js";
-import { Types } from "mongoose";
 
 export async function httpGetOneItemByName(req: Request, res: Response) {
   const name = req.params.name;
