@@ -8,6 +8,7 @@ import { useLoaded } from "@/hooks/useLoaded";
 import ListBarChart from "@/components/Charts/ListBarChart";
 import ListPieChart from "./Charts/ListPieChart";
 import { ListStats, ListStatus } from "@/types";
+import Link from "next/link";
 
 interface ListDashboardCardProps {
   title: string;
@@ -117,9 +118,9 @@ export default function ListDashboardCard({
         >
           <RxDotsVertical />
         </div>
-        <div className="w-full pl-2">
+        <Link href={`/lists/${id}`} className="w-full pl-2">
           <h2 className="text-lg font-semibold">{title}</h2>
-        </div>
+        </Link>
       </div>
 
       <div className="my-3 flex flex-col justify-evenly px-2 md:mx-0 md:w-full md:flex-row xl:px-0">
