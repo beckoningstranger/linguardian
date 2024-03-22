@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { MobileMenuContextProvider } from "@/components/Menus/MobileMenu/MobileMenuContext";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@/app/globals.css";
@@ -19,7 +18,7 @@ export default async function Root({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <MobileMenuContextProvider>{children}</MobileMenuContextProvider>
+        {children}
         <div id="PortalOutlet" />
       </body>
     </html>
