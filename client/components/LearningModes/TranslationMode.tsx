@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -16,6 +16,7 @@ import HelperKeys from "./HelperKeys";
 import { MobileMenuContextProvider } from "../Menus/MobileMenu/MobileMenuContext";
 import GenderCaseReview from "./GenderCaseReview";
 import SolutionInput from "./SolutionInput";
+import LearnReviewElementContainer from "./LearnReviewElementContainer";
 
 export type ReviewStatus = "neutral" | "correct" | "incorrect";
 
@@ -45,8 +46,15 @@ export default function TranslationMode({
   const [itemPresentation, setItemPresentation] = useState<boolean | undefined>(
     false
   );
+  const [hideHelperKeys, setHideHelperKeys] = useState<Boolean>(false);
 
   const solutionInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    moreReviews || itemPresentation
+      ? setHideHelperKeys(true)
+      : setHideHelperKeys(false);
+  }, [moreReviews, itemPresentation]);
 
   function finalizeReview(answerCorrect: Boolean) {
     // This is where we can update the backend for this item,
@@ -70,61 +78,69 @@ export default function TranslationMode({
     }, 1500);
   }
 
+  function handleGotItClickInPresentation() {
+    setItemPresentation(false);
+    setSolution("");
+  }
+
   return (
-    <div className="flex flex-col justify-center transition-all">
+    <div className="grid place-items-center">
       <TopBar
         listName={listName}
-        reviewedItems={reviewedItems}
+        itemsInProgress={reviewedItems}
         totalItems={items.length}
+        mode="review"
       />
-      <div className="w-95 mx-6 mt-3 flex flex-col gap-3">
-        <ItemPrompt activeItem={activeItem} userNative={userNative} />
+      <LearnReviewElementContainer>
+        <ItemPrompt item={activeItem} userNative={userNative} />
 
         <MobileMenuContextProvider>
           <HelperKeys
             targetLanguageFeatures={targetLanguageFeatures}
-            moreReviews={moreReviews}
-            itemPresentation={itemPresentation}
+            hide={hideHelperKeys}
             solution={solution}
             setSolution={setSolution}
             inputRef={solutionInputRef}
           />
         </MobileMenuContextProvider>
 
-        <SolutionInput
-          moreReviews={moreReviews}
-          itemPresentation={itemPresentation}
-          targetLanguageFeatures={targetLanguageFeatures}
-          solution={solution}
-          setSolution={setSolution}
-          inputRef={solutionInputRef}
-          reviewStatus={reviewStatus}
-          setReviewStatus={setReviewStatus}
-          sessionEnd={sessionEnd}
-          activeItem={activeItem}
-          setMoreReviews={setMoreReviews}
-          finalizeReview={finalizeReview}
-        />
+        {!moreReviews && !itemPresentation && (
+          <SolutionInput
+            targetLanguageFeatures={targetLanguageFeatures}
+            solution={solution}
+            setSolution={setSolution}
+            inputRef={solutionInputRef}
+            reviewStatus={reviewStatus}
+            setReviewStatus={setReviewStatus}
+            disable={sessionEnd}
+            item={activeItem}
+            setMoreReviews={setMoreReviews}
+            finalizeReview={finalizeReview}
+          />
+        )}
 
-        <GenderCaseReview
-          moreReviews={moreReviews}
-          targetLanguageFeatures={targetLanguageFeatures}
-          activeItem={activeItem}
-          solution={solution}
-          setSolution={setSolution}
-          setReviewStatus={setReviewStatus}
-          setMoreReviews={setMoreReviews}
-          finalizeReview={finalizeReview}
-        />
+        {moreReviews && (
+          <GenderCaseReview
+            mode={moreReviews}
+            targetLanguageFeatures={targetLanguageFeatures}
+            item={activeItem}
+            solution={solution}
+            setSolution={setSolution}
+            setReviewStatus={setReviewStatus}
+            setMoreReviews={setMoreReviews}
+            finalizeReview={finalizeReview}
+          />
+        )}
 
-        <ItemPresentation
-          item={activeItem}
-          itemPresentation={itemPresentation}
-          userSolution={solution}
-          endPresentation={() => setItemPresentation(false)}
-          setSolution={setSolution}
-        />
-      </div>
+        {itemPresentation && (
+          <ItemPresentation
+            firstPresentation={false}
+            item={activeItem}
+            userSolution={solution}
+            endPresentation={handleGotItClickInPresentation}
+          />
+        )}
+      </LearnReviewElementContainer>
     </div>
   );
 }

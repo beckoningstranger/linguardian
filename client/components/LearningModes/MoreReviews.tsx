@@ -11,7 +11,7 @@ export type MoreReviewsMode = "gender" | "case";
 interface MoreReviewsProps {
   mode: MoreReviewsMode;
   moreReviewsInputRef: RefObject<HTMLInputElement>;
-  activeItem: ItemPopulatedWithTranslations;
+  item: ItemPopulatedWithTranslations;
   target: SupportedLanguage;
   targetLanguageFeatures: LanguageFeatures;
   handleSubmit: Function;
@@ -20,7 +20,7 @@ interface MoreReviewsProps {
 export default function MoreReviews({
   mode,
   moreReviewsInputRef,
-  activeItem,
+  item,
   targetLanguageFeatures,
   handleSubmit,
 }: MoreReviewsProps) {
@@ -44,10 +44,8 @@ export default function MoreReviews({
       />
       <div className="text-center text-xl">
         <p>Very good!</p>
-        {mode === "gender" && <p>What is {activeItem.name}&apos;s gender?</p>}
-        {mode === "case" && (
-          <p>And {activeItem.name} is followed by which case?</p>
-        )}
+        {mode === "gender" && <p>What is {item.name}&apos;s gender?</p>}
+        {mode === "case" && <p>And {item.name} is followed by which case?</p>}
       </div>
       <div className="my-2 flex justify-around">
         {mode === "case" &&

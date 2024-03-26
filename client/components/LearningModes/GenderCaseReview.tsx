@@ -8,9 +8,9 @@ import MoreReviews, { MoreReviewsMode } from "./MoreReviews";
 import { useRef } from "react";
 
 interface GenderCaseReviewProps {
-  moreReviews: MoreReviewsMode | null;
+  mode: MoreReviewsMode;
   targetLanguageFeatures: LanguageFeatures;
-  activeItem: ItemPopulatedWithTranslations;
+  item: ItemPopulatedWithTranslations;
   solution: string;
   setSolution: Function;
   setReviewStatus: Function;
@@ -19,9 +19,9 @@ interface GenderCaseReviewProps {
 }
 
 export default function GenderCaseReview({
-  moreReviews,
+  mode,
   targetLanguageFeatures,
-  activeItem,
+  item,
   solution,
   setSolution,
   setReviewStatus,
@@ -37,10 +37,7 @@ export default function GenderCaseReview({
     let correct = true;
     if (mode === "gender") {
       setSolution(`${solution} (${moreReviewsSolution})`);
-      if (
-        activeItem.gender &&
-        !activeItem.gender.includes(moreReviewsSolution)
-      ) {
+      if (item.gender && !item.gender.includes(moreReviewsSolution)) {
         setReviewStatus("incorrect");
         correct = false;
       }
@@ -48,7 +45,7 @@ export default function GenderCaseReview({
 
     if (mode === "case") {
       setSolution(`${solution} (${moreReviewsSolution})`);
-      if (activeItem.case && !activeItem.case.includes(moreReviewsSolution)) {
+      if (item.case && !item.case.includes(moreReviewsSolution)) {
         setReviewStatus("incorrect");
         correct = false;
       }
@@ -58,28 +55,17 @@ export default function GenderCaseReview({
     finalizeReview(correct);
   }
 
-  return (
-    <>
-      {moreReviews === "gender" && (
-        <MoreReviews
-          mode={moreReviews}
-          moreReviewsInputRef={moreReviewsInputRef}
-          activeItem={activeItem}
-          target={targetLanguageFeatures.langCode}
-          targetLanguageFeatures={targetLanguageFeatures}
-          handleSubmit={handleMoreReviewsSubmit}
-        />
-      )}
-      {moreReviews === "case" && (
-        <MoreReviews
-          mode={moreReviews}
-          moreReviewsInputRef={moreReviewsInputRef}
-          activeItem={activeItem}
-          target={targetLanguageFeatures.langCode}
-          targetLanguageFeatures={targetLanguageFeatures}
-          handleSubmit={handleMoreReviewsSubmit}
-        />
-      )}
-    </>
-  );
+  if (mode)
+    return (
+      <MoreReviews
+        mode={mode}
+        moreReviewsInputRef={moreReviewsInputRef}
+        item={item}
+        target={targetLanguageFeatures.langCode}
+        targetLanguageFeatures={targetLanguageFeatures}
+        handleSubmit={handleMoreReviewsSubmit}
+      />
+    );
+
+  return null;
 }

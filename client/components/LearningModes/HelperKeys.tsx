@@ -1,23 +1,22 @@
+"use client";
+
 import { LanguageFeatures } from "@/types";
 import HelperKeysSelector from "../Menus/HelperKeysSelector";
 import MobileMenu from "../Menus/MobileMenu/MobileMenu";
 import { RefObject, useContext, useState } from "react";
 import { MobileMenuContext } from "../Menus/MobileMenu/MobileMenuContext";
-import { MoreReviewsMode } from "./MoreReviews";
 
 interface HelperKeysProps {
+  hide: Boolean;
   targetLanguageFeatures: LanguageFeatures;
-  moreReviews: MoreReviewsMode | null;
-  itemPresentation: boolean | undefined;
   solution: string;
   setSolution: Function;
   inputRef: RefObject<HTMLInputElement>;
 }
 
 export default function HelperKeys({
+  hide,
   targetLanguageFeatures,
-  moreReviews,
-  itemPresentation,
   solution,
   setSolution,
   inputRef,
@@ -32,27 +31,10 @@ export default function HelperKeys({
     if (inputRef.current) inputRef.current.focus();
   };
 
+  if (!targetLanguageFeatures.requiresHelperKeys || hide) return null;
+
   return (
     <>
-      {targetLanguageFeatures.requiresHelperKeys &&
-        !showHelperKeys &&
-        !moreReviews &&
-        !itemPresentation && (
-          <>
-            <div
-              className="hidden rounded-md bg-slate-200 p-2 text-center md:block"
-              onClick={() => setShowHelperKeys(true)}
-            >
-              Need help entering special characters?
-            </div>
-            <div
-              className="rounded-md bg-slate-200 p-2 text-center md:hidden"
-              onClick={() => toggleMobileMenu!()}
-            >
-              Need help entering special characters?
-            </div>
-          </>
-        )}
       <MobileMenu>
         <HelperKeysSelector
           target={targetLanguageFeatures.langCode}
@@ -62,13 +44,29 @@ export default function HelperKeys({
           mobile={true}
         />
       </MobileMenu>
-      {targetLanguageFeatures.requiresHelperKeys && showHelperKeys && (
+      {showHelperKeys && (
         <HelperKeysSelector
           target={targetLanguageFeatures.langCode}
           handleHelperKeyClick={handleHelperKeyClick}
           targetLanguageFeatures={targetLanguageFeatures}
           mobile={false}
         />
+      )}
+      {!showHelperKeys && (
+        <>
+          <div
+            className="hidden rounded-md bg-slate-200 p-2 text-center md:block"
+            onClick={() => setShowHelperKeys(true)}
+          >
+            Need help entering special characters?
+          </div>
+          <div
+            className="rounded-md bg-slate-200 p-2 text-center md:hidden"
+            onClick={() => toggleMobileMenu!()}
+          >
+            Need help entering special characters?
+          </div>
+        </>
       )}
     </>
   );

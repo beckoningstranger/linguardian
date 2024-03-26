@@ -13,12 +13,6 @@ export type PartOfSpeech =
   | "particle"
   | "phrase";
 
-export interface LearnedItem {
-  id: Types.ObjectId;
-  level: number;
-  nextReview: number;
-}
-
 export type Gender =
   | "masculine"
   | "feminine"
@@ -37,7 +31,12 @@ export type Case =
   | "vocative"
   | "accusative & dative";
 
-export type Tags = "intransitive" | "archaic" | "literary" | "slang" | "humorous";
+export type Tags =
+  | "intransitive"
+  | "archaic"
+  | "literary"
+  | "slang"
+  | "humorous";
 
 export type Frequency =
   | "extremely rare"
@@ -47,6 +46,7 @@ export type Frequency =
   | "extremely high";
 
 export interface Item {
+  id: Types.ObjectId;
   name: string;
   language: SupportedLanguage;
   partOfSpeech: PartOfSpeech;
@@ -67,6 +67,10 @@ export interface Item {
 
 export type ItemPopulatedWithTranslations = Omit<Item, "translations"> & {
   translations: Record<SupportedLanguage, ItemPopulatedWithTranslations[]>;
+};
+
+export type ItemToLearn = ItemPopulatedWithTranslations & {
+  learningStep: number;
 };
 
 export interface Lemma {
@@ -106,12 +110,12 @@ export interface List {
 
 export type FullyPopulatedList = Omit<List, "units" | "authors"> & {
   units: { unitName: string; item: ItemPopulatedWithTranslations }[];
-  authors: User[]
+  authors: User[];
 };
 
 export type PopulatedList = Omit<List, "units" | "authors"> & {
   units: { unitName: string; item: Item }[];
-  authors: User[]
+  authors: User[];
 };
 
 export type PopulatedListNoAuthors = Omit<List, "units"> & {
@@ -126,8 +130,7 @@ export interface ListStats {
   ignored: number;
 }
 
-export type ListStatus = "review" | "add" | "practice"
-
+export type ListStatus = "review" | "add" | "practice";
 
 export type SupportedLanguage = "DE" | "EN" | "FR" | "CN";
 
@@ -180,10 +183,15 @@ export type LearnedLanguageWithPopulatedLists = Omit<
   learnedLists: List[];
 };
 
+export interface LearnedItem {
+  id: Types.ObjectId;
+  level: number;
+  nextReview: number;
+}
+
 export interface User {
   id: number;
   alias: string;
   native: SupportedLanguage;
   languages: LearnedLanguage[];
 }
-

@@ -1,34 +1,29 @@
 import { RefObject, useEffect, useState } from "react";
-import { MoreReviewsMode } from "./MoreReviews";
 import { ItemPopulatedWithTranslations, LanguageFeatures } from "@/types";
 import { ReviewStatus } from "./TranslationMode";
 
 interface SolutionInputProps {
-  moreReviews: MoreReviewsMode | null;
-  itemPresentation: boolean | undefined;
   targetLanguageFeatures: LanguageFeatures;
   solution: string;
   setSolution: Function;
   inputRef: RefObject<HTMLInputElement>;
   reviewStatus: ReviewStatus;
   setReviewStatus: Function;
-  sessionEnd: boolean | undefined;
-  activeItem: ItemPopulatedWithTranslations;
+  disable: boolean | undefined;
+  item: ItemPopulatedWithTranslations;
   setMoreReviews: Function;
   finalizeReview: Function;
 }
 
 export default function SolutionInput({
-  moreReviews,
-  itemPresentation,
   targetLanguageFeatures,
   solution,
   setSolution,
   inputRef,
   reviewStatus,
   setReviewStatus,
-  sessionEnd,
-  activeItem,
+  disable,
+  item,
   setMoreReviews,
   finalizeReview,
 }: SolutionInputProps) {
@@ -69,7 +64,7 @@ export default function SolutionInput({
     e.preventDefault();
     let answerCorrect;
 
-    if (activeItem.name === solution.trim()) {
+    if (item.name === solution.trim()) {
       setReviewStatus("correct");
       answerCorrect = true;
     } else {
@@ -80,9 +75,9 @@ export default function SolutionInput({
     // This is where we can trigger additional reviews for this item, i.e. gender...
     if (
       answerCorrect &&
-      activeItem.partOfSpeech === "noun" &&
+      item.partOfSpeech === "noun" &&
       targetLanguageFeatures.hasGender &&
-      activeItem.name === solution
+      item.name === solution
     ) {
       setMoreReviews("gender");
       return;
@@ -91,9 +86,9 @@ export default function SolutionInput({
     // ...or case
     if (
       answerCorrect &&
-      activeItem.partOfSpeech === "preposition" &&
+      item.partOfSpeech === "preposition" &&
       targetLanguageFeatures.hasCases &&
-      activeItem.name === solution
+      item.name === solution
     ) {
       setMoreReviews("case");
       return;
@@ -102,22 +97,18 @@ export default function SolutionInput({
   }
 
   return (
-    <>
-      {!moreReviews && !itemPresentation && (
-        <form onSubmit={handleWordSubmit} className={inputStyling.form}>
-          <input
-            type="text"
-            placeholder={`Translate to ${targetLanguageFeatures.langName}`}
-            value={solution}
-            onChange={(e) => setSolution(e.target.value)}
-            className={inputStyling.input}
-            autoFocus
-            ref={inputRef}
-            readOnly={reviewStatus !== "neutral"}
-            disabled={sessionEnd}
-          />
-        </form>
-      )}
-    </>
+    <form onSubmit={handleWordSubmit} className={inputStyling.form}>
+      <input
+        type="text"
+        placeholder={`Translate to ${targetLanguageFeatures.langName}`}
+        value={solution}
+        onChange={(e) => setSolution(e.target.value)}
+        className={inputStyling.input}
+        autoFocus
+        ref={inputRef}
+        readOnly={reviewStatus !== "neutral"}
+        disabled={disable}
+      />
+    </form>
   );
 }
