@@ -34,6 +34,10 @@ export default async function ReviewPage({
     listNumber
   );
 
+  const allItemStringsInList = listData?.units.map(
+    (unitItem) => unitItem.item.name
+  );
+
   // Fetch all items that user has learned for this language
   const learnedLanguageData = await getLearnedLanguageData(
     user!.id,
@@ -67,7 +71,13 @@ export default async function ReviewPage({
 
   // This is where we read the list data to see what items need to be reviewed / can be learned
   // and then fetch all of them to then pass this information on into a Learning Mode.
-  if (targetLanguageFeatures && listData && listData.name && listData.units)
+  if (
+    targetLanguageFeatures &&
+    listData &&
+    listData.name &&
+    listData.units &&
+    allItemStringsInList
+  )
     switch (mode) {
       case "translation":
         const itemsToReview: ItemToLearn[] = allLearnableItems;
@@ -96,6 +106,7 @@ export default async function ReviewPage({
             items={itemsToLearn}
             userNative={userNative}
             targetLanguageFeatures={targetLanguageFeatures}
+            allItemsInList={allItemStringsInList}
           />
         );
       default:
