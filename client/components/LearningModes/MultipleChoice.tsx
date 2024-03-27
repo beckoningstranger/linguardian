@@ -24,7 +24,7 @@ export default function MultipleChoice({
         evaluate(reviewStatus);
       }, 1000);
     }
-  });
+  }, [reviewStatus]);
 
   const handleClick = (option: string) => {
     setSelectedOption(option);

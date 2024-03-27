@@ -72,6 +72,7 @@ export default async function ReviewPage({
   // This is where we read the list data to see what items need to be reviewed / can be learned
   // and then fetch all of them to then pass this information on into a Learning Mode.
   if (
+    user &&
     targetLanguageFeatures &&
     listData &&
     listData.name &&

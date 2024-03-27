@@ -11,6 +11,7 @@ import { MobileMenuContextProvider } from "../Menus/MobileMenu/MobileMenuContext
 import { ReviewStatus } from "./TranslationMode";
 import ItemPresentation from "./ItemPresentation";
 import MultipleChoice from "./MultipleChoice";
+import PuzzleMode from "./PuzzleMode";
 
 interface LearnNewWordsModeProps {
   listName: string;
@@ -88,16 +89,26 @@ export default function LearnNewWordsMode({
             item={itemsToLearn[0]}
             userSolution={solution}
             endPresentation={evaluateUserAnswer}
+            userNative={userNative}
           />
         )}
         {itemsToLearn[0].learningStep === 1 && (
           <MultipleChoice
-            options={generateOptions(allItemsInList, itemsToLearn[0])}
+            options={createMultipleChoiceOptions(
+              allItemsInList,
+              itemsToLearn[0]
+            )}
             correctItem={itemsToLearn[0]}
             evaluate={evaluateUserAnswer}
           />
         )}
-        {itemsToLearn[0].learningStep === 2 && "2nd learning step"}
+        {itemsToLearn[0].learningStep === 2 && (
+          <PuzzleMode
+            item={itemsToLearn[0]}
+            evaluate={evaluateUserAnswer}
+            initialPuzzlePieces={createPuzzlePieces(itemsToLearn[0])}
+          />
+        )}
         {itemsToLearn[0].learningStep === 3 && (
           <SolutionInput
             inputRef={solutionInputRef}
@@ -117,7 +128,10 @@ export default function LearnNewWordsMode({
   );
 }
 
-function generateOptions(moreItems: string[], correctItem: ItemToLearn) {
+function createMultipleChoiceOptions(
+  moreItems: string[],
+  correctItem: ItemToLearn
+) {
   const wrongOptions: string[] = [];
   let numberOfOptions = 0;
   if (moreItems.length >= 7) {
@@ -150,11 +164,31 @@ function generateOptions(moreItems: string[], correctItem: ItemToLearn) {
   const options = wrongOptions.slice(0, numberOfOptions);
   options.push(correctItem.name);
 
-  // Durstenfeld Shuffle: https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-  for (let i = options.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [options[i], options[j]] = [options[j], options[i]];
-  }
+  const shuffledOptions = arrayShuffle(options);
 
-  return options;
+  return shuffledOptions;
+}
+
+export function arrayShuffle(array: string[]) {
+  // Durstenfeld Shuffle: https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function createPuzzlePieces(item: ItemToLearn) {
+  const amountOfPieces = 6;
+  const pieceLength = Math.ceil(item.name.length / amountOfPieces);
+  const itemString = item.name;
+  let puzzlePieces: string[] = [];
+  for (let x = 0; x < amountOfPieces; x++) {
+    puzzlePieces.push(itemString.slice(x * pieceLength, pieceLength * (x + 1)));
+  }
+  const puzzlePiecesWithoutEmptyOnes = puzzlePieces.filter(
+    (piece) => piece.length > 0 && piece !== " "
+  );
+  const shuffledPieces = arrayShuffle(puzzlePiecesWithoutEmptyOnes);
+  return shuffledPieces;
 }

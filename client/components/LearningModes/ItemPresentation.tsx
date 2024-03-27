@@ -1,4 +1,4 @@
-import { ItemPopulatedWithTranslations } from "@/types";
+import { ItemPopulatedWithTranslations, SupportedLanguage } from "@/types";
 import { MouseEventHandler } from "react";
 
 interface ItemPresentationProps {
@@ -6,6 +6,7 @@ interface ItemPresentationProps {
   endPresentation: Function;
   userSolution: string;
   firstPresentation: Boolean;
+  userNative: SupportedLanguage;
 }
 
 export default function ItemPresentation({
@@ -13,6 +14,7 @@ export default function ItemPresentation({
   endPresentation,
   userSolution,
   firstPresentation,
+  userNative,
 }: ItemPresentationProps) {
   return (
     <>
@@ -30,6 +32,13 @@ export default function ItemPresentation({
         <div className="">{item.partOfSpeech}</div>
         {item.gender && <div>{item.gender}</div>}
         {item.case && <div>{item.case}</div>}
+        {firstPresentation && (
+          <div className="text-2xl">
+            {item.translations[userNative]
+              .map((transl) => transl.name)
+              .join(", ")}
+          </div>
+        )}
       </div>
 
       {userSolution.length > 0 && (
