@@ -1,11 +1,13 @@
 import {
-  ItemPopulatedWithTranslations,
+  FullyPopulatedList,
   ItemToLearn,
   LanguageFeatures,
+  LearnedItem,
+  LearnedLanguageWithPopulatedLists,
+  LearningMode,
   User,
 } from "@/types";
-import LearnNewWordsMode from "@/components/LearningModes/LearnNewWordsMode";
-import TranslationMode from "@/components/LearningModes/TranslationMode";
+import LearnAndReview from "@/components/LearningModes/LearnAndReview";
 import {
   getLanguageFeaturesForLanguage,
   getFullyPopulatedListByListNumber,
@@ -20,97 +22,104 @@ interface ReviewPageProps {
   };
 }
 
-export default async function ReviewPage({
+export default async function LearnAndReviewPage({
   params: { mode, listNumberString },
 }: ReviewPageProps) {
+  // Verify props
   const listNumber = parseInt(listNumberString);
+  if (mode !== "translation" && mode !== "learn")
+    return `No valid learning mode selected ${mode}`;
 
   const user: User | undefined = await getUserById(1);
-  const userNative = user!.native;
+  if (!user) return "No User";
 
-  // Fetch list here
   const listData = await getFullyPopulatedListByListNumber(
-    userNative,
+    user.native,
     listNumber
   );
+  if (!listData) return "Error getting listData";
 
-  const allItemStringsInList = listData?.units.map(
+  const allItemStringsInList = listData.units.map(
     (unitItem) => unitItem.item.name
   );
 
+  const targetLanguageFeatures: LanguageFeatures | undefined =
+    await getLanguageFeaturesForLanguage(listData!.language);
+  if (!targetLanguageFeatures) return "Error getting targetLanguageFeatures";
+
   // Fetch all items that user has learned for this language
   const learnedLanguageData = await getLearnedLanguageData(
-    user!.id,
-    listData!.language
+    user.id,
+    listData.language
+  );
+  if (!learnedLanguageData) return "Error getting learnedLanguageData";
+
+  const itemsForSession = prepareItemsForSession(
+    mode,
+    user,
+    listData,
+    learnedLanguageData
   );
 
-  const learnedItems = learnedLanguageData?.learnedItems;
-  const languageDataForListLanguage = user?.languages.find(
-    (lang) => lang.code === listData?.language
+  return (
+    <LearnAndReview
+      targetLanguageFeatures={targetLanguageFeatures}
+      items={itemsForSession}
+      listName={listData.name}
+      userNative={user.native}
+      allItemStringsInList={allItemStringsInList}
+      mode={mode}
+    />
+  );
+}
+
+function prepareItemsForSession(
+  mode: LearningMode,
+  user: User,
+  listData: FullyPopulatedList,
+  learnedLanguageData: LearnedLanguageWithPopulatedLists
+): ItemToLearn[] {
+  const languageDataForListLanguage = user.languages.find(
+    (lang) => lang.code === listData.language
   );
 
+  const learnedItems: LearnedItem[] | undefined =
+    learnedLanguageData?.learnedItems;
   const allLearnedItemIds = learnedItems?.map((item) => item.id);
 
   const itemsPerSession =
     languageDataForListLanguage?.customSRSettings?.itemsPerSession;
 
   const allLearnableItems: ItemToLearn[] = [];
-  const allReviewableItems: ItemPopulatedWithTranslations[] = [];
-  listData!.units.forEach((unitItem) => {
+  const allReviewableItems: ItemToLearn[] = [];
+  listData.units.forEach((unitItem) => {
     if (!allLearnedItemIds?.includes(unitItem.item.id)) {
       const item = unitItem.item as ItemToLearn;
       item.learningStep = 0;
+      item.firstPresentation = true;
       allLearnableItems.push(item);
-    } else {
-      allReviewableItems.push(unitItem.item);
     }
+    // This should be just the else statement, but for now let's just put everything in
+    // regardless of whether the items have been learned or are actually due to review
+    // else {
+    const item = unitItem.item as ItemToLearn;
+    item.learningStep = 3;
+    item.firstPresentation = false;
+    allReviewableItems.push(item);
+    // }
   });
 
-  const targetLanguageFeatures: LanguageFeatures | undefined =
-    await getLanguageFeaturesForLanguage(listData!.language);
+  let itemsForSession: ItemToLearn[] = [];
+  switch (mode) {
+    case "translation":
+      itemsForSession = allReviewableItems.slice(0, itemsPerSession?.reviewing);
+      break;
+    case "learn":
+      itemsForSession = allLearnableItems.slice(0, itemsPerSession?.learning);
+      break;
+    default:
+      console.error("No valid learning mode");
+  }
 
-  // This is where we read the list data to see what items need to be reviewed / can be learned
-  // and then fetch all of them to then pass this information on into a Learning Mode.
-  if (
-    user &&
-    targetLanguageFeatures &&
-    listData &&
-    listData.name &&
-    listData.units &&
-    allItemStringsInList
-  )
-    switch (mode) {
-      case "translation":
-        const itemsToReview: ItemToLearn[] = allLearnableItems;
-        // Include check whether this item is due for review
-        const itemsForNextSession = itemsToReview.slice(
-          0,
-          itemsPerSession!.reviewing
-        );
-        return (
-          <TranslationMode
-            targetLanguageFeatures={targetLanguageFeatures}
-            items={itemsForNextSession}
-            listName={listData.name}
-            userNative={userNative}
-          />
-        );
-      case "learn":
-        const itemsToLearn = allLearnableItems.slice(
-          0,
-          itemsPerSession!.learning
-        );
-
-        return (
-          <LearnNewWordsMode
-            listName={listData.name}
-            items={itemsToLearn}
-            userNative={userNative}
-            targetLanguageFeatures={targetLanguageFeatures}
-            allItemsInList={allItemStringsInList}
-          />
-        );
-      default:
-        throw new Error("Unknown Learning Mode");
-    }
+  return itemsForSession;
 }

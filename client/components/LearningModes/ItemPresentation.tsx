@@ -1,38 +1,37 @@
-import { ItemPopulatedWithTranslations, SupportedLanguage } from "@/types";
-import { MouseEventHandler } from "react";
+import { ItemToLearn, SupportedLanguage } from "@/types";
 
 interface ItemPresentationProps {
-  item: ItemPopulatedWithTranslations;
+  item: ItemToLearn;
   endPresentation: Function;
-  userSolution: string;
-  firstPresentation: Boolean;
+  wrongSolution: string;
   userNative: SupportedLanguage;
 }
 
 export default function ItemPresentation({
   item,
   endPresentation,
-  userSolution,
-  firstPresentation,
+  wrongSolution,
   userNative,
 }: ItemPresentationProps) {
   return (
     <>
       <div className="flex flex-col gap-y-1.5 rounded-md bg-slate-200 p-3 text-center">
-        {!firstPresentation && (
+        {wrongSolution.length > 0 && (
           <div className="text-sm text-red-500">We were looking for</div>
         )}
-        {firstPresentation && (
+        {wrongSolution === "" && (
           <div className="text-md font-semibold text-green-500">
             Your next item:
           </div>
         )}
         <div className="text-2xl">{item.name}</div>
         {item.IPA && <div className="">{item.IPA}</div>}
-        <div className="">{item.partOfSpeech}</div>
-        {item.gender && <div>{item.gender}</div>}
+        <div>
+          {item.gender && <span>{item.gender} </span>}
+          <span>{item.partOfSpeech}</span>
+        </div>
         {item.case && <div>{item.case}</div>}
-        {firstPresentation && (
+        {item.firstPresentation && (
           <div className="text-2xl">
             {item.translations[userNative]
               .map((transl) => transl.name)
@@ -41,15 +40,15 @@ export default function ItemPresentation({
         )}
       </div>
 
-      {userSolution.length > 0 && (
-        <div className="bg-slate-200 p-3 text-center text-sm">
+      {wrongSolution.length > 0 && (
+        <div className="bg-slate-200 p-3 text-center">
           <div className="mb-1">Your solution was</div>
-          <div>{userSolution}</div>
+          <div>{wrongSolution}</div>
         </div>
       )}
 
       <button
-        onClick={endPresentation as MouseEventHandler}
+        onClick={() => endPresentation("correct", "")}
         className="rounded-md border-2 bg-green-300 p-2 outline-none focus:border-green-400 focus:outline-none focus:ring-0"
         autoFocus
       >

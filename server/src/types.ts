@@ -71,6 +71,7 @@ export type ItemPopulatedWithTranslations = Omit<Item, "translations"> & {
 
 export type ItemToLearn = ItemPopulatedWithTranslations & {
   learningStep: number;
+  firstPresentation: Boolean;
 };
 
 export interface Lemma {
@@ -79,12 +80,13 @@ export interface Lemma {
   items?: Types.ObjectId[];
 }
 
-export type ReviewMode =
-  | "Translation"
-  | "Context"
-  | "SpellingBee"
-  | "Dictionary"
-  | "Visual";
+export type LearningMode =
+  | "learn"
+  | "translation"
+  | "context"
+  | "spellingBee"
+  | "dictionary"
+  | "visual";
 
 export type Difficulty =
   | "Novice"
@@ -104,7 +106,7 @@ export interface List {
   private: Boolean;
   units: { unitName: string; item: Types.ObjectId }[];
   unitOrder: string[];
-  unlockedReviewModes?: Record<SupportedLanguage, Types.Array<ReviewMode>>;
+  unlockedReviewModes?: Record<SupportedLanguage, Types.Array<LearningMode>>;
   learners?: Types.ObjectId[];
 }
 

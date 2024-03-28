@@ -1,6 +1,6 @@
 import { ItemToLearn } from "@/types";
-import { useEffect, useRef, useState } from "react";
-import { ReviewStatus } from "./TranslationMode";
+import { useEffect, useState } from "react";
+import { ReviewStatus } from "./LearnAndReview";
 
 interface MultipleChoiceProps {
   options: string[];
@@ -21,7 +21,7 @@ export default function MultipleChoice({
       setTimeout(() => {
         setSelectedOption(null);
         setReviewStatus("neutral");
-        evaluate(reviewStatus);
+        evaluate(reviewStatus, selectedOption);
       }, 1000);
     }
   }, [reviewStatus]);

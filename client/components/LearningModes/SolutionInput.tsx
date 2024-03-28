@@ -1,6 +1,6 @@
 import { RefObject, useEffect, useState } from "react";
 import { ItemPopulatedWithTranslations, LanguageFeatures } from "@/types";
-import { ReviewStatus } from "./TranslationMode";
+import { ReviewStatus } from "./LearnAndReview";
 
 interface SolutionInputProps {
   targetLanguageFeatures: LanguageFeatures;
@@ -27,16 +27,17 @@ export default function SolutionInput({
   setMoreReviews,
   finalizeReview,
 }: SolutionInputProps) {
-  const [inputStyling, setInputStyling] = useState({
+  const neutralInputFieldStyling = {
     input:
       "focus:border-b-2 bg-slate-200 m-3 pt-2 text-xl text-center mx-auto w-11/12 focus:outline-none border-b-black transition-all",
     form: "mt-0 flex justify-stretch transition-all rounded-md bg-slate-200",
-  });
+  };
+  const [inputStyling, setInputStyling] = useState(neutralInputFieldStyling);
 
-  // Styling for input field depending on reviewStatus
   useEffect(() => {
-    let inputFieldStyling;
-    let formElementStyling;
+    let inputFieldStyling: string = "";
+    let formElementStyling: string = "";
+
     switch (reviewStatus) {
       case "correct":
         inputFieldStyling = "focus:border-b-inherit bg-green-300 scale-105";
@@ -50,6 +51,7 @@ export default function SolutionInput({
         inputFieldStyling = "focus:border-b-2 bg-slate-200";
         formElementStyling = "bg-slate-200";
     }
+
     setInputStyling({
       input:
         inputFieldStyling +
@@ -58,23 +60,32 @@ export default function SolutionInput({
         formElementStyling +
         " mt-0 flex justify-stretch transition-all rounded-md",
     });
+
+    if (reviewStatus !== "neutral") {
+      setTimeout(() => {
+        setSolution("");
+        setReviewStatus("neutral");
+        setInputStyling(neutralInputFieldStyling);
+        finalizeReview(reviewStatus, solution);
+      }, 1000);
+    }
   }, [reviewStatus]);
 
   function handleWordSubmit(e: React.FormEvent) {
     e.preventDefault();
-    let answerCorrect;
+    let reviewStatus: ReviewStatus;
 
     if (item.name === solution.trim()) {
       setReviewStatus("correct");
-      answerCorrect = true;
+      reviewStatus = "correct";
     } else {
       setReviewStatus("incorrect");
-      answerCorrect = false;
+      reviewStatus = "incorrect";
     }
 
     // This is where we can trigger additional reviews for this item, i.e. gender...
     if (
-      answerCorrect &&
+      reviewStatus === "correct" &&
       item.partOfSpeech === "noun" &&
       targetLanguageFeatures.hasGender &&
       item.name === solution
@@ -85,7 +96,7 @@ export default function SolutionInput({
 
     // ...or case
     if (
-      answerCorrect &&
+      reviewStatus === "correct" &&
       item.partOfSpeech === "preposition" &&
       targetLanguageFeatures.hasCases &&
       item.name === solution
@@ -93,7 +104,6 @@ export default function SolutionInput({
       setMoreReviews("case");
       return;
     }
-    finalizeReview(answerCorrect);
   }
 
   return (

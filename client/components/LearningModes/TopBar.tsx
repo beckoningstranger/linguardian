@@ -1,8 +1,10 @@
+import { LearningMode } from "@/types";
+
 interface TopBarProps {
   listName: string;
   itemsInProgress: number;
   totalItems: number;
-  mode: "learn" | "review";
+  mode: LearningMode;
 }
 
 export default function TopBar({
@@ -11,17 +13,31 @@ export default function TopBar({
   totalItems,
   mode,
 }: TopBarProps) {
+  let heading;
+  switch (mode) {
+    case "learn":
+      heading = (
+        <>
+          <div className="text-sm">Learning new items in</div>
+          {listName}
+        </>
+      );
+      break;
+    case "translation":
+      heading = (
+        <>
+          <div>{listName}</div>
+          <div className="text-sm">Reviewing items in Translation Mode</div>
+        </>
+      );
+      break;
+  }
+
   return (
     <div id="TopBar" className="w-full bg-slate-200 text-center text-xl">
-      <h1 className="font-semibold">
-        <span className="text-sm">
-          {mode === "learn" ? "Learning new items in" : "Reviewing items in"}
-          <br />
-        </span>
-        {listName}
-      </h1>
+      <h1 className="font-semibold">{heading}</h1>
       <h2 className="text-sm">
-        {itemsInProgress + 1} / {totalItems} items
+        {itemsInProgress} / {totalItems} items
       </h2>
     </div>
   );

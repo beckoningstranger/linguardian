@@ -1,6 +1,6 @@
 import { ItemToLearn } from "@/types";
 import { useEffect, useState } from "react";
-import { ReviewStatus } from "./TranslationMode";
+import { ReviewStatus } from "./LearnAndReview";
 
 interface PuzzleModeProps {
   item: ItemToLearn;
@@ -28,7 +28,7 @@ export default function PuzzleMode({
         setInputFieldStyling(
           "h-20 w-full rounded-md text-center text-xl bg-slate-200"
         );
-        evaluate(reviewStatus);
+        evaluate(reviewStatus, input);
       }, 1000);
     }
   }, [reviewStatus]);

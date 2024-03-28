@@ -4,7 +4,7 @@ import {
   ItemPopulatedWithTranslations,
   PopulatedList,
   PopulatedListNoAuthors,
-  ReviewMode,
+  LearningMode,
   SupportedLanguage,
   User,
 } from "../types.js";
@@ -31,9 +31,11 @@ export async function getPopulatedListByObjectId(listId: Types.ObjectId) {
 
 export async function getPopulatedListByListNumber(listNumber: number) {
   try {
-    return await Lists.findOne({ listNumber: listNumber }).populate<{
-      units: { unitName: string; item: Item }[];
-    }>({ path: "units.item" }).populate<{authors: User[]}>({path: "authors"});
+    return await Lists.findOne({ listNumber: listNumber })
+      .populate<{
+        units: { unitName: string; item: Item }[];
+      }>({ path: "units.item" })
+      .populate<{ authors: User[] }>({ path: "authors" });
   } catch (err) {
     console.error(`Error getting populated list with listNumber ${listNumber}`);
   }
@@ -44,12 +46,14 @@ export async function getFullyPopulatedListByListNumber(
   listNumber: number
 ) {
   try {
-    return await Lists.findOne({ listNumber: listNumber }).populate<{
-      units: { unitName: string; item: ItemPopulatedWithTranslations }[];
-    }>({
-      path: "units.item",
-      populate: { path: "translations." + userNative },
-    }).populate<{authors: User[]}>({path: "authors"});
+    return await Lists.findOne({ listNumber: listNumber })
+      .populate<{
+        units: { unitName: string; item: ItemPopulatedWithTranslations }[];
+      }>({
+        path: "units.item",
+        populate: { path: "translations." + userNative },
+      })
+      .populate<{ authors: User[] }>({ path: "authors" });
   } catch (err) {
     console.error(
       `Error getting fully populated list with listNumber ${listNumber}`
@@ -59,7 +63,9 @@ export async function getFullyPopulatedListByListNumber(
 
 export async function getAllListsForLanguage(language: SupportedLanguage) {
   try {
-    return await Lists.find({ language: language }).populate<{authors: User[]}>({path:"authors"});
+    return await Lists.find({ language: language }).populate<{
+      authors: User[];
+    }>({ path: "authors" });
   } catch (err) {
     console.error(`Error getting all lists for language ${language}`);
   }
@@ -73,7 +79,7 @@ export async function getLatestListNumber() {
 export async function unlockReviewMode(
   id: Types.ObjectId,
   language: SupportedLanguage,
-  reviewMode: ReviewMode
+  reviewMode: LearningMode
 ) {
   await Lists.findOneAndUpdate(
     { _id: id },
@@ -93,7 +99,9 @@ export async function getChapterNameByNumber(
 }
 
 export async function updateUnlockedReviewModes(listId: Types.ObjectId) {
-  const response = (await getPopulatedListByObjectId(listId)) as PopulatedListNoAuthors;
+  const response = (await getPopulatedListByObjectId(
+    listId
+  )) as PopulatedListNoAuthors;
   const supportedLanguages = await getSupportedLanguages();
   if (response && response.units && supportedLanguages) {
     // This part checks for translation mode
@@ -126,7 +134,7 @@ export async function updateUnlockedReviewModes(listId: Types.ObjectId) {
         await unlockReviewMode(
           listId,
           lang as SupportedLanguage,
-          "Translation"
+          "translation"
         );
       }
     });

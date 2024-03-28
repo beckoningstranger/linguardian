@@ -7,7 +7,6 @@ import { RefObject, useContext, useState } from "react";
 import { MobileMenuContext } from "../Menus/MobileMenu/MobileMenuContext";
 
 interface HelperKeysProps {
-  hide: Boolean;
   targetLanguageFeatures: LanguageFeatures;
   solution: string;
   setSolution: Function;
@@ -15,7 +14,6 @@ interface HelperKeysProps {
 }
 
 export default function HelperKeys({
-  hide,
   targetLanguageFeatures,
   solution,
   setSolution,
@@ -31,7 +29,7 @@ export default function HelperKeys({
     if (inputRef.current) inputRef.current.focus();
   };
 
-  if (!targetLanguageFeatures.requiresHelperKeys || hide) return null;
+  if (!targetLanguageFeatures.requiresHelperKeys) return null;
 
   return (
     <>
