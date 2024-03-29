@@ -46,7 +46,7 @@ export type Frequency =
   | "extremely high";
 
 export interface Item {
-  id: Types.ObjectId;
+  _id: Types.ObjectId;
   name: string;
   language: SupportedLanguage;
   partOfSpeech: PartOfSpeech;
@@ -72,7 +72,10 @@ export type ItemPopulatedWithTranslations = Omit<Item, "translations"> & {
 export type ItemToLearn = ItemPopulatedWithTranslations & {
   learningStep: number;
   firstPresentation: Boolean;
+  increaseLevel: Boolean;
 };
+
+export type ItemForServer = { id: Types.ObjectId; increaseLevel: Boolean };
 
 export interface Lemma {
   language: SupportedLanguage;

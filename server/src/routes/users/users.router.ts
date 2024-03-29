@@ -4,6 +4,7 @@ import {
   httpAddNewLanguage,
   httpGetLearnedLanguageData,
   httpGetUserById,
+  httpUpdateLearnedItems,
 } from "./users.controller.js";
 
 export const usersRouter = express.Router();
@@ -21,3 +22,8 @@ usersRouter.post(
 );
 
 usersRouter.post("/addNewLanguage/:userId/:language", httpAddNewLanguage);
+
+usersRouter.post(
+  "/updateLearnedItems/:userId/:language/:mode",
+  httpUpdateLearnedItems
+);

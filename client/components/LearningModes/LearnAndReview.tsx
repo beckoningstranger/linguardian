@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ItemForServer,
   ItemToLearn,
   LanguageFeatures,
   LearningMode,
@@ -8,16 +9,18 @@ import {
 } from "@/types";
 import TopBar from "./TopBar";
 import ItemPrompt from "./ItemPrompt";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import ItemPresentation from "./ItemPresentation";
 import MultipleChoice from "./MultipleChoice";
 import PuzzleMode from "./PuzzleMode";
 import BetterSolutionInput from "./TypeSolution";
 import { useRouter } from "next/navigation";
+import { updateLearnedItems } from "@/app/actions";
 
 interface LearnAndReviewProps {
   listName: string;
   userNative: SupportedLanguage;
+  userId: number;
   items: ItemToLearn[];
   targetLanguageFeatures: LanguageFeatures;
   allItemStringsInList: string[];
@@ -29,6 +32,7 @@ export type ReviewStatus = "neutral" | "correct" | "incorrect";
 export default function LearnAndReview({
   listName,
   userNative,
+  userId,
   items,
   targetLanguageFeatures,
   allItemStringsInList,
@@ -36,10 +40,13 @@ export default function LearnAndReview({
 }: LearnAndReviewProps) {
   const [itemsToLearn, setItemsToLearn] = useState<ItemToLearn[]>(items);
   const [activeItem, setActiveItem] = useState<ItemToLearn>(items[0]);
-  const [numberOfLearnedItems, setNumberOfLearnedItems] = useState<number>(0);
-  const [itemPresentation, setItemPresentation] = useState<Boolean>(true);
+  const [learnedItems, setLearnedItems] = useState<ItemToLearn[]>([]);
+  const [itemPresentation, setItemPresentation] = useState<Boolean>(
+    mode === "learn" ? true : false
+  );
   const [sessionEnd, setSessionEnd] = useState<Boolean>(false);
   const [wrongAnswer, setWrongAnswer] = useState<string>("");
+  const [_, startTransition] = useTransition();
 
   const router = useRouter();
 
@@ -49,6 +56,7 @@ export default function LearnAndReview({
   ) {
     if (status === "incorrect") {
       activeItem.learningStep--;
+      if (mode !== "learn") activeItem.increaseLevel = false;
       setItemsToLearn(itemsToLearn);
       setWrongAnswer(answer);
       return setItemPresentation(true);
@@ -74,7 +82,9 @@ export default function LearnAndReview({
           newItemOrder = itemsToLearn;
           break;
         case 4:
-          setNumberOfLearnedItems(numberOfLearnedItems + 1);
+          const newLearnedItems = [...learnedItems];
+          newLearnedItems.push(activeItem);
+          setLearnedItems(newLearnedItems);
           newItemOrder = itemsToLearn;
           break;
         default:
@@ -97,60 +107,72 @@ export default function LearnAndReview({
     }
   }
 
-  if (sessionEnd) {
-    console.log("Session ends");
-    setTimeout(() => {
-      return router.push("/dashboard");
-    }, 5000);
-  }
-
-  return (
-    <div className="grid place-items-center">
-      <TopBar
-        listName={listName}
-        itemsInProgress={numberOfLearnedItems}
-        totalItems={itemsToLearn.length + numberOfLearnedItems}
-        mode={mode}
-      />
-      <div className="mt-3 flex w-[95%] flex-col gap-3">
-        {!itemPresentation && (
-          <ItemPrompt item={activeItem} userNative={userNative} />
-        )}
-        {itemPresentation && (
-          <ItemPresentation
-            item={activeItem}
-            wrongSolution={wrongAnswer}
-            endPresentation={evaluateUserAnswer}
-            userNative={userNative}
-          />
-        )}
-        {!itemPresentation && activeItem.learningStep === 1 && (
-          <MultipleChoice
-            options={createMultipleChoiceOptions(
-              allItemStringsInList,
-              activeItem
-            )}
-            correctItem={activeItem}
-            evaluate={evaluateUserAnswer}
-          />
-        )}
-        {!itemPresentation && activeItem.learningStep === 2 && (
-          <PuzzleMode
-            item={activeItem}
-            evaluate={evaluateUserAnswer}
-            initialPuzzlePieces={createPuzzlePieces(activeItem)}
-          />
-        )}
-        {!itemPresentation && activeItem.learningStep === 3 && (
-          <BetterSolutionInput
-            targetLanguageFeatures={targetLanguageFeatures}
-            item={activeItem}
-            evaluate={evaluateUserAnswer}
-          />
-        )}
+  if (!sessionEnd)
+    return (
+      <div className="grid place-items-center">
+        <TopBar
+          listName={listName}
+          itemsInProgress={learnedItems.length}
+          totalItems={itemsToLearn.length + learnedItems.length}
+          mode={mode}
+        />
+        <div className="mt-3 flex w-[95%] flex-col gap-3">
+          {!itemPresentation && (
+            <ItemPrompt item={activeItem} userNative={userNative} />
+          )}
+          {itemPresentation && (
+            <ItemPresentation
+              item={activeItem}
+              wrongSolution={wrongAnswer}
+              endPresentation={evaluateUserAnswer}
+              userNative={userNative}
+            />
+          )}
+          {!itemPresentation && activeItem.learningStep === 1 && (
+            <MultipleChoice
+              options={createMultipleChoiceOptions(
+                allItemStringsInList,
+                activeItem
+              )}
+              correctItem={activeItem}
+              evaluate={evaluateUserAnswer}
+            />
+          )}
+          {!itemPresentation && activeItem.learningStep === 2 && (
+            <PuzzleMode
+              item={activeItem}
+              evaluate={evaluateUserAnswer}
+              initialPuzzlePieces={createPuzzlePieces(activeItem)}
+            />
+          )}
+          {!itemPresentation && activeItem.learningStep === 3 && (
+            <BetterSolutionInput
+              targetLanguageFeatures={targetLanguageFeatures}
+              item={activeItem}
+              evaluate={evaluateUserAnswer}
+            />
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+
+  console.log("Session ends");
+  const itemsForServer: ItemForServer[] = learnedItems.map((item) => {
+    return {
+      id: item._id,
+      increaseLevel: item.increaseLevel,
+    };
+  });
+
+  startTransition(async () => {
+    await updateLearnedItems(
+      itemsForServer,
+      learnedItems[0].language,
+      userId,
+      mode
+    );
+  });
+  router.push(`/dashboard/?lang=${learnedItems[0].language}`);
 }
 
 function createMultipleChoiceOptions(

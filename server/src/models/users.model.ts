@@ -1,4 +1,6 @@
+import { UpdateWriteOpResult } from "mongoose";
 import {
+  ItemForServer,
   LearnedLanguageWithPopulatedLists,
   SupportedLanguage,
   User,
@@ -21,10 +23,10 @@ export async function getUserById(id: number) {
 
 export async function getUserObjectIdById(id: number) {
   try {
-    const response = await Users.findOne({id: id}, {_id: 1, __v: 0});
-    if (response) return response
+    const response = await Users.findOne({ id: id }, { _id: 1, __v: 0 });
+    if (response) return response;
   } catch (err) {
-    console.error(`Error getting ObjectId for id ${id}: ${err}`)
+    console.error(`Error getting ObjectId for id ${id}: ${err}`);
   }
 }
 
@@ -36,9 +38,7 @@ export async function createUser(user: User) {
   }
 }
 
-export async function getUserWithPopulatedLearnedLists(
-  userId: number,
-) {
+export async function getUserWithPopulatedLearnedLists(userId: number) {
   try {
     return await Users.findOne<User>(
       { id: userId },
@@ -54,7 +54,7 @@ export async function getUserWithPopulatedLearnedLists(
 export async function addListToDashboard(userId: number, listNumber: number) {
   try {
     const list = await getList(listNumber);
-    return await Users.updateOne(
+    return await Users.updateOne<User>(
       { id: userId, "languages.code": list?.language },
       {
         $push: { "languages.$.learnedLists": list?._id },
@@ -96,4 +96,125 @@ export async function addNewLanguage(
       `Error adding language ${language} for user ${userId}: ${err}`
     );
   }
+}
+
+export async function updateReviewedItems(
+  items: ItemForServer[],
+  userId: number,
+  language: SupportedLanguage
+) {
+  try {
+    const allPassedItemIds = items.map((item) => item.id);
+    const allLearnedItems = await getAllLearnedItems(userId, language);
+    const userSRSettings = await getUserSRSettings(userId, language);
+    if (!allLearnedItems || !userSRSettings) return;
+
+    const passedItemsWithfetchedItems = allLearnedItems.map((fetchedItem) => {
+      if (allPassedItemIds.includes(fetchedItem.id)) {
+        return {
+          fetchedItem: fetchedItem,
+          passedItem: items.find((item) => item.id === fetchedItem.id),
+        };
+      }
+    });
+
+    // Pull fetched items out immediately and collect promises to push updated items in
+    // Then await all those promises so they can run simultaneously
+
+    const updateItems: Promise<UpdateWriteOpResult>[] = [];
+    passedItemsWithfetchedItems.forEach(async (itemPair) => {
+      if (!itemPair) return;
+      await Users.updateOne<User>(
+        { id: userId, "languages.code": language },
+        {
+          $pull: {
+            "languages.$.learnedItems": {
+              id: itemPair.fetchedItem.id,
+            },
+          },
+        }
+      );
+      const newLevelForItem = itemPair.passedItem?.increaseLevel
+        ? itemPair.fetchedItem.level + 1
+        : 1;
+      updateItems.push(
+        Users.updateOne<User>(
+          { id: userId, "languages.code": language },
+          {
+            $push: {
+              "languages.$.learnedItems": {
+                id: itemPair.passedItem?.id,
+                level: newLevelForItem,
+                nextReview:
+                  Date.now() +
+                  userSRSettings.reviewTimes[
+                    newLevelForItem as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+                  ],
+              },
+            },
+          }
+        )
+      );
+    });
+
+    return Promise.all(updateItems);
+  } catch (err) {
+    console.error(
+      `Error updating reviewed items. Received these ${JSON.stringify(
+        items
+      )}, user ${userId}, language ${language}. ${err}`
+    );
+  }
+}
+
+export async function addNewlyLearnedItems(
+  items: ItemForServer[],
+  userId: number,
+  language: SupportedLanguage
+) {
+  try {
+    const userSRSettings = await getUserSRSettings(userId, language);
+    if (!userSRSettings) return;
+    const updateItems = items.map(async (item) =>
+      Users.updateOne<User>(
+        { id: userId, "languages.code": language },
+        {
+          $push: {
+            "languages.$.learnedItems": {
+              id: item.id,
+              level: 1,
+              nextReview: Date.now() + userSRSettings.reviewTimes[1],
+            },
+          },
+        }
+      )
+    );
+    return Promise.all(updateItems);
+  } catch (err) {
+    console.error(
+      `Error adding newly learned items. Received these ${JSON.stringify(
+        items
+      )}, user ${userId}, language ${language}. ${err}`
+    );
+  }
+}
+
+async function getAllLearnedItems(userId: number, language: SupportedLanguage) {
+  try {
+    const user = await Users.findOne({ id: userId });
+    if (!user) return;
+    const selectedLanguageData = user.languages.find(
+      (lang) => lang.code === language
+    );
+    return selectedLanguageData?.learnedItems || [];
+  } catch (err) {
+    console.error(`Error getting learned item ids: ${err}`);
+  }
+}
+
+async function getUserSRSettings(userId: number, language: SupportedLanguage) {
+  const user = await Users.findOne({ id: userId });
+  if (!user) return;
+  const languageData = user.languages.find((lang) => lang.code === language);
+  return languageData?.customSRSettings;
 }

@@ -2,6 +2,7 @@ import { model, Schema } from "mongoose";
 import { Item } from "../types.js";
 
 const itemSchema = new Schema<Item>({
+  _id: { type: Schema.Types.ObjectId },
   name: {
     type: String,
     required: true,

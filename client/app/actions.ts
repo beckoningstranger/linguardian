@@ -7,8 +7,10 @@ import { redirect } from "next/navigation";
 import {
   FullyPopulatedList,
   Item,
+  ItemForServer,
   LanguageFeatures,
   LearnedLanguageWithPopulatedLists,
+  LearningMode,
   List,
   PopulatedList,
   SupportedLanguage,
@@ -174,9 +176,9 @@ export async function addNewLanguageToLearn(
 }
 
 export async function checkPassedLanguageAsync(
-  passedLanguage: string | undefined,
+  passedLanguage: string | undefined
 ) {
-  const supportedLanguages = await getSupportedLanguages()
+  const supportedLanguages = await getSupportedLanguages();
   if (
     !passedLanguage ||
     !supportedLanguages ||
@@ -187,28 +189,44 @@ export async function checkPassedLanguageAsync(
   return passedLanguage as SupportedLanguage;
 }
 
-  export async function uploadCSV(
-    formState: { message: string },
-    formData: FormData
-  ) {
-    let newListNumber = 0;
-    try {
-      const { data } = await axios.post(
-        "http://localhost:8000/lists/uploadCSV",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-      newListNumber = data.message as number;
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        return { message: err.response?.data.message };
-      } else return { message: "Something went wrong" };
-    }    
-    revalidatePath("/dashboard");
-    revalidatePath("/dictionary");
-    revalidatePath("/lists");
-    revalidatePath("/languages/new");
-    redirect(`/lists/${newListNumber}`);
+export async function uploadCSV(
+  formState: { message: string },
+  formData: FormData
+) {
+  let newListNumber = 0;
+  try {
+    const { data } = await axios.post(
+      "http://localhost:8000/lists/uploadCSV",
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
+    newListNumber = data.message as number;
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      return { message: err.response?.data.message };
+    } else return { message: "Something went wrong" };
   }
+  revalidatePath(`/lists/${newListNumber}`);
+  redirect(`/lists/${newListNumber}`);
+}
+
+export async function updateLearnedItems(
+  items: ItemForServer[],
+  language: SupportedLanguage,
+  userId: number,
+  mode: LearningMode
+) {
+  try {
+    const { data } = await axios.post(
+      `http://localhost:8000/users/updateLearnedItems/${userId}/${language}/${mode}`,
+      items,
+      { headers: { "Content-Type": "application/json" } }
+    );
+  } catch (err) {
+    console.error(`Error passing items to server: ${err}`);
+  }
+  revalidatePath(`/dashboard?lang=${language}`);
+  redirect(`/dashboard?lang=${language}`);
+}

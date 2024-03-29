@@ -24,10 +24,10 @@ const userSchema = new Schema<User>({
         {
           id: { type: Schema.Types.ObjectId, ref: "Item" },
           level: { type: Number },
-          nextReview: { type: Date },
+          nextReview: { type: Number },
         },
       ],
-      ignoredItems: [{type: Schema.Types.ObjectId, ref: "Item"}],
+      ignoredItems: [{ type: Schema.Types.ObjectId, ref: "Item" }],
       learnedLists: [{ type: Schema.Types.ObjectId, ref: "List" }],
       customSRSettings: {
         reviewTimes: {
