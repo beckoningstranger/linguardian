@@ -35,47 +35,78 @@ export default function ListDashboardCard({
   if (status === "review") {
     renderedButtons = (
       <div className="flex justify-around md:flex-col">
-        <ReviewButton id={id} mode="translation" />
-        <ReviewButton id={id} mode={loaded ? randomMode1 : "spinner"} />
+        <ReviewButton id={id} mode="translation" stats={stats} />
+        <ReviewButton
+          id={id}
+          mode={loaded ? randomMode1 : "spinner"}
+          stats={stats}
+        />
         <div className="md:hidden">
-          <ReviewButton id={id} mode={loaded ? randomMode2 : "spinner"} />
+          <ReviewButton
+            id={id}
+            mode={loaded ? randomMode2 : "spinner"}
+            stats={stats}
+          />
         </div>
 
         <ReviewButton
           id={id}
           mode="more"
           showAllModes={setShowAllReviewModes}
+          stats={stats}
         />
       </div>
     );
   } else if (status === "add") {
     renderedButtons = (
       <div className="flex justify-around md:flex-col">
-        <ReviewButton id={id} mode="learn" />
-        <ReviewButton id={id} mode={loaded ? randomMode1 : "spinner"} />
+        <ReviewButton id={id} mode="learn" stats={stats} />
+        <ReviewButton
+          id={id}
+          mode={loaded ? randomMode1 : "spinner"}
+          stats={stats}
+        />
         <div className="md:hidden">
-          <ReviewButton id={id} mode={loaded ? randomMode2 : "spinner"} />
+          <ReviewButton
+            id={id}
+            mode={loaded ? randomMode2 : "spinner"}
+            stats={stats}
+          />
         </div>
 
         <ReviewButton
           id={id}
           mode="more"
           showAllModes={setShowAllReviewModes}
+          stats={stats}
         />
       </div>
     );
   } else if (status === "practice") {
     renderedButtons = (
       <div className="flex justify-around md:flex-col">
-        <ReviewButton id={id} mode={loaded ? randomMode1 : "spinner"} />
-        <ReviewButton id={id} mode={loaded ? randomMode2 : "spinner"} />
+        <ReviewButton
+          id={id}
+          mode={loaded ? randomMode1 : "spinner"}
+          stats={stats}
+        />
+        <ReviewButton
+          id={id}
+          mode={loaded ? randomMode2 : "spinner"}
+          stats={stats}
+        />
         <div className="md:hidden">
-          <ReviewButton id={id} mode={loaded ? randomMode3 : "spinner"} />
+          <ReviewButton
+            id={id}
+            mode={loaded ? randomMode3 : "spinner"}
+            stats={stats}
+          />
         </div>
         <ReviewButton
           id={id}
           mode="more"
           showAllModes={setShowAllReviewModes}
+          stats={stats}
         />
       </div>
     );
@@ -103,12 +134,12 @@ export default function ListDashboardCard({
         positionClasses="bottom-0 right-0 w-full"
       >
         <div className="grid grid-cols-3 place-items-center md:h-full md:grid-cols-2">
-          <ReviewButton id={id} mode="learn" />
-          <ReviewButton id={id} mode="translation" />
-          <ReviewButton id={id} mode="dictionary" />
-          <ReviewButton id={id} mode="context" />
-          <ReviewButton id={id} mode="visual" />
-          <ReviewButton id={id} mode="spelling" />
+          <ReviewButton id={id} mode="learn" stats={stats} />
+          <ReviewButton id={id} mode="translation" stats={stats} />
+          <ReviewButton id={id} mode="dictionary" stats={stats} />
+          <ReviewButton id={id} mode="context" stats={stats} />
+          <ReviewButton id={id} mode="visual" stats={stats} />
+          <ReviewButton id={id} mode="spelling" stats={stats} />
         </div>
       </ContextMenu>
       <div className="m-3 flex items-center justify-between">
