@@ -105,7 +105,6 @@ function prepareItemsForSession(
       mode === "translation" &&
       allLearnedItemIds.includes(unitItem.item._id)
     ) {
-      console.log("adding", unitItem.item._id);
       const item = unitItem.item as ItemToLearn;
       item.learningStep = 3;
       item.firstPresentation = false;

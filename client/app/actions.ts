@@ -228,5 +228,4 @@ export async function updateLearnedItems(
     console.error(`Error passing items to server: ${err}`);
   }
   revalidatePath(`/dashboard?lang=${language}`);
-  redirect(`/dashboard?lang=${language}`);
 }

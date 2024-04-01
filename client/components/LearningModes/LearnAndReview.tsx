@@ -111,15 +111,12 @@ export default function LearnAndReview({
   }
 
   function passDataToServer(learnedItems: ItemToLearn[]) {
-    console.log("Session ends");
     const itemsForServer: ItemForServer[] = learnedItems.map((item) => {
       return {
         id: item._id,
         increaseLevel: item.increaseLevel,
       };
     });
-
-    console.log("LAR", itemsForServer, activeItem.language, userId, mode);
 
     startTransition(async () => {
       await updateLearnedItems(
@@ -128,8 +125,8 @@ export default function LearnAndReview({
         userId,
         mode
       );
+      router.push(`/dashboard/?lang=${learnedItems[0].language}`);
     });
-    // router.push(`/dashboard/?lang=${learnedItems[0].language}`);
   }
 
   return (

@@ -60,6 +60,5 @@ export async function httpUpdateLearnedItems(req: Request, res: Response) {
   } else {
     response = await updateReviewedItems(req.body, userId, language);
   }
-  if (response) return res.status(200).json();
-  return res.status(400).json();
+  return res.status(200).json();
 }

@@ -1,4 +1,3 @@
-import { UpdateWriteOpResult } from "mongoose";
 import {
   ItemForServer,
   LearnedLanguageWithPopulatedLists,
@@ -104,7 +103,7 @@ export async function updateReviewedItems(
   language: SupportedLanguage
 ) {
   try {
-    const allPassedItemIds = items.map((item) => item.id);
+    const allPassedItemIds = items.map((item) => item.id as unknown as string);
     const allLearnedItems = await getAllLearnedItems(userId, language);
     const userSRSettings = await getUserSRSettings(userId, language);
     if (!allLearnedItems || !userSRSettings) return;
@@ -117,7 +116,8 @@ export async function updateReviewedItems(
         return {
           fetchedItem: fetchedItem,
           passedItem: items.find(
-            (item) => item.id === fetchedItem.id.toHexString()
+            (item) =>
+              (item.id as unknown as string) === fetchedItem.id.toHexString()
           ),
         };
       }
@@ -197,7 +197,10 @@ export async function addNewlyLearnedItems(
   }
 }
 
-async function getAllLearnedItems(userId: number, language: SupportedLanguage) {
+export async function getAllLearnedItems(
+  userId: number,
+  language: SupportedLanguage
+) {
   try {
     const user = await Users.findOne({ id: userId });
     if (!user) return;
