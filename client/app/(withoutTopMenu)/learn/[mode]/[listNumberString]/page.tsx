@@ -87,20 +87,25 @@ function prepareItemsForSession(
   const itemsPerSession =
     languageDataForListLanguage?.customSRSettings?.itemsPerSession;
 
+  const allLearnedItemIds = learnedLanguageData.learnedItems.map(
+    (item) => item.id
+  );
+
   const allLearnableItems: ItemToLearn[] = [];
   const allReviewableItems: ItemToLearn[] = [];
   populatedListData.units.forEach((unitItem) => {
-    if (mode === "learn") {
+    if (mode === "learn" && !allLearnedItemIds.includes(unitItem.item._id)) {
       const item = unitItem.item as ItemToLearn;
       item.learningStep = 0;
       item.increaseLevel = true;
       item.firstPresentation = true;
       allLearnableItems.push(item);
     }
-    // This should be just the else statement, but for now let's just put everything in
-    // regardless of whether the items have been learned or are actually due to review
-    // else {
-    if (mode === "translation") {
+    if (
+      mode === "translation" &&
+      allLearnedItemIds.includes(unitItem.item._id)
+    ) {
+      console.log("adding", unitItem.item._id);
       const item = unitItem.item as ItemToLearn;
       item.learningStep = 3;
       item.firstPresentation = false;
@@ -112,8 +117,7 @@ function prepareItemsForSession(
   let itemsForSession: ItemToLearn[] = [];
   switch (mode) {
     case "translation":
-      // itemsForSession = allReviewableItems.slice(0, itemsPerSession?.reviewing);
-      itemsForSession = allReviewableItems.slice(0, 3);
+      itemsForSession = allReviewableItems.slice(0, itemsPerSession?.reviewing);
       break;
     case "learn":
       itemsForSession = allLearnableItems.slice(0, itemsPerSession?.learning);

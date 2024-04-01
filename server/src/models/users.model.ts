@@ -109,19 +109,20 @@ export async function updateReviewedItems(
     const userSRSettings = await getUserSRSettings(userId, language);
     if (!allLearnedItems || !userSRSettings) return;
 
-    const passedItemsWithfetchedItems = allLearnedItems.map((fetchedItem) => {
-      if (allPassedItemIds.includes(fetchedItem.id)) {
+    const allItemsWeNeedToUpdate = allLearnedItems.filter((item) =>
+      allPassedItemIds.includes(item.id.toHexString())
+    );
+    const passedItemsWithfetchedItems = allItemsWeNeedToUpdate.map(
+      (fetchedItem) => {
         return {
           fetchedItem: fetchedItem,
-          passedItem: items.find((item) => item.id === fetchedItem.id),
+          passedItem: items.find(
+            (item) => item.id === fetchedItem.id.toHexString()
+          ),
         };
       }
-    });
+    );
 
-    // Pull fetched items out immediately and collect promises to push updated items in
-    // Then await all those promises so they can run simultaneously
-
-    const updateItems: Promise<UpdateWriteOpResult>[] = [];
     passedItemsWithfetchedItems.forEach(async (itemPair) => {
       if (!itemPair) return;
       await Users.updateOne<User>(
@@ -134,30 +135,27 @@ export async function updateReviewedItems(
           },
         }
       );
+
       const newLevelForItem = itemPair.passedItem?.increaseLevel
         ? itemPair.fetchedItem.level + 1
         : 1;
-      updateItems.push(
-        Users.updateOne<User>(
-          { id: userId, "languages.code": language },
-          {
-            $push: {
-              "languages.$.learnedItems": {
-                id: itemPair.passedItem?.id,
-                level: newLevelForItem,
-                nextReview:
-                  Date.now() +
-                  userSRSettings.reviewTimes[
-                    newLevelForItem as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
-                  ],
-              },
+      await Users.updateOne<User>(
+        { id: userId, "languages.code": language },
+        {
+          $push: {
+            "languages.$.learnedItems": {
+              id: itemPair.passedItem?.id,
+              level: newLevelForItem,
+              nextReview:
+                Date.now() +
+                userSRSettings.reviewTimes[
+                  newLevelForItem as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+                ],
             },
-          }
-        )
+          },
+        }
       );
     });
-
-    return Promise.all(updateItems);
   } catch (err) {
     console.error(
       `Error updating reviewed items. Received these ${JSON.stringify(
