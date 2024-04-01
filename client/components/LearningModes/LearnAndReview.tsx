@@ -62,6 +62,7 @@ export default function LearnAndReview({
       return setItemPresentation(true);
     }
     if (status === "correct") {
+      setWrongAnswer("");
       if (activeItem.learningStep === 0) activeItem.firstPresentation === false;
 
       activeItem.learningStep = activeItem.learningStep + 1;
