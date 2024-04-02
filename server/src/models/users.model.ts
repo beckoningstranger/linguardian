@@ -137,7 +137,9 @@ export async function updateReviewedItems(
       );
 
       const newLevelForItem = itemPair.passedItem?.increaseLevel
-        ? itemPair.fetchedItem.level + 1
+        ? itemPair.fetchedItem.level + 1 > 10
+          ? 10
+          : itemPair.fetchedItem.level + 1
         : 1;
       await Users.updateOne<User>(
         { id: userId, "languages.code": language },
