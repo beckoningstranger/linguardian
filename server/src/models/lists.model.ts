@@ -107,17 +107,20 @@ export async function updateUnlockedReviewModes(listId: Types.ObjectId) {
     // This part checks for translation mode
     const allTranslationsExist: Partial<Record<SupportedLanguage, Boolean>> =
       {};
-    supportedLanguages.map((language) => {
+    supportedLanguages.forEach((language) => {
       // Let's assume it can be unlocked
       let languageCanBeUnlocked = true;
       // Check every item for whether if has a translation in this language
-      response.units.map((item) => {
+      response.units.forEach((unitItem) => {
         if (
-          item.item &&
-          item.item.translations &&
-          item.item.translations[language]
+          unitItem.item &&
+          unitItem.item.translations &&
+          unitItem.item.translations[language]
         )
-          if (!(item.item.translations[language]!.length > 0)) {
+          if (
+            !(unitItem.item.translations[language]!.length > 0) ||
+            !unitItem.item.partOfSpeech
+          ) {
             // It it doesn't, we can't unlock translation mode
             languageCanBeUnlocked = false;
           }

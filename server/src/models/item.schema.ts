@@ -84,7 +84,6 @@ const itemSchema = new Schema<Item>({
     {
       type: Schema.Types.ObjectId,
       ref: "Item",
-      required: true,
     },
   ],
 });

@@ -189,8 +189,6 @@ function createMultipleChoiceOptions(
     numberOfOptions = maxNumberOfOptions;
   } else numberOfOptions = moreItems.length;
 
-  console.log(moreItems);
-
   moreItems
     .filter((item) => item.split(" ").length === 2)
     .forEach((option) => {
@@ -214,9 +212,7 @@ function createMultipleChoiceOptions(
           itemx.length === correctItem.name.length - stringLengthDifference &&
           itemx !== correctItem.name
       )
-      .forEach((option) => {
-        if (!newOptions.includes(option)) newOptions.push(option);
-      });
+      .forEach((option) => newOptions.push(option));
     newOptions.forEach((option) => {
       if (!wrongOptions.includes(option)) wrongOptions.push(option);
     });
