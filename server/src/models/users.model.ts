@@ -106,7 +106,8 @@ export async function updateReviewedItems(
     const allPassedItemIds = items.map((item) => item.id as unknown as string);
     const allLearnedItems = await getAllLearnedItems(userId, language);
     const userSRSettings = await getUserSRSettings(userId, language);
-    if (!allLearnedItems || !userSRSettings) return;
+    if (!allLearnedItems || !userSRSettings)
+      throw new Error("Error fetching learned items or user settings");
 
     const allItemsWeNeedToUpdate = allLearnedItems.filter((item) =>
       allPassedItemIds.includes(item.id.toHexString())
@@ -124,7 +125,8 @@ export async function updateReviewedItems(
     );
 
     passedItemsWithfetchedItems.forEach(async (itemPair) => {
-      if (!itemPair) return;
+      if (!itemPair)
+        throw new Error("This item was not reviewed, please report this");
       await Users.updateOne<User>(
         { id: userId, "languages.code": language },
         {

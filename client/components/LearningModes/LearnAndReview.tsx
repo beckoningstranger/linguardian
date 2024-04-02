@@ -184,9 +184,13 @@ function createMultipleChoiceOptions(
 ) {
   const wrongOptions: string[] = [];
   let numberOfOptions = 0;
-  if (moreItems.length >= 7) {
-    numberOfOptions = 7;
+  const maxNumberOfOptions = 7;
+  if (moreItems.length >= maxNumberOfOptions) {
+    numberOfOptions = maxNumberOfOptions;
   } else numberOfOptions = moreItems.length;
+
+  console.log(moreItems);
+
   moreItems
     .filter((item) => item.split(" ").length === 2)
     .forEach((option) => {
@@ -195,20 +199,27 @@ function createMultipleChoiceOptions(
 
   let stringLengthDifference = 0;
   while (wrongOptions.length < numberOfOptions && stringLengthDifference < 10) {
+    const newOptions: string[] = [];
     moreItems
       .filter(
         (itemx) =>
           itemx.length === correctItem.name.length + stringLengthDifference &&
           itemx !== correctItem.name
       )
-      .forEach((option) => wrongOptions.push(option));
+      .forEach((option) => newOptions.push(option));
+
     moreItems
       .filter(
         (itemx) =>
           itemx.length === correctItem.name.length - stringLengthDifference &&
           itemx !== correctItem.name
       )
-      .forEach((option) => wrongOptions.push(option));
+      .forEach((option) => {
+        if (!newOptions.includes(option)) newOptions.push(option);
+      });
+    newOptions.forEach((option) => {
+      if (!wrongOptions.includes(option)) wrongOptions.push(option);
+    });
     stringLengthDifference += 1;
   }
   const options = wrongOptions.slice(0, numberOfOptions);

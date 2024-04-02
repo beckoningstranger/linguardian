@@ -35,8 +35,19 @@ export default function MultipleChoice({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    const legalKeys = Array.from({ length: options.length }, (_, i) => i + 1);
+    if (!legalKeys.includes(+e.key)) return;
+    setSelectedOption(options[+e.key - 1]);
+    if (correctItem.name === options[+e.key - 1]) {
+      setReviewStatus("correct");
+    } else {
+      setReviewStatus("incorrect");
+    }
+  };
+
   return (
-    <div className="grid grid-cols-2 place-items-center items-stretch gap-3">
+    <div className="grid grid-cols-1 place-items-center items-stretch gap-3">
       {options.map((option, index) => (
         <button
           key={index}
@@ -50,9 +61,16 @@ export default function MultipleChoice({
             handleClick(option);
           }}
         >
-          {option}
+          <span className="mx-4">{index + 1}:</span>
+          <span>{option}</span>
         </button>
       ))}
+      <input
+        type="text"
+        autoFocus
+        className="h-0"
+        onKeyDown={(e) => handleKeyDown(e)}
+      />
     </div>
   );
 }
@@ -63,7 +81,7 @@ function calculateStyling(
   reviewStatus: ReviewStatus,
   correctOption: string
 ) {
-  let styling = "w-full rounded-full p-4";
+  let styling = "w-full rounded-full p-4 flex items-center";
   if (option !== selectedOption) styling += " bg-slate-200";
   if (option === selectedOption && reviewStatus === "incorrect")
     styling += " bg-red-600";
@@ -71,7 +89,7 @@ function calculateStyling(
     (option === selectedOption && reviewStatus === "correct") ||
     (option === correctOption && reviewStatus === "incorrect")
   ) {
-    styling = "w-full rounded-full p-4 bg-green-300";
+    styling = "w-full rounded-full p-4 bg-green-300 flex";
   }
   return styling;
 }
