@@ -17,10 +17,12 @@ import {
   User,
 } from "@/types";
 
+const server = "https://localhost:8000";
+
 export async function getSupportedLanguages() {
   try {
     const response = await axios.get<SupportedLanguage[]>(
-      "http://localhost:8000/settings/supportedLanguages"
+      `${server}/settings/supportedLanguages`
     );
     return response.data;
   } catch (err) {
@@ -33,7 +35,7 @@ export async function getLanguageFeaturesForLanguage(
 ) {
   try {
     const response = await axios.get<LanguageFeatures>(
-      `http://localhost:8000/settings/languageFeatures/${language}`
+      `${server}/settings/languageFeatures/${language}`
     );
     return response.data;
   } catch (err) {
@@ -46,7 +48,7 @@ export async function getLanguageFeaturesForLanguage(
 export async function getAllLanguageFeatures() {
   try {
     const response = await axios.get<LanguageFeatures[]>(
-      `http://localhost:8000/settings/allLanguageFeatures`
+      `${server}/settings/allLanguageFeatures`
     );
     return response.data;
   } catch (err) {
@@ -56,9 +58,7 @@ export async function getAllLanguageFeatures() {
 
 export async function getUserById(userId: number) {
   try {
-    const response = await axios.get<User>(
-      `http://localhost:8000/users/get/${userId}`
-    );
+    const response = await axios.get<User>(`${server}/users/get/${userId}`);
     return response.data;
   } catch (err) {
     console.error(`Error getting user: ${err}`);
@@ -71,7 +71,7 @@ export async function getFullyPopulatedListByListNumber(
 ) {
   try {
     const response = await axios.get<FullyPopulatedList>(
-      `http://localhost:8000/lists/getFullyPopulatedList/${userNative}/${listNumber}`
+      `${server}/lists/getFullyPopulatedList/${userNative}/${listNumber}`
     );
     return response.data;
   } catch (err) {
@@ -84,7 +84,7 @@ export async function getFullyPopulatedListByListNumber(
 export async function getPopulatedList(lNumber: number) {
   try {
     return await axios.get<PopulatedList>(
-      `http://localhost:8000/lists/getPopulatedList/${lNumber}`
+      `${server}/lists/getPopulatedList/${lNumber}`
     );
   } catch (err) {
     console.error(`Error fetching populated list number ${lNumber}: ${err}`);
@@ -93,9 +93,7 @@ export async function getPopulatedList(lNumber: number) {
 
 export async function getList(lNumber: number) {
   try {
-    return await axios.get<List>(
-      `http:localhost:8000/lists/getList/${lNumber}`
-    );
+    return await axios.get<List>(`${server}/lists/getList/${lNumber}`);
   } catch (err) {
     console.error(`Error getching list number ${lNumber}: ${err}}`);
   }
@@ -104,7 +102,7 @@ export async function getList(lNumber: number) {
 export async function getUnitItems(lNumber: number, unitNumber: number) {
   try {
     const response = await axios.get<Item[]>(
-      `http://localhost:8000/lists/getUnitItems/${lNumber}/${unitNumber}`
+      `${server}/lists/getUnitItems/${lNumber}/${unitNumber}`
     );
     return response.data;
   } catch (err) {
@@ -118,7 +116,7 @@ export async function getListsByLanguage(language: SupportedLanguage) {
   try {
     return (
       await axios.get<PopulatedList[]>(
-        `http://localhost:8000/lists/getAllLists/${language}`
+        `${server}/lists/getAllLists/${language}`
       )
     ).data;
   } catch (err) {
@@ -132,7 +130,7 @@ export async function getLearnedLanguageData(
 ) {
   try {
     const response = await axios.get<LearnedLanguageWithPopulatedLists>(
-      `http://localhost:8000/users/getLearnedLanguageData/${language}/${userId}`
+      `${server}/users/getLearnedLanguageData/${language}/${userId}`
     );
     return response.data;
   } catch (err) {
@@ -144,9 +142,7 @@ export async function getLearnedLanguageData(
 
 export async function addListToDashboard(userId: number, listId: number) {
   try {
-    await axios.post(
-      `http://localhost:8000/users/addListToDashboard/${userId}/${listId}`
-    );
+    await axios.post(`${server}/users/addListToDashboard/${userId}/${listId}`);
     revalidatePath("/dashboard");
     revalidatePath(`/lists/${listId}`);
   } catch (err) {
@@ -161,9 +157,7 @@ export async function addNewLanguageToLearn(
   language: SupportedLanguage
 ) {
   try {
-    await axios.post(
-      `http://localhost:8000/users/addNewLanguage/${userId}/${language}`
-    );
+    await axios.post(`${server}/users/addNewLanguage/${userId}/${language}`);
     revalidatePath("/dashboard");
     revalidatePath("/dictionary");
     revalidatePath("/lists");
@@ -195,13 +189,9 @@ export async function uploadCSV(
 ) {
   let newListNumber = 0;
   try {
-    const { data } = await axios.post(
-      "http://localhost:8000/lists/uploadCSV",
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    );
+    const { data } = await axios.post(`${server}/lists/uploadCSV`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     newListNumber = data.message as number;
   } catch (err) {
     if (err instanceof AxiosError) {
@@ -220,7 +210,7 @@ export async function updateLearnedItems(
 ) {
   try {
     const { data } = await axios.post(
-      `http://localhost:8000/users/updateLearnedItems/${userId}/${language}/${mode}`,
+      `${server}/users/updateLearnedItems/${userId}/${language}/${mode}`,
       items,
       { headers: { "Content-Type": "application/json" } }
     );
