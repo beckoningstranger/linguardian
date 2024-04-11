@@ -2,21 +2,24 @@ import { User } from "../types.js";
 
 export const germanUser: User = {
   id: 1,
-  alias: "Jan",
+  username: "Jan",
+  email: "asdfkjh@fsad.de",
   native: "DE",
   languages: [],
 };
 
 export const frenchUser: User = {
   id: 2,
-  alias: "Jean",
+  username: "Jean",
+  email: "asdfkjh@fsad.de",
   native: "FR",
   languages: [],
 };
 
 export const englishUser: User = {
   id: 3,
-  alias: "John",
+  username: "John",
+  email: "asdfkjh@fsad.de",
   native: "EN",
   languages: [],
 };

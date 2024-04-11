@@ -196,7 +196,8 @@ export interface LearnedItem {
 
 export interface User {
   id: number;
-  alias: string;
+  username: string;
+  email: string;
   native: SupportedLanguage;
   languages: LearnedLanguage[];
 }

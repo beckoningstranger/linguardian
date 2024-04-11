@@ -11,6 +11,7 @@ import {
 import { LearningMode, SupportedLanguage } from "../../types.js";
 
 export async function httpGetUserById(req: Request, res: Response) {
+  console.log("USERS_CONTROLLER LINE 14: ", req.user);
   const userId = parseInt(req.params.id);
 
   const response = await getUserById(userId);

@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@types/cookie-session": "^2.0.48",
+    "cookie-session": "^2.1.0",
+    "passport": "^0.7.0"
+  }
+}

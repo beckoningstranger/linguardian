@@ -7,11 +7,12 @@ const userSchema = new Schema<User>({
     required: true,
     unique: true,
   },
-  alias: {
+  username: {
     type: String,
     required: true,
     unique: true,
   },
+  email: { type: String },
   native: {
     type: String,
   },

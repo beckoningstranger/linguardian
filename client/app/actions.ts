@@ -3,6 +3,7 @@
 import axios, { AxiosError } from "axios";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 import {
   FullyPopulatedList,
@@ -58,6 +59,8 @@ export async function getAllLanguageFeatures() {
 
 export async function getUserById(userId: number) {
   try {
+    const userFromSession = cookies().get("linguardian-session")?.value;
+    console.log("USER_FROM_SESSION", userFromSession);
     const response = await axios.get<User>(`${server}/users/get/${userId}`);
     return response.data;
   } catch (err) {

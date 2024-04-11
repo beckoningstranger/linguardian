@@ -1,5 +1,10 @@
 import Link from "next/link";
 
 export default function Root() {
-  return <Link href="/dashboard">Dashboard</Link>;
+  return (
+    <div className="flex flex-col">
+      <Link href="/dashboard">Dashboard</Link>
+      <Link href="https://localhost:8000/auth/google">Login with Google</Link>
+    </div>
+  );
 }
