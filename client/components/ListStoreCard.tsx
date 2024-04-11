@@ -1,3 +1,4 @@
+import paths from "@/paths";
 import { User } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
@@ -24,7 +25,7 @@ export default function ListStoreCard({
   listNumber,
 }: ListStoreCardProps) {
   return (
-    <Link href={`/lists/${listNumber}`}>
+    <Link href={paths.listDetailsPath(listNumber)}>
       <article className="flex w-[350px] flex-col justify-between rounded-md bg-slate-100 shadow-md transition-all hover:shadow-xl">
         <div
           id="title"

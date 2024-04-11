@@ -7,8 +7,9 @@ import ReviewButton from "./ReviewButton";
 import { useLoaded } from "@/hooks/useLoaded";
 import ListBarChart from "@/components/Charts/ListBarChart";
 import ListPieChart from "./Charts/ListPieChart";
-import { ListStats, ListStatus } from "@/types";
+import { LearningMode, ListStats, ListStatus } from "@/types";
 import Link from "next/link";
+import paths from "@/paths";
 
 interface ListDashboardCardProps {
   title: string;
@@ -139,7 +140,7 @@ export default function ListDashboardCard({
           <ReviewButton id={id} mode="dictionary" stats={stats} />
           <ReviewButton id={id} mode="context" stats={stats} />
           <ReviewButton id={id} mode="visual" stats={stats} />
-          <ReviewButton id={id} mode="spelling" stats={stats} />
+          <ReviewButton id={id} mode="spellingBee" stats={stats} />
         </div>
       </ContextMenu>
       <div className="m-3 flex items-center justify-between">
@@ -149,7 +150,7 @@ export default function ListDashboardCard({
         >
           <RxDotsVertical />
         </div>
-        <Link href={`/lists/${id}`} className="w-full pl-2">
+        <Link href={paths.listDetailsPath(id)} className="w-full pl-2">
           <h2 className="text-lg font-semibold">{title}</h2>
         </Link>
       </div>
@@ -168,42 +169,48 @@ export default function ListDashboardCard({
   );
 }
 
-function pickRandomModes(exclude: string[]): string[] {
+function pickRandomModes(exclude: string[]): LearningMode[] {
   // Pass this an array of review modes that should be excluded
   // and it will return an array of two other review modes.
   const options = [
     "translation",
     "context",
     "visual",
-    "spelling",
+    "spellingBee",
     "dictionary",
   ];
-  let modes: string[] = [];
+  let modes: LearningMode[] = [];
   let findingFirstOption = true;
   while (findingFirstOption) {
     let option1 = options[Math.floor(Math.random() * options.length)];
     if (!exclude.includes(option1)) {
-      modes.push(option1);
+      modes.push(option1 as LearningMode);
       findingFirstOption = false;
     }
   }
   let findingSecondOption = true;
   while (findingSecondOption) {
     let option2 = options[Math.floor(Math.random() * options.length)];
-    if (!modes.includes(option2) && !exclude.includes(option2)) {
-      modes.push(option2);
+    if (
+      !modes.includes(option2 as LearningMode) &&
+      !exclude.includes(option2)
+    ) {
+      modes.push(option2 as LearningMode);
       findingSecondOption = false;
     }
   }
   let findingThirdOption = true;
   while (findingThirdOption) {
     let option2 = options[Math.floor(Math.random() * options.length)];
-    if (!modes.includes(option2) && !exclude.includes(option2)) {
-      modes.push(option2);
+    if (
+      !modes.includes(option2 as LearningMode) &&
+      !exclude.includes(option2)
+    ) {
+      modes.push(option2 as LearningMode);
       findingThirdOption = false;
     }
   }
-  return modes;
+  return modes as LearningMode[];
 }
 
 function excluded(status: string): string[] {

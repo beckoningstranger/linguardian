@@ -1,4 +1,5 @@
 import { getUnitItems } from "@/app/actions";
+import paths from "@/paths";
 import Link from "next/link";
 
 interface UnitDetailsProps {
@@ -28,8 +29,8 @@ export default async function UnitDetailPage({
       <h1>Unit not found</h1>
       <p>This unit does not exist yet. </p>
       <div>
-        <Link href={`/lists/${listNumber}`}>Back to List</Link>
-        <Link href="/lists">List Store</Link>
+        <Link href={paths.listDetailsPath(listNumber)}>Back to List</Link>
+        <Link href={paths.listsPath()}>List Store</Link>
       </div>
     </div>
   );

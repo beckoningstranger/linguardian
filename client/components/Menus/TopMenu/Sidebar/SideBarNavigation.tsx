@@ -10,6 +10,7 @@ import { FaPeopleRoof } from "react-icons/fa6";
 import { RiLogoutBoxLine, RiFileList3Fill } from "react-icons/ri";
 import CloseButton from "@/components/Menus/MobileMenu/MobileMenuCloseButton";
 import { SupportedLanguage } from "@/types";
+import paths from "@/paths";
 
 interface SideBarNavigationProps {
   toggleSidebar: MouseEventHandler;
@@ -37,26 +38,26 @@ export default function SideBarNavigation({
           <SidebarItem
             icon={<RxHamburgerMenu />}
             label="Dashboard"
-            href={`/dashboard?lang=${currentlyActiveLanguage}`}
+            href={paths.dashboardLanguagePath(currentlyActiveLanguage)}
             toggleSidebar={toggleSidebar as MouseEventHandler}
           />
 
           <SidebarItem
             icon={<RiFileList3Fill />}
             label="Lists"
-            href={`/lists?lang=${currentlyActiveLanguage}`}
+            href={paths.listsLanguagePath(currentlyActiveLanguage)}
             toggleSidebar={toggleSidebar as MouseEventHandler}
           />
           <SidebarItem
             icon={<FaBookReader />}
             label="Dictionary"
-            href={`/dictionary?lang=${currentlyActiveLanguage}`}
+            href={paths.dictionaryLanguagePath(currentlyActiveLanguage)}
             toggleSidebar={toggleSidebar as MouseEventHandler}
           />
           <SidebarItem
             icon={<FaPeopleRoof />}
             label="Social"
-            href="/social"
+            href={paths.socialPath()}
             toggleSidebar={toggleSidebar as MouseEventHandler}
           />
         </nav>
@@ -64,13 +65,13 @@ export default function SideBarNavigation({
           <SidebarItem
             icon={<FaRegQuestionCircle />}
             label="About"
-            href="/about"
+            href={paths.aboutPath()}
             toggleSidebar={toggleSidebar as MouseEventHandler}
           />
           <SidebarItem
             icon={<RiLogoutBoxLine />}
             label="Logout"
-            href="/logout"
+            href={paths.logoutPath()}
             toggleSidebar={toggleSidebar as MouseEventHandler}
           />
         </footer>

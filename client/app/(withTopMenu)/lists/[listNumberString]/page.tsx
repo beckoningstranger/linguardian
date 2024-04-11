@@ -8,6 +8,8 @@ import { LearnedLanguageWithPopulatedLists } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 
+import paths from "@/paths";
+
 interface ListDetailProps {
   params: {
     listNumberString: string;
@@ -48,7 +50,7 @@ export default async function ListDetailPage({
       return (
         <Link
           key={index}
-          href={`/lists/${listNumber}/${index + 1}`}
+          href={paths.unitDetailsPath(listNumber, index + 1)}
           className="flex w-full justify-center"
         >
           <div
@@ -134,8 +136,8 @@ export default async function ListDetailPage({
         from the database.
       </p>
       <div>
-        <Link href="/dashboard">Back to Dashboard</Link>
-        <Link href="/lists">List Store</Link>
+        <Link href={paths.dashboardPath()}>Back to Dashboard</Link>
+        <Link href={paths.listsPath()}>List Store</Link>
       </div>
     </div>
   );

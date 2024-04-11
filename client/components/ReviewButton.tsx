@@ -13,10 +13,11 @@ import {
 } from "react-icons/fa6"; // Context and Spelling Bee Mode
 import { RxDotsHorizontal, RxDotsVertical } from "react-icons/rx"; // More button
 import Link from "next/link";
-import { ListStats } from "@/types";
+import { LearningMode, ListStats } from "@/types";
+import paths from "@/paths";
 
 interface ReviewButtonProps {
-  mode: string;
+  mode: LearningMode | "more" | "spinner";
   showAllModes?: Function;
   id: number;
   stats: ListStats;
@@ -44,7 +45,7 @@ export default function ReviewButton({
       icon = <FaBookOpenReader />;
       color = "bg-indigo-600";
       break;
-    case "spelling":
+    case "spellingBee":
       icon = <FaSpellCheck />;
       color = "bg-red-500";
       break;
@@ -77,7 +78,7 @@ export default function ReviewButton({
     </button>
   ) : (
     <Link
-      href={`/learn/${mode}/${id}`}
+      href={paths.learnPath(mode, id)}
       className={`m-1 rounded-lg border-4 border-white ${
         seeIfDisabled()
           ? "bg-gray-300 pointer-events-none"
