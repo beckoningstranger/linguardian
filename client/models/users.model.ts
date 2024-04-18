@@ -1,7 +1,7 @@
-import { User } from "../../../client/types.js";
-import { model, Schema } from "mongoose";
+import { User as UserType } from "@/types";
+import mongoose, { model, Schema } from "mongoose";
 
-const userSchema = new Schema<User>(
+const userSchema = new Schema<UserType>(
   {
     id: {
       type: Number,
@@ -59,4 +59,10 @@ const userSchema = new Schema<User>(
   { timestamps: true }
 );
 
-export default model<User>("User", userSchema);
+const User = mongoose.models.User || model<UserType>("User", userSchema);
+export default User;
+
+export async function getLatestUserId() {
+  const latestUserId = await User.findOne().sort("-listNumber");
+  return !latestUserId?.id ? 1 : latestUserId.id + 1;
+}

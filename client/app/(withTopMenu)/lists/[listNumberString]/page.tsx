@@ -9,6 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import paths from "@/paths";
+import getUserOnServer from "@/lib/getUserOnServer";
 
 interface ListDetailProps {
   params: {
@@ -23,7 +24,8 @@ export default async function ListDetailPage({
 
   const listData = await getPopulatedList(listNumber);
 
-  const user = await getUserById(1);
+  const sessionUser = await getUserOnServer();
+  const user = await getUserById(sessionUser.id);
 
   if (listData && listData.data && user) {
     const {
@@ -114,7 +116,8 @@ export default async function ListDetailPage({
                 <h3 className="mx-2 text-sm sm:mx-6">{description}</h3>
               </div>
               <h5 className="absolute bottom-1 right-3 text-xs">
-                created by {authors.map((author) => author.alias).join(" & ")}
+                created by{" "}
+                {authors.map((author) => author.username).join(" & ")}
               </h5>
             </div>
           </div>

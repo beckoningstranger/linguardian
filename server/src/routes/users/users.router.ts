@@ -2,9 +2,11 @@ import express from "express";
 import {
   httpAddListToDashboard,
   httpAddNewLanguage,
+  httpGetNextUserId,
   httpGetLearnedLanguageData,
   httpGetUserById,
   httpUpdateLearnedItems,
+  httpSetNativeLanguage,
 } from "./users.controller.js";
 
 export const usersRouter = express.Router();
@@ -27,3 +29,7 @@ usersRouter.post(
   "/updateLearnedItems/:userId/:language/:mode",
   httpUpdateLearnedItems
 );
+
+usersRouter.get("/nextUserId", httpGetNextUserId);
+
+usersRouter.post("/setNativeLanguage/:userId/:language", httpSetNativeLanguage);

@@ -11,6 +11,8 @@ import { Inter } from "next/font/google";
 import "@/app/globals.css";
 
 import { ReactNode } from "react";
+import { AuthProvider } from "../Providers";
+import getUserOnServer from "@/lib/getUserOnServer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,22 +28,28 @@ interface RootLayoutProps {
 export default async function RootLayoutWithTopMenu({
   children,
 }: RootLayoutProps) {
-  const user = await getUserById(1);
+  const sessionUser = await getUserOnServer();
+  const user = await getUserById(sessionUser.id);
+
   const allSupportedLanguages = await getSupportedLanguages();
   const allLanguageFeatures = await getAllLanguageFeatures();
   if (user && allSupportedLanguages && allLanguageFeatures)
     return (
       <html lang="en">
         <body className={inter.className}>
-          <TopMenu
-            user={user}
-            allSupportedLanguages={allSupportedLanguages}
-            allLanguageFeatures={allLanguageFeatures}
-          />
-          <DashboardContainer>
-            {children}
-            <div id="PortalOutlet" />
-          </DashboardContainer>
+          <AuthProvider>
+            {user.languages[0] && (
+              <TopMenu
+                user={user}
+                allSupportedLanguages={allSupportedLanguages}
+                allLanguageFeatures={allLanguageFeatures}
+              />
+            )}
+            <DashboardContainer>
+              {children}
+              <div id="PortalOutlet" />
+            </DashboardContainer>
+          </AuthProvider>
         </body>
       </html>
     );

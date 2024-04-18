@@ -3,13 +3,15 @@ import {
   getSupportedLanguages,
   getUserById,
 } from "@/app/actions";
+import getUserOnServer from "@/lib/getUserOnServer";
 import { SupportedLanguage } from "@/types";
 import Link from "next/link";
 import Flag from "react-world-flags";
 
 export default async function AddNewLanguageToLearn() {
   const supportedLanguages = await getSupportedLanguages();
-  const user = await getUserById(1);
+  const sessionUser = await getUserOnServer();
+  const user = await getUserById(sessionUser.id);
   const languagesAlreadyLearned = user?.languages.reduce((a, curr) => {
     a.push(curr.code);
     return a;

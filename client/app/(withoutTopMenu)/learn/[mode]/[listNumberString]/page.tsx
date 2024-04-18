@@ -14,6 +14,7 @@ import {
   getUserById,
   getLearnedLanguageData,
 } from "@/app/actions";
+import getUserOnServer from "@/lib/getUserOnServer";
 
 interface ReviewPageProps {
   params: {
@@ -30,7 +31,8 @@ export default async function LearnAndReviewPage({
   if (mode !== "translation" && mode !== "learn")
     return `No valid learning mode selected ${mode}`;
 
-  const user: User | undefined = await getUserById(1);
+  const sessionUser = await getUserOnServer();
+  const user = await getUserById(sessionUser.id);
   if (!user) return "No User";
 
   const populatedListData = await getFullyPopulatedListByListNumber(

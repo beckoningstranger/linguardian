@@ -1,8 +1,10 @@
 import { getUserById } from "@/app/actions";
 import ParseCSVForm from "@/components/parseCSVForm";
+import getUserOnServer from "@/lib/getUserOnServer";
 
 export default async function CreateList() {
-  const user = await getUserById(1);
+  const sessionUser = await getUserOnServer();
+  const user = await getUserById(sessionUser.id);
 
   if (user)
     return (

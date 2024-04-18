@@ -223,3 +223,15 @@ async function getUserSRSettings(userId: number, language: SupportedLanguage) {
   const languageData = user.languages.find((lang) => lang.code === language);
   return languageData?.customSRSettings;
 }
+
+export async function getNextUserId() {
+  const latestUserId = await Users.findOne().sort("-id");
+  return !latestUserId?.id ? 1 : latestUserId.id + 1;
+}
+
+export async function setNativeLanguage(
+  userId: number,
+  language: SupportedLanguage
+) {
+  return await Users.updateOne<User>({ id: userId }, { native: language });
+}

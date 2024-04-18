@@ -83,10 +83,12 @@ export async function parseCSV({
   author,
 }: parseCSVProps) {
   const authors: Types.ObjectId[] = [];
-  const authorData = await getUserObjectIdById(+author)
+  const authorData = await getUserObjectIdById(+author);
   if (authorData) {
     authors.push(authorData?._id);
-  } else {console.error('List will be added without author')}
+  } else {
+    console.error("List will be added without author");
+  }
 
   const newList: List = {
     name: listName,
@@ -95,7 +97,7 @@ export async function parseCSV({
     language: language,
     authors: authors,
     unitOrder: [],
-    units: []
+    units: [],
   };
 
   const newUploadedList = await Lists.findOneAndUpdate(

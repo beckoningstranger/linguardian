@@ -31,9 +31,11 @@ export default function ListStoreCard({
           id="title"
           className="mt-2 flex h-[60px] flex-col items-center justify-center"
         >
-          <h3 className="pt-1 text-[0.7rem] leading-3">
-            {authors.map((author) => author.alias).join(" & ")}&apos;s
-          </h3>
+          {authors.length > 0 && (
+            <h3 className="pt-1 text-[0.7rem] leading-3">
+              {authors.map((author) => author.username).join(" & ")}&apos;s
+            </h3>
+          )}
           <h2 className="text-[1.4rem]">{title}</h2>
         </div>
         <div id="main" className="flex items-center px-4">

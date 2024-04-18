@@ -219,3 +219,31 @@ export async function updateLearnedItems(
   }
   revalidatePath(`/dashboard?lang=${language}`);
 }
+
+export async function getNextUserId() {
+  try {
+    const { data } = await axios.get(`${server}/users/nextUserId`);
+    return data;
+  } catch (err) {
+    console.error("Error getting latest user id", err);
+  }
+}
+
+export async function setNativeLanguage({
+  language,
+  userId,
+}: {
+  language: SupportedLanguage;
+  userId: number;
+}) {
+  try {
+    await axios.post(
+      `${server}/users/setNativeLanguage/${userId}/${language}`,
+      { headers: { "Content-Type": "application/json" } }
+    );
+  } catch (err) {
+    console.error(`Error setting native language for user ${userId}: ${err}`);
+  }
+  revalidatePath("/dashboard");
+  redirect("/");
+}

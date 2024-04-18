@@ -7,13 +7,16 @@ import {
   getUserById,
 } from "@/app/actions";
 import ListStoreCard from "@/components/ListStoreCard";
+import getUserOnServer from "@/lib/getUserOnServer";
 
 interface ListStoreProps {
   searchParams?: { lang: string };
 }
 
 export default async function ListStore({ searchParams }: ListStoreProps) {
-  const user = await getUserById(1);
+  const sessionUser = await getUserOnServer();
+  const user = await getUserById(sessionUser.id);
+
   const passedLanguage = searchParams?.lang?.toUpperCase() as SupportedLanguage;
   const validPassedLanguage = await checkPassedLanguageAsync(passedLanguage);
   const listsForLanguage = await getListsByLanguage(

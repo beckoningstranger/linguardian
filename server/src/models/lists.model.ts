@@ -2,7 +2,6 @@ import { Types } from "mongoose";
 import {
   Item,
   ItemPopulatedWithTranslations,
-  PopulatedList,
   PopulatedListNoAuthors,
   LearningMode,
   SupportedLanguage,

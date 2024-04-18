@@ -1,4 +1,5 @@
 import { addNewLanguageToLearn, getUserById } from "@/app/actions";
+import getUserOnServer from "@/lib/getUserOnServer";
 import { SupportedLanguage } from "@/types";
 import { redirect } from "next/navigation";
 
@@ -9,7 +10,8 @@ interface AddListToDashboardProps {
 export default async function AddNewLanguageToLearn({
   searchParams,
 }: AddListToDashboardProps) {
-  const user = await getUserById(1);
+  const sessionUser = await getUserOnServer();
+  const user = await getUserById(sessionUser.id);
 
   if (searchParams && searchParams.lang && user && user.id) {
     const { lang } = searchParams;

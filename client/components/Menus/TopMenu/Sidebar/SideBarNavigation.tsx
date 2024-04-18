@@ -11,6 +11,8 @@ import { RiLogoutBoxLine, RiFileList3Fill } from "react-icons/ri";
 import CloseButton from "@/components/Menus/MobileMenu/MobileMenuCloseButton";
 import { SupportedLanguage } from "@/types";
 import paths from "@/paths";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface SideBarNavigationProps {
   toggleSidebar: MouseEventHandler;
@@ -24,6 +26,8 @@ export default function SideBarNavigation({
   currentlyActiveLanguage,
 }: SideBarNavigationProps) {
   const ref = useOutsideClick(toggleSidebar, showSidebar);
+  const router = useRouter();
+
   return (
     <>
       <div
@@ -68,12 +72,20 @@ export default function SideBarNavigation({
             href={paths.aboutPath()}
             toggleSidebar={toggleSidebar as MouseEventHandler}
           />
-          <SidebarItem
-            icon={<RiLogoutBoxLine />}
-            label="Logout"
-            href={paths.logoutPath()}
-            toggleSidebar={toggleSidebar as MouseEventHandler}
-          />
+          <div
+            className={`my-4 flex select-none justify-center transition-all md:my-0 md:h-14 md:justify-start md:border-none md:p-10 md:hover:scale-100 md:hover:bg-slate-300`}
+            onClick={() => {
+              signOut();
+              router.push("/");
+            }}
+          >
+            <div className="flex w-48 items-center">
+              <div className="flex items-center px-3 text-3xl md:pl-3">
+                <RiLogoutBoxLine />
+              </div>
+              <div className="px-3 text-2xl md:text-xl">Logout</div>
+            </div>
+          </div>
         </footer>
         <div
           onClick={toggleSidebar}

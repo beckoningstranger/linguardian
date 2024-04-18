@@ -7,7 +7,10 @@ import {
   getUserWithPopulatedLearnedLists,
   addNewlyLearnedItems,
   updateReviewedItems,
+  getNextUserId,
+  setNativeLanguage,
 } from "../../models/users.model.js";
+
 import { LearningMode, SupportedLanguage } from "../../types.js";
 
 export async function httpGetUserById(req: Request, res: Response) {
@@ -61,4 +64,17 @@ export async function httpUpdateLearnedItems(req: Request, res: Response) {
     response = await updateReviewedItems(req.body, userId, language);
   }
   return res.status(200).json();
+}
+
+export async function httpGetNextUserId(req: Request, res: Response) {
+  return res.status(200).json(await getNextUserId());
+}
+
+export async function httpSetNativeLanguage(req: Request, res: Response) {
+  const userId = parseInt(req.params.userId);
+  const language = req.params.language as SupportedLanguage;
+
+  const response = await setNativeLanguage(userId, language);
+  if (response.modifiedCount === 1) return res.status(201).json();
+  return res.status(500);
 }
