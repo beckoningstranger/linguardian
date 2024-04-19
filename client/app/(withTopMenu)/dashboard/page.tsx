@@ -13,10 +13,9 @@ export default async function DashboardPage({
   const passedLanguage = searchParams?.lang?.toUpperCase();
   const validPassedLanguage = await checkPassedLanguageAsync(passedLanguage);
   const sessionUser = await getUserOnServer();
-  console.log("SESSION", sessionUser);
   const user = await getUserById(sessionUser.id);
 
-  if (!user?.native) redirect("nativelanguage");
+  if (!user?.native) redirect("/nativelanguage");
   if (!user?.languages || user?.languages.length === 0)
     redirect("languages/new");
 

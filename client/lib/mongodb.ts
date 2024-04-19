@@ -5,8 +5,7 @@ export const connectMongoDB = async () => {
 
   try {
     await mongoose.connect(process.env.MONGO_URL);
-    console.log("Frontend connected to MongoDB");
   } catch (err) {
-    console.log("Error connecting to MongoDB on front end: ", err);
+    console.error("Error connecting to MongoDB on front end: ", err);
   }
 };

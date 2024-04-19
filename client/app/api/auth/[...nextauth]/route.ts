@@ -31,6 +31,7 @@ export const authOptions: NextAuthOptions = {
 
           const passwordsMatch = await bcrypt.compare(password, user.password);
           if (!passwordsMatch) return null;
+          user.name = user.username; // Just to have it in the token as it's called differently in the user schema
           return user;
         } catch (err) {
           console.error("Error during login", err);
@@ -51,12 +52,15 @@ export const authOptions: NextAuthOptions = {
     signIn: "/",
   },
   callbacks: {
-    jwt({ token, user }) {
-      if (user) {
+    jwt({ token, user, account }) {
+      if (user && account) {
         token.email = user.email;
         token.name = user.name;
         token.image = user.image;
-        token.id = user.id;
+        token.id =
+          account.provider === "credentials"
+            ? user.id
+            : account.provider + account.providerAccountId;
       }
       return token;
     },
@@ -64,17 +68,22 @@ export const authOptions: NextAuthOptions = {
       session.user.id = token.id;
       return session;
     },
-    async signIn({ profile }) {
+    async signIn({ profile, account }) {
       try {
-        await connectMongoDB();
-        const idExists = await User.findOne({ id: profile?.sub });
-        if (!idExists) {
-          await User.create({
-            id: profile?.sub,
-            username: profile?.name,
-            email: profile?.email,
-            image: profile?.picture,
+        if (account && account.provider !== "credentials") {
+          await connectMongoDB();
+          const idExists = await User.findOne({
+            id: account?.provider + account?.providerAccountId,
           });
+          if (!idExists) {
+            if (!account) throw new Error("account is undefined");
+            await User.create({
+              id: account?.provider + account?.providerAccountId,
+              username: profile?.name,
+              email: profile?.email,
+              image: profile?.picture,
+            });
+          }
         }
         return true;
       } catch (err) {

@@ -10,10 +10,14 @@ export async function POST(req: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const id = await getNextUserId();
     await connectMongoDB();
-    await User.create({ id, username, email, password: hashedPassword });
+    await User.create({
+      id: "credentials" + id,
+      username,
+      email,
+      password: hashedPassword,
+    });
     return NextResponse.json({ message: "User registered" }, { status: 201 });
   } catch (err) {
-    console.log("Error", err);
     return NextResponse.json(
       { message: "An error occured while registering the user." },
       { status: 500 }

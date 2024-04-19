@@ -17,7 +17,7 @@ export default function NativeLanguageForm({
 }: NativeLanguageFormProps) {
   const [selectedLanguage, setSelectedLanguage] = useState<SupportedLanguage>();
   const { data: session } = useSession();
-  const userId: number = session?.user.id;
+  const userId: string = session?.user.id;
 
   const langData = allLanguageFeatures
     .filter((language) => language.langCode === selectedLanguage)

@@ -14,16 +14,14 @@ import {
 import { LearningMode, SupportedLanguage } from "../../types.js";
 
 export async function httpGetUserById(req: Request, res: Response) {
-  const userId = parseInt(req.params.id);
-
-  const response = await getUserById(userId);
+  const response = await getUserById(req.params.id);
   if (response) return res.status(200).json(response);
   return res.status(404).json();
 }
 
 export async function httpGetLearnedLanguageData(req: Request, res: Response) {
   const language = req.params.language as SupportedLanguage;
-  const userId = parseInt(req.params.userId);
+  const userId = req.params.userId;
 
   const response = await getUserWithPopulatedLearnedLists(userId);
 
@@ -36,7 +34,7 @@ export async function httpGetLearnedLanguageData(req: Request, res: Response) {
 }
 
 export async function httpAddListToDashboard(req: Request, res: Response) {
-  const userId = parseInt(req.params.userId);
+  const userId = req.params.userId;
   const listNumber = parseInt(req.params.listNumber);
 
   const response = await addListToDashboard(userId, listNumber);
@@ -45,7 +43,7 @@ export async function httpAddListToDashboard(req: Request, res: Response) {
 }
 
 export async function httpAddNewLanguage(req: Request, res: Response) {
-  const userId = parseInt(req.params.userId);
+  const userId = req.params.userId;
   const language = req.params.language as SupportedLanguage;
 
   const response = await addNewLanguage(userId, language);
@@ -54,7 +52,7 @@ export async function httpAddNewLanguage(req: Request, res: Response) {
 }
 
 export async function httpUpdateLearnedItems(req: Request, res: Response) {
-  const userId = parseInt(req.params.userId);
+  const userId = req.params.userId;
   const language = req.params.language as SupportedLanguage;
   const mode = req.params.mode as LearningMode;
   let response;
@@ -71,7 +69,7 @@ export async function httpGetNextUserId(req: Request, res: Response) {
 }
 
 export async function httpSetNativeLanguage(req: Request, res: Response) {
-  const userId = parseInt(req.params.userId);
+  const userId = req.params.userId;
   const language = req.params.language as SupportedLanguage;
 
   const response = await setNativeLanguage(userId, language);

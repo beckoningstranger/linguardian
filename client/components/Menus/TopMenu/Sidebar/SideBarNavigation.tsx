@@ -75,7 +75,7 @@ export default function SideBarNavigation({
           <div
             className={`my-4 flex select-none justify-center transition-all md:my-0 md:h-14 md:justify-start md:border-none md:p-10 md:hover:scale-100 md:hover:bg-slate-300`}
             onClick={() => {
-              signOut();
+              signOut({ callbackUrl: "/" });
               router.push("/");
             }}
           >

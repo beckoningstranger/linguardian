@@ -32,7 +32,7 @@ export default function LoginForm() {
 
       router.replace("dashboard");
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 

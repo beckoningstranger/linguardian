@@ -1,7 +1,6 @@
 "use client";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function RegisterForm() {
@@ -10,8 +9,6 @@ export default function RegisterForm() {
   const [password, setPassword] = useState<string>("");
   const [passwordVerify, setPasswordVerify] = useState<string>("");
   const [error, setError] = useState("");
-
-  const router = useRouter();
 
   const inputStyling =
     "w-[400px] border border-gray-200 py-2 px-6 bg-zinc-100/40";
@@ -61,9 +58,8 @@ export default function RegisterForm() {
         await signIn("credentials", {
           email,
           password,
-          redirect: false,
+          callbackUrl: "/nativelanguage",
         });
-        router.push("nativelanguage");
       } else {
         console.error("User registration failed");
       }

@@ -1,3 +1,4 @@
+import { on } from "events";
 import {
   ItemForServer,
   LearnedLanguageWithPopulatedLists,
@@ -11,7 +12,7 @@ import {
 } from "./settings.model.js";
 import Users from "./users.schema.js";
 
-export async function getUserById(id: number) {
+export async function getUserById(id: string) {
   try {
     const response = await Users.findOne<User>({ id: id }, { _id: 0 });
     if (response) return response;
@@ -37,7 +38,7 @@ export async function createUser(user: User) {
   }
 }
 
-export async function getUserWithPopulatedLearnedLists(userId: number) {
+export async function getUserWithPopulatedLearnedLists(userId: string) {
   try {
     return await Users.findOne<User>(
       { id: userId },
@@ -50,7 +51,7 @@ export async function getUserWithPopulatedLearnedLists(userId: number) {
   }
 }
 
-export async function addListToDashboard(userId: number, listNumber: number) {
+export async function addListToDashboard(userId: string, listNumber: number) {
   try {
     const list = await getList(listNumber);
     return await Users.updateOne<User>(
@@ -67,7 +68,7 @@ export async function addListToDashboard(userId: number, listNumber: number) {
 }
 
 export async function addNewLanguage(
-  userId: number,
+  userId: string,
   language: SupportedLanguage
 ) {
   try {
@@ -99,7 +100,7 @@ export async function addNewLanguage(
 
 export async function updateReviewedItems(
   items: ItemForServer[],
-  userId: number,
+  userId: string,
   language: SupportedLanguage
 ) {
   try {
@@ -171,7 +172,7 @@ export async function updateReviewedItems(
 
 export async function addNewlyLearnedItems(
   items: ItemForServer[],
-  userId: number,
+  userId: string,
   language: SupportedLanguage
 ) {
   try {
@@ -202,7 +203,7 @@ export async function addNewlyLearnedItems(
 }
 
 export async function getAllLearnedItems(
-  userId: number,
+  userId: string,
   language: SupportedLanguage
 ) {
   try {
@@ -217,7 +218,7 @@ export async function getAllLearnedItems(
   }
 }
 
-async function getUserSRSettings(userId: number, language: SupportedLanguage) {
+async function getUserSRSettings(userId: string, language: SupportedLanguage) {
   const user = await Users.findOne({ id: userId });
   if (!user) return;
   const languageData = user.languages.find((lang) => lang.code === language);
@@ -225,12 +226,22 @@ async function getUserSRSettings(userId: number, language: SupportedLanguage) {
 }
 
 export async function getNextUserId() {
-  const latestUserId = await Users.findOne().sort("-id");
-  return !latestUserId?.id ? 1 : latestUserId.id + 1;
+  const allCredentialsUsers = await Users.find({
+    id: { $regex: "^" + "credentials" },
+  })
+    .select("id")
+    .sort({ id: "asc" });
+  const onlyIds = allCredentialsUsers.map((x) => x.id);
+  const onlyNumbers = onlyIds
+    .map((x: string) => +x.replace(/[a-z]/g, ""))
+    .sort((a, b) => a - b);
+
+  if (onlyNumbers.length === 0) return 1;
+  return onlyNumbers[onlyNumbers.length - 1] + 1;
 }
 
 export async function setNativeLanguage(
-  userId: number,
+  userId: string,
   language: SupportedLanguage
 ) {
   return await Users.updateOne<User>({ id: userId }, { native: language });

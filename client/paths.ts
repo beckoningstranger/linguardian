@@ -42,9 +42,6 @@ const paths = {
   aboutPath() {
     return `/about`;
   },
-  logoutPath() {
-    return `/logout`;
-  },
   newLanguagePath() {
     return `/languages/new`;
   },

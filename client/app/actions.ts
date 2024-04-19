@@ -56,7 +56,7 @@ export async function getAllLanguageFeatures() {
   }
 }
 
-export async function getUserById(userId: number) {
+export async function getUserById(userId: string) {
   try {
     const response = await axios.get<User>(`${server}/users/get/${userId}`);
     return response.data;
@@ -125,7 +125,7 @@ export async function getListsByLanguage(language: SupportedLanguage) {
 }
 
 export async function getLearnedLanguageData(
-  userId: number,
+  userId: string,
   language: SupportedLanguage
 ) {
   try {
@@ -140,7 +140,7 @@ export async function getLearnedLanguageData(
   }
 }
 
-export async function addListToDashboard(userId: number, listId: number) {
+export async function addListToDashboard(userId: string, listId: number) {
   try {
     await axios.post(`${server}/users/addListToDashboard/${userId}/${listId}`);
     revalidatePath("/dashboard");
@@ -153,7 +153,7 @@ export async function addListToDashboard(userId: number, listId: number) {
 }
 
 export async function addNewLanguageToLearn(
-  userId: number,
+  userId: string,
   language: SupportedLanguage
 ) {
   try {
@@ -205,7 +205,7 @@ export async function uploadCSV(
 export async function updateLearnedItems(
   items: ItemForServer[],
   language: SupportedLanguage,
-  userId: number,
+  userId: string,
   mode: LearningMode
 ) {
   try {
@@ -234,7 +234,7 @@ export async function setNativeLanguage({
   userId,
 }: {
   language: SupportedLanguage;
-  userId: number;
+  userId: string;
 }) {
   try {
     await axios.post(

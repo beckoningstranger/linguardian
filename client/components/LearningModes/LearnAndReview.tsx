@@ -20,7 +20,7 @@ import { updateLearnedItems } from "@/app/actions";
 interface LearnAndReviewProps {
   listName: string;
   userNative: SupportedLanguage;
-  userId: number;
+  userId: string;
   items: ItemToLearn[];
   targetLanguageFeatures: LanguageFeatures;
   allItemStringsInList: string[];
@@ -89,7 +89,7 @@ export default function LearnAndReview({
           newItemOrder = itemsToLearn;
           break;
         default:
-          console.log(
+          console.error(
             "Something went wrong in switch statement, received",
             removedItem?.learningStep
           );
