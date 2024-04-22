@@ -1,3 +1,5 @@
+import { transcode } from "buffer";
+import { transform } from "next/dist/build/swc";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -9,12 +11,28 @@ const config: Config = {
   theme: {
     extend: {
       animation: {
-        "fold-out": "fold-out .4s forwards",
+        "from-top": "from-top .4s forwards",
+        "from-left": "from-left .4s forwards",
+        "from-right": "from-right .4s forwards",
+        "from-bottom": "from-bottom .4s forwards",
       },
       keyframes: {
-        "fold-out": {
-          "0%": { width: "100%", height: "1rem" },
-          "100%": { width: "100%", height: "100%" },
+        "from-top": {
+          "0%": { transform: "translate(0%, -100%)" },
+          "100%": { transform: "translate(0%, 0%)" },
+        },
+        "from-left": {
+          "0%": { transform: "translate(-100%)" },
+
+          "100%": { transform: "translate(0%)" },
+        },
+        "from-right": {
+          "0%": { transform: "translate(100%)" },
+          "100%": { transform: "translate(0%)" },
+        },
+        "from-bottom": {
+          "0%": { transform: "translate(0%, 100%)" },
+          "100%": { transform: "translate(0%, 0%)" },
         },
       },
       backgroundImage: {

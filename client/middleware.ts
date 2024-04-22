@@ -9,6 +9,5 @@ export const config = {
     "/learn/:path*",
     "/languages/:path*",
     "/nativeLanguage/:path*",
-    "/register/:path*",
   ],
 };

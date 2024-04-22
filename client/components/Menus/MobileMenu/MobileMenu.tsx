@@ -1,5 +1,11 @@
 "use client";
-import { MouseEventHandler, ReactNode, useEffect, useRef } from "react";
+import {
+  MouseEventHandler,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 import Logo from "@/components/Logo";
 import MobileMenuCloseButton from "./MobileMenuCloseButton";
@@ -7,9 +13,17 @@ import useMobileMenuContext from "@/hooks/useMobileMenuContext";
 
 interface MobileMenuProps {
   children: ReactNode;
+  fromDirection?:
+    | "animate-from-top"
+    | "animate-from-right"
+    | "animate-from-left"
+    | "animate-from-bottom";
 }
 
-export default function MobileMenu({ children }: MobileMenuProps) {
+export default function MobileMenu({
+  children,
+  fromDirection = "animate-from-top",
+}: MobileMenuProps) {
   const ref = useRef<Element | null>(null);
   const { showMobileMenu, toggleMobileMenu } = useMobileMenuContext();
 
@@ -27,9 +41,14 @@ export default function MobileMenu({ children }: MobileMenuProps) {
       // This returns a logo at the top, options (passed as children) in the middle and a button to close the menu at the bottom
 
       <div className="absolute top-0 h-full w-full backdrop-blur-md">
-        <div className="flex animate-fold-out flex-col items-center justify-center gap-3 overflow-hidden">
+        <div
+          className={
+            "flex flex-col items-center justify-center gap-3 overflow-hidden " +
+            fromDirection
+          }
+        >
           <Logo />
-          <div className="flex flex-col justify-center">{children}</div>
+          <div className="mt-10 flex flex-col justify-center">{children}</div>
           <div onClick={toggleMobileMenu as MouseEventHandler}>
             <MobileMenuCloseButton />
           </div>

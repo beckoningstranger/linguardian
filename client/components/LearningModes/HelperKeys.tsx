@@ -33,7 +33,7 @@ export default function HelperKeys({
 
   return (
     <>
-      <MobileMenu>
+      <MobileMenu fromDirection="animate-from-top">
         <HelperKeysSelector
           target={targetLanguageFeatures.langCode}
           handleHelperKeyClick={handleHelperKeyClick}

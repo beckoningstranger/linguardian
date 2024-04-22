@@ -41,7 +41,7 @@ export default function LanguageSelectorAndUserMenu({
           className={`m-0 h-16 w-16 rounded-full border-2 border-slate-300 object-cover md:hidden`}
           onClick={toggleMobileMenu as MouseEventHandler}
         />
-        <MobileMenu>
+        <MobileMenu fromDirection="animate-from-left">
           <MobileLanguageSelector
             user={user}
             setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
@@ -61,7 +61,7 @@ export default function LanguageSelectorAndUserMenu({
           />
         </div>
 
-        <UserMenu />
+        <UserMenu user={user} />
       </div>
     </>
   );
