@@ -45,6 +45,12 @@ const paths = {
   newLanguagePath() {
     return `/languages/new`;
   },
+  profilePath() {
+    return `/profile`;
+  },
+  settingsPath() {
+    return `/settings`;
+  },
 };
 
 export default paths;

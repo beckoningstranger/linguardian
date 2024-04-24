@@ -11,10 +11,10 @@ const config: Config = {
   theme: {
     extend: {
       animation: {
-        "from-top": "from-top .4s forwards",
-        "from-left": "from-left .4s forwards",
-        "from-right": "from-right .4s forwards",
-        "from-bottom": "from-bottom .4s forwards",
+        "from-top": "from-top .3s forwards",
+        "from-left": "from-left .3s forwards",
+        "from-right": "from-right .3s forwards",
+        "from-bottom": "from-bottom .3s forwards",
       },
       keyframes: {
         "from-top": {

@@ -30,7 +30,7 @@ export default function MobileLanguageSelector({
 
   if (toggleMobileMenu)
     return (
-      <div className="grid grid-cols-2 grid-rows-3 gap-8 pt-28">
+      <div className="grid grid-cols-2 grid-rows-3 gap-8">
         {languagesAndFlags.map((lang) => {
           return (
             <Link key={lang.flagCode} href={`${currentPath}?lang=${lang.name}`}>

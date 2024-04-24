@@ -1,19 +1,19 @@
 import { MouseEventHandler, ReactElement } from "react";
 import Link from "next/link";
 
-interface SidebarProps {
+interface SideNavItemProps {
   icon: ReactElement;
   label: string;
   href: string;
-  toggleSidebar: MouseEventHandler;
+  toggleSidebar?: MouseEventHandler;
 }
 
-export default function SidebarItem({
+export default function SideNavItem({
   icon,
   label,
   href,
   toggleSidebar,
-}: SidebarProps) {
+}: SideNavItemProps) {
   return (
     <Link
       href={href}

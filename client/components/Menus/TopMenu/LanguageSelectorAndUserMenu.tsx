@@ -10,6 +10,7 @@ import UserMenu from "./UserMenu";
 import MobileLanguageSelector from "./LanguageSelector/MobileLanguageSelector";
 import useMobileMenuContext from "@/hooks/useMobileMenuContext";
 import { SupportedLanguage, User } from "@/types";
+import { MobileMenuContextProvider } from "../MobileMenu/MobileMenuContext";
 
 interface LanguageSelectorAndUserMenuProps {
   languageAndFlag: { lang: SupportedLanguage; flag: string };
@@ -41,7 +42,7 @@ export default function LanguageSelectorAndUserMenu({
           className={`m-0 h-16 w-16 rounded-full border-2 border-slate-300 object-cover md:hidden`}
           onClick={toggleMobileMenu as MouseEventHandler}
         />
-        <MobileMenu fromDirection="animate-from-left">
+        <MobileMenu fromDirection="animate-from-top">
           <MobileLanguageSelector
             user={user}
             setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
@@ -60,8 +61,9 @@ export default function LanguageSelectorAndUserMenu({
             user={user}
           />
         </div>
-
-        <UserMenu user={user} />
+        <MobileMenuContextProvider>
+          <UserMenu user={user} />
+        </MobileMenuContextProvider>
       </div>
     </>
   );

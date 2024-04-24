@@ -40,16 +40,21 @@ export default function MobileMenu({
     return createPortal(
       // This returns a logo at the top, options (passed as children) in the middle and a button to close the menu at the bottom
 
-      <div className="absolute top-0 h-full w-full backdrop-blur-md">
+      <div className="absolute top-0 h-full w-full overflow-hidden backdrop-blur-md">
         <div
           className={
-            "flex flex-col items-center justify-center gap-3 overflow-hidden " +
+            "h-full flex flex-col items-center justify-center gap-3 overflow-hidden " +
             fromDirection
           }
         >
           <Logo />
-          <div className="mt-10 flex flex-col justify-center">{children}</div>
-          <div onClick={toggleMobileMenu as MouseEventHandler}>
+          <div className="mt-12 flex h-96 flex-col justify-center">
+            {children}
+          </div>
+          <div
+            onClick={toggleMobileMenu as MouseEventHandler}
+            className="absolute bottom-5"
+          >
             <MobileMenuCloseButton />
           </div>
         </div>
