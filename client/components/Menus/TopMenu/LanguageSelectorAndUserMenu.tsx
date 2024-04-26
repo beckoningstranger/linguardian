@@ -16,12 +16,14 @@ interface LanguageSelectorAndUserMenuProps {
   languageAndFlag: { lang: SupportedLanguage; flag: string };
   user: User;
   setCurrentlyActiveLanguage: Function;
+  allSupportedLanguages: SupportedLanguage[];
 }
 
 export default function LanguageSelectorAndUserMenu({
   languageAndFlag,
   user,
   setCurrentlyActiveLanguage,
+  allSupportedLanguages,
 }: LanguageSelectorAndUserMenuProps) {
   const { toggleMobileMenu } = useMobileMenuContext();
 
@@ -46,6 +48,7 @@ export default function LanguageSelectorAndUserMenu({
           <MobileLanguageSelector
             user={user}
             setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
+            allSupportedLanguages={allSupportedLanguages}
           />
         </MobileMenu>
       </div>
@@ -59,6 +62,7 @@ export default function LanguageSelectorAndUserMenu({
             setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
             languageAndFlag={languageAndFlag}
             user={user}
+            allSupportedLanguages={allSupportedLanguages}
           />
         </div>
         <MobileMenuContextProvider>

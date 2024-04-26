@@ -7,19 +7,23 @@ import Flag from "react-world-flags";
 import AddNewLanguageOption from "./AddNewLanguageOption";
 import { SupportedLanguage, User } from "@/types";
 import useMobileMenuContext from "@/hooks/useMobileMenuContext";
+import { moreLanguagesToLearn } from "./LanguageSelector";
 
 interface MobileLanguageSelectorProps {
   user: User;
   setCurrentlyActiveLanguage: Function;
+  allSupportedLanguages: SupportedLanguage[];
 }
 
 export default function MobileLanguageSelector({
   user,
   setCurrentlyActiveLanguage,
+  allSupportedLanguages,
 }: MobileLanguageSelectorProps) {
   const { toggleMobileMenu } = useMobileMenuContext();
   const currentPath = usePathname();
   const languagesAndFlags: { name: SupportedLanguage; flagCode: string }[] = [];
+  const amountOfSupportedLanguages = allSupportedLanguages.length;
 
   user.languages.map((lang) =>
     languagesAndFlags.push({
@@ -45,7 +49,10 @@ export default function MobileLanguageSelector({
             </Link>
           );
         })}
-        {user.languages.length < 6 && <AddNewLanguageOption />}
+        {user.languages.length < 6 &&
+          moreLanguagesToLearn(user, amountOfSupportedLanguages) && (
+            <AddNewLanguageOption />
+          )}
       </div>
     );
 }

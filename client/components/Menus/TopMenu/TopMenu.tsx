@@ -63,6 +63,7 @@ export default function TopMenu({
               languageAndFlag={languageAndFlag}
               user={user}
               setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
+              allSupportedLanguages={allSupportedLanguages}
             />
           </MobileMenuContextProvider>
         </div>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Flag from "react-world-flags";
 
 import { useOutsideClick } from "@/hooks/useOutsideClick";
@@ -13,14 +13,18 @@ interface LanguageSelectorProps {
   user: User;
   setCurrentlyActiveLanguage: Function;
   languageAndFlag: { lang: SupportedLanguage; flag: string };
+  allSupportedLanguages: SupportedLanguage[];
 }
 
 export default function LanguageSelector({
   user,
   setCurrentlyActiveLanguage,
   languageAndFlag,
+  allSupportedLanguages,
 }: LanguageSelectorProps) {
   const currentPath = usePathname();
+
+  const amountOfSupportedLanguages = allSupportedLanguages.length;
 
   const allOfUsersLanguagesAndFlags: {
     name: SupportedLanguage;
@@ -74,10 +78,23 @@ export default function LanguageSelector({
             />
           </Link>
         ))}
-        {showAllLanguageOptions && renderedLanguagesAndFlags.length < 6 && (
-          <AddNewLanguageOption />
-        )}
+        {showAllLanguageOptions &&
+          renderedLanguagesAndFlags.length < 6 &&
+          moreLanguagesToLearn(user, amountOfSupportedLanguages) && (
+            <AddNewLanguageOption />
+          )}
       </div>
     </div>
   );
+}
+
+export function moreLanguagesToLearn(
+  user: User,
+  amountOfSupportedLanguages: number
+): Boolean {
+  const amountOfLanguagesUserLearns = user.languages.length;
+  const amountOfLanguagesThatCanBeLearned = amountOfSupportedLanguages - 1; // native language has to be deducted
+  if (amountOfLanguagesUserLearns >= amountOfLanguagesThatCanBeLearned)
+    return false;
+  return true;
 }

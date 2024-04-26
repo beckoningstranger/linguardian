@@ -17,7 +17,7 @@ import {
   User,
 } from "@/types";
 
-const server = "https://localhost:8000";
+const server = process.env.SERVER_URL;
 
 export async function getSupportedLanguages() {
   try {
