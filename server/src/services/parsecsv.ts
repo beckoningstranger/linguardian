@@ -9,7 +9,6 @@ import {
   SupportedLanguage,
   Case,
   Gender,
-  Frequency,
   Tags,
   List,
   Item,
@@ -33,7 +32,7 @@ interface ParsedData {
   case?: string;
   gender?: string;
   pluralForm?: string;
-  frequency?: Frequency;
+  relevance?: string[];
   tags?: string;
   tDE?: string;
   tEN?: string;
@@ -49,7 +48,7 @@ interface FormattedParsedData {
   case?: Case[];
   gender?: Gender[];
   pluralForm?: string[];
-  frequency?: Frequency;
+  relevance?: string[];
   tags?: Tags[];
   translations: Partial<Record<SupportedLanguage, string[]>>;
   unit?: string;
@@ -63,7 +62,7 @@ interface ItemInPrep {
   case?: Case[];
   gender?: Gender[];
   pluralForm?: string[];
-  frequency?: Frequency;
+  relevance?: string[];
   tags?: Tags[];
   translations?: Partial<Record<SupportedLanguage, string[]>>;
   unit?: string;
@@ -127,7 +126,7 @@ export async function parseCSV({
             case: data.case?.split(", ") as Case[],
             gender: data.gender?.split(", ") as Gender[],
             pluralForm: data.pluralForm?.split(", "),
-            frequency: data.frequency,
+            relevance: data.relevance,
             tags: data.tags?.split(", ") as Tags[],
             translations: {
               DE: data.tDE?.split(", "),

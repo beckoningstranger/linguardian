@@ -38,13 +38,6 @@ export type Tags =
   | "slang"
   | "humorous";
 
-export type Frequency =
-  | "extremely rare"
-  | "rare"
-  | "medium"
-  | "high"
-  | "extremely high";
-
 export interface Item {
   _id: Types.ObjectId;
   name: string;
@@ -61,7 +54,7 @@ export interface Item {
   vids?: Types.Array<string>;
   IPA?: Types.Array<string>;
   tags?: Types.Array<Tags>;
-  frequency?: Frequency;
+  relevance: Types.ObjectId[];
   collocations?: Types.ObjectId[];
 }
 

@@ -77,8 +77,8 @@ const itemSchema = new Schema<Item>({
       type: [String],
     },
   ],
-  frequency: {
-    type: String,
+  relevance: {
+    type: [Schema.Types.ObjectId],
   },
   collocations: [
     {
