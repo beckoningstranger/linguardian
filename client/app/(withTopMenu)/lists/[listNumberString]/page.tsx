@@ -71,7 +71,14 @@ export default async function ListDetailPage({
     });
 
     // Calculate how many words the user already knows
-    const learned = 20;
+    const allLearnedItemIds = learnedLanguageData?.learnedItems.map(
+      (item) => item.id
+    );
+    const allItemIdsFromList = listData.data.units.map((item) => item.item._id);
+    const allLearnedItemsFromList = allItemIdsFromList.filter((id) =>
+      allLearnedItemIds?.includes(id)
+    );
+    const learned = allLearnedItemsFromList.length;
 
     if (renderedUnits && languageFeatures)
       return (

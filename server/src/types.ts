@@ -54,7 +54,7 @@ export interface Item {
   vids?: Types.Array<string>;
   IPA?: Types.Array<string>;
   tags?: Types.Array<Tags>;
-  relevance: Types.ObjectId[];
+  relevance?: Types.ObjectId[];
   collocations?: Types.ObjectId[];
 }
 
