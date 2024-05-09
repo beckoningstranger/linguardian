@@ -4,12 +4,12 @@ import {
   getPopulatedList,
   getUserById,
 } from "@/app/actions";
-import { LearnedLanguageWithPopulatedLists } from "@/types";
 import Link from "next/link";
 
 import paths from "@/paths";
 import getUserOnServer from "@/lib/getUserOnServer";
 import ListHeader from "@/components/Lists/ListOverview/ListHeader";
+import StartLearningListButton from "@/components/Lists/ListOverview/StartLearningListButton";
 
 interface ListDetailProps {
   params: {
@@ -84,26 +84,6 @@ export default async function ListDetailPage({
       return (
         <div id="container" className="md:mx-20 lg:mx-48 xl:mx-64 2xl:mx-96">
           <div className="flex flex-col">
-            {!learnedLanguageData && (
-              <Link
-                href={`/lists/add?lang=${language}&user=${user.id}&list=${listNumber}&newLanguage=yes`}
-                className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
-              >
-                Start learning {languageFeatures.langName} with this list!
-              </Link>
-            )}
-            {learnedLanguageData &&
-              userIsNotAlreadyLearningThisList(
-                learnedLanguageData,
-                listNumber
-              ) && (
-                <Link
-                  href={`/lists/add?lang=${language}&user=${user.id}&list=${listNumber}`}
-                  className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
-                >
-                  Add this list to your dashboard
-                </Link>
-              )}
             <ListHeader
               name={name}
               description={description}
@@ -111,6 +91,13 @@ export default async function ListDetailPage({
               numberOfItems={listData.data.units.length}
               image={listData.data.image}
               added={userHasAddedThisList}
+            />
+            <StartLearningListButton
+              learnedLanguageData={learnedLanguageData}
+              language={language}
+              userId={user.id}
+              listNumber={listNumber}
+              languageName={languageFeatures.langName}
             />
             <div id="units" className="my-2 flex flex-col items-center gap-y-2">
               {renderedUnits}
@@ -133,17 +120,4 @@ export default async function ListDetailPage({
       </div>
     </div>
   );
-}
-
-function userIsNotAlreadyLearningThisList(
-  learnedLanguageData: LearnedLanguageWithPopulatedLists | undefined,
-  listNumber: number
-) {
-  if (learnedLanguageData) {
-    const allListNumberssLearnedByUser: number[] =
-      learnedLanguageData.learnedLists.map((list) => list.listNumber);
-    if (allListNumberssLearnedByUser.includes(listNumber)) return false;
-  }
-
-  return true;
 }
