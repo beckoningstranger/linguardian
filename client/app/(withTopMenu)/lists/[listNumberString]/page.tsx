@@ -5,11 +5,11 @@ import {
   getUserById,
 } from "@/app/actions";
 import { LearnedLanguageWithPopulatedLists } from "@/types";
-import Image from "next/image";
 import Link from "next/link";
 
 import paths from "@/paths";
 import getUserOnServer from "@/lib/getUserOnServer";
+import ListHeader from "@/components/Lists/ListOverview/ListHeader";
 
 interface ListDetailProps {
   params: {
@@ -30,7 +30,7 @@ export default async function ListDetailPage({
   if (listData && listData.data && user) {
     const {
       name,
-      description = "No description entered yet... but this is text that could get quite long. I might even get to three or four lines. Or maybe even longer, who knows? Some people ramble on and on.",
+      description,
       authors,
       unitOrder,
       units,
@@ -70,69 +70,51 @@ export default async function ListDetailPage({
       );
     });
 
-    // Calculate how many words the user already knows
-    const allLearnedItemIds = learnedLanguageData?.learnedItems.map(
-      (item) => item.id
+    const allLearnedListNumbers = learnedLanguageData?.learnedLists.map(
+      (list) => list.listNumber
     );
-    const allItemIdsFromList = listData.data.units.map((item) => item.item._id);
-    const allLearnedItemsFromList = allItemIdsFromList.filter((id) =>
-      allLearnedItemIds?.includes(id)
-    );
-    const learned = allLearnedItemsFromList.length;
+    const listId = listData.data.listNumber;
+    const userHasAddedThisList = allLearnedListNumbers?.includes(listId);
+
+    const renderedAuthors = authors
+      .map((author) => author.username)
+      .join(" & ");
 
     if (renderedUnits && languageFeatures)
       return (
-        <div className="flex flex-col">
-          {!learnedLanguageData && (
-            <Link
-              href={`/lists/add?lang=${language}&user=${user.id}&list=${listNumber}&newLanguage=yes`}
-              className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
-            >
-              Start learning {languageFeatures.langName} with this list!
-            </Link>
-          )}
-          {learnedLanguageData &&
-            userIsNotAlreadyLearningThisList(
-              learnedLanguageData,
-              listNumber
-            ) && (
+        <div id="container" className="md:mx-20 lg:mx-48 xl:mx-64 2xl:mx-96">
+          <div className="flex flex-col">
+            {!learnedLanguageData && (
               <Link
-                href={`/lists/add?lang=${language}&user=${user.id}&list=${listNumber}`}
+                href={`/lists/add?lang=${language}&user=${user.id}&list=${listNumber}&newLanguage=yes`}
                 className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
               >
-                Add this list to your dashboard
+                Start learning {languageFeatures.langName} with this list!
               </Link>
             )}
-          <div
-            id="header"
-            className="relative flex border-y-2 border-slate-300"
-          >
-            <Image
-              src="https://picsum.photos/200?grayscale"
-              alt="List image"
-              height={200}
-              width={200}
-              className="w-1/3 md:w-1/6"
-              priority
+            {learnedLanguageData &&
+              userIsNotAlreadyLearningThisList(
+                learnedLanguageData,
+                listNumber
+              ) && (
+                <Link
+                  href={`/lists/add?lang=${language}&user=${user.id}&list=${listNumber}`}
+                  className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
+                >
+                  Add this list to your dashboard
+                </Link>
+              )}
+            <ListHeader
+              name={name}
+              description={description}
+              authors={renderedAuthors}
+              numberOfItems={listData.data.units.length}
+              image={listData.data.image}
+              added={userHasAddedThisList}
             />
-            <div className="flex w-2/3 flex-col items-center justify-center md:w-5/6">
-              <div className="flex flex-col">
-                <h1 className="mb-2 flex justify-center text-2xl sm:m-2">
-                  {name}
-                </h1>
-                <h3 className="mx-2 text-sm sm:mx-6">{description}</h3>
-              </div>
-              <h5 className="absolute bottom-1 right-3 text-xs">
-                created by{" "}
-                {authors.map((author) => author.username).join(" & ")}
-              </h5>
+            <div id="units" className="my-2 flex flex-col items-center gap-y-2">
+              {renderedUnits}
             </div>
-          </div>
-          <div id="progress" className="m-3 text-center text-xl">
-            {learned} / {units.length} words learned
-          </div>
-          <div id="units" className="flex flex-col items-center gap-y-2">
-            {renderedUnits}
           </div>
         </div>
       );

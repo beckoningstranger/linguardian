@@ -13,6 +13,7 @@ const listSchema = new Schema<List>({
   },
   description: {
     type: String,
+    maxlength: 190,
   },
   image: {
     type: String,
