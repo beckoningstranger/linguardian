@@ -1,4 +1,4 @@
-import { LearnedItem, List, ListStats } from "@/types";
+import { LearnedItem, List, ListStats, PopulatedList } from "@/types";
 import { Types } from "mongoose";
 
 export function calculateListStats(
@@ -6,8 +6,6 @@ export function calculateListStats(
   learnedItems: LearnedItem[],
   ignoredItems: Types.ObjectId[]
 ): ListStats {
-  console.log("LIst", list);
-  console.log("Learned", learnedItems);
   const itemIDsInList = list.units.map((unitItem) => unitItem.item);
   const userlearnedItemIDs = learnedItems.map((item) => item.id);
   const learnedItemsInList = userlearnedItemIDs.filter((id) =>

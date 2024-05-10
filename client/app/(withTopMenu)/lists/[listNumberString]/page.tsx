@@ -11,6 +11,7 @@ import getUserOnServer from "@/lib/getUserOnServer";
 import ListHeader from "@/components/Lists/ListOverview/ListHeader";
 import StartLearningListButton from "@/components/Lists/ListOverview/StartLearningListButton";
 import ListBarChart from "@/components/Charts/ListBarChart";
+import { calculateListStats } from "@/components/Charts/ChartHelpers";
 
 interface ListDetailProps {
   params: {
@@ -28,7 +29,7 @@ export default async function ListDetailPage({
   const sessionUser = await getUserOnServer();
   const user = await getUserById(sessionUser.id);
 
-  if (listData && listData.data && user) {
+  if (listData?.data && user) {
     const {
       name,
       description,
@@ -39,8 +40,14 @@ export default async function ListDetailPage({
       listNumber,
     } = listData.data;
 
-    const languageFeatures = await getLanguageFeaturesForLanguage(language);
     const learnedLanguageData = await getLearnedLanguageData(user.id, language);
+
+    if (!learnedLanguageData)
+      throw new Error("Failed to get user data, please report this");
+
+    const thisListsData = learnedLanguageData.learnedLists.filter(
+      (list) => list.listNumber === listNumber
+    );
 
     const renderedUnits = unitOrder?.map((unitName, index) => {
       const noOfItemsInUnit = units.reduce((a, itemInUnit) => {
@@ -81,6 +88,8 @@ export default async function ListDetailPage({
       .map((author) => author.username)
       .join(" & ");
 
+    const languageFeatures = await getLanguageFeaturesForLanguage(language);
+
     if (renderedUnits && languageFeatures)
       return (
         <div id="container" className="md:mx-20 lg:mx-48 xl:mx-64 2xl:mx-96">
@@ -102,7 +111,15 @@ export default async function ListDetailPage({
                 languageName={languageFeatures.langName}
               />
             )}
-            {/* <ListBarChart stats={stats} /> */}
+            {userHasAddedThisList && (
+              <ListBarChart
+                stats={calculateListStats(
+                  thisListsData[0],
+                  learnedLanguageData?.learnedItems,
+                  learnedLanguageData?.ignoredItems
+                )}
+              />
+            )}
             <div id="units" className="my-2 flex flex-col items-center gap-y-2">
               {renderedUnits}
             </div>

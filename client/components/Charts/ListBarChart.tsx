@@ -1,3 +1,5 @@
+"use client";
+
 import { ListStats } from "@/types";
 import dynamic from "next/dynamic";
 
