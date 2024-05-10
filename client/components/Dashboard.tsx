@@ -1,12 +1,9 @@
 import Link from "next/link";
-import { Types } from "mongoose";
 import { HiOutlinePlusCircle } from "react-icons/hi2";
 
 import ListDashboardCard from "./ListDashboardCard";
 import {
-  LearnedItem,
   LearnedLanguageWithPopulatedLists,
-  List,
   ListStats,
   ListStatus,
   SupportedLanguage,
@@ -14,6 +11,7 @@ import {
 } from "@/types";
 import { getLearnedLanguageData } from "@/app/actions";
 import paths from "@/paths";
+import { calculateListStats } from "./Charts/ChartHelpers";
 
 interface DashboardProps {
   user: User;
@@ -77,42 +75,6 @@ export default async function Dashboard({
       </div>
     </div>
   );
-}
-
-function calculateListStats(
-  list: List,
-  learnedItems: LearnedItem[],
-  ignoredItems: Types.ObjectId[]
-): ListStats {
-  const itemIDsInList = list.units.map((unitItem) => unitItem.item);
-  const userlearnedItemIDs = learnedItems.map((item) => item.id);
-  const learnedItemsInList = userlearnedItemIDs.filter((id) =>
-    itemIDsInList.includes(id)
-  );
-
-  const ignoredItemsInList = ignoredItems.filter((id) =>
-    itemIDsInList.includes(id)
-  );
-
-  const readyToReview = learnedItems.filter(
-    (item) => item.nextReview < Date.now()
-  );
-
-  const learned = learnedItems.filter(
-    (item) => !readyToReview.includes(item) && item.level > 8
-  );
-
-  const learning = learnedItems.filter(
-    (item) => !readyToReview.includes(item) && item.level < 8
-  );
-
-  return {
-    unlearned: itemIDsInList.length - learnedItemsInList.length,
-    readyToReview: readyToReview.length,
-    learned: learned.length,
-    learning: learning.length,
-    ignored: ignoredItemsInList.length,
-  };
 }
 
 function determineListStatus(stats: ListStats): ListStatus {

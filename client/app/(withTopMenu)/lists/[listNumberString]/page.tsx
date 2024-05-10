@@ -10,6 +10,7 @@ import paths from "@/paths";
 import getUserOnServer from "@/lib/getUserOnServer";
 import ListHeader from "@/components/Lists/ListOverview/ListHeader";
 import StartLearningListButton from "@/components/Lists/ListOverview/StartLearningListButton";
+import ListBarChart from "@/components/Charts/ListBarChart";
 
 interface ListDetailProps {
   params: {
@@ -92,13 +93,16 @@ export default async function ListDetailPage({
               image={listData.data.image}
               added={userHasAddedThisList}
             />
-            <StartLearningListButton
-              learnedLanguageData={learnedLanguageData}
-              language={language}
-              userId={user.id}
-              listNumber={listNumber}
-              languageName={languageFeatures.langName}
-            />
+            {!userHasAddedThisList && (
+              <StartLearningListButton
+                learnedLanguageData={learnedLanguageData}
+                language={language}
+                userId={user.id}
+                listNumber={listNumber}
+                languageName={languageFeatures.langName}
+              />
+            )}
+            {/* <ListBarChart stats={stats} /> */}
             <div id="units" className="my-2 flex flex-col items-center gap-y-2">
               {renderedUnits}
             </div>
