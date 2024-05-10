@@ -93,7 +93,7 @@ export default function UserMenu({ user }: UserMenuProps) {
               alt="User profile image"
               width={200}
               height={200}
-              className="mb-32 rounded-full"
+              className="mb-16 rounded-full"
             />
           )}
           <SidebarItem
