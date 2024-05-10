@@ -3,7 +3,7 @@ import {
   getSupportedLanguages,
   getUserById,
 } from "@/app/actions";
-import DashboardContainer from "@/components/DashboardContainer";
+import DashboardContainer from "@/components/Dashboard/DashboardContainer";
 import TopMenu from "@/components/Menus/TopMenu/TopMenu";
 
 import type { Metadata } from "next";

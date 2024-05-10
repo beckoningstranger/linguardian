@@ -6,7 +6,7 @@ import {
   getListsByLanguage,
   getUserById,
 } from "@/app/actions";
-import ListStoreCard from "@/components/ListStoreCard";
+import ListStoreCard from "@/components/Lists/ListStoreCard";
 import getUserOnServer from "@/lib/getUserOnServer";
 
 interface ListStoreProps {

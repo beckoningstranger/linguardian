@@ -2,11 +2,11 @@
 import { useRef, useState } from "react";
 import { RxDotsVertical } from "react-icons/rx";
 
-import ContextMenu from "./Menus/ContextMenu";
-import ReviewButton from "./ReviewButton";
+import ContextMenu from "../Menus/ContextMenu";
+import ReviewButton from "../ReviewButton";
 import { useLoaded } from "@/hooks/useLoaded";
 import ListBarChart from "@/components/Charts/ListBarChart";
-import ListPieChart from "./Charts/ListPieChart";
+import ListPieChart from "../Charts/ListPieChart";
 import { LearningMode, ListStats, ListStatus } from "@/types";
 import Link from "next/link";
 import paths from "@/paths";
@@ -124,9 +124,8 @@ export default function ListDashboardCard({
       >
         <div className="m-4 flex flex-col">
           <p>Archive List</p>
-          <p>Delete List</p>
-          <p>Edit List</p>
-          <p>And maybe more options!</p>
+          <p>Remove list & Stop learning</p>
+          <p>Edit List (if author)</p>
         </div>
       </ContextMenu>
       <ContextMenu

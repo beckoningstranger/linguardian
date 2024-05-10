@@ -1,4 +1,4 @@
-import Dashboard from "@/components/Dashboard";
+import Dashboard from "@/components/Dashboard/Dashboard";
 import { checkPassedLanguageAsync, getUserById } from "@/app/actions";
 import { redirect } from "next/navigation";
 import getUserOnServer from "@/lib/getUserOnServer";

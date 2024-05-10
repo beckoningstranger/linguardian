@@ -1,6 +1,5 @@
 import { getUserById } from "@/app/actions";
 import getUserOnServer from "@/lib/getUserOnServer";
-import { DiVim } from "react-icons/di";
 
 interface ProfilePageProps {}
 

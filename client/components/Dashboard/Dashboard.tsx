@@ -11,7 +11,7 @@ import {
 } from "@/types";
 import { getLearnedLanguageData } from "@/app/actions";
 import paths from "@/paths";
-import { calculateListStats } from "./Charts/ChartHelpers";
+import { calculateListStats } from "../Charts/ChartHelpers";
 
 interface DashboardProps {
   user: User;
