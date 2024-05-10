@@ -7,15 +7,23 @@ import ReviewButton from "../ReviewButton";
 import { useLoaded } from "@/hooks/useLoaded";
 import ListBarChart from "@/components/Charts/ListBarChart";
 import ListPieChart from "../Charts/ListPieChart";
-import { LearningMode, ListStats, ListStatus } from "@/types";
+import {
+  LearningMode,
+  ListStats,
+  ListStatus,
+  SupportedLanguage,
+} from "@/types";
 import Link from "next/link";
 import paths from "@/paths";
+import { removeListFromDashboard } from "@/app/actions";
 
 interface ListDashboardCardProps {
   title: string;
   id: number;
   status: ListStatus;
   stats: ListStats;
+  userId: string;
+  language: SupportedLanguage;
 }
 
 export default function ListDashboardCard({
@@ -23,6 +31,8 @@ export default function ListDashboardCard({
   status,
   stats,
   id,
+  userId,
+  language,
 }: ListDashboardCardProps) {
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [showAllReviewModes, setShowAllReviewModes] = useState(false);
@@ -115,6 +125,13 @@ export default function ListDashboardCard({
     return <h1>Mode not set correctly</h1>;
   }
 
+  const removeListFromDashboardAction = removeListFromDashboard.bind(
+    null,
+    id,
+    language,
+    userId
+  );
+
   return (
     <div className="relative mx-6 rounded-md bg-slate-200 lg:mx-3 xl:mx-6">
       <ContextMenu
@@ -123,9 +140,9 @@ export default function ListDashboardCard({
         positionClasses="top-0 left-0"
       >
         <div className="m-4 flex flex-col">
-          <p>Archive List</p>
-          <p>Remove list & Stop learning</p>
-          <p>Edit List (if author)</p>
+          <form action={removeListFromDashboardAction}>
+            <button type="submit">Remove list & Stop learning</button>
+          </form>
         </div>
       </ContextMenu>
       <ContextMenu

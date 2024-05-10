@@ -140,16 +140,39 @@ export async function getLearnedLanguageData(
   }
 }
 
-export async function addListToDashboard(userId: string, listId: number) {
+export async function addListToDashboard(
+  listNumber: number,
+  language: SupportedLanguage,
+  userId: string
+) {
   try {
-    await axios.post(`${server}/users/addListToDashboard/${userId}/${listId}`);
-    revalidatePath("/dashboard");
-    revalidatePath(`/lists/${listId}`);
+    await axios.post(
+      `${server}/users/addListToDashboard/${userId}/${listNumber}`
+    );
+    revalidatePath(`/dashboard?lang=${language}`);
+    revalidatePath(`/lists/${listNumber}`);
   } catch (err) {
     console.error(
-      `Error adding list number ${listId} user ${userId}'s dashboard.}`
+      `Error adding list number ${listNumber} user ${userId}'s dashboard.}`
     );
   }
+}
+
+export async function removeListFromDashboard(
+  listNumber: number,
+  language: SupportedLanguage,
+  userId: string
+) {
+  try {
+    await axios.post(
+      `${server}/users/removeListFromDashboard/${userId}/${listNumber}`
+    );
+  } catch (err) {
+    console.error(`Error removing ${language} list 
+  #${listNumber} for user ${userId}`);
+  }
+  revalidatePath(`/dashboard?lang=${language}`);
+  redirect("/");
 }
 
 export async function addNewLanguageToLearn(
@@ -158,13 +181,28 @@ export async function addNewLanguageToLearn(
 ) {
   try {
     await axios.post(`${server}/users/addNewLanguage/${userId}/${language}`);
-    revalidatePath("/dashboard");
-    revalidatePath("/dictionary");
-    revalidatePath("/lists");
-    revalidatePath("/languages/new");
+    revalidatePath(`/dashboard?lang=${language}`);
+    revalidatePath(`/dictionary?lang=${language}`);
+    revalidatePath(`/lists?lang=${language}`);
+    revalidatePath(`/languages/new`);
   } catch (err) {
     console.error(
       `Error adding ${language} as a new language for user ${userId}: ${err}`
+    );
+  }
+}
+
+export async function addListForNewLanguage(
+  userId: string,
+  language: SupportedLanguage,
+  listNumber: number
+) {
+  try {
+    addNewLanguageToLearn(userId, language);
+    addListToDashboard(listNumber, language, userId);
+  } catch (err) {
+    console.error(
+      `Error adding list ${listNumber} for new language ${language} for user ${userId}.`
     );
   }
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { LearnedLanguageWithPopulatedLists, SupportedLanguage } from "@/types";
+import { addListForNewLanguage, addListToDashboard } from "@/app/actions";
 
 interface StartLearningListButtonProps {
   learnedLanguageData?: LearnedLanguageWithPopulatedLists;
@@ -17,24 +18,42 @@ export default function StartLearningListButton({
   listNumber,
   languageName,
 }: StartLearningListButtonProps) {
+  const addListToDashboardAction = addListToDashboard.bind(
+    null,
+    listNumber,
+    language,
+    userId
+  );
+
+  const addListForNewLanguageAction = addListForNewLanguage.bind(
+    null,
+    userId,
+    language,
+    listNumber
+  );
+
   return (
     <>
       {!learnedLanguageData && (
-        <Link
-          href={`/lists/add?lang=${language}&user=${userId}&list=${listNumber}&newLanguage=yes`}
+        <form
+          action={addListForNewLanguageAction}
           className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
         >
-          Start learning {languageName} with this list!
-        </Link>
+          <button type="submit">
+            Start learning {languageName} with this list!
+          </button>
+        </form>
       )}
       {learnedLanguageData &&
         userIsNotAlreadyLearningThisList(learnedLanguageData, listNumber) && (
-          <Link
-            href={`/lists/add?lang=${language}&user=${userId}&list=${listNumber}`}
-            className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
-          >
-            Add this list to your dashboard
-          </Link>
+          <>
+            <form
+              action={addListToDashboardAction}
+              className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
+            >
+              <button>Start learning this list</button>
+            </form>
+          </>
         )}
     </>
   );

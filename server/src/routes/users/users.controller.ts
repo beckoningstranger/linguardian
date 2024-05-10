@@ -9,6 +9,7 @@ import {
   updateReviewedItems,
   getNextUserId,
   setNativeLanguage,
+  removeListFromDashboard,
 } from "../../models/users.model.js";
 
 import { LearningMode, SupportedLanguage } from "../../types.js";
@@ -36,8 +37,18 @@ export async function httpGetLearnedLanguageData(req: Request, res: Response) {
 export async function httpAddListToDashboard(req: Request, res: Response) {
   const userId = req.params.userId;
   const listNumber = parseInt(req.params.listNumber);
+  const language = req.params.language as SupportedLanguage;
 
   const response = await addListToDashboard(userId, listNumber);
+  if (response) return res.status(200).json();
+  return res.status(400).json();
+}
+
+export async function httpRemoveListFromDashboard(req: Request, res: Response) {
+  const userId = req.params.userId;
+  const listNumber = parseInt(req.params.listNumber);
+
+  const response = await removeListFromDashboard(userId, listNumber);
   if (response) return res.status(200).json();
   return res.status(400).json();
 }

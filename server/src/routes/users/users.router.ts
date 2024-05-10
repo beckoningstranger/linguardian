@@ -7,6 +7,7 @@ import {
   httpGetUserById,
   httpUpdateLearnedItems,
   httpSetNativeLanguage,
+  httpRemoveListFromDashboard,
 } from "./users.controller.js";
 
 export const usersRouter = express.Router();
@@ -21,6 +22,11 @@ usersRouter.get(
 usersRouter.post(
   "/addListToDashboard/:userId/:listNumber",
   httpAddListToDashboard
+);
+
+usersRouter.post(
+  "/removeListFromDashboard/:userId/:listNumber",
+  httpRemoveListFromDashboard
 );
 
 usersRouter.post("/addNewLanguage/:userId/:language", httpAddNewLanguage);

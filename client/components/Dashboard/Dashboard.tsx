@@ -48,6 +48,8 @@ export default async function Dashboard({
             title={list.name}
             stats={stats}
             status={status}
+            userId={user.id}
+            language={list.language}
           />
         );
       }

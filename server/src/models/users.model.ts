@@ -1,4 +1,3 @@
-import { on } from "events";
 import {
   ItemForServer,
   LearnedLanguageWithPopulatedLists,
@@ -63,6 +62,23 @@ export async function addListToDashboard(userId: string, listNumber: number) {
   } catch (err) {
     console.error(
       `Error adding list ${listNumber} to user ${userId}'s dashboard: ${err}`
+    );
+  }
+}
+
+export async function removeListFromDashboard(
+  userId: string,
+  listNumber: number
+) {
+  try {
+    const list = await getList(listNumber);
+    return await Users.updateOne<User>(
+      { id: userId, "languages.code": list?.language },
+      { $pull: { "languages.$.learnedLists": list?._id } }
+    );
+  } catch (err) {
+    console.error(
+      `Error removing list ${listNumber} from user ${userId}'s dashboard: ${err}`
     );
   }
 }

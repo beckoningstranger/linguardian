@@ -27,9 +27,6 @@ const paths = {
   listDetailsPath(listNumber: number) {
     return `/lists/${listNumber}`;
   },
-  addListPath(language: SupportedLanguage, userId: number, listNumber: number) {
-    return `/lists/add?lang=${language}&user=${userId}&list=${listNumber}`;
-  },
   unitDetailsPath(listNumber: number, unitNumber: number) {
     return `/lists/${listNumber}/${unitNumber}`;
   },
