@@ -4,14 +4,11 @@ import { HiOutlinePlusCircle } from "react-icons/hi2";
 import ListDashboardCard from "./ListDashboardCard";
 import {
   LearnedLanguageWithPopulatedLists,
-  ListStats,
-  ListStatus,
   SupportedLanguage,
   User,
 } from "@/types";
 import { getLearnedLanguageData } from "@/app/actions";
 import paths from "@/paths";
-import { calculateListStats } from "../Charts/ChartHelpers";
 
 interface DashboardProps {
   user: User;
@@ -34,22 +31,17 @@ export default async function Dashboard({
   if (userLearningDataForActiveLanguage?.learnedLists) {
     renderedLists = userLearningDataForActiveLanguage?.learnedLists.map(
       (list) => {
-        const stats = calculateListStats(
-          list,
-          userLearningDataForActiveLanguage.learnedItems,
-          userLearningDataForActiveLanguage.ignoredItems
-        );
-        const status = determineListStatus(stats);
-
         return (
           <ListDashboardCard
             key={list.listNumber}
-            id={list.listNumber}
-            title={list.name}
-            stats={stats}
-            status={status}
+            list={list}
+            allLearnedItemsForLanguage={
+              userLearningDataForActiveLanguage.learnedItems
+            }
+            allIgnoredItemsForLanguage={
+              userLearningDataForActiveLanguage.ignoredItems
+            }
             userId={user.id}
-            language={list.language}
           />
         );
       }
@@ -77,10 +69,4 @@ export default async function Dashboard({
       </div>
     </div>
   );
-}
-
-function determineListStatus(stats: ListStats): ListStatus {
-  if (stats.readyToReview > 0) return "review";
-  if (stats.readyToReview === 0 && stats.unlearned > 0) return "add";
-  return "practice";
 }

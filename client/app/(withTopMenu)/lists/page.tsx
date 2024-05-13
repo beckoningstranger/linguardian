@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FaPlus } from "react-icons/fa6";
 
 import { SupportedLanguage } from "@/types";
 import {
@@ -40,15 +41,15 @@ export default async function ListStore({ searchParams }: ListStoreProps) {
 
     return (
       <div>
-        <div className="m-3 grid justify-center p-2 md:justify-normal">
+        <div className="m-3 grid justify-center gap-3 p-2 md:justify-normal">
           {renderedLists}
         </div>
         <div>
           <Link
             href="/lists/new"
-            className="absolute bottom-1 left-1 m-4 rounded border border-black bg-slate-200 p-3"
+            className="fixed bottom-1 right-1 m-2 grid h-16 w-16 place-items-center rounded-full border border-white bg-green-400 p-3"
           >
-            Upload CSV
+            <FaPlus className="text-2xl font-semibold text-white">+</FaPlus>
           </Link>
         </div>
       </div>

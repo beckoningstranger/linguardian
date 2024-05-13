@@ -19,14 +19,14 @@ import paths from "@/paths";
 interface ReviewButtonProps {
   mode: LearningMode | "more" | "spinner";
   showAllModes?: Function;
-  id: number;
+  listNumber: number;
   stats: ListStats;
 }
 
 export default function ReviewButton({
   mode,
   showAllModes,
-  id,
+  listNumber,
   stats,
 }: ReviewButtonProps) {
   let icon;
@@ -78,7 +78,7 @@ export default function ReviewButton({
     </button>
   ) : (
     <Link
-      href={paths.learnPath(mode, id)}
+      href={paths.learnPath(mode, listNumber)}
       className={`m-1 rounded-lg border-4 border-white ${
         seeIfDisabled()
           ? "bg-gray-300 pointer-events-none"

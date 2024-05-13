@@ -3,7 +3,7 @@ import { uploadCSV } from "@/app/actions";
 import { useFormState } from "react-dom";
 
 interface parseCSVFormProps {
-  userId: number;
+  userId: string;
 }
 
 export default function ParseCSVForm({ userId }: parseCSVFormProps) {

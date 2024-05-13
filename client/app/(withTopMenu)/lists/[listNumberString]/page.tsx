@@ -11,7 +11,12 @@ import getUserOnServer from "@/lib/getUserOnServer";
 import ListHeader from "@/components/Lists/ListOverview/ListHeader";
 import StartLearningListButton from "@/components/Lists/ListOverview/StartLearningListButton";
 import ListBarChart from "@/components/Charts/ListBarChart";
-import { calculateListStats } from "@/components/Charts/ChartHelpers";
+import FlexibleLearningButtons from "@/components/Lists/FlexibleLearningButtons";
+import ListUnits from "@/components/Lists/ListOverview/ListUnits";
+import {
+  calculateListStats,
+  determineListStatus,
+} from "@/components/Lists/ListHelpers";
 
 interface ListDetailProps {
   params: {
@@ -49,35 +54,6 @@ export default async function ListDetailPage({
       (list) => list.listNumber === listNumber
     );
 
-    const renderedUnits = unitOrder?.map((unitName, index) => {
-      const noOfItemsInUnit = units.reduce((a, itemInUnit) => {
-        if (itemInUnit.unitName === unitName) a += 1;
-        return a;
-      }, 0);
-
-      // IDEA: see how much the user has learned for each unit and calculate from- and to- values
-      // for the gradient colors to visualize their progress
-      return (
-        <Link
-          key={index}
-          href={paths.unitDetailsPath(listNumber, index + 1)}
-          className="flex w-full justify-center"
-        >
-          <div
-            className={`${
-              index % 2 === 0 &&
-              "rounded-bl-[70px] rounded-tr-[70px] bg-gradient-to-tr"
-            } ${
-              index % 2 !== 0 &&
-              "rounded-tl-[70px] rounded-br-[70px] bg-gradient-to-tl"
-            } border border-slate-800 text-center py-6 shadow-lg hover:shadow-2xl w-11/12 flex justify-center bg-gradient-to-r from-slate-100 to-slate-100`}
-          >
-            {unitName}
-          </div>
-        </Link>
-      );
-    });
-
     const allLearnedListNumbers = learnedLanguageData?.learnedLists.map(
       (list) => list.listNumber
     );
@@ -90,10 +66,17 @@ export default async function ListDetailPage({
 
     const languageFeatures = await getLanguageFeaturesForLanguage(language);
 
-    if (renderedUnits && languageFeatures)
+    const listStats = calculateListStats(
+      thisListsData[0],
+      learnedLanguageData?.learnedItems,
+      learnedLanguageData?.ignoredItems
+    );
+    const listStatus = determineListStatus(listStats);
+
+    if (languageFeatures)
       return (
         <div id="container" className="md:mx-20 lg:mx-48 xl:mx-64 2xl:mx-96">
-          <div className="flex flex-col">
+          <div className="mb-24 flex flex-col">
             <ListHeader
               name={name}
               description={description}
@@ -102,6 +85,7 @@ export default async function ListDetailPage({
               image={listData.data.image}
               added={userHasAddedThisList}
             />
+
             {!userHasAddedThisList && (
               <StartLearningListButton
                 learnedLanguageData={learnedLanguageData}
@@ -112,17 +96,26 @@ export default async function ListDetailPage({
               />
             )}
             {userHasAddedThisList && (
-              <ListBarChart
-                stats={calculateListStats(
-                  thisListsData[0],
-                  learnedLanguageData?.learnedItems,
-                  learnedLanguageData?.ignoredItems
-                )}
-              />
+              <div className="md:hidden">
+                <ListBarChart stats={listStats} />
+              </div>
             )}
-            <div id="units" className="my-2 flex flex-col items-center gap-y-2">
-              {renderedUnits}
-            </div>
+
+            <ListUnits
+              unitOrder={unitOrder}
+              units={units}
+              listNumber={listNumber}
+            />
+
+            {userHasAddedThisList && (
+              <div className="fixed bottom-0 h-24 w-full bg-slate-200 py-4 md:hidden">
+                <FlexibleLearningButtons
+                  stats={listStats}
+                  status={listStatus}
+                  listNumber={listNumber}
+                />
+              </div>
+            )}
           </div>
         </div>
       );

@@ -1,4 +1,4 @@
-import { LearnedItem, List, ListStats, PopulatedList } from "@/types";
+import { LearnedItem, List, ListStats, ListStatus } from "@/types";
 import { Types } from "mongoose";
 
 export function calculateListStats(
@@ -46,4 +46,10 @@ export function calculateListStats(
     learning: learning.length,
     ignored: ignoredItemsInList.length,
   };
+}
+
+export function determineListStatus(stats: ListStats): ListStatus {
+  if (stats.readyToReview > 0) return "review";
+  if (stats.readyToReview === 0 && stats.unlearned > 0) return "add";
+  return "practice";
 }

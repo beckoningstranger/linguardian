@@ -12,7 +12,7 @@ export default async function CreateList() {
         <h1 className="m-4 text-center text-2xl font-bold">
           Here, you can upload CSVs to create new lists
         </h1>
-        <ParseCSVForm userId={+user.id} />
+        <ParseCSVForm userId={user.id} />
       </div>
     );
 
