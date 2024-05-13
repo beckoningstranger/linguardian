@@ -5,7 +5,7 @@ import { RxDotsVertical } from "react-icons/rx";
 import ContextMenu from "../Menus/ContextMenu";
 import ListBarChart from "@/components/Charts/ListBarChart";
 import ListPieChart from "../Charts/ListPieChart";
-import { LearnedItem, List, SupportedLanguage } from "@/types";
+import { LearnedItem, List } from "@/types";
 import Link from "next/link";
 import paths from "@/paths";
 import { removeListFromDashboard } from "@/app/actions";

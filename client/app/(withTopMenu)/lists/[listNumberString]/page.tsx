@@ -17,6 +17,7 @@ import {
   calculateListStats,
   determineListStatus,
 } from "@/components/Lists/ListHelpers";
+import { ListStats, ListStatus } from "@/types";
 
 interface ListDetailProps {
   params: {
@@ -50,7 +51,7 @@ export default async function ListDetailPage({
     if (!learnedLanguageData)
       throw new Error("Failed to get user data, please report this");
 
-    const thisListsData = learnedLanguageData.learnedLists.filter(
+    const thisListsData = learnedLanguageData.learnedLists.find(
       (list) => list.listNumber === listNumber
     );
 
@@ -66,12 +67,16 @@ export default async function ListDetailPage({
 
     const languageFeatures = await getLanguageFeaturesForLanguage(language);
 
-    const listStats = calculateListStats(
-      thisListsData[0],
-      learnedLanguageData?.learnedItems,
-      learnedLanguageData?.ignoredItems
-    );
-    const listStatus = determineListStatus(listStats);
+    let listStats: ListStats | null = null;
+    let listStatus: ListStatus | null = null;
+    if (thisListsData) {
+      listStats = calculateListStats(
+        thisListsData,
+        learnedLanguageData?.learnedItems,
+        learnedLanguageData?.ignoredItems
+      );
+      listStatus = determineListStatus(listStats);
+    }
 
     if (languageFeatures)
       return (
@@ -86,7 +91,7 @@ export default async function ListDetailPage({
               added={userHasAddedThisList}
             />
 
-            {!userHasAddedThisList && (
+            {user && !userHasAddedThisList && (
               <StartLearningListButton
                 learnedLanguageData={learnedLanguageData}
                 language={language}
@@ -95,7 +100,7 @@ export default async function ListDetailPage({
                 languageName={languageFeatures.langName}
               />
             )}
-            {userHasAddedThisList && (
+            {userHasAddedThisList && listStats && (
               <div className="md:hidden">
                 <ListBarChart stats={listStats} />
               </div>
@@ -107,7 +112,7 @@ export default async function ListDetailPage({
               listNumber={listNumber}
             />
 
-            {userHasAddedThisList && (
+            {userHasAddedThisList && listStats && listStatus && (
               <div className="fixed bottom-0 h-24 w-full bg-slate-200 py-4 md:hidden">
                 <FlexibleLearningButtons
                   stats={listStats}
@@ -123,10 +128,10 @@ export default async function ListDetailPage({
 
   return (
     <div>
-      <h1>List not found</h1>
+      <h1>List or user not found</h1>
       <p>
         Either the list does not exist yet or there was a problem fetching it
-        from the database.
+        from the database. Make sure you are logged in.
       </p>
       <div>
         <Link href={paths.dashboardPath()}>Back to Dashboard</Link>
