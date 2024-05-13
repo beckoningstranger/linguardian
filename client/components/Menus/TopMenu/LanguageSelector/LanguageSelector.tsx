@@ -72,7 +72,7 @@ export default function LanguageSelector({
               }}
               className={`scale-0 transition-all rounded-full object-cover hover:scale-125 w-12 ${
                 showAllLanguageOptions &&
-                "scale-100 h-12 my-2 border-2 border-slate-300"
+                "scale-100 h-12 my-2 md:border border-slate-300"
               }
                 `}
             />

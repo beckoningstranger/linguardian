@@ -18,6 +18,9 @@ import {
   determineListStatus,
 } from "@/components/Lists/ListHelpers";
 import { ListStats, ListStatus } from "@/types";
+import ListPieChart from "@/components/Charts/ListPieChart";
+import Leaderboard from "@/components/Lists/Leaderboard";
+import AllLearningButtons from "@/components/Lists/ListOverview/AllLearningButtons";
 
 interface ListDetailProps {
   params: {
@@ -101,9 +104,29 @@ export default async function ListDetailPage({
               />
             )}
             {userHasAddedThisList && listStats && (
-              <div className="md:hidden">
-                <ListBarChart stats={listStats} />
-              </div>
+              <>
+                <div className="md:hidden">
+                  <ListBarChart stats={listStats} />
+                </div>
+                <div className="hidden md:block">
+                  <div className="flex">
+                    <div className="m-2 w-1/2 rounded-md bg-slate-100 py-4">
+                      <ListPieChart stats={listStats} />
+                    </div>
+                    <div className="m-2 w-1/2 rounded-md bg-slate-100 py-4">
+                      <Leaderboard />
+                    </div>
+                  </div>
+                  {listStats && (
+                    <div className="m-2 flex justify-evenly rounded-md bg-slate-100 py-2">
+                      <AllLearningButtons
+                        listNumber={listNumber}
+                        listStats={listStats}
+                      />
+                    </div>
+                  )}
+                </div>
+              </>
             )}
 
             <ListUnits
@@ -113,12 +136,18 @@ export default async function ListDetailPage({
             />
 
             {userHasAddedThisList && listStats && listStatus && (
-              <div className="fixed bottom-0 h-24 w-full bg-slate-200 py-4 md:hidden">
-                <FlexibleLearningButtons
-                  stats={listStats}
-                  status={listStatus}
-                  listNumber={listNumber}
-                />
+              <div>
+                <div className="my-4 h-64 bg-slate-100 md:hidden">
+                  <Leaderboard />
+                </div>
+
+                <div className="fixed bottom-0 h-24 w-full bg-slate-200 py-4 md:hidden">
+                  <FlexibleLearningButtons
+                    stats={listStats}
+                    status={listStatus}
+                    listNumber={listNumber}
+                  />
+                </div>
               </div>
             )}
           </div>

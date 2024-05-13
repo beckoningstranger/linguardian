@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RxDotsVertical } from "react-icons/rx";
 
 import ContextMenu from "../Menus/ContextMenu";
@@ -70,7 +70,7 @@ export default function ListDashboardCard({
         </Link>
       </div>
 
-      <div className="my-3 flex flex-col justify-evenly px-2 md:mx-0 md:w-full md:flex-row xl:px-0">
+      <div className="my-3 md:flex md:w-full md:flex-row md:justify-evenly md:px-2 xl:px-0">
         <div className="md:hidden">
           <ListBarChart stats={stats} />
         </div>

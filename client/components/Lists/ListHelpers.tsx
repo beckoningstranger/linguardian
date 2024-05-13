@@ -6,7 +6,6 @@ export function calculateListStats(
   learnedItems: LearnedItem[],
   ignoredItems: Types.ObjectId[]
 ): ListStats {
-  console.log("bugggy", list.units);
   const itemIDsInList = list.units.map((unitItem) => unitItem.item);
   const userlearnedItemIDs = learnedItems.map((item) => item.id);
   const learnedItemsInList = userlearnedItemIDs.filter((id) =>

@@ -44,7 +44,7 @@ export default function MobileLanguageSelector({
                   toggleMobileMenu();
                   setCurrentlyActiveLanguage(lang.name);
                 }}
-                className={`h-24 w-24 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125`}
+                className={`h-24 w-24 rounded-full object-cover shadow-lg transition-all hover:scale-125`}
               />
             </Link>
           );

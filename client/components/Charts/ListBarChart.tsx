@@ -32,7 +32,7 @@ export default function ListBarChart({ stats }: ListBarChartProps) {
       yaxis: {
         labels: { style: { fontWeight: 800 } },
       },
-      grid: { padding: { top: -30, bottom: -10, left: -5, right: -45 } },
+      grid: { padding: { top: -30, bottom: -10, left: -5, right: -85 } },
       stroke: {
         width: 1,
         colors: ["#fff"],
@@ -63,8 +63,8 @@ export default function ListBarChart({ stats }: ListBarChartProps) {
       options={ChartData.options}
       series={ChartData.series}
       type="bar"
-      width="95%"
-      height="100"
+      height={100}
+      width={"100%"}
     />
   );
 }

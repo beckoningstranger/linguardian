@@ -50,13 +50,14 @@ export default function ListHeader({
         </div>
       </div>
       <div className="hidden sm:block">
-        <div className="relative flex border-y-2 border-slate-300">
+        <div className="relative m-2 flex rounded-md bg-slate-100 p-6">
           <Image
             src={image}
             alt="List image"
-            height={200}
-            width={200}
+            height={150}
+            width={150}
             priority
+            className="rounded-md"
           />
           <div className="m-2 flex h-full w-full flex-col md:mt-4">
             <div className="flex w-full flex-col items-center">
