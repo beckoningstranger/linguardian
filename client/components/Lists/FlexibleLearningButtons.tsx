@@ -10,12 +10,14 @@ interface FlexibleLearningButtonsProps {
   status: ListStatus;
   stats: ListStats;
   listNumber: number;
+  unlockedModes: LearningMode[];
 }
 
 export default function FlexibleLearningButtons({
   status,
   stats,
   listNumber,
+  unlockedModes,
 }: FlexibleLearningButtonsProps) {
   const loaded = useLoaded();
   const [showAllReviewModes, setShowAllReviewModes] = useState(false);
@@ -36,6 +38,7 @@ export default function FlexibleLearningButtons({
         listNumber={listNumber}
         mode={firstButtonMode}
         stats={stats}
+        unlockedModes={unlockedModes}
       />
       {/* Second Button */}
       <ReviewButton
@@ -48,6 +51,7 @@ export default function FlexibleLearningButtons({
             : "spinner"
         }
         stats={stats}
+        unlockedModes={unlockedModes}
       />
       {/* Button Only Visible on Mobile */}
       <div className="md:hidden">
@@ -61,6 +65,7 @@ export default function FlexibleLearningButtons({
               : "spinner"
           }
           stats={stats}
+          unlockedModes={unlockedModes}
         />
       </div>
       {/* More Button */}
@@ -69,6 +74,7 @@ export default function FlexibleLearningButtons({
         mode="more"
         showAllModes={setShowAllReviewModes}
         stats={stats}
+        unlockedModes={unlockedModes}
       />
     </div>
   );
@@ -81,7 +87,11 @@ export default function FlexibleLearningButtons({
         moreClasses="absolute bottom-0 right-0 w-full border-slate-300 border-t-4 md:border-t-0 md:border-l-4 h-36"
       >
         <div className="grid grid-cols-3 place-items-center md:h-full md:grid-cols-2">
-          <AllLearningButtons listNumber={listNumber} listStats={stats} />
+          <AllLearningButtons
+            listNumber={listNumber}
+            listStats={stats}
+            unlockedReviewModes={unlockedModes}
+          />
         </div>
       </ContextMenu>
       {renderedButtons}

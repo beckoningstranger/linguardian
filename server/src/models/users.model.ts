@@ -262,3 +262,8 @@ export async function setNativeLanguage(
 ) {
   return await Users.updateOne<User>({ id: userId }, { native: language });
 }
+
+export async function getNativeLanguageById(userId: string) {
+  const user = await Users.findOne<User>({ id: userId });
+  return user?.native;
+}

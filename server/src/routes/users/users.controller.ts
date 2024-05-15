@@ -10,6 +10,7 @@ import {
   getNextUserId,
   setNativeLanguage,
   removeListFromDashboard,
+  getNativeLanguageById,
 } from "../../models/users.model.js";
 
 import { LearningMode, SupportedLanguage } from "../../types.js";
@@ -86,4 +87,12 @@ export async function httpSetNativeLanguage(req: Request, res: Response) {
   const response = await setNativeLanguage(userId, language);
   if (response.modifiedCount === 1) return res.status(201).json();
   return res.status(500);
+}
+
+export async function httpGetNativeLanguageById(req: Request, res: Response) {
+  const userId = req.params.userId;
+
+  const response = await getNativeLanguageById(userId);
+  if (response) return res.status(200).json(response);
+  return res.status(404).json();
 }

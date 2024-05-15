@@ -9,6 +9,7 @@ import {
 } from "@/types";
 import { getLearnedLanguageData } from "@/app/actions";
 import paths from "@/paths";
+import getUnlockedModes from "@/lib/getUnlockedModes";
 
 interface DashboardProps {
   user: User;
@@ -26,27 +27,25 @@ export default async function Dashboard({
     currentlyActiveLanguage
   );
 
-  let renderedLists: JSX.Element[] = [];
-
-  if (userLearningDataForActiveLanguage?.learnedLists) {
-    renderedLists = userLearningDataForActiveLanguage?.learnedLists.map(
-      (list) => {
-        return (
-          <ListDashboardCard
-            key={list.listNumber}
-            list={list}
-            allLearnedItemsForLanguage={
-              userLearningDataForActiveLanguage.learnedItems
-            }
-            allIgnoredItemsForLanguage={
-              userLearningDataForActiveLanguage.ignoredItems
-            }
-            userId={user.id}
-          />
-        );
-      }
-    );
-  }
+  const renderedLists = userLearningDataForActiveLanguage?.learnedLists.map(
+    async (list) => {
+      const unlockedModes = await getUnlockedModes(list.listNumber);
+      return (
+        <ListDashboardCard
+          key={list.listNumber}
+          list={list}
+          allLearnedItemsForLanguage={
+            userLearningDataForActiveLanguage.learnedItems
+          }
+          allIgnoredItemsForLanguage={
+            userLearningDataForActiveLanguage.ignoredItems
+          }
+          userId={user.id}
+          unlockedModes={unlockedModes}
+        />
+      );
+    }
+  );
 
   function AddNewListOption() {
     return (

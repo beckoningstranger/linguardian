@@ -83,9 +83,10 @@ export async function getFullyPopulatedListByListNumber(
 
 export async function getPopulatedList(lNumber: number) {
   try {
-    return await axios.get<PopulatedList>(
+    const response = await axios.get<PopulatedList>(
       `${server}/lists/getPopulatedList/${lNumber}`
     );
+    return response.data;
   } catch (err) {
     console.error(`Error fetching populated list number ${lNumber}: ${err}`);
   }
@@ -284,4 +285,15 @@ export async function setNativeLanguage({
   }
   revalidatePath("/dashboard");
   redirect("/");
+}
+
+export async function getNativeLanguage(userId: string) {
+  try {
+    const response = await axios.get(
+      `${server}/users/getNativeLanguage/${userId}`
+    );
+    return response.data as SupportedLanguage;
+  } catch (err) {
+    console.error(`Error getting native language for user ${userId}: ${err}`);
+  }
 }

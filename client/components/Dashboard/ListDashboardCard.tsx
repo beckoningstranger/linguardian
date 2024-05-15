@@ -1,11 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { RxDotsVertical } from "react-icons/rx";
 
 import ContextMenu from "../Menus/ContextMenu";
 import ListBarChart from "@/components/Charts/ListBarChart";
 import ListPieChart from "../Charts/ListPieChart";
-import { LearnedItem, List } from "@/types";
+import { LearnedItem, LearningMode, List } from "@/types";
 import Link from "next/link";
 import paths from "@/paths";
 import { removeListFromDashboard } from "@/app/actions";
@@ -18,6 +18,7 @@ interface ListDashboardCardProps {
   allLearnedItemsForLanguage: LearnedItem[];
   allIgnoredItemsForLanguage: Types.ObjectId[];
   userId: string;
+  unlockedModes: Types.Array<LearningMode>;
 }
 
 export default function ListDashboardCard({
@@ -25,6 +26,7 @@ export default function ListDashboardCard({
   allIgnoredItemsForLanguage,
   allLearnedItemsForLanguage,
   userId,
+  unlockedModes,
 }: ListDashboardCardProps) {
   const [showContextMenu, setShowContextMenu] = useState(false);
 
@@ -82,6 +84,7 @@ export default function ListDashboardCard({
           stats={stats}
           status={status}
           listNumber={list.listNumber}
+          unlockedModes={unlockedModes}
         />
       </div>
     </div>

@@ -21,6 +21,7 @@ interface ReviewButtonProps {
   showAllModes?: Function;
   listNumber: number;
   stats: ListStats;
+  unlockedModes: LearningMode[];
 }
 
 export default function ReviewButton({
@@ -28,6 +29,7 @@ export default function ReviewButton({
   showAllModes,
   listNumber,
   stats,
+  unlockedModes,
 }: ReviewButtonProps) {
   let icon;
   let color;
@@ -80,21 +82,28 @@ export default function ReviewButton({
     <Link
       href={paths.learnPath(mode, listNumber)}
       className={`m-1 rounded-lg border-4 border-white ${
-        seeIfDisabled()
+        isDisabled()
           ? "bg-gray-300 pointer-events-none"
           : color + " hover:border-slate-200 hover:scale-125"
       } p-2 text-3xl text-white transition-all block`}
-      aria-disabled={seeIfDisabled()}
-      tabIndex={seeIfDisabled() ? -1 : undefined}
+      aria-disabled={isDisabled()}
+      tabIndex={isDisabled() ? -1 : undefined}
     >
       {icon}
     </Link>
   );
 
-  function seeIfDisabled(): boolean | undefined {
+  function isDisabled(): boolean | undefined {
+    if (mode === "more") return false;
+    if (mode === "spinner") return true;
     if (mode === "learn" && stats.unlearned === 0) return true;
-    if (mode !== "learn" && mode !== "more" && stats.readyToReview === 0)
-      return true;
-    return false;
+    if (mode === "learn" && unlockedModes.length > 0) return false;
+    if (
+      mode !== "learn" &&
+      stats.readyToReview > 0 &&
+      unlockedModes.includes(mode)
+    )
+      return false;
+    return true;
   }
 }

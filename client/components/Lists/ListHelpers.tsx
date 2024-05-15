@@ -1,3 +1,5 @@
+import { getPopulatedList } from "@/app/actions";
+import getUserOnServer from "@/lib/getUserOnServer";
 import { LearnedItem, List, ListStats, ListStatus } from "@/types";
 import { Types } from "mongoose";
 
@@ -12,44 +14,58 @@ export function calculateListStats(
     itemIDsInList.includes(id)
   );
 
-  const ignoredItemsInList = ignoredItems.filter((id) =>
-    itemIDsInList.includes(id)
+  return generateStats(
+    ignoredItems,
+    learnedItems,
+    itemIDsInList,
+    learnedItemsInList
   );
-
-  const readyToReview = learnedItems.filter(
-    (item) =>
-      itemIDsInList.includes(item.id) &&
-      !ignoredItemsInList.includes(item.id) &&
-      item.nextReview < Date.now()
-  );
-
-  const learned = learnedItems.filter(
-    (item) =>
-      itemIDsInList.includes(item.id) &&
-      !ignoredItemsInList.includes(item.id) &&
-      !readyToReview.includes(item) &&
-      item.level > 8
-  );
-
-  const learning = learnedItems.filter(
-    (item) =>
-      itemIDsInList.includes(item.id) &&
-      !ignoredItemsInList.includes(item.id) &&
-      !readyToReview.includes(item) &&
-      item.level < 8
-  );
-
-  return {
-    unlearned: itemIDsInList.length - learnedItemsInList.length,
-    readyToReview: readyToReview.length,
-    learned: learned.length,
-    learning: learning.length,
-    ignored: ignoredItemsInList.length,
-  };
 }
 
 export function determineListStatus(stats: ListStats): ListStatus {
   if (stats.readyToReview > 0) return "review";
   if (stats.readyToReview === 0 && stats.unlearned > 0) return "add";
   return "practice";
+}
+
+export function generateStats(
+  allIgnoredItems: Types.ObjectId[],
+  allLearnedItems: LearnedItem[],
+  itemIDs: Types.ObjectId[],
+  selectedlearnedItems: Types.ObjectId[]
+) {
+  const ignoredItemsInList = allIgnoredItems.filter((id) =>
+    itemIDs.includes(id)
+  );
+
+  const readyToReview = allLearnedItems.filter(
+    (item) =>
+      itemIDs.includes(item.id) &&
+      !ignoredItemsInList.includes(item.id) &&
+      item.nextReview < Date.now()
+  );
+
+  const learned = allLearnedItems.filter(
+    (item) =>
+      itemIDs.includes(item.id) &&
+      !ignoredItemsInList.includes(item.id) &&
+      !readyToReview.includes(item) &&
+      item.level > 8
+  );
+
+  const learning = allLearnedItems.filter(
+    (item) =>
+      itemIDs.includes(item.id) &&
+      !ignoredItemsInList.includes(item.id) &&
+      !readyToReview.includes(item) &&
+      item.level < 8
+  );
+
+  return {
+    unlearned: itemIDs.length - selectedlearnedItems.length,
+    readyToReview: readyToReview.length,
+    learned: learned.length,
+    learning: learning.length,
+    ignored: ignoredItemsInList.length,
+  };
 }

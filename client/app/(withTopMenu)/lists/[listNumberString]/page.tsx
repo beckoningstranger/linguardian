@@ -1,8 +1,8 @@
 import {
   getLanguageFeaturesForLanguage,
   getLearnedLanguageData,
+  getNativeLanguage,
   getPopulatedList,
-  getUserById,
 } from "@/app/actions";
 import Link from "next/link";
 
@@ -21,6 +21,8 @@ import { ListStats, ListStatus } from "@/types";
 import ListPieChart from "@/components/Charts/ListPieChart";
 import Leaderboard from "@/components/Lists/Leaderboard";
 import AllLearningButtons from "@/components/Lists/ListOverview/AllLearningButtons";
+import ListContainer from "@/components/Lists/ListContainer";
+import AllLearningButtonsContainer from "@/components/Lists/AllLearningButtonsContainer";
 
 interface ListDetailProps {
   params: {
@@ -34,11 +36,19 @@ export default async function ListDetailPage({
   const listNumber = parseInt(listNumberString);
 
   const listData = await getPopulatedList(listNumber);
+  if (!listData || !listData.unlockedReviewModes)
+    throw new Error("Could not get listData");
 
   const sessionUser = await getUserOnServer();
-  const user = await getUserById(sessionUser.id);
+  const usersNativeLanguage = await getNativeLanguage(sessionUser.id);
+  if (!usersNativeLanguage)
+    throw new Error("Error getting users native language");
+  const unlockedReviewModes =
+    listData?.unlockedReviewModes[usersNativeLanguage];
 
-  if (listData?.data && user) {
+  const userId = sessionUser.id;
+
+  if (listData && userId) {
     const {
       name,
       description,
@@ -47,9 +57,9 @@ export default async function ListDetailPage({
       units,
       language,
       listNumber,
-    } = listData.data;
+    } = listData;
 
-    const learnedLanguageData = await getLearnedLanguageData(user.id, language);
+    const learnedLanguageData = await getLearnedLanguageData(userId, language);
 
     if (!learnedLanguageData)
       throw new Error("Failed to get user data, please report this");
@@ -61,7 +71,7 @@ export default async function ListDetailPage({
     const allLearnedListNumbers = learnedLanguageData?.learnedLists.map(
       (list) => list.listNumber
     );
-    const listId = listData.data.listNumber;
+    const listId = listData.listNumber;
     const userHasAddedThisList = allLearnedListNumbers?.includes(listId);
 
     const renderedAuthors = authors
@@ -83,22 +93,22 @@ export default async function ListDetailPage({
 
     if (languageFeatures)
       return (
-        <div id="container" className="md:mx-20 lg:mx-48 xl:mx-64 2xl:mx-96">
+        <ListContainer>
           <div className="mb-24 flex flex-col">
             <ListHeader
               name={name}
               description={description}
               authors={renderedAuthors}
-              numberOfItems={listData.data.units.length}
-              image={listData.data.image}
+              numberOfItems={listData.units.length}
+              image={listData.image}
               added={userHasAddedThisList}
             />
 
-            {user && !userHasAddedThisList && (
+            {userId && !userHasAddedThisList && (
               <StartLearningListButton
                 learnedLanguageData={learnedLanguageData}
                 language={language}
-                userId={user.id}
+                userId={userId}
                 listNumber={listNumber}
                 languageName={languageFeatures.langName}
               />
@@ -118,12 +128,13 @@ export default async function ListDetailPage({
                     </div>
                   </div>
                   {listStats && (
-                    <div className="m-2 flex justify-evenly rounded-md bg-slate-100 py-2">
+                    <AllLearningButtonsContainer>
                       <AllLearningButtons
                         listNumber={listNumber}
                         listStats={listStats}
+                        unlockedReviewModes={unlockedReviewModes}
                       />
-                    </div>
+                    </AllLearningButtonsContainer>
                   )}
                 </div>
               </>
@@ -146,12 +157,13 @@ export default async function ListDetailPage({
                     stats={listStats}
                     status={listStatus}
                     listNumber={listNumber}
+                    unlockedModes={unlockedReviewModes}
                   />
                 </div>
               </div>
             )}
           </div>
-        </div>
+        </ListContainer>
       );
   }
 
