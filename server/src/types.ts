@@ -98,7 +98,7 @@ export interface List {
   image?: string;
   language: SupportedLanguage;
   difficulty?: Difficulty;
-  authors: Types.ObjectId[];
+  authors: string[];
   private: Boolean;
   units: { unitName: string; item: Types.ObjectId }[];
   unitOrder: string[];
@@ -106,14 +106,12 @@ export interface List {
   learners?: Types.ObjectId[];
 }
 
-export type FullyPopulatedList = Omit<List, "units" | "authors"> & {
+export type FullyPopulatedList = Omit<List, "units"> & {
   units: { unitName: string; item: ItemPopulatedWithTranslations }[];
-  authors: User[];
 };
 
-export type PopulatedList = Omit<List, "units" | "authors"> & {
+export type PopulatedList = Omit<List, "units"> & {
   units: { unitName: string; item: Item }[];
-  authors: User[];
 };
 
 export type PopulatedListNoAuthors = Omit<List, "units"> & {

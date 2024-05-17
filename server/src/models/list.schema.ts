@@ -27,9 +27,8 @@ const listSchema = new Schema<List>({
   },
   authors: [
     {
-      type: Schema.Types.ObjectId,
+      type: String,
       required: true,
-      ref: "User",
     },
   ],
   private: {

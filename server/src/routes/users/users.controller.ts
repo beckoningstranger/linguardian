@@ -27,9 +27,9 @@ export async function httpGetLearnedLanguageData(req: Request, res: Response) {
 
   const response = await getUserWithPopulatedLearnedLists(userId);
 
-  const responseFilteredForLanguage = response?.languages.filter(
+  const responseFilteredForLanguage = response?.languages.find(
     (lang) => lang.code === language
-  )[0];
+  );
 
   if (response) return res.status(200).json(responseFilteredForLanguage);
   return res.status(404).json();
@@ -38,7 +38,6 @@ export async function httpGetLearnedLanguageData(req: Request, res: Response) {
 export async function httpAddListToDashboard(req: Request, res: Response) {
   const userId = req.params.userId;
   const listNumber = parseInt(req.params.listNumber);
-  const language = req.params.language as SupportedLanguage;
 
   const response = await addListToDashboard(userId, listNumber);
   if (response) return res.status(200).json();

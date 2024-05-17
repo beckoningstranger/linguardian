@@ -20,7 +20,7 @@ export default function ListBarChart({ stats }: ListBarChartProps) {
         toolbar: { show: false },
       },
       title: {
-        text: `Words Total: ${
+        text: `Items Total: ${
           stats.learned + stats.learning + stats.readyToReview + stats.unlearned
         }`,
       },
@@ -32,7 +32,7 @@ export default function ListBarChart({ stats }: ListBarChartProps) {
       yaxis: {
         labels: { style: { fontWeight: 800 } },
       },
-      grid: { padding: { top: -30, bottom: -10, left: -5, right: -85 } },
+      grid: { padding: { top: -30, bottom: -10, left: -5, right: -5 } },
       stroke: {
         width: 1,
         colors: ["#fff"],

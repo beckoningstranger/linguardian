@@ -104,22 +104,3 @@ export async function httpGetAllListsForLanguage(req: Request, res: Response) {
 
   return res.status(200).json(await getAllListsForLanguage(language));
 }
-
-export async function httpGetUnitItems(req: Request, res: Response) {
-  const listNumber = parseInt(req.params.listNumber);
-  const unitNumber = parseInt(req.params.unitNumber);
-
-  const listData = (await getPopulatedListByListNumber(
-    listNumber
-  )) as PopulatedList;
-
-  if (listData && listData.unitOrder) {
-    const unitName = listData.unitOrder[unitNumber - 1];
-    const unitItems: Item[] = [];
-    listData.units.map((item) => {
-      if (unitName === item.unitName) unitItems.push(item.item);
-    });
-    return res.status(200).json(unitItems);
-  }
-  return res.status(404).json();
-}

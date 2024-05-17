@@ -100,19 +100,6 @@ export async function getList(lNumber: number) {
   }
 }
 
-export async function getUnitItems(lNumber: number, unitNumber: number) {
-  try {
-    const response = await axios.get<Item[]>(
-      `${server}/lists/getUnitItems/${lNumber}/${unitNumber}`
-    );
-    return response.data;
-  } catch (err) {
-    console.error(
-      `Error fetching unit items for list number ${lNumber}: ${err}`
-    );
-  }
-}
-
 export async function getListsByLanguage(language: SupportedLanguage) {
   try {
     return (
@@ -173,7 +160,7 @@ export async function removeListFromDashboard(
   #${listNumber} for user ${userId}`);
   }
   revalidatePath(`/dashboard?lang=${language}`);
-  redirect("/");
+  redirect(`/dashboard?lang=${language}`);
 }
 
 export async function addNewLanguageToLearn(

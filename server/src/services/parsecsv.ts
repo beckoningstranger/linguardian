@@ -21,7 +21,7 @@ import {
   getLatestListNumber,
   getPopulatedListByObjectId,
 } from "../models/lists.model.js";
-import { getUserObjectIdById } from "../models/users.model.js";
+import { getSupportedLanguages } from "../models/settings.model.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -81,20 +81,12 @@ export async function parseCSV({
   language,
   author,
 }: parseCSVProps) {
-  const authors: Types.ObjectId[] = [];
-  const authorData = await getUserObjectIdById(+author);
-  if (authorData) {
-    authors.push(authorData?._id);
-  } else {
-    console.error("List will be added without author");
-  }
-
   const newList: List = {
     name: listName,
     listNumber: await getLatestListNumber(),
     private: false,
     language: language,
-    authors: authors,
+    authors: author.split(" "),
     unitOrder: [],
     units: [],
   };
@@ -104,7 +96,6 @@ export async function parseCSV({
       listNumber: newList.listNumber,
     },
     newList,
-
     { upsert: true, new: true }
   );
   const newListsId = newUploadedList?._id;
@@ -138,7 +129,7 @@ export async function parseCSV({
           };
 
           // Remove translations that are just empty strings
-          formattedData = cleanUpTranslationProperty(formattedData);
+          formattedData = await cleanUpTranslationProperty(formattedData);
 
           // Harvest and upload all possible lemmas from each parsed item
           const lemmas = convertItemToLemmas(formattedData);
@@ -406,16 +397,18 @@ async function linkItemsToLemmas(harvestedItems: ItemInPrep[]): Promise<void> {
   });
 }
 
-function cleanUpTranslationProperty(
+async function cleanUpTranslationProperty(
   formattedData: FormattedParsedData
-): FormattedParsedData {
+): Promise<FormattedParsedData> {
   // Delete non-existent translations
-  const supportedLanguages: SupportedLanguage[] = ["DE", "EN", "FR", "CN"];
-  supportedLanguages.map((lang) => {
-    if (formattedData.translations[lang]) {
-      if (formattedData.translations[lang]![0].length < 1) {
-        delete formattedData.translations[lang];
-      }
+  const supportedLanguages = await getSupportedLanguages();
+  if (!supportedLanguages) throw new Error("Failed to get supported languages");
+  supportedLanguages.forEach((lang) => {
+    if (
+      formattedData.translations[lang] &&
+      formattedData.translations[lang]![0].length < 1
+    ) {
+      delete formattedData.translations[lang];
     }
   });
   return formattedData;
@@ -437,7 +430,6 @@ async function addItemsToList(
       })) as FetchedItem;
       if (itemInDatabase) {
         const itemId = itemInDatabase._id;
-        // First make sure that the needed chapter exists
         await Lists.findByIdAndUpdate(
           newListId,
           {

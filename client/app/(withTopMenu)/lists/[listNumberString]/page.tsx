@@ -22,7 +22,11 @@ import ListPieChart from "@/components/Charts/ListPieChart";
 import Leaderboard from "@/components/Lists/Leaderboard";
 import AllLearningButtons from "@/components/Lists/ListOverview/AllLearningButtons";
 import ListContainer from "@/components/Lists/ListContainer";
-import AllLearningButtonsContainer from "@/components/Lists/AllLearningButtonsContainer";
+import {
+  AllLearningButtonsDesktopContainer,
+  AllLearningButtonsMobileContainer,
+} from "@/components/Lists/AllLearningButtonsContainer";
+import { fetchAuthors } from "../page";
 
 interface ListDetailProps {
   params: {
@@ -59,34 +63,32 @@ export default async function ListDetailPage({
       listNumber,
     } = listData;
 
-    const learnedLanguageData = await getLearnedLanguageData(userId, language);
+    const allListsUserData = await getLearnedLanguageData(userId, language);
 
-    if (!learnedLanguageData)
+    if (!allListsUserData)
       throw new Error("Failed to get user data, please report this");
 
-    const thisListsData = learnedLanguageData.learnedLists.find(
+    const thisListsUserData = allListsUserData.learnedLists.find(
       (list) => list.listNumber === listNumber
     );
 
-    const allLearnedListNumbers = learnedLanguageData?.learnedLists.map(
+    const allLearnedListNumbers = allListsUserData?.learnedLists.map(
       (list) => list.listNumber
     );
     const listId = listData.listNumber;
     const userHasAddedThisList = allLearnedListNumbers?.includes(listId);
 
-    const renderedAuthors = authors
-      .map((author) => author.username)
-      .join(" & ");
+    const renderedAuthors = await fetchAuthors(authors);
 
     const languageFeatures = await getLanguageFeaturesForLanguage(language);
 
     let listStats: ListStats | null = null;
     let listStatus: ListStatus | null = null;
-    if (thisListsData) {
+    if (thisListsUserData) {
       listStats = calculateListStats(
-        thisListsData,
-        learnedLanguageData?.learnedItems,
-        learnedLanguageData?.ignoredItems
+        thisListsUserData,
+        allListsUserData?.learnedItems,
+        allListsUserData?.ignoredItems
       );
       listStatus = determineListStatus(listStats);
     }
@@ -94,7 +96,7 @@ export default async function ListDetailPage({
     if (languageFeatures)
       return (
         <ListContainer>
-          <div className="mb-24 flex flex-col">
+          <div className="mb-24 flex flex-col md:mb-0">
             <ListHeader
               name={name}
               description={description}
@@ -106,7 +108,7 @@ export default async function ListDetailPage({
 
             {userId && !userHasAddedThisList && (
               <StartLearningListButton
-                learnedLanguageData={learnedLanguageData}
+                learnedLanguageData={allListsUserData}
                 language={language}
                 userId={userId}
                 listNumber={listNumber}
@@ -128,13 +130,13 @@ export default async function ListDetailPage({
                     </div>
                   </div>
                   {listStats && (
-                    <AllLearningButtonsContainer>
+                    <AllLearningButtonsDesktopContainer>
                       <AllLearningButtons
                         listNumber={listNumber}
                         listStats={listStats}
                         unlockedReviewModes={unlockedReviewModes}
                       />
-                    </AllLearningButtonsContainer>
+                    </AllLearningButtonsDesktopContainer>
                   )}
                 </div>
               </>
@@ -152,14 +154,14 @@ export default async function ListDetailPage({
                   <Leaderboard />
                 </div>
 
-                <div className="fixed bottom-0 h-24 w-full bg-slate-200 py-4 md:hidden">
+                <AllLearningButtonsMobileContainer>
                   <FlexibleLearningButtons
                     stats={listStats}
                     status={listStatus}
                     listNumber={listNumber}
                     unlockedModes={unlockedReviewModes}
                   />
-                </div>
+                </AllLearningButtonsMobileContainer>
               </div>
             )}
           </div>

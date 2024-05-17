@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 interface ListStoreCardProps {
-  authors: User[];
+  authors: string;
   title: string;
   description: string | undefined;
   image: string | undefined;
@@ -21,20 +21,18 @@ export default function ListStoreCard({
   image = "https:/picsum.photos/150?grayscale",
   numberOfItems,
   numberOfUnits = 1,
-  difficulty = "Undetermined",
+  difficulty = "Unknown",
   listNumber,
 }: ListStoreCardProps) {
   return (
     <Link href={paths.listDetailsPath(listNumber)}>
-      <article className="flex w-[350px] flex-col justify-between rounded-md bg-slate-100 shadow-md transition-all hover:shadow-xl">
+      <article className="flex w-[340px] flex-col justify-between rounded-md bg-slate-100 shadow-md transition-all hover:shadow-xl xl:w-[350px]">
         <div
           id="title"
           className="mt-2 flex h-[60px] flex-col items-center justify-center"
         >
           {authors.length > 0 && (
-            <h3 className="pt-1 text-[0.7rem] leading-3">
-              {authors.map((author) => author.username).join(" & ")}&apos;s
-            </h3>
+            <h3 className="pt-1 text-[0.7rem] leading-3">{authors}&apos;s</h3>
           )}
           <h2 className="text-[1.4rem]">{title}</h2>
         </div>

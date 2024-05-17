@@ -20,9 +20,9 @@ export async function getUserById(id: string) {
   }
 }
 
-export async function getUserObjectIdById(id: number) {
+export async function getUserObjectIdById(id: string) {
   try {
-    const response = await Users.findOne({ id: id }, { _id: 1, __v: 0 });
+    const response = await Users.findOne({ id: id }, { id: 1, __v: 0 });
     if (response) return response;
   } catch (err) {
     console.error(`Error getting ObjectId for id ${id}: ${err}`);

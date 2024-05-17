@@ -3,7 +3,6 @@ import {
   httpGetAllListsForLanguage,
   httpGetPopulatedListByListNumber,
   httpGetFullyPopulatedListByListNumber,
-  httpGetUnitItems,
   httpPostCSV,
   httpGetList,
 } from "./lists.controller.js";
@@ -41,5 +40,3 @@ listsRouter.get(
   "/getFullyPopulatedList/:userNative/:listNumber",
   httpGetFullyPopulatedListByListNumber
 );
-
-listsRouter.get("/getUnitItems/:listNumber/:unitNumber", httpGetUnitItems);

@@ -25,23 +25,26 @@ export default async function ListStore({ searchParams }: ListStoreProps) {
   );
 
   if (listsForLanguage) {
-    const renderedLists = listsForLanguage.map((list) => (
-      <ListStoreCard
-        authors={list.authors}
-        title={list.name}
-        description={list.description}
-        image={list.image}
-        numberOfItems={list.units.length}
-        numberOfUnits={list.unitOrder?.length}
-        difficulty={list.difficulty}
-        listNumber={list.listNumber}
-        key={list.listNumber}
-      />
-    ));
+    const renderedLists = listsForLanguage.map(async (list) => {
+      const authors = await fetchAuthors(list.authors);
+      return (
+        <ListStoreCard
+          authors={authors}
+          title={list.name}
+          description={list.description}
+          image={list.image}
+          numberOfItems={list.units.length}
+          numberOfUnits={list.unitOrder?.length}
+          difficulty={list.difficulty}
+          listNumber={list.listNumber}
+          key={list.listNumber}
+        />
+      );
+    });
 
     return (
       <div>
-        <div className="m-3 grid justify-center gap-3 p-2 md:justify-normal">
+        <div className="grid grid-cols-1 justify-center justify-items-center gap-4 py-4 md:grid-cols-2 md:justify-normal lg:grid-cols-3">
           {renderedLists}
         </div>
         <div>
@@ -57,4 +60,12 @@ export default async function ListStore({ searchParams }: ListStoreProps) {
   } else {
     return "Invalid language";
   }
+}
+
+export async function fetchAuthors(authors: string[]) {
+  const authorDataPromises = authors.map(
+    async (author) => await getUserById(author)
+  );
+  const authorData = await Promise.all(authorDataPromises);
+  return authorData.map((author) => author?.username).join(" & ");
 }

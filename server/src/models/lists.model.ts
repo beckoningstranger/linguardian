@@ -5,7 +5,6 @@ import {
   PopulatedListNoAuthors,
   LearningMode,
   SupportedLanguage,
-  User,
 } from "../types.js";
 import Lists from "./list.schema.js";
 import { getSupportedLanguages } from "./settings.model.js";
@@ -30,11 +29,9 @@ export async function getPopulatedListByObjectId(listId: Types.ObjectId) {
 
 export async function getPopulatedListByListNumber(listNumber: number) {
   try {
-    return await Lists.findOne({ listNumber: listNumber })
-      .populate<{
-        units: { unitName: string; item: Item }[];
-      }>({ path: "units.item" })
-      .populate<{ authors: User[] }>({ path: "authors" });
+    return await Lists.findOne({ listNumber: listNumber }).populate<{
+      units: { unitName: string; item: Item }[];
+    }>({ path: "units.item" });
   } catch (err) {
     console.error(`Error getting populated list with listNumber ${listNumber}`);
   }
@@ -45,14 +42,12 @@ export async function getFullyPopulatedListByListNumber(
   listNumber: number
 ) {
   try {
-    return await Lists.findOne({ listNumber: listNumber })
-      .populate<{
-        units: { unitName: string; item: ItemPopulatedWithTranslations }[];
-      }>({
-        path: "units.item",
-        populate: { path: "translations." + userNative },
-      })
-      .populate<{ authors: User[] }>({ path: "authors" });
+    return await Lists.findOne({ listNumber: listNumber }).populate<{
+      units: { unitName: string; item: ItemPopulatedWithTranslations }[];
+    }>({
+      path: "units.item",
+      populate: { path: "translations." + userNative },
+    });
   } catch (err) {
     console.error(
       `Error getting fully populated list with listNumber ${listNumber}`
@@ -62,9 +57,7 @@ export async function getFullyPopulatedListByListNumber(
 
 export async function getAllListsForLanguage(language: SupportedLanguage) {
   try {
-    return await Lists.find({ language: language }).populate<{
-      authors: User[];
-    }>({ path: "authors" });
+    return await Lists.find({ language: language });
   } catch (err) {
     console.error(`Error getting all lists for language ${language}`);
   }
