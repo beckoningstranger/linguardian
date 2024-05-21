@@ -4,6 +4,7 @@ import { FaPlus } from "react-icons/fa6";
 import { SupportedLanguage } from "@/types";
 import {
   checkPassedLanguageAsync,
+  fetchAuthors,
   getListsByLanguage,
   getUserById,
 } from "@/app/actions";
@@ -60,12 +61,4 @@ export default async function ListStore({ searchParams }: ListStoreProps) {
   } else {
     return "Invalid language";
   }
-}
-
-export async function fetchAuthors(authors: string[]) {
-  const authorDataPromises = authors.map(
-    async (author) => await getUserById(author)
-  );
-  const authorData = await Promise.all(authorDataPromises);
-  return authorData.map((author) => author?.username).join(" & ");
 }

@@ -191,6 +191,7 @@ export async function addNewlyLearnedItems(
   userId: string,
   language: SupportedLanguage
 ) {
+  console.log("models.ts, addNewlyAdded", items);
   try {
     const userSRSettings = await getUserSRSettings(userId, language);
     if (!userSRSettings) return;

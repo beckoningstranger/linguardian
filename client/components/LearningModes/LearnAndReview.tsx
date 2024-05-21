@@ -103,7 +103,6 @@ export default function LearnAndReview({
 
       if (newItemOrder.length === 0) {
         setSessionEnd(true);
-        passDataToServer(newLearnedItems);
         return;
       }
       setActiveItem([...newItemOrder][0]);
@@ -125,57 +124,62 @@ export default function LearnAndReview({
         userId,
         mode
       );
-      router.push(`/dashboard/?lang=${learnedItems[0].language}`);
     });
   }
 
-  return (
-    <div className="grid place-items-center">
-      <TopBar
-        listName={listName}
-        itemsInProgress={learnedItems.length}
-        totalItems={itemsToLearn.length + learnedItems.length}
-        mode={mode}
-      />
-      <div className="mt-3 flex w-[95%] flex-col gap-3">
-        {!itemPresentation && (
-          <ItemPrompt item={activeItem} userNative={userNative} />
-        )}
-        {itemPresentation && (
-          <ItemPresentation
-            item={activeItem}
-            wrongSolution={wrongAnswer}
-            endPresentation={evaluateUserAnswer}
-            userNative={userNative}
-          />
-        )}
-        {!itemPresentation && activeItem.learningStep === 1 && (
-          <MultipleChoice
-            options={createMultipleChoiceOptions(
-              allItemStringsInList,
-              activeItem
-            )}
-            correctItem={activeItem}
-            evaluate={evaluateUserAnswer}
-          />
-        )}
-        {!itemPresentation && activeItem.learningStep === 2 && (
-          <PuzzleMode
-            item={activeItem}
-            evaluate={evaluateUserAnswer}
-            initialPuzzlePieces={createPuzzlePieces(activeItem)}
-          />
-        )}
-        {!itemPresentation && activeItem.learningStep === 3 && (
-          <BetterSolutionInput
-            targetLanguageFeatures={targetLanguageFeatures}
-            item={activeItem}
-            evaluate={evaluateUserAnswer}
-          />
-        )}
+  if (sessionEnd) {
+    passDataToServer(learnedItems);
+    router.push(`/dashboard/?lang=${learnedItems[0].language}`);
+  }
+
+  if (!sessionEnd)
+    return (
+      <div className="grid place-items-center">
+        <TopBar
+          listName={listName}
+          itemsInProgress={learnedItems.length}
+          totalItems={itemsToLearn.length + learnedItems.length}
+          mode={mode}
+        />
+        <div className="mt-3 flex w-[95%] flex-col gap-3">
+          {!itemPresentation && (
+            <ItemPrompt item={activeItem} userNative={userNative} />
+          )}
+          {itemPresentation && (
+            <ItemPresentation
+              item={activeItem}
+              wrongSolution={wrongAnswer}
+              endPresentation={evaluateUserAnswer}
+              userNative={userNative}
+            />
+          )}
+          {!itemPresentation && activeItem.learningStep === 1 && (
+            <MultipleChoice
+              options={createMultipleChoiceOptions(
+                allItemStringsInList,
+                activeItem
+              )}
+              correctItem={activeItem}
+              evaluate={evaluateUserAnswer}
+            />
+          )}
+          {!itemPresentation && activeItem.learningStep === 2 && (
+            <PuzzleMode
+              item={activeItem}
+              evaluate={evaluateUserAnswer}
+              initialPuzzlePieces={createPuzzlePieces(activeItem)}
+            />
+          )}
+          {!itemPresentation && activeItem.learningStep === 3 && (
+            <BetterSolutionInput
+              targetLanguageFeatures={targetLanguageFeatures}
+              item={activeItem}
+              evaluate={evaluateUserAnswer}
+            />
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
 }
 
 function createMultipleChoiceOptions(

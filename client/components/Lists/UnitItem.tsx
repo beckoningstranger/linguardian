@@ -19,7 +19,7 @@ export default function UnitItem({
   return (
     <div
       key={item.name + item.language}
-      className={`p-3 rounded-md w-full flex flex-col items-center justify-center z-50 ${bgColor(
+      className={`p-3 rounded-md w-full flex flex-col items-center justify-center ${bgColor(
         item.nextReview,
         item.level
       )}`}

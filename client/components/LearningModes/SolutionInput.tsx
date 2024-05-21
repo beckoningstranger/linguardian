@@ -27,12 +27,11 @@ export default function SolutionInput({
   setMoreReviews,
   finalizeReview,
 }: SolutionInputProps) {
-  const neutralInputFieldStyling = {
+  const [inputStyling, setInputStyling] = useState({
     input:
       "focus:border-b-2 bg-slate-200 m-3 pt-2 text-xl text-center mx-auto w-11/12 focus:outline-none border-b-black transition-all",
     form: "mt-0 flex justify-stretch transition-all rounded-md bg-slate-200",
-  };
-  const [inputStyling, setInputStyling] = useState(neutralInputFieldStyling);
+  });
 
   useEffect(() => {
     let inputFieldStyling: string = "";
@@ -65,11 +64,15 @@ export default function SolutionInput({
       setTimeout(() => {
         setSolution("");
         setReviewStatus("neutral");
-        setInputStyling(neutralInputFieldStyling);
+        setInputStyling({
+          input:
+            "focus:border-b-2 bg-slate-200 m-3 pt-2 text-xl text-center mx-auto w-11/12 focus:outline-none border-b-black transition-all",
+          form: "mt-0 flex justify-stretch transition-all rounded-md bg-slate-200",
+        });
         finalizeReview(reviewStatus, solution);
       }, 1000);
     }
-  }, [reviewStatus]);
+  }, [reviewStatus, finalizeReview, setReviewStatus, setSolution, solution]);
 
   function handleWordSubmit(e: React.FormEvent) {
     e.preventDefault();

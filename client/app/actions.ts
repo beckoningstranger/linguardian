@@ -284,3 +284,11 @@ export async function getNativeLanguage(userId: string) {
     console.error(`Error getting native language for user ${userId}: ${err}`);
   }
 }
+
+export async function fetchAuthors(authors: string[]) {
+  const authorDataPromises = authors.map(
+    async (author) => await getUserById(author)
+  );
+  const authorData = await Promise.all(authorDataPromises);
+  return authorData.map((author) => author?.username).join(" & ");
+}

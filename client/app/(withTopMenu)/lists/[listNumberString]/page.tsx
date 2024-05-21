@@ -1,4 +1,5 @@
 import {
+  fetchAuthors,
   getLanguageFeaturesForLanguage,
   getLearnedLanguageData,
   getNativeLanguage,
@@ -26,7 +27,6 @@ import {
   AllLearningButtonsDesktopContainer,
   AllLearningButtonsMobileContainer,
 } from "@/components/Lists/AllLearningButtonsContainer";
-import { fetchAuthors } from "../page";
 
 interface ListDetailProps {
   params: {

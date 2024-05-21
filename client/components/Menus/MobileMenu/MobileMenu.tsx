@@ -26,7 +26,7 @@ export default function MobileMenu({
   }, [showMobileMenu]);
 
   if (
-    typeof window === "object" &&
+    // typeof window === "object" &&
     showMobileMenu &&
     toggleMobileMenu &&
     ref.current

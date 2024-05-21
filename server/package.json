@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.ts",
   "scripts": {
-    "start": "npx tsc && node --watch dist/server.js",
+    "start": "node --loader=ts-node/esm src/server.ts",
     "watch-compiler": "npx tsc --watch --noEmit",
     "dev": "nodemon src/server.ts"
   },

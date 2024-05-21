@@ -9,7 +9,7 @@ export default async function ProfilePage({}: ProfilePageProps) {
 
   return (
     <>
-      <div>{user?.username}'s profile</div>
+      <div>{user?.username}&apos;s profile</div>
       <div>
         {user?.username} is learning{" "}
         {user?.languages.map((lang) => lang.name).join(" and ")}.

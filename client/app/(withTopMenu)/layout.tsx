@@ -53,5 +53,10 @@ export default async function RootLayoutWithTopMenu({
         </body>
       </html>
     );
-  return "No User or connection lost.";
+
+  return (
+    <html>
+      <body>No User or connection lost.</body>
+    </html>
+  );
 }

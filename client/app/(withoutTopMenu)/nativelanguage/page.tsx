@@ -10,7 +10,7 @@ export default async function Onboarding() {
   return (
     <div className="grid place-items-center">
       <h1 className="mt-6 text-2xl font-semibold">
-        What's your native language?
+        What&apos;s your native language?
       </h1>
       <NativeLanguageForm
         supportedLanguages={supportedLanguage}

@@ -22,14 +22,12 @@ export default async function AddNewLanguageToLearn() {
       const languageFeatures = await getLanguageFeaturesForLanguage(lang);
 
       return (
-        <div>
-          <Link key={lang} href={`/languages/add?lang=${lang}`}>
-            <Flag
-              code={languageFeatures?.flagCode}
-              className={`my-2 h-24 w-24 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125`}
-            />
-          </Link>
-        </div>
+        <Link key={lang} href={`/languages/add?lang=${lang}`}>
+          <Flag
+            code={languageFeatures?.flagCode}
+            className={`my-2 h-24 w-24 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125`}
+          />
+        </Link>
       );
     }
   });

@@ -31,7 +31,7 @@ export default function PuzzleMode({
         evaluate(reviewStatus, input);
       }, 1000);
     }
-  }, [reviewStatus]);
+  }, [reviewStatus, evaluate, input]);
 
   useEffect(() => {
     setPuzzlePieces([...initialPuzzlePieces]);
