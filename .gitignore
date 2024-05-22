@@ -43,3 +43,4 @@ mongosh_connect.sh
 /tailwind.config.ts
 /server/data/csvUploads*
 /client/types.ts
+mScripts/

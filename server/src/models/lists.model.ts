@@ -102,20 +102,15 @@ export async function updateUnlockedReviewModes(listId: Types.ObjectId) {
     supportedLanguages.forEach((language) => {
       // Let's assume it can be unlocked
       let languageCanBeUnlocked = true;
-      // Check every item for whether if has a translation in this language
+      // Check every item for whether if has a translation and part of speech in this language
       response.units.forEach((unitItem) => {
-        if (
-          unitItem.item &&
-          unitItem.item.translations &&
-          unitItem.item.translations[language]
-        )
-          if (
-            !(unitItem.item.translations[language]!.length > 0) ||
-            !unitItem.item.partOfSpeech
-          ) {
-            // It it doesn't, we can't unlock translation mode
+        if (unitItem?.item?.translations) {
+          const translations = unitItem.item.translations[language];
+
+          // It it doesn't, we can't unlock translation mode
+          if (translations?.length === 0 || !unitItem.item.partOfSpeech)
             languageCanBeUnlocked = false;
-          }
+        }
       });
       if (languageCanBeUnlocked)
         console.log(`Translation mode for ${language} will be unlocked!`);

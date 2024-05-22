@@ -81,6 +81,7 @@ export async function parseCSV({
   language,
   author,
 }: parseCSVProps) {
+  console.log("Parsing CSV File...");
   const newList: List = {
     name: listName,
     listNumber: await getLatestListNumber(),
@@ -136,19 +137,20 @@ export async function parseCSV({
           await UploadLemmas(lemmas);
 
           // Harvest all possible items from each parsed item
-          const harvestedItems: ItemInPrep[] = await harvestAndUploadItems(
-            formattedData
-          );
+          const harvestedItems: ItemInPrep[] =
+            await harvestAndUploadItemsWithoutTranslations(formattedData);
+
           // Link items to all of their lemmas
           await linkItemsToLemmas(harvestedItems);
+
           // Upload all harvested items with all the information supplied
-          await uploadAsProperItems(harvestedItems);
+          await addTranslationsToItems(harvestedItems);
 
           // Add all relevant harvested items to the new list
           await addItemsToList(harvestedItems, newListsId, language);
         })
         .on("error", (err) => {
-          console.error(err);
+          console.error("Error while parsing csv file", err);
         })
         .on("end", () => {
           // Wait 15 seconds for parsing and uploading to finish
@@ -159,7 +161,7 @@ export async function parseCSV({
               newListId: newListsId,
               newListNumber: newUploadedList.listNumber,
             });
-          }, 15000);
+          }, 10000);
         });
     }
   );
@@ -207,9 +209,6 @@ function convertItemToLemmas(item: FormattedParsedData): LemmaItem[] {
 async function UploadLemmas(lemmaArray: LemmaItem[]): Promise<void> {
   const lemmaUpload = lemmaArray.map(async (lemma) => {
     try {
-      console.log(
-        `${lemma.language}: Creating lemma entry for '${lemma.name}'.`
-      );
       await Lemmas.findOneAndUpdate(
         { name: lemma.name, language: lemma.language },
         { $set: { name: lemma.name, language: lemma.language } },
@@ -245,7 +244,7 @@ async function getAllLemmaObjectIdsForItem(
   return allFoundLemmaObjectIds;
 }
 
-async function harvestAndUploadItems(
+async function harvestAndUploadItemsWithoutTranslations(
   item: FormattedParsedData
 ): Promise<ItemInPrep[]> {
   const harvestedItems: ItemInPrep[] = [];
@@ -299,10 +298,6 @@ async function harvestAndUploadItems(
   const uploadHarvestedItemsWithoutTranslations = harvestedItems.map(
     async (item) => {
       try {
-        console.log(
-          `${item.language}: Uploading item '${item.name}' without translation.`
-        );
-
         await Items.findOneAndUpdate(
           { name: item.name, language: item.language },
           {
@@ -326,27 +321,45 @@ async function harvestAndUploadItems(
   return harvestedItems;
 }
 
-async function uploadAsProperItems(
+async function addTranslationsToItems(
   harvestedItems: ItemInPrep[]
 ): Promise<void> {
   // We iterate over every translation of every item
-  harvestedItems.map(async (item) => {
+  const supportedLanguages = await getSupportedLanguages();
+  if (!supportedLanguages) throw new Error("Failed to get supported languages");
+  const filteredItems: ItemInPrep[] = harvestedItems.map((item) => {
+    return {
+      ...item,
+      translations: filterOutUndefinedTranslations(item.translations),
+    };
+  });
+
+  function filterOutUndefinedTranslations(
+    translations: Partial<Record<SupportedLanguage, string[]>> | undefined
+  ): Partial<Record<SupportedLanguage, string[]>> {
+    const translationObject: Partial<Record<SupportedLanguage, string[]>> = {};
+    supportedLanguages?.forEach((lang) => {
+      if (translations && translations[lang])
+        translationObject[lang] = translations[lang];
+    });
+    return translationObject;
+  }
+
+  filteredItems.forEach(async (item) => {
     if (item.translations) {
-      console.log(
-        `${item.language}: Now filling in translations for item '${item.name}'`
-      );
       const newTranslationProperty: Partial<
         Record<SupportedLanguage, Types.ObjectId[]>
       > = {};
+
       Object.entries(item.translations).map(async (translationProperty) => {
         const [language, translation] = translationProperty;
         // We get the object ids for every translation of each item...
-        const objectIDsObject = await Items.find(
+        const objectIDs = await Items.find(
           { name: { $in: translation }, language: language },
           { _id: 1 }
         );
-        if (objectIDsObject) {
-          objectIDsObject.map((idObject) => {
+        if (objectIDs) {
+          objectIDs.map((idObject) => {
             // ... and save them in an object of type {SupportedLanguage: ObjectId[]}
             if (!newTranslationProperty[language as SupportedLanguage])
               newTranslationProperty[language as SupportedLanguage] = [];
@@ -357,7 +370,7 @@ async function uploadAsProperItems(
         }
 
         // This new object can now serve as the new translation property of the item we want to update
-        await Items.findOneAndUpdate(
+        const response = await Items.findOneAndUpdate(
           { name: item.name, language: item.language },
           {
             ...item,
@@ -379,9 +392,6 @@ async function linkItemsToLemmas(harvestedItems: ItemInPrep[]): Promise<void> {
     item.lemmas.map(async (lemma) => {
       // Since we didn't populate, lemma is this lemma's ObjectId
       try {
-        console.log(
-          `Adding item '${item.name}' to lemma with ObjectId '${lemma}'`
-        );
         // We push the item's ObjectId to the lemmas items array if it's not in already
         await Lemmas.findByIdAndUpdate(lemma, {
           $addToSet: {
@@ -449,10 +459,12 @@ async function defineUnitOrder(newListsId: Types.ObjectId) {
   if (newList && newList.units) {
     const foundUnitNames: string[] = [];
     newList.units.map((item) => {
+      console.log(item.unitName);
       if (!foundUnitNames.includes(item.unitName)) {
         foundUnitNames.push(item.unitName);
       }
     });
+    console.log("found", foundUnitNames);
     await Lists.findByIdAndUpdate(newListsId, {
       $set: { unitOrder: foundUnitNames },
     });
