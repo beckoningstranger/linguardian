@@ -31,8 +31,8 @@ export default function UnitItem({
         itemName={!showItemTranslation ? item.name : translations}
         showTranslations={showTranslations}
       />
-      <div className="text-xs">{item.partOfSpeech}</div>
-      <div className="text-xs">
+      <div className="pointer-events-none text-xs">{item.partOfSpeech}</div>
+      <div className="pointer-events-none text-xs">
         {item.level && <span>Level {item.level}:</span>}
         <span> {nextReview(item.nextReview)}</span>
       </div>
