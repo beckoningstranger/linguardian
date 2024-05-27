@@ -48,14 +48,12 @@ export default async function ListStore({ searchParams }: ListStoreProps) {
         <div className="grid grid-cols-1 justify-center justify-items-center gap-4 py-4 md:grid-cols-2 md:justify-normal lg:grid-cols-3">
           {renderedLists}
         </div>
-        <div>
-          <Link
-            href="/lists/new"
-            className="fixed bottom-1 right-1 m-2 grid h-16 w-16 place-items-center rounded-full border border-white bg-green-400 p-3"
-          >
-            <FaPlus className="text-2xl font-semibold text-white">+</FaPlus>
-          </Link>
-        </div>
+        <Link
+          href="/lists/new"
+          className="fixed bottom-1 right-1 m-2 grid h-16 w-16 place-items-center rounded-full border border-white bg-green-400 p-3"
+        >
+          <FaPlus className="text-2xl font-semibold text-white" />
+        </Link>
       </div>
     );
   } else {

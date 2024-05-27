@@ -146,6 +146,15 @@ export interface SRSettings {
   itemsPerSession: { learning: number; reviewing: number };
 }
 
+export interface IPA {
+  help: string;
+  consonants: string[];
+  vowels: string[];
+  dipthongs?: string[];
+  rare?: { vowels: string[]; consonants: string[] };
+  helperSymbols: string[];
+}
+
 export interface LanguageFeatures {
   langName: string;
   langCode: SupportedLanguage;
@@ -153,6 +162,9 @@ export interface LanguageFeatures {
   requiresHelperKeys?: string[];
   hasGender?: Gender[];
   hasCases?: Case[];
+  hasRomanization?: Boolean;
+  hasTones?: Boolean;
+  ipa?: IPA;
 }
 
 export interface GlobalSettings {

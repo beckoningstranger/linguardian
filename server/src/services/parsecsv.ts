@@ -153,7 +153,7 @@ export async function parseCSV({
           console.error("Error while parsing csv file", err);
         })
         .on("end", () => {
-          // Wait 15 seconds for parsing and uploading to finish
+          // Wait 10 seconds for parsing and uploading to finish
           setTimeout(async () => {
             // Define a tentative unit order
             await defineUnitOrder(newListsId);

@@ -25,7 +25,7 @@ export default function ListHeader({
   return (
     <>
       <div
-        className="flex items-center border-y-2 border-slate-300 sm:hidden"
+        className="relative flex items-center border-y-2 border-slate-300 sm:hidden"
         onClick={() => {
           if (description) setShowDetails(!showDetails);
         }}
