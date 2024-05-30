@@ -153,7 +153,7 @@ export async function parseCSV({
           console.error("Error while parsing csv file", err);
         })
         .on("end", () => {
-          // Wait 10 seconds for parsing and uploading to finish
+          // Wait 30 seconds for parsing and uploading to finish
           setTimeout(async () => {
             // Define a tentative unit order
             await defineUnitOrder(newListsId);
@@ -161,7 +161,7 @@ export async function parseCSV({
               newListId: newListsId,
               newListNumber: newUploadedList.listNumber,
             });
-          }, 10000);
+          }, 30000);
         });
     }
   );
@@ -433,7 +433,7 @@ async function addItemsToList(
   newListId: Types.ObjectId,
   listLanguage: SupportedLanguage
 ) {
-  harvestedItems.map(async (item) => {
+  harvestedItems.forEach(async (item) => {
     if (item.language === listLanguage) {
       const itemInDatabase = (await Items.findOne({
         name: item.name,
@@ -458,13 +458,11 @@ async function defineUnitOrder(newListsId: Types.ObjectId) {
   )) as PopulatedListNoAuthors;
   if (newList && newList.units) {
     const foundUnitNames: string[] = [];
-    newList.units.map((item) => {
-      console.log(item.unitName);
+    newList.units.forEach((item) => {
       if (!foundUnitNames.includes(item.unitName)) {
         foundUnitNames.push(item.unitName);
       }
     });
-    console.log("found", foundUnitNames);
     await Lists.findByIdAndUpdate(newListsId, {
       $set: { unitOrder: foundUnitNames },
     });

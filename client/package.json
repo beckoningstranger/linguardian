@@ -12,7 +12,6 @@
     "@auth/mongodb-adapter": "^2.6.0",
     "@types/bcryptjs": "^2.4.6",
     "apexcharts": "^3.45.2",
-    "axios": "^1.6.7",
     "bcryptjs": "^2.4.3",
     "mongodb": "^6.5.0",
     "mongoose": "^8.3.1",

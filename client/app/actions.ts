@@ -1,12 +1,10 @@
 "use server";
 
-import axios, { AxiosError } from "axios";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import {
   FullyPopulatedList,
-  Item,
   ItemForServer,
   LanguageFeatures,
   LearnedLanguageWithPopulatedLists,
@@ -21,10 +19,10 @@ const server = process.env.SERVER_URL;
 
 export async function getSupportedLanguages() {
   try {
-    const response = await axios.get<SupportedLanguage[]>(
-      `${server}/settings/supportedLanguages`
-    );
-    return response.data;
+    const response = await fetch(`${server}/settings/supportedLanguages`);
+    if (!response.ok) throw new Error(response.statusText);
+    const supportedLanguages: SupportedLanguage[] = await response.json();
+    return supportedLanguages;
   } catch (err) {
     console.error(`Error getting supported languages: ${err}`);
   }
@@ -34,10 +32,12 @@ export async function getLanguageFeaturesForLanguage(
   language: SupportedLanguage
 ) {
   try {
-    const response = await axios.get<LanguageFeatures>(
+    const response = await fetch(
       `${server}/settings/languageFeatures/${language}`
     );
-    return response.data;
+    if (!response.ok) throw new Error(response.statusText);
+    const languageFeatures: LanguageFeatures = await response.json();
+    return languageFeatures;
   } catch (err) {
     console.error(
       `Error getting language features for language ${language}: ${err}`
@@ -47,10 +47,10 @@ export async function getLanguageFeaturesForLanguage(
 
 export async function getAllLanguageFeatures() {
   try {
-    const response = await axios.get<LanguageFeatures[]>(
-      `${server}/settings/allLanguageFeatures`
-    );
-    return response.data;
+    const response = await fetch(`${server}/settings/allLanguageFeatures`);
+    if (!response.ok) throw new Error(response.statusText);
+    const allLanguageFeatures: LanguageFeatures[] = await response.json();
+    return allLanguageFeatures;
   } catch (err) {
     console.error(`Error getting all language features: ${err}`);
   }
@@ -58,8 +58,10 @@ export async function getAllLanguageFeatures() {
 
 export async function getUserById(userId: string) {
   try {
-    const response = await axios.get<User>(`${server}/users/get/${userId}`);
-    return response.data;
+    const response = await fetch(`${server}/users/get/${userId}`);
+    if (!response.ok) throw new Error(response.statusText);
+    const user: User = await response.json();
+    return user;
   } catch (err) {
     console.error(`Error getting user: ${err}`);
   }
@@ -70,10 +72,12 @@ export async function getFullyPopulatedListByListNumber(
   listNumber: number
 ) {
   try {
-    const response = await axios.get<FullyPopulatedList>(
+    const response = await fetch(
       `${server}/lists/getFullyPopulatedList/${userNative}/${listNumber}`
     );
-    return response.data;
+    if (!response.ok) throw new Error(response.statusText);
+    const list: FullyPopulatedList = await response.json();
+    return list;
   } catch (err) {
     console.error(
       `Error fetching fully populated list number ${listNumber}: ${err}`
@@ -83,10 +87,10 @@ export async function getFullyPopulatedListByListNumber(
 
 export async function getPopulatedList(lNumber: number) {
   try {
-    const response = await axios.get<PopulatedList>(
-      `${server}/lists/getPopulatedList/${lNumber}`
-    );
-    return response.data;
+    const response = await fetch(`${server}/lists/getPopulatedList/${lNumber}`);
+    if (!response.ok) throw new Error(response.statusText);
+    const list: PopulatedList = await response.json();
+    return list;
   } catch (err) {
     console.error(`Error fetching populated list number ${lNumber}: ${err}`);
   }
@@ -94,19 +98,21 @@ export async function getPopulatedList(lNumber: number) {
 
 export async function getList(lNumber: number) {
   try {
-    return await axios.get<List>(`${server}/lists/getList/${lNumber}`);
+    const response = await fetch(`${server}/lists/getList/${lNumber}`);
+    if (!response.ok) throw new Error(response.statusText);
+    const list: List = await response.json();
+    return list;
   } catch (err) {
-    console.error(`Error getching list number ${lNumber}: ${err}}`);
+    console.error(`Error fetching list number ${lNumber}: ${err}}`);
   }
 }
 
 export async function getListsByLanguage(language: SupportedLanguage) {
   try {
-    return (
-      await axios.get<PopulatedList[]>(
-        `${server}/lists/getAllLists/${language}`
-      )
-    ).data;
+    const response = await fetch(`${server}/lists/getAllLists/${language}`);
+    if (!response.ok) throw new Error(response.statusText);
+    const lists: PopulatedList[] = await response.json();
+    return lists;
   } catch (err) {
     console.error(`Error fetching all lists for language ${language}`);
   }
@@ -117,10 +123,13 @@ export async function getLearnedLanguageData(
   language: SupportedLanguage
 ) {
   try {
-    const response = await axios.get<LearnedLanguageWithPopulatedLists>(
+    const response = await fetch(
       `${server}/users/getLearnedLanguageData/${language}/${userId}`
     );
-    return response.data;
+    if (!response.ok) throw new Error(response.statusText);
+    const learnedLanguageData: LearnedLanguageWithPopulatedLists =
+      await response.json();
+    return learnedLanguageData;
   } catch (err) {
     console.error(
       `Error fetching learned lists for language ${language} for user ${userId}: ${err}`
@@ -134,16 +143,18 @@ export async function addListToDashboard(
   userId: string
 ) {
   try {
-    await axios.post(
-      `${server}/users/addListToDashboard/${userId}/${listNumber}`
+    const response = await fetch(
+      `${server}/users/addListToDashboard/${userId}/${listNumber}`,
+      { method: "POST" }
     );
-    revalidatePath(`/dashboard?lang=${language}`);
-    revalidatePath(`/lists/${listNumber}`);
+    if (!response.ok) throw new Error(response.statusText);
   } catch (err) {
     console.error(
-      `Error adding list number ${listNumber} user ${userId}'s dashboard.}`
+      `Error adding list number ${listNumber} user ${userId}'s dashboard: ${err}`
     );
   }
+  revalidatePath(`/dashboard?lang=${language}`);
+  revalidatePath(`/lists/${listNumber}`);
 }
 
 export async function removeListFromDashboard(
@@ -152,12 +163,14 @@ export async function removeListFromDashboard(
   userId: string
 ) {
   try {
-    await axios.post(
-      `${server}/users/removeListFromDashboard/${userId}/${listNumber}`
+    const response = await fetch(
+      `${server}/users/removeListFromDashboard/${userId}/${listNumber}`,
+      { method: "POST" }
     );
+    if (!response.ok) throw new Error(response.statusText);
   } catch (err) {
     console.error(`Error removing ${language} list 
-  #${listNumber} for user ${userId}`);
+  #${listNumber} for user ${userId}: ${err}`);
   }
   revalidatePath(`/dashboard?lang=${language}`);
   redirect(`/dashboard?lang=${language}`);
@@ -168,16 +181,20 @@ export async function addNewLanguageToLearn(
   language: SupportedLanguage
 ) {
   try {
-    await axios.post(`${server}/users/addNewLanguage/${userId}/${language}`);
-    revalidatePath(`/dashboard?lang=${language}`);
-    revalidatePath(`/dictionary?lang=${language}`);
-    revalidatePath(`/lists?lang=${language}`);
-    revalidatePath(`/languages/new`);
+    const response = await fetch(
+      `${server}/users/addNewLanguage/${userId}/${language}`,
+      { method: "POST" }
+    );
+    if (!response.ok) throw new Error(response.statusText);
   } catch (err) {
     console.error(
       `Error adding ${language} as a new language for user ${userId}: ${err}`
     );
   }
+  revalidatePath(`/dashboard?lang=${language}`);
+  revalidatePath(`/dictionary?lang=${language}`);
+  revalidatePath(`/lists?lang=${language}`);
+  revalidatePath(`/languages/new`);
 }
 
 export async function addListForNewLanguage(
@@ -185,14 +202,8 @@ export async function addListForNewLanguage(
   language: SupportedLanguage,
   listNumber: number
 ) {
-  try {
-    addNewLanguageToLearn(userId, language);
-    addListToDashboard(listNumber, language, userId);
-  } catch (err) {
-    console.error(
-      `Error adding list ${listNumber} for new language ${language} for user ${userId}.`
-    );
-  }
+  addNewLanguageToLearn(userId, language);
+  addListToDashboard(listNumber, language, userId);
 }
 
 export async function checkPassedLanguageAsync(
@@ -215,14 +226,17 @@ export async function uploadCSV(
 ) {
   let newListNumber = 0;
   try {
-    const { data } = await axios.post(`${server}/lists/uploadCSV`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+    const response = await fetch(`${server}/lists/uploadCSV`, {
+      method: "POST",
+      // headers: { "Content-Type": "multipart/form-data" },
+      body: formData,
     });
-    newListNumber = data.message as number;
+
+    if (!response.ok) throw new Error(response.statusText);
+    const data = await response.json();
+    newListNumber = data.message;
   } catch (err) {
-    if (err instanceof AxiosError) {
-      return { message: err.response?.data.message };
-    } else return { message: "Something went wrong" };
+    console.error(`Error uploading a csv file to create new list: ${err}`);
   }
   revalidatePath(`/lists/${newListNumber}`);
   redirect(`/lists/${newListNumber}`);
@@ -235,11 +249,22 @@ export async function updateLearnedItems(
   mode: LearningMode
 ) {
   try {
-    const { data } = await axios.post(
+    const response = await fetch(
       `${server}/users/updateLearnedItems/${userId}/${language}/${mode}`,
-      items,
-      { headers: { "Content-Type": "application/json" } }
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(items),
+      }
     );
+
+    if (!response.ok) throw new Error(response.statusText);
+
+    // const { data } = await axios.post(
+    //   `${server}/users/updateLearnedItems/${userId}/${language}/${mode}`,
+    //   items,
+    //   { headers: { "Content-Type": "application/json" } }
+    // );
   } catch (err) {
     console.error(`Error passing items to server: ${err}`);
   }
@@ -248,8 +273,10 @@ export async function updateLearnedItems(
 
 export async function getNextUserId() {
   try {
-    const { data } = await axios.get(`${server}/users/nextUserId`);
-    return data;
+    const response = await fetch(`${server}/users/nextUserId`);
+    if (!response.ok) throw new Error(response.statusText);
+    const nextUserId = await response.json();
+    return nextUserId;
   } catch (err) {
     console.error("Error getting latest user id", err);
   }
@@ -263,10 +290,11 @@ export async function setNativeLanguage({
   userId: string;
 }) {
   try {
-    await axios.post(
+    const response = await fetch(
       `${server}/users/setNativeLanguage/${userId}/${language}`,
-      { headers: { "Content-Type": "application/json" } }
+      { method: "POST", headers: { "Content-Type": "application/json" } }
     );
+    if (!response.ok) throw new Error(response.statusText);
   } catch (err) {
     console.error(`Error setting native language for user ${userId}: ${err}`);
   }
@@ -276,10 +304,11 @@ export async function setNativeLanguage({
 
 export async function getNativeLanguage(userId: string) {
   try {
-    const response = await axios.get(
-      `${server}/users/getNativeLanguage/${userId}`
-    );
-    return response.data as SupportedLanguage;
+    const response = await fetch(`${server}/users/getNativeLanguage/${userId}`);
+
+    if (!response.ok) throw new Error(response.statusText);
+    const nativeLanguage: SupportedLanguage = await response.json();
+    return nativeLanguage;
   } catch (err) {
     console.error(`Error getting native language for user ${userId}: ${err}`);
   }
