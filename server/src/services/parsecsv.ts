@@ -281,7 +281,7 @@ async function harvestAndUploadItemsWithoutTranslations(
             // Add as harvested item
             const itemToPush: ItemInPrep = {
               name: translation,
-              slug: translation,
+              slug: slugify(translation),
               language: lang as SupportedLanguage,
               partOfSpeech: item.partOfSpeech,
               lemmas: allFoundLemmaObjectIds,
@@ -474,8 +474,8 @@ async function defineUnitOrder(newListsId: Types.ObjectId) {
 }
 
 function slugify(title: string): string {
-  let slug = title.replace(/\s\s+/g, " ").toLowerCase();
-  slug = slug.replace(/[^äöüàáâéèêíìîóòôûúùýỳŷãõũỹa-zA-Z!?¿() ':]/gi, "");
-  slug = slug.replace(/\s/g, "-");
-  return slug;
+  return title
+    .replace(/[^äöüàáâéèêíìîóòôûúùýỳŷãõũỹa-zA-Z!?¿()': }]/gi, "")
+    .replace(/\s+/g, "-")
+    .toLowerCase();
 }

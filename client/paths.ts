@@ -12,7 +12,7 @@ const paths = {
   },
   dictionaryPath() {},
   dictionaryLanguagePath(language: SupportedLanguage) {
-    return `/dictionary?lang=${language}`;
+    return `/dictionary/${language}`;
   },
   learnPath(mode: LearningMode | "spinner", listId: number) {
     return `/learn/${mode}/${listId}`;

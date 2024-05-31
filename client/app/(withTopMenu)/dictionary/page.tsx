@@ -1,23 +1,19 @@
-import { checkPassedLanguageAsync, getUserById } from "@/app/actions";
-import getUserOnServer from "@/lib/getUserOnServer";
+import { getSupportedLanguages } from "@/app/actions";
+import Link from "next/link";
 
-interface DictionaryPageProps {
-  searchParams?: { lang: string };
-}
+export default async function DictionariesPage() {
+  const supportedLanguages = (await getSupportedLanguages()) as string[];
 
-export default async function DictionaryPage({
-  searchParams,
-}: DictionaryPageProps) {
-  const sessionUser = await getUserOnServer();
-  const user = await getUserById(sessionUser.id);
+  const dictionaryLinks = supportedLanguages.map((lang) => (
+    <div key={lang} className="ml-12">
+      <Link href={`/dictionary/${lang}`}>{lang}</Link>
+    </div>
+  ));
 
-  const passedLanguage = searchParams?.lang?.toUpperCase();
-  const validPassedLanguage =
-    (await checkPassedLanguageAsync(passedLanguage)) || user?.languages[0].code;
-
-  if (validPassedLanguage)
-    return (
-      <div>Dictionary {validPassedLanguage}: Nothing to see here just yet.</div>
-    );
-  return "Something went wrong, are you logged in?";
+  return (
+    <>
+      <div>There are multiple dictionaries, pick one</div>
+      {dictionaryLinks}
+    </>
+  );
 }

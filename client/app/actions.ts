@@ -215,7 +215,7 @@ export async function checkPassedLanguageAsync(
     !supportedLanguages ||
     !supportedLanguages.includes(passedLanguage as SupportedLanguage)
   ) {
-    return false;
+    return null;
   }
   return passedLanguage as SupportedLanguage;
 }
@@ -237,6 +237,7 @@ export async function uploadCSV(
     newListNumber = data.message;
   } catch (err) {
     console.error(`Error uploading a csv file to create new list: ${err}`);
+    return { message: "Something went wrong" };
   }
   revalidatePath(`/lists/${newListNumber}`);
   redirect(`/lists/${newListNumber}`);
@@ -314,4 +315,33 @@ export async function fetchAuthors(authors: string[]) {
   );
   const authorData = await Promise.all(authorDataPromises);
   return authorData.map((author) => author?.username).join(" & ");
+}
+
+export async function lookUpItem(language: SupportedLanguage, slug: string) {
+  try {
+    const response = await fetch(
+      `${server}/items/getBySlug/${language}/${slug}`,
+      { method: "GET" }
+    );
+    if (!response.ok) throw new Error(response.statusText);
+    return await response.json();
+  } catch (err) {
+    console.error(`Error looking up item with slug ${slug}: ${err}`);
+  }
+}
+
+export async function getAllSlugsForLanguage(language: SupportedLanguage) {
+  try {
+    const response = await fetch(
+      `${server}/items/getAllSlugsForLanguage/${language}`
+    );
+    if (!response.ok) throw new Error(response.statusText);
+    const slugLanguageObjects: {
+      language: SupportedLanguage;
+      slug: string;
+    }[] = await response.json();
+    return slugLanguageObjects;
+  } catch (err) {
+    console.error(`Error looking up all slugs for ${language}: ${err}`);
+  }
 }
