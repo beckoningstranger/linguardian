@@ -56,6 +56,7 @@ interface FormattedParsedData {
 
 interface ItemInPrep {
   name: string;
+  slug: string;
   language: SupportedLanguage;
   partOfSpeech: PartOfSpeech;
   lemmas: Types.ObjectId[];
@@ -161,7 +162,7 @@ export async function parseCSV({
               newListId: newListsId,
               newListNumber: newUploadedList.listNumber,
             });
-          }, 30000);
+          }, 50000);
         });
     }
   );
@@ -259,6 +260,7 @@ async function harvestAndUploadItemsWithoutTranslations(
   // Add as harvested item
   harvestedItems.push({
     ...item,
+    slug: slugify(item.name),
     lemmas: allFoundLemmaObjectIds,
   });
 
@@ -279,6 +281,7 @@ async function harvestAndUploadItemsWithoutTranslations(
             // Add as harvested item
             const itemToPush: ItemInPrep = {
               name: translation,
+              slug: translation,
               language: lang as SupportedLanguage,
               partOfSpeech: item.partOfSpeech,
               lemmas: allFoundLemmaObjectIds,
@@ -303,6 +306,7 @@ async function harvestAndUploadItemsWithoutTranslations(
           {
             $set: {
               name: item.name,
+              slug: slugify(item.name),
               language: item.language,
               partOfSpeech: item.partOfSpeech,
               lemmas: item.lemmas,
@@ -467,4 +471,11 @@ async function defineUnitOrder(newListsId: Types.ObjectId) {
       $set: { unitOrder: foundUnitNames },
     });
   }
+}
+
+function slugify(title: string): string {
+  let slug = title.replace(/\s\s+/g, " ").toLowerCase();
+  slug = slug.replace(/[^äöüàáâéèêíìîóòôûúùýỳŷãõũỹa-zA-Z!?¿() ':]/gi, "");
+  slug = slug.replace(/\s/g, "-");
+  return slug;
 }

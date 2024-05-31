@@ -259,12 +259,6 @@ export async function updateLearnedItems(
     );
 
     if (!response.ok) throw new Error(response.statusText);
-
-    // const { data } = await axios.post(
-    //   `${server}/users/updateLearnedItems/${userId}/${language}/${mode}`,
-    //   items,
-    //   { headers: { "Content-Type": "application/json" } }
-    // );
   } catch (err) {
     console.error(`Error passing items to server: ${err}`);
   }
