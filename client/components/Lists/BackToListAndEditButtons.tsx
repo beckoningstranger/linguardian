@@ -14,7 +14,7 @@ export default function BackToListAndEditButtons({
 }: BackToListOverviewButtonProps) {
   return (
     <>
-      <div className="mt-20 md:hidden">
+      <div className="md:hidden">
         {!listAuthors.includes(userId) && (
           <Link
             href={`/lists/${listNumber}`}

@@ -1,4 +1,5 @@
 import {
+  findItemsByName,
   getAllSlugsForLanguage,
   getOneItemById,
   getOneItemBySlug,
@@ -39,4 +40,23 @@ export async function httpGetAllSlugForLanguage(req: Request, res: Response) {
   return res
     .status(404)
     .json({ message: `Error getting slugs for ${language}: None found` });
+}
+
+export async function httpFindItemsByName(req: Request, res: Response) {
+  const language = req.params.language as SupportedLanguage;
+  const query = req.params.query as string;
+
+  const response = await findItemsByName(language, query);
+  if (response)
+    return res.status(200).json(
+      response as {
+        slug: string;
+        name: string;
+        partOfSpeech: string;
+        IPA?: string;
+      }[]
+    );
+  return res.status(404).json({
+    message: `Error finding items for ${language} and query ${query}: None found`,
+  });
 }

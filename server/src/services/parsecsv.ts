@@ -475,7 +475,7 @@ async function defineUnitOrder(newListsId: Types.ObjectId) {
 
 function slugify(title: string): string {
   return title
-    .replace(/[^äöüàáâéèêíìîóòôûúùýỳŷãõũỹa-zA-Z!?¿()': }]/gi, "")
+    .replace(/[^äöüàáâéèêíìîóòôûúùýỳŷãõũỹa-zA-Z!()': }]/gi, "")
     .replace(/\s+/g, "-")
     .toLowerCase();
 }

@@ -1,9 +1,11 @@
 import {
   checkPassedLanguageAsync,
+  findItems,
+  getLanguageFeaturesForLanguage,
   getSupportedLanguages,
-  getUserById,
 } from "@/app/actions";
-import getUserOnServer from "@/lib/getUserOnServer";
+import Search from "@/components/Dictionary/Search";
+import SearchBox from "@/components/Dictionary/SearchBox";
 
 interface DictionaryPageProps {
   params?: { language: string };
@@ -16,15 +18,21 @@ export async function generateStaticParams() {
 }
 
 export default async function DictionaryPage({ params }: DictionaryPageProps) {
-  const sessionUser = await getUserOnServer();
-  const user = await getUserById(sessionUser.id);
-
   const passedLanguage = params?.language?.toUpperCase();
   const validPassedLanguage = await checkPassedLanguageAsync(passedLanguage);
+  if (!validPassedLanguage)
+    return `No dictionary found for ${params?.language}`;
 
-  if (validPassedLanguage)
+  const languageFeatures = await getLanguageFeaturesForLanguage(
+    validPassedLanguage
+  );
+
+  if (languageFeatures)
     return (
-      <div>Dictionary {validPassedLanguage}: Nothing to see here just yet.</div>
+      <Search
+        validPassedLanguage={validPassedLanguage}
+        languageName={languageFeatures.langName}
+        findItems={findItems}
+      />
     );
-  return `No dictionary found for ${params?.language}`;
 }

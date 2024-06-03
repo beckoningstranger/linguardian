@@ -34,7 +34,7 @@ export async function generateStaticParams() {
 }
 
 interface ItemPageProps {
-  params: { language: string; slug: string };
+  params: SlugLanguageObject;
 }
 
 export default async function ItemPage({

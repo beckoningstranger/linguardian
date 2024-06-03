@@ -17,7 +17,7 @@ export default function UnitHeader({
   unitCount,
 }: UnitHeaderProps) {
   return (
-    <div className="flex h-20 items-center justify-between border-y-2 border-slate-300 text-xl md:mt-24">
+    <div className="flex h-20 items-center justify-between border-y-2 border-slate-300 text-xl md:mt-3">
       <Link
         href={`/lists/${listNumber}/${unitNumber - 1}`}
         className={`grid h-20 w-32 place-items-center text-3xl hover:bg-slate-100 hover:text-4xl hover:scale-90 rounded-md ${

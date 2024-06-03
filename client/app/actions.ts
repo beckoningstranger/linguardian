@@ -10,6 +10,7 @@ import {
   LearnedLanguageWithPopulatedLists,
   LearningMode,
   List,
+  PartOfSpeech,
   PopulatedList,
   SupportedLanguage,
   User,
@@ -343,5 +344,23 @@ export async function getAllSlugsForLanguage(language: SupportedLanguage) {
     return slugLanguageObjects;
   } catch (err) {
     console.error(`Error looking up all slugs for ${language}: ${err}`);
+  }
+}
+
+export async function findItems(language: SupportedLanguage, query: string) {
+  try {
+    const response = await fetch(
+      `${server}/items/findItems/${language}/${query}`
+    );
+    if (!response.ok) throw new Error(response.statusText);
+    const foundItems: {
+      slug: string;
+      name: string;
+      partOfSpeech: PartOfSpeech;
+      IPA?: string;
+    } = await response.json();
+    return foundItems;
+  } catch (err) {
+    console.error(`Error finding for ${language} with query ${query}: ${err}`);
   }
 }

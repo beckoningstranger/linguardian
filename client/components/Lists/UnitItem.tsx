@@ -1,6 +1,7 @@
 import { useState } from "react";
 import UnitItemText from "./UnitItemText";
 import { ItemPlusLearningInfo } from "./UnitItems";
+import Link from "next/link";
 
 interface UnitItemProps {
   item: ItemPlusLearningInfo;
@@ -17,7 +18,8 @@ export default function UnitItem({
     useState<boolean>(false);
 
   return (
-    <div
+    <Link
+      href={`/dictionary/${item.language}/${item.slug}`}
       key={item.name + item.language}
       className={`p-3 rounded-md w-full flex flex-col items-center justify-center ${bgColor(
         item.nextReview,
@@ -36,7 +38,7 @@ export default function UnitItem({
         {item.level && <span>Level {item.level}:</span>}
         <span> {nextReview(item.nextReview)}</span>
       </div>
-    </div>
+    </Link>
   );
 }
 
