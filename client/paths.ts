@@ -1,34 +1,33 @@
 import { LearningMode, SupportedLanguage } from "./types";
 
 const paths = {
-  landingPagePath() {
+  rootPath() {
     return "/";
   },
-  dashboardPath() {
-    return "/dashboard";
-  },
   dashboardLanguagePath(language: SupportedLanguage) {
-    return `/dashboard?lang=${language}`;
+    return `/${language}/dashboard`;
   },
-  dictionaryPath() {},
   dictionaryLanguagePath(language: SupportedLanguage) {
-    return `/dictionary/${language}`;
+    return `/${language}/dictionary`;
+  },
+  dictionaryItemPath(language: SupportedLanguage, slug: string) {
+    return `/${language}/dictionary/${slug}`;
   },
   learnPath(mode: LearningMode | "spinner", listId: number) {
     return `/learn/${mode}/${listId}`;
   },
   listsLanguagePath(language: SupportedLanguage) {
-    return `/lists?lang=${language}`;
+    return `/${language}/lists`;
   },
-  listsPath() {
-    return `/lists`;
+  listDetailsPath(listNumber: number, listLanguage: SupportedLanguage) {
+    return `/${listLanguage}/lists/${listNumber}`;
   },
-
-  listDetailsPath(listNumber: number) {
-    return `/lists/${listNumber}`;
-  },
-  unitDetailsPath(listNumber: number, unitNumber: number) {
-    return `/lists/${listNumber}/${unitNumber}`;
+  unitDetailsPath(
+    listNumber: number,
+    unitNumber: number,
+    language: SupportedLanguage
+  ) {
+    return `/${language}/lists/${listNumber}/${unitNumber}`;
   },
   uploadListPath() {
     return "/lists/new";

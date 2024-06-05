@@ -2,27 +2,16 @@ import Link from "next/link";
 import { FaPlus } from "react-icons/fa6";
 
 import { SupportedLanguage } from "@/types";
-import {
-  checkPassedLanguageAsync,
-  fetchAuthors,
-  getListsByLanguage,
-  getUserById,
-} from "@/app/actions";
+import { fetchAuthors, getListsByLanguage } from "@/app/actions";
 import ListStoreCard from "@/components/Lists/ListStoreCard";
-import getUserOnServer from "@/lib/getUserOnServer";
 
 interface ListStoreProps {
-  searchParams?: { lang: string };
+  params?: { language: string };
 }
 
-export default async function ListStore({ searchParams }: ListStoreProps) {
-  const sessionUser = await getUserOnServer();
-  const user = await getUserById(sessionUser.id);
-
-  const passedLanguage = searchParams?.lang?.toUpperCase() as SupportedLanguage;
-  const validPassedLanguage = await checkPassedLanguageAsync(passedLanguage);
+export default async function ListStore({ params }: ListStoreProps) {
   const listsForLanguage = await getListsByLanguage(
-    validPassedLanguage ? validPassedLanguage : user?.languages[0].code!
+    params?.language as SupportedLanguage
   );
 
   if (listsForLanguage) {
@@ -39,6 +28,7 @@ export default async function ListStore({ searchParams }: ListStoreProps) {
           difficulty={list.difficulty}
           listNumber={list.listNumber}
           key={list.listNumber}
+          language={list.language}
         />
       );
     });

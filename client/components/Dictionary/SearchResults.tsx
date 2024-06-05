@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { Result } from "./Search";
-import { SupportedLanguage } from "@/types";
+import { DictionarySearchResult, SupportedLanguage } from "@/types";
+import paths from "@/paths";
 
 interface SearchResultsProps {
-  results: Result[];
+  results: DictionarySearchResult[];
   language: SupportedLanguage;
 }
 
@@ -15,7 +15,7 @@ export default function SearchResults({
     <div className="mx-1 mt-2 grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
       {results.map((result) => (
         <Link
-          href={`/dictionary/${language}/${result.slug}`}
+          href={paths.dictionaryItemPath(language, result.slug)}
           key={result.slug}
           className="flex flex-col gap-1 bg-white"
         >
@@ -26,6 +26,7 @@ export default function SearchResults({
             <div className="text-sm text-slate-300">
               {result.IPA && result.IPA.length > 0 ? `/${result.IPA}/` : null}
             </div>
+            <div className="text-sm">{result.definition}</div>
             <div className="text-sm">{result.partOfSpeech}</div>
           </div>
         </Link>

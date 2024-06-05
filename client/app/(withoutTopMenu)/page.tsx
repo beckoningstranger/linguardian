@@ -6,7 +6,7 @@ import authOptions from "../api/auth/[...nextauth]/authOptions";
 export default async function Root() {
   const session = await getServerSession(authOptions);
 
-  if (session) redirect("/dashboard");
+  if (session) redirect("/");
 
   return (
     <main>

@@ -2,9 +2,9 @@ import { Types } from "mongoose";
 import {
   Item,
   ItemPopulatedWithTranslations,
-  PopulatedListNoAuthors,
   LearningMode,
   SupportedLanguage,
+  PopulatedList,
 } from "../types.js";
 import Lists from "./list.schema.js";
 import { getSupportedLanguages } from "./settings.model.js";
@@ -91,9 +91,7 @@ export async function getChapterNameByNumber(
 }
 
 export async function updateUnlockedReviewModes(listId: Types.ObjectId) {
-  const response = (await getPopulatedListByObjectId(
-    listId
-  )) as PopulatedListNoAuthors;
+  const response = (await getPopulatedListByObjectId(listId)) as PopulatedList;
   const supportedLanguages = await getSupportedLanguages();
   if (response && response.units && supportedLanguages) {
     // This part checks for translation mode

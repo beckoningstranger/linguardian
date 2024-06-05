@@ -2,15 +2,18 @@ import express from "express";
 import {
   httpFindItemsByName,
   httpGetAllSlugForLanguage,
+  httpGetFullyPopulatedItemBySlug,
   httpGetOneItemById,
-  httpGetOneItemBySlug,
 } from "./items.controller.js";
 
 export const itemsRouter = express.Router();
 
 itemsRouter.get("/getById/:id", httpGetOneItemById);
 
-itemsRouter.get("/getBySlug/:language/:slug", httpGetOneItemBySlug);
+itemsRouter.get(
+  "/getBySlug/:language/:slug/:userNative",
+  httpGetFullyPopulatedItemBySlug
+);
 
 itemsRouter.get("/getAllSlugsForLanguage/:language", httpGetAllSlugForLanguage);
 

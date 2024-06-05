@@ -2,10 +2,10 @@ import {
   findItemsByName,
   getAllSlugsForLanguage,
   getOneItemById,
-  getOneItemBySlug,
+  getFullyPopulatedItemBySlug,
 } from "../../models/items.model.js";
 import { Request, Response } from "express";
-import { SupportedLanguage } from "../../types.js";
+import { DictionarySearchResult, SupportedLanguage } from "../../types.js";
 
 export async function httpGetOneItemById(req: Request, res: Response) {
   const id = req.params.id;
@@ -17,11 +17,19 @@ export async function httpGetOneItemById(req: Request, res: Response) {
     .json({ message: `Error getting item with id ${id}: Item not found` });
 }
 
-export async function httpGetOneItemBySlug(req: Request, res: Response) {
+export async function httpGetFullyPopulatedItemBySlug(
+  req: Request,
+  res: Response
+) {
   const slug = req.params.slug;
   const language = req.params.language as SupportedLanguage;
+  const userNative = req.params.userNative as SupportedLanguage;
 
-  const response = await getOneItemBySlug(language, slug);
+  const response = await getFullyPopulatedItemBySlug(
+    language,
+    slug,
+    userNative
+  );
   if (!response)
     return res
       .status(404)
@@ -47,15 +55,7 @@ export async function httpFindItemsByName(req: Request, res: Response) {
   const query = req.params.query as string;
 
   const response = await findItemsByName(language, query);
-  if (response)
-    return res.status(200).json(
-      response as {
-        slug: string;
-        name: string;
-        partOfSpeech: string;
-        IPA?: string;
-      }[]
-    );
+  if (response) return res.status(200).json(response);
   return res.status(404).json({
     message: `Error finding items for ${language} and query ${query}: None found`,
   });

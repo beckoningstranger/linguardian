@@ -1,5 +1,5 @@
 import paths from "@/paths";
-import { User } from "@/types";
+import { SupportedLanguage } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -12,6 +12,7 @@ interface ListStoreCardProps {
   numberOfUnits: number | undefined;
   difficulty: string | undefined;
   listNumber: number;
+  language: SupportedLanguage;
 }
 
 export default function ListStoreCard({
@@ -23,9 +24,10 @@ export default function ListStoreCard({
   numberOfUnits = 1,
   difficulty = "Unknown",
   listNumber,
+  language,
 }: ListStoreCardProps) {
   return (
-    <Link href={paths.listDetailsPath(listNumber)}>
+    <Link href={paths.listDetailsPath(listNumber, language)}>
       <article className="flex w-[340px] flex-col justify-between rounded-md bg-slate-100 shadow-md transition-all hover:shadow-xl xl:w-[350px]">
         <div
           id="title"

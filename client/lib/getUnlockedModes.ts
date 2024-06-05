@@ -1,5 +1,6 @@
-import { getNativeLanguage, getPopulatedList } from "@/app/actions";
+import { getPopulatedList } from "@/app/actions";
 import getUserOnServer from "./getUserOnServer";
+import { SupportedLanguage } from "@/types";
 
 export default async function getUnlockedModes(listNumber: number) {
   const listData = await getPopulatedList(listNumber);
@@ -7,7 +8,7 @@ export default async function getUnlockedModes(listNumber: number) {
     throw new Error("Could not get listData");
 
   const sessionUser = await getUserOnServer();
-  const usersNativeLanguage = await getNativeLanguage(sessionUser.id);
+  const usersNativeLanguage: SupportedLanguage = sessionUser.native.name;
   if (!usersNativeLanguage)
     throw new Error("Error getting users native language");
   const unlockedReviewModes =

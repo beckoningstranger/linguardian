@@ -16,6 +16,7 @@ import PuzzleMode from "./PuzzleMode";
 import BetterSolutionInput from "./TypeSolution";
 import { useRouter } from "next/navigation";
 import { updateLearnedItems } from "@/app/actions";
+import paths from "@/paths";
 
 interface LearnAndReviewProps {
   listName: string;
@@ -129,7 +130,7 @@ export default function LearnAndReview({
 
   if (sessionEnd) {
     passDataToServer(learnedItems);
-    router.push(`/dashboard/?lang=${learnedItems[0].language}`);
+    router.push(paths.dashboardLanguagePath(learnedItems[0].language));
   }
 
   if (!sessionEnd)

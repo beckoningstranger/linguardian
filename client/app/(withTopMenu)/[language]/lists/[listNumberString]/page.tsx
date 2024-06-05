@@ -2,7 +2,6 @@ import {
   fetchAuthors,
   getLanguageFeaturesForLanguage,
   getLearnedLanguageData,
-  getNativeLanguage,
   getPopulatedList,
 } from "@/app/actions";
 import Link from "next/link";
@@ -18,7 +17,7 @@ import {
   calculateListStats,
   determineListStatus,
 } from "@/components/Lists/ListHelpers";
-import { ListStats, ListStatus } from "@/types";
+import { ListStats, ListStatus, SupportedLanguage } from "@/types";
 import ListPieChart from "@/components/Charts/ListPieChart";
 import Leaderboard from "@/components/Lists/Leaderboard";
 import AllLearningButtons from "@/components/Lists/ListOverview/AllLearningButtons";
@@ -30,12 +29,13 @@ import {
 
 interface ListDetailProps {
   params: {
+    language: SupportedLanguage;
     listNumberString: string;
   };
 }
 
 export default async function ListDetailPage({
-  params: { listNumberString },
+  params: { listNumberString, language },
 }: ListDetailProps) {
   const listNumber = parseInt(listNumberString);
 
@@ -44,7 +44,7 @@ export default async function ListDetailPage({
     throw new Error("Could not get listData");
 
   const sessionUser = await getUserOnServer();
-  const usersNativeLanguage = await getNativeLanguage(sessionUser.id);
+  const usersNativeLanguage: SupportedLanguage = sessionUser.native.name;
   if (!usersNativeLanguage)
     throw new Error("Error getting users native language");
   const unlockedReviewModes =
@@ -146,6 +146,7 @@ export default async function ListDetailPage({
               unitOrder={unitOrder}
               units={units}
               listNumber={listNumber}
+              language={language}
             />
 
             {userHasAddedThisList && listStats && listStatus && (
@@ -177,8 +178,10 @@ export default async function ListDetailPage({
         from the database. Make sure you are logged in.
       </p>
       <div>
-        <Link href={paths.dashboardPath()}>Back to Dashboard</Link>
-        <Link href={paths.listsPath()}>List Store</Link>
+        <Link href={paths.dashboardLanguagePath(language)}>
+          Back to Dashboard
+        </Link>
+        <Link href={paths.listsLanguagePath(language)}>List Store</Link>
       </div>
     </div>
   );

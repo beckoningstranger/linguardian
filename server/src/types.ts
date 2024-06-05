@@ -115,10 +115,6 @@ export type PopulatedList = Omit<List, "units"> & {
   units: { unitName: string; item: Item }[];
 };
 
-export type PopulatedListNoAuthors = Omit<List, "units"> & {
-  units: { unitName: string; item: Item }[];
-};
-
 export interface ListStats {
   unlearned: number;
   readyToReview: number;
@@ -206,4 +202,12 @@ export interface User {
   image: string;
   native: SupportedLanguage;
   languages: LearnedLanguage[];
+}
+
+export interface DictionarySearchResult {
+  name: string;
+  slug: string;
+  partOfSpeech: PartOfSpeech;
+  IPA?: string;
+  definition?: string;
 }

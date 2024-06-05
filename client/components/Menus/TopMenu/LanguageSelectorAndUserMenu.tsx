@@ -13,31 +13,27 @@ import { SupportedLanguage, User } from "@/types";
 import { MobileMenuContextProvider } from "../MobileMenu/MobileMenuContext";
 
 interface LanguageSelectorAndUserMenuProps {
-  languageAndFlag: { lang: SupportedLanguage; flag: string };
+  activeLanguageData: { name: SupportedLanguage; flag: string };
   user: User;
   setCurrentlyActiveLanguage: Function;
   allSupportedLanguages: SupportedLanguage[];
 }
 
 export default function LanguageSelectorAndUserMenu({
-  languageAndFlag,
+  activeLanguageData,
   user,
   setCurrentlyActiveLanguage,
   allSupportedLanguages,
 }: LanguageSelectorAndUserMenuProps) {
   const { toggleMobileMenu } = useMobileMenuContext();
-
   const currentBaseUrl = usePathname();
-  const showLanguageSelectorOnlyOn: string[] = [
-    "/dashboard",
-    "/dictionary",
-    "/lists",
-  ];
-  allSupportedLanguages.forEach((lang) =>
-    ["/dashboard", "/dictionary", "/lists"].forEach((entry) =>
-      showLanguageSelectorOnlyOn.push(entry + "/" + lang)
-    )
-  );
+  const showLanguageSelectorOnlyOn: string[] = [];
+
+  allSupportedLanguages.forEach((lang) => {
+    ["dashboard", "dictionary", "lists"].forEach((entry) =>
+      showLanguageSelectorOnlyOn.push("/" + lang + "/" + entry)
+    );
+  });
 
   return (
     <>
@@ -49,7 +45,7 @@ export default function LanguageSelectorAndUserMenu({
         }
       >
         <Flag
-          code={languageAndFlag.flag}
+          code={activeLanguageData.flag}
           className={`m-0 h-16 w-16 rounded-full border-2 border-slate-300 object-cover md:hidden`}
           onClick={toggleMobileMenu as MouseEventHandler}
         />
@@ -58,6 +54,7 @@ export default function LanguageSelectorAndUserMenu({
             user={user}
             setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
             allSupportedLanguages={allSupportedLanguages}
+            activeLanguageData={activeLanguageData}
           />
         </MobileMenu>
       </div>
@@ -69,7 +66,7 @@ export default function LanguageSelectorAndUserMenu({
         >
           <LanguageSelector
             setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
-            languageAndFlag={languageAndFlag}
+            activeLanguageData={activeLanguageData}
             user={user}
             allSupportedLanguages={allSupportedLanguages}
           />

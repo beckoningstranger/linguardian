@@ -5,7 +5,6 @@ import {
   getSupportedLanguages,
 } from "@/app/actions";
 import Search from "@/components/Dictionary/Search";
-import SearchBox from "@/components/Dictionary/SearchBox";
 
 interface DictionaryPageProps {
   params?: { language: string };

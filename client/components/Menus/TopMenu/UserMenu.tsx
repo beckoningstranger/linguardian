@@ -64,7 +64,7 @@ export default function UserMenu({ user }: UserMenuProps) {
               label="Logout"
               onClick={() => {
                 signOut({ callbackUrl: "/" });
-                router.push("/");
+                router.push(paths.rootPath());
               }}
             />
           </div>
@@ -110,7 +110,7 @@ export default function UserMenu({ user }: UserMenuProps) {
             className={`my-4 flex select-none justify-center transition-all md:my-0 md:h-14 md:justify-start md:border-none md:p-10 md:hover:scale-100 md:hover:bg-slate-300`}
             onClick={() => {
               signOut({ callbackUrl: "/" });
-              router.push("/");
+              router.push(paths.rootPath());
             }}
           >
             <div className="flex w-48 items-center hover:cursor-pointer">

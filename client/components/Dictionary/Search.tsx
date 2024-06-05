@@ -1,6 +1,6 @@
 "use client";
 
-import { PartOfSpeech, SupportedLanguage } from "@/types";
+import { DictionarySearchResult, SupportedLanguage } from "@/types";
 import SearchBox from "./SearchBox";
 import { useState } from "react";
 import SearchResults from "./SearchResults";
@@ -11,19 +11,14 @@ interface SearchProps {
   languageName: string;
 }
 
-export interface Result {
-  name: string;
-  slug: string;
-  partOfSpeech: PartOfSpeech;
-  IPA?: string;
-}
-
 export default function Search({
   validPassedLanguage,
   findItems,
   languageName,
 }: SearchProps) {
-  const [searchResults, setSearchResults] = useState<Result[]>([]);
+  const [searchResults, setSearchResults] = useState<DictionarySearchResult[]>(
+    []
+  );
 
   return (
     <div className="md:mx-12">

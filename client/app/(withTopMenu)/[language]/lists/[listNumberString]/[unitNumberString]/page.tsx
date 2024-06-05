@@ -1,7 +1,6 @@
 import {
   getFullyPopulatedListByListNumber,
   getLearnedLanguageData,
-  getNativeLanguage,
   getUserById,
 } from "@/app/actions";
 import ListBarChart from "@/components/Charts/ListBarChart";
@@ -21,6 +20,7 @@ import BackToListAndEditButtons from "@/components/Lists/BackToListAndEditButton
 import ListPieChart from "@/components/Charts/ListPieChart";
 import Leaderboard from "@/components/Lists/Leaderboard";
 import UnitItems from "@/components/Lists/UnitItems";
+import { SupportedLanguage } from "@/types";
 
 interface UnitDetailsProps {
   params: {
@@ -36,7 +36,7 @@ export default async function UnitDetailPage({
   const unitNumber = parseInt(unitNumberString);
   const sessionUser = await getUserOnServer();
   const unlockedModes = await getUnlockedModes(listNumber);
-  const userNative = await getNativeLanguage(sessionUser.id);
+  const userNative: SupportedLanguage = sessionUser.native.name;
   if (!userNative)
     throw new Error(`Failed to get native language of user ${sessionUser.id}`);
 

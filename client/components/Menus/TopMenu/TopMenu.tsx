@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import { LanguageFeatures, SupportedLanguage, User } from "@/types";
 import SideBarNavigation from "./Sidebar/SideBarNavigation";
@@ -14,35 +14,30 @@ interface TopMenuProps {
   user: User;
   allSupportedLanguages: SupportedLanguage[];
   allLanguageFeatures: LanguageFeatures[];
+  language: SupportedLanguage;
 }
 
 export default function TopMenu({
   user,
   allSupportedLanguages,
   allLanguageFeatures,
+  language,
 }: TopMenuProps) {
-  const searchParams = useSearchParams();
-  const passedLanguage = searchParams.get("lang");
-  const checkedPassedLanguage = checkPassedLanguageSync(
-    passedLanguage,
-    allSupportedLanguages
-  );
-
-  const languageAndFlag = getLanguageAndFlag(
-    user,
-    checkedPassedLanguage,
-    allLanguageFeatures
-  );
-
-  const [currentlyActiveLanguage, setCurrentlyActiveLanguage] = useState(
-    languageAndFlag.lang as SupportedLanguage
-  );
-
+  const activeLanguageData = getLanguageAndFlag(language, allLanguageFeatures);
+  const [currentlyActiveLanguage, setCurrentlyActiveLanguage] =
+    useState(language);
   const [showSidebar, setShowSidebar] = useState(false);
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
   };
+  const currentBaseUrl = usePathname();
+
+  allSupportedLanguages.forEach((lang) => {
+    if (currentBaseUrl.includes(lang) && lang !== currentlyActiveLanguage) {
+      setCurrentlyActiveLanguage(lang);
+    }
+  });
 
   return (
     <>
@@ -60,7 +55,7 @@ export default function TopMenu({
           <TopMiddleNavigation language={currentlyActiveLanguage} />
           <MobileMenuContextProvider>
             <LanguageSelectorAndUserMenu
-              languageAndFlag={languageAndFlag}
+              activeLanguageData={activeLanguageData}
               user={user}
               setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
               allSupportedLanguages={allSupportedLanguages}
@@ -87,23 +82,15 @@ export function checkPassedLanguageSync(
 }
 
 export function getLanguageAndFlag(
-  user: User,
   language: SupportedLanguage | false,
   allLanguageFeatures: LanguageFeatures[]
 ) {
-  const failSafeResponse = {
-    lang: user.languages[0].code,
-    flag: user.languages[0].flag,
-  };
-  if (!language) {
-    return failSafeResponse;
-  }
   const [langFeaturesForPassedLanguage] = allLanguageFeatures.filter(
     (langFeat) => langFeat.langCode === language
   );
 
   return {
-    lang: langFeaturesForPassedLanguage?.langCode,
+    name: langFeaturesForPassedLanguage?.langCode,
     flag: langFeaturesForPassedLanguage?.flagCode,
   };
 }

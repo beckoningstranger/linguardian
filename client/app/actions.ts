@@ -4,13 +4,13 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import {
+  DictionarySearchResult,
   FullyPopulatedList,
   ItemForServer,
   LanguageFeatures,
   LearnedLanguageWithPopulatedLists,
   LearningMode,
   List,
-  PartOfSpeech,
   PopulatedList,
   SupportedLanguage,
   User,
@@ -298,17 +298,17 @@ export async function setNativeLanguage({
   redirect("/");
 }
 
-export async function getNativeLanguage(userId: string) {
-  try {
-    const response = await fetch(`${server}/users/getNativeLanguage/${userId}`);
+// export async function getNativeLanguage(userId: string) {
+//   try {
+//     const response = await fetch(`${server}/users/getNativeLanguage/${userId}`);
 
-    if (!response.ok) throw new Error(response.statusText);
-    const nativeLanguage: SupportedLanguage = await response.json();
-    return nativeLanguage;
-  } catch (err) {
-    console.error(`Error getting native language for user ${userId}: ${err}`);
-  }
-}
+//     if (!response.ok) throw new Error(response.statusText);
+//     const nativeLanguage: SupportedLanguage = await response.json();
+//     return nativeLanguage;
+//   } catch (err) {
+//     console.error(`Error getting native language for user ${userId}: ${err}`);
+//   }
+// }
 
 export async function fetchAuthors(authors: string[]) {
   const authorDataPromises = authors.map(
@@ -318,10 +318,14 @@ export async function fetchAuthors(authors: string[]) {
   return authorData.map((author) => author?.username).join(" & ");
 }
 
-export async function lookUpItem(language: SupportedLanguage, slug: string) {
+export async function lookUpItemBySlug(
+  language: SupportedLanguage,
+  slug: string,
+  userNative: SupportedLanguage
+) {
   try {
     const response = await fetch(
-      `${server}/items/getBySlug/${language}/${slug}`,
+      `${server}/items/getBySlug/${language}/${slug}/${userNative}`,
       { method: "GET" }
     );
     if (!response.ok) throw new Error(response.statusText);
@@ -353,12 +357,7 @@ export async function findItems(language: SupportedLanguage, query: string) {
       `${server}/items/findItems/${language}/${query}`
     );
     if (!response.ok) throw new Error(response.statusText);
-    const foundItems: {
-      slug: string;
-      name: string;
-      partOfSpeech: PartOfSpeech;
-      IPA?: string;
-    } = await response.json();
+    const foundItems: DictionarySearchResult[] = await response.json();
     return foundItems;
   } catch (err) {
     console.error(`Error finding for ${language} with query ${query}: ${err}`);

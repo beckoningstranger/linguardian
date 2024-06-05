@@ -1,4 +1,5 @@
 import {
+  checkPassedLanguageAsync,
   getAllLanguageFeatures,
   getSupportedLanguages,
   getUserById,
@@ -11,7 +12,7 @@ import { Inter } from "next/font/google";
 import "@/app/globals.css";
 
 import { ReactNode } from "react";
-import { AuthProvider } from "../Providers";
+import { AuthProvider } from "../../Providers";
 import getUserOnServer from "@/lib/getUserOnServer";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -23,40 +24,54 @@ export const metadata: Metadata = {
 
 interface RootLayoutProps {
   children: ReactNode;
+  params: { language: string };
 }
 
 export default async function RootLayoutWithTopMenu({
   children,
+  params,
 }: RootLayoutProps) {
+  const language = params.language;
+  const validPassedLanguage = await checkPassedLanguageAsync(language);
   const sessionUser = await getUserOnServer();
   const user = await getUserById(sessionUser.id);
-
   const allSupportedLanguages = await getSupportedLanguages();
   const allLanguageFeatures = await getAllLanguageFeatures();
-  if (user && allSupportedLanguages && allLanguageFeatures)
-    return (
-      <html lang="en">
-        <body className={inter.className}>
-          <AuthProvider>
-            {user.languages[0] && (
+
+  let error: string | null = null;
+  if (
+    !user ||
+    !allSupportedLanguages ||
+    !allLanguageFeatures ||
+    !validPassedLanguage
+  )
+    error = "Connection lost";
+  if (!validPassedLanguage)
+    error = `${params?.language} is not a valid language`;
+
+  return (
+    <html lang="en">
+      <body className={inter.className}>
+        {!error &&
+          user &&
+          allSupportedLanguages &&
+          allLanguageFeatures &&
+          validPassedLanguage && (
+            <AuthProvider>
               <TopMenu
                 user={user}
                 allSupportedLanguages={allSupportedLanguages}
                 allLanguageFeatures={allLanguageFeatures}
+                language={validPassedLanguage}
               />
-            )}
-            <DashboardContainer>
-              {children}
-              <div id="PortalOutlet" />
-            </DashboardContainer>
-          </AuthProvider>
-        </body>
-      </html>
-    );
-
-  return (
-    <html>
-      <body>No User or connection lost.</body>
+              <DashboardContainer>
+                {children}
+                <div id="PortalOutlet" />
+              </DashboardContainer>
+            </AuthProvider>
+          )}
+        {error}
+      </body>
     </html>
   );
 }

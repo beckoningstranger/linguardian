@@ -13,19 +13,13 @@ import getUnlockedModes from "@/lib/getUnlockedModes";
 
 interface DashboardProps {
   user: User;
-  currentlyActiveLanguage: SupportedLanguage;
+  language: SupportedLanguage;
 }
 
-export default async function Dashboard({
-  user,
-  currentlyActiveLanguage,
-}: DashboardProps) {
+export default async function Dashboard({ user, language }: DashboardProps) {
   const userLearningDataForActiveLanguage:
     | LearnedLanguageWithPopulatedLists
-    | undefined = await getLearnedLanguageData(
-    user.id,
-    currentlyActiveLanguage
-  );
+    | undefined = await getLearnedLanguageData(user.id, language);
 
   const renderedLists = userLearningDataForActiveLanguage?.learnedLists.map(
     async (list) => {
@@ -50,7 +44,7 @@ export default async function Dashboard({
   function AddNewListOption() {
     return (
       <Link
-        href={paths.listsLanguagePath(currentlyActiveLanguage)}
+        href={paths.listsLanguagePath(language)}
         className="relative mx-6 flex h-full min-h-40 items-center justify-center rounded-md bg-slate-200 md:min-h-80 lg:mx-3 xl:mx-6"
       >
         <div className="flex size-4/5 items-center justify-center rounded-md bg-slate-100 text-6xl text-slate-600 transition-all hover:scale-110 md:text-8xl">

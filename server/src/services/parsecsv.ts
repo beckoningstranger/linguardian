@@ -12,7 +12,7 @@ import {
   Tags,
   List,
   Item,
-  PopulatedListNoAuthors,
+  PopulatedList,
 } from "../types.js";
 import Items from "../models/item.schema.js";
 import Lemmas from "../models/lemma.schema.js";
@@ -459,7 +459,7 @@ async function addItemsToList(
 async function defineUnitOrder(newListsId: Types.ObjectId) {
   const newList = (await getPopulatedListByObjectId(
     newListsId
-  )) as PopulatedListNoAuthors;
+  )) as PopulatedList;
   if (newList && newList.units) {
     const foundUnitNames: string[] = [];
     newList.units.forEach((item) => {

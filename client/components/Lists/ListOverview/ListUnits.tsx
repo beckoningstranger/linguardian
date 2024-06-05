@@ -1,17 +1,19 @@
 import paths from "@/paths";
-import { Item } from "@/types";
+import { Item, SupportedLanguage } from "@/types";
 import Link from "next/link";
 
 interface ListUnitsProps {
   unitOrder: string[];
   units: { unitName: string; item: Item }[];
   listNumber: number;
+  language: SupportedLanguage;
 }
 
 export default function ListUnits({
   unitOrder,
   units,
   listNumber,
+  language,
 }: ListUnitsProps) {
   const renderedUnits = unitOrder?.map((unitName, index) => {
     const noOfItemsInUnit = units.reduce((a, itemInUnit) => {
@@ -24,7 +26,7 @@ export default function ListUnits({
     return (
       <Link
         key={index}
-        href={paths.unitDetailsPath(listNumber, index + 1)}
+        href={paths.unitDetailsPath(listNumber, index + 1, language)}
         className="flex w-full justify-center"
       >
         <div

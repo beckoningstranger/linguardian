@@ -9,14 +9,14 @@ import {
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDebounce } from "use-debounce";
-import { SupportedLanguage } from "@/types";
-import { Result } from "./Search";
+import { DictionarySearchResult, SupportedLanguage } from "@/types";
+import paths from "@/paths";
 
 interface SearchBoxProps {
   language: SupportedLanguage;
   findItems: Function;
   languageName: string;
-  searchResults: Result[];
+  searchResults: DictionarySearchResult[];
   setSearchResults: Function;
 }
 export default function SearchBox({
@@ -38,7 +38,10 @@ export default function SearchBox({
     if (debouncedQuery.length > 1) {
       const controller = new AbortController();
       (async () => {
-        const response: Result[] = await findItems(language, debouncedQuery);
+        const response: DictionarySearchResult[] = await findItems(
+          language,
+          debouncedQuery
+        );
         response.sort((a, b) => {
           if (
             a.name.slice(0, query.length) === query &&
@@ -55,11 +58,11 @@ export default function SearchBox({
     }
   }, [debouncedQuery, language, findItems, query, setSearchResults]);
 
-  const handleChange = (result: Result | "showAll") => {
+  const handleChange = (result: DictionarySearchResult | "showAll") => {
     if (!result) return;
     if (result === "showAll") return null;
     if (typeof result === "object")
-      router.push(`/dictionary/${language}/${result.slug}`);
+      router.push(paths.dictionaryItemPath(language, result.slug));
   };
 
   return (

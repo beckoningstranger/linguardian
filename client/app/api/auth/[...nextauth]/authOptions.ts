@@ -1,4 +1,4 @@
-import { Account, NextAuthOptions, Profile } from "next-auth";
+import { Account, NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import FaceBookProvider from "next-auth/providers/facebook";
@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 
 import { connectMongoDB } from "@/lib/mongodb";
 import User from "@/models/users.model";
+import { getLanguageFeaturesForLanguage } from "@/app/actions";
 
 const GOOGLE_ID = process.env.GOOGLE_ID;
 const GOOGLE_SECRET = process.env.GOOGLE_SECRET;
@@ -64,8 +65,19 @@ const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    session({ session, token }) {
+    async session({ session, token }) {
       session.user.id = token.id;
+      const user = await User.findOne(
+        { id: session.user.id },
+        { native: 1, _id: 0 }
+      );
+      const languageFeatures = await getLanguageFeaturesForLanguage(
+        user.native
+      );
+      session.user.native = {
+        name: user.native,
+        flag: languageFeatures?.flagCode,
+      };
       return session;
     },
     async signIn({

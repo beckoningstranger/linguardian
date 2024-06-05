@@ -1,42 +1,45 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Flag from "react-world-flags";
 
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import AddNewLanguageOption from "./AddNewLanguageOption";
 import { SupportedLanguage, User } from "@/types";
+import { useSession } from "next-auth/react";
+import LanguageSelectorLink from "./LanguageSelectorLink";
 
 interface LanguageSelectorProps {
   user: User;
   setCurrentlyActiveLanguage: Function;
-  languageAndFlag: { lang: SupportedLanguage; flag: string };
+  activeLanguageData: { name: SupportedLanguage; flag: string };
   allSupportedLanguages: SupportedLanguage[];
 }
 
 export default function LanguageSelector({
   user,
   setCurrentlyActiveLanguage,
-  languageAndFlag,
+  activeLanguageData,
   allSupportedLanguages,
 }: LanguageSelectorProps) {
+  const [showAllLanguageOptions, setShowAllLanguageOptions] = useState(false);
+  const MAX_NUMBER_OF_LANGUAGES_ALLOWED = 6;
   const currentPath = usePathname();
-
   const amountOfSupportedLanguages = allSupportedLanguages.length;
 
   const allOfUsersLanguagesAndFlags: {
     name: SupportedLanguage;
-    flagCode: string;
+    flag: string;
   }[] = user.languages.map((lang) => {
-    return { name: lang.code, flagCode: lang.flag };
+    return { name: lang.code, flag: lang.flag };
   });
-  const renderedLanguagesAndFlags = allOfUsersLanguagesAndFlags.filter(
-    (lang) => lang.name !== languageAndFlag.lang
-  );
 
-  const [showAllLanguageOptions, setShowAllLanguageOptions] = useState(false);
+  const sessionUserNative: { name: SupportedLanguage; flag: string } =
+    useSession().data?.user.native;
+  const allLanguageAndFlagExceptActive = allOfUsersLanguagesAndFlags.filter(
+    (lang) => lang.name !== activeLanguageData.name
+  );
 
   const ref = useOutsideClick(
     () =>
@@ -50,7 +53,7 @@ export default function LanguageSelector({
     <div ref={ref} className="z-50 hidden md:block">
       <div>
         <Flag
-          code={languageAndFlag.flag}
+          code={activeLanguageData.flag}
           onClick={() =>
             setShowAllLanguageOptions(
               (showAllLanguageOptions) => !showAllLanguageOptions
@@ -60,26 +63,37 @@ export default function LanguageSelector({
         />
       </div>
       <div className={`absolute`}>
-        {renderedLanguagesAndFlags.map((lang) => (
-          <Link key={lang.flagCode} href={`${currentPath}?lang=${lang.name}`}>
-            <Flag
-              code={lang.flagCode}
-              onClick={() => {
-                setShowAllLanguageOptions(
-                  (showAllLanguageOptions) => !showAllLanguageOptions
-                );
-                setCurrentlyActiveLanguage(lang.name);
-              }}
-              className={`scale-0 transition-all rounded-full object-cover hover:scale-125 w-12 ${
-                showAllLanguageOptions &&
-                "scale-100 h-12 my-2 md:border border-slate-300"
-              }
-                `}
+        {allLanguageAndFlagExceptActive.map((lang) => {
+          if (!lang) return;
+          return (
+            <LanguageSelectorLink
+              setShowAllLanguageOptions={setShowAllLanguageOptions}
+              showAllLanguageOptions={showAllLanguageOptions}
+              flag={lang.flag}
+              language={lang.name}
+              currentPath={currentPath}
+              setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
+              key={lang.flag}
             />
-          </Link>
-        ))}
+          );
+        })}
+        {currentPath.includes("dictionary") &&
+          sessionUserNative?.name &&
+          activeLanguageData?.name &&
+          activeLanguageData.name !== sessionUserNative.name && (
+            <LanguageSelectorLink
+              setShowAllLanguageOptions={setShowAllLanguageOptions}
+              showAllLanguageOptions={showAllLanguageOptions}
+              flag={sessionUserNative.flag}
+              language={sessionUserNative.name}
+              currentPath={currentPath}
+              setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
+              key={sessionUserNative.flag}
+            />
+          )}
         {showAllLanguageOptions &&
-          renderedLanguagesAndFlags.length < 6 &&
+          allLanguageAndFlagExceptActive.length <
+            MAX_NUMBER_OF_LANGUAGES_ALLOWED &&
           moreLanguagesToLearn(user, amountOfSupportedLanguages) && (
             <AddNewLanguageOption />
           )}
