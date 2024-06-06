@@ -5,7 +5,7 @@ import {
   getFullyPopulatedItemBySlug,
 } from "../../models/items.model.js";
 import { Request, Response } from "express";
-import { DictionarySearchResult, SupportedLanguage } from "../../types.js";
+import { SupportedLanguage } from "../../types.js";
 
 export async function httpGetOneItemById(req: Request, res: Response) {
   const id = req.params.id;
@@ -51,12 +51,17 @@ export async function httpGetAllSlugForLanguage(req: Request, res: Response) {
 }
 
 export async function httpFindItemsByName(req: Request, res: Response) {
-  const language = req.params.language as SupportedLanguage;
+  const languagesString = req.params.languages as string;
   const query = req.params.query as string;
 
-  const response = await findItemsByName(language, query);
+  const languages = languagesString.split(",");
+
+  const response = await findItemsByName(
+    languages as SupportedLanguage[],
+    query
+  );
   if (response) return res.status(200).json(response);
   return res.status(404).json({
-    message: `Error finding items for ${language} and query ${query}: None found`,
+    message: `Error finding items for ${languages} and query ${query}: None found`,
   });
 }

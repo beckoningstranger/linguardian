@@ -17,4 +17,4 @@ itemsRouter.get(
 
 itemsRouter.get("/getAllSlugsForLanguage/:language", httpGetAllSlugForLanguage);
 
-itemsRouter.get("/findItems/:language/:query", httpFindItemsByName);
+itemsRouter.get("/findItems/:languages/:query", httpFindItemsByName);

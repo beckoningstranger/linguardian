@@ -13,16 +13,14 @@ import { DictionarySearchResult, SupportedLanguage } from "@/types";
 import paths from "@/paths";
 
 interface SearchBoxProps {
-  language: SupportedLanguage;
+  searchLanguages: SupportedLanguage[];
   findItems: Function;
-  languageName: string;
   searchResults: DictionarySearchResult[];
   setSearchResults: Function;
 }
 export default function SearchBox({
-  language,
+  searchLanguages,
   findItems,
-  languageName,
   searchResults,
   setSearchResults,
 }: SearchBoxProps) {
@@ -39,7 +37,7 @@ export default function SearchBox({
       const controller = new AbortController();
       (async () => {
         const response: DictionarySearchResult[] = await findItems(
-          language,
+          searchLanguages,
           debouncedQuery
         );
         response.sort((a, b) => {
@@ -56,13 +54,13 @@ export default function SearchBox({
     } else {
       setSearchResults([]);
     }
-  }, [debouncedQuery, language, findItems, query, setSearchResults]);
+  }, [debouncedQuery, searchLanguages, findItems, query, setSearchResults]);
 
   const handleChange = (result: DictionarySearchResult | "showAll") => {
     if (!result) return;
     if (result === "showAll") return null;
     if (typeof result === "object")
-      router.push(paths.dictionaryItemPath(language, result.slug));
+      router.push(paths.dictionaryItemPath(result.language, result.slug));
   };
 
   return (
@@ -70,7 +68,7 @@ export default function SearchBox({
       <div className="relative flex w-full flex-col justify-stretch rounded-md px-2">
         <Combobox onChange={handleChange}>
           <ComboboxInput
-            placeholder={`Search our ${languageName} dictionary`}
+            placeholder={`Search all of your languages...`}
             className="flex h-20 w-full rounded px-6 text-xl outline-none"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -110,7 +108,9 @@ export default function SearchBox({
                         focus ? "bg-slate-100" : ""
                       }`}
                     >
-                      <div>{result.name} </div>
+                      <div>
+                        {result.language} - {result.name}{" "}
+                      </div>
                       <div className="text-sm text-slate-300">
                         {result.IPA && result.IPA.length > 0
                           ? `/${result.IPA}/`

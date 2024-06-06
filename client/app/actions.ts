@@ -350,15 +350,15 @@ export async function getAllSlugsForLanguage(language: SupportedLanguage) {
   }
 }
 
-export async function findItems(language: SupportedLanguage, query: string) {
+export async function findItems(languages: SupportedLanguage[], query: string) {
   try {
     const response = await fetch(
-      `${server}/items/findItems/${language}/${query}`
+      `${server}/items/findItems/${languages}/${query}`
     );
     if (!response.ok) throw new Error(response.statusText);
     const foundItems: DictionarySearchResult[] = await response.json();
     return foundItems;
   } catch (err) {
-    console.error(`Error finding for ${language} with query ${query}: ${err}`);
+    console.error(`Error looking up items for query ${query}: ${err}`);
   }
 }

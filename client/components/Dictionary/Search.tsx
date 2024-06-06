@@ -4,18 +4,13 @@ import { DictionarySearchResult, SupportedLanguage } from "@/types";
 import SearchBox from "./SearchBox";
 import { useState } from "react";
 import SearchResults from "./SearchResults";
+import { findItems } from "@/app/actions";
 
 interface SearchProps {
-  validPassedLanguage: SupportedLanguage;
-  findItems: Function;
-  languageName: string;
+  resultLanguages: SupportedLanguage[];
 }
 
-export default function Search({
-  validPassedLanguage,
-  findItems,
-  languageName,
-}: SearchProps) {
+export default function Search({ resultLanguages }: SearchProps) {
   const [searchResults, setSearchResults] = useState<DictionarySearchResult[]>(
     []
   );
@@ -23,15 +18,12 @@ export default function Search({
   return (
     <div className="md:mx-12">
       <SearchBox
-        language={validPassedLanguage}
+        searchLanguages={resultLanguages}
         findItems={findItems}
-        languageName={languageName}
         searchResults={searchResults}
         setSearchResults={setSearchResults}
       />
-      {searchResults && (
-        <SearchResults results={searchResults} language={validPassedLanguage} />
-      )}
+      {searchResults && <SearchResults results={searchResults} />}
     </div>
   );
 }

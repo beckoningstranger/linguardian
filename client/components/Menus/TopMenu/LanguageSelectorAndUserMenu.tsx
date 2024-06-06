@@ -54,7 +54,6 @@ export default function LanguageSelectorAndUserMenu({
             user={user}
             setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
             allSupportedLanguages={allSupportedLanguages}
-            activeLanguageData={activeLanguageData}
           />
         </MobileMenu>
       </div>

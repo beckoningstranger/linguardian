@@ -210,4 +210,19 @@ export interface DictionarySearchResult {
   partOfSpeech: PartOfSpeech;
   IPA?: string;
   definition?: string;
+  language: SupportedLanguage;
+}
+
+export interface LanguageWithFlag {
+  name: SupportedLanguage;
+  flag: string;
+}
+
+export interface SessionUser {
+  name: string;
+  email: string;
+  image: string;
+  id: string;
+  native: LanguageWithFlag;
+  isLearning: LanguageWithFlag[];
 }

@@ -7,7 +7,6 @@ import Flag from "react-world-flags";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import AddNewLanguageOption from "./AddNewLanguageOption";
 import { SupportedLanguage, User } from "@/types";
-import { useSession } from "next-auth/react";
 import LanguageSelectorLink from "./LanguageSelectorLink";
 
 interface LanguageSelectorProps {
@@ -35,8 +34,6 @@ export default function LanguageSelector({
     return { name: lang.code, flag: lang.flag };
   });
 
-  const sessionUserNative: { name: SupportedLanguage; flag: string } =
-    useSession().data?.user.native;
   const allLanguageAndFlagExceptActive = allOfUsersLanguagesAndFlags.filter(
     (lang) => lang.name !== activeLanguageData.name
   );
@@ -77,20 +74,6 @@ export default function LanguageSelector({
             />
           );
         })}
-        {currentPath.includes("dictionary") &&
-          sessionUserNative?.name &&
-          activeLanguageData?.name &&
-          activeLanguageData.name !== sessionUserNative.name && (
-            <LanguageSelectorLink
-              setShowAllLanguageOptions={setShowAllLanguageOptions}
-              showAllLanguageOptions={showAllLanguageOptions}
-              flag={sessionUserNative.flag}
-              language={sessionUserNative.name}
-              currentPath={currentPath}
-              setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
-              key={sessionUserNative.flag}
-            />
-          )}
         {showAllLanguageOptions &&
           allLanguageAndFlagExceptActive.length <
             MAX_NUMBER_OF_LANGUAGES_ALLOWED &&

@@ -23,11 +23,19 @@ export async function getAllSlugsForLanguage(language: SupportedLanguage) {
 }
 
 export async function findItemsByName(
-  language: SupportedLanguage,
+  languages: SupportedLanguage[],
   query: string
 ) {
   return await Items.find(
-    { name: { $regex: query }, language: language },
-    { slug: 1, name: 1, _id: 0, partOfSpeech: 1, IPA: 1, definition: 1 }
+    { name: { $regex: query }, language: { $in: languages } },
+    {
+      slug: 1,
+      name: 1,
+      _id: 0,
+      partOfSpeech: 1,
+      IPA: 1,
+      definition: 1,
+      language: 1,
+    }
   );
 }
