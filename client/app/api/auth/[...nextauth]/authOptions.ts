@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 import { connectMongoDB } from "@/lib/mongodb";
 import User from "@/models/users.model";
 import { getLanguageFeaturesForLanguage } from "@/app/actions";
+import { LearnedLanguage, SupportedLanguage } from "@/types";
 
 const GOOGLE_ID = process.env.GOOGLE_ID;
 const GOOGLE_SECRET = process.env.GOOGLE_SECRET;
@@ -69,8 +70,9 @@ const authOptions: NextAuthOptions = {
       session.user.id = token.id;
       const user = await User.findOne(
         { id: session.user.id },
-        { native: 1, _id: 0 }
+        { native: 1, languages: 1, _id: 0 }
       );
+      if (!user.native) return session;
       const languageFeatures = await getLanguageFeaturesForLanguage(
         user.native
       );
@@ -78,6 +80,13 @@ const authOptions: NextAuthOptions = {
         name: user.native,
         flag: languageFeatures?.flagCode,
       };
+      const userIsLearning: { name: SupportedLanguage; flag: string }[] =
+        user.languages.map((lang: LearnedLanguage) => ({
+          name: lang.code,
+          flag: lang.flag,
+        }));
+      if (!user.languages || userIsLearning.length < 1) return session;
+      session.user.isLearning = userIsLearning;
       return session;
     },
     async signIn({

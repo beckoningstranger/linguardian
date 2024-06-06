@@ -1,4 +1,5 @@
 "use client";
+import paths from "@/paths";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
@@ -58,7 +59,7 @@ export default function RegisterForm() {
         await signIn("credentials", {
           email,
           password,
-          callbackUrl: "/nativelanguage",
+          callbackUrl: paths.setNativeLanguagePath(),
         });
       } else {
         console.error("User registration failed");

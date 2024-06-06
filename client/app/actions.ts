@@ -15,6 +15,7 @@ import {
   SupportedLanguage,
   User,
 } from "@/types";
+import paths from "@/paths";
 
 const server = process.env.SERVER_URL;
 
@@ -294,8 +295,7 @@ export async function setNativeLanguage({
   } catch (err) {
     console.error(`Error setting native language for user ${userId}: ${err}`);
   }
-  revalidatePath("/dashboard");
-  redirect("/");
+  redirect(paths.signInPath());
 }
 
 // export async function getNativeLanguage(userId: string) {

@@ -1,3 +1,4 @@
+import { setNativeLanguage } from "./app/actions";
 import { LearningMode, SupportedLanguage } from "./types";
 
 const paths = {
@@ -38,14 +39,20 @@ const paths = {
   aboutPath() {
     return `/about`;
   },
-  newLanguagePath() {
+  learnNewLanguagePath() {
     return `/languages/new`;
+  },
+  setNativeLanguagePath() {
+    return `/setNativeLanguage`;
   },
   profilePath() {
     return `/profile`;
   },
   settingsPath() {
     return `/settings`;
+  },
+  signInPath() {
+    return `/signIn`;
   },
 };
 

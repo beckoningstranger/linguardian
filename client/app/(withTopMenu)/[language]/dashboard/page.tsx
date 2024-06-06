@@ -3,6 +3,7 @@ import { getUserById } from "@/app/actions";
 import { redirect } from "next/navigation";
 import getUserOnServer from "@/lib/getUserOnServer";
 import { SupportedLanguage } from "@/types";
+import paths from "@/paths";
 
 interface DashboardPageProps {
   params?: { language: string };
@@ -12,13 +13,15 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const sessionUser = await getUserOnServer();
   const user = await getUserById(sessionUser.id);
 
-  if (!user?.native) redirect("/nativelanguage");
-  if (!user?.languages || user?.languages.length === 0)
-    redirect("languages/new");
+  console.log("Dashboard page.tsx", sessionUser);
+
+  if (!sessionUser.native) redirect(paths.setNativeLanguagePath());
+  if (!sessionUser.isLearning) redirect(paths.learnNewLanguagePath());
 
   if (!user) return "No user";
 
-  return (
-    <Dashboard user={user} language={params?.language as SupportedLanguage} />
-  );
+  if (user && sessionUser.native && sessionUser.isLearning)
+    return (
+      <Dashboard user={user} language={params?.language as SupportedLanguage} />
+    );
 }

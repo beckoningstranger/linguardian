@@ -1,5 +1,6 @@
 import { addNewLanguageToLearn, getUserById } from "@/app/actions";
 import getUserOnServer from "@/lib/getUserOnServer";
+import paths from "@/paths";
 import { SupportedLanguage } from "@/types";
 import { redirect } from "next/navigation";
 
@@ -17,7 +18,7 @@ export default async function AddNewLanguageToLearn({
     const { lang } = searchParams;
     await addNewLanguageToLearn(user.id, lang);
 
-    redirect(`/lists?lang=${lang}`);
+    redirect(paths.listsLanguagePath(lang));
   } else {
     return "Page must be called with correct searchParams";
   }

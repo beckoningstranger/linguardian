@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import paths from "@/paths";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -25,12 +26,11 @@ export default function LoginForm() {
         redirect: false,
       });
 
-      if (res && res.error) {
+      if (res?.error) {
         setError("Invalid Credentials");
         return;
       }
-
-      router.replace("dashboard");
+      router.replace(paths.signInPath());
     } catch (err) {
       console.error(err);
     }
@@ -61,7 +61,7 @@ export default function LoginForm() {
           <button
             className="cursor-pointer bg-red-400 px-6 py-2 font-bold text-white"
             onClick={() => {
-              signIn("google", { callbackUrl: "/dashboard" });
+              signIn("google", { callbackUrl: paths.signInPath() });
             }}
           >
             Login with Google
@@ -69,7 +69,7 @@ export default function LoginForm() {
           <button
             className="cursor-pointer bg-blue-500 px-6 py-2 font-bold text-white"
             onClick={() => {
-              signIn("facebook", { callbackUrl: "/dashboard" });
+              signIn("facebook", { callbackUrl: paths.signInPath() });
             }}
           >
             Login with Facebook
