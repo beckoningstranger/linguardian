@@ -4,6 +4,7 @@ import { FaPlus } from "react-icons/fa6";
 import { SupportedLanguage } from "@/types";
 import { fetchAuthors, getListsByLanguage } from "@/app/actions";
 import ListStoreCard from "@/components/Lists/ListStoreCard";
+import paths from "@/paths";
 
 interface ListStoreProps {
   params?: { language: string };
@@ -39,7 +40,7 @@ export default async function ListStore({ params }: ListStoreProps) {
           {renderedLists}
         </div>
         <Link
-          href="/lists/new"
+          href={paths.newListPath(params?.language as SupportedLanguage)}
           className="fixed bottom-1 right-1 m-2 grid h-16 w-16 place-items-center rounded-full border border-white bg-green-400 p-3"
         >
           <FaPlus className="text-2xl font-semibold text-white" />

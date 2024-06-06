@@ -79,6 +79,7 @@ export default async function UnitDetailPage({
         listAuthors={listData.authors}
         listNumber={listNumber}
         userId={user.id}
+        listLanguage={listData.language}
       />
       <UnitHeader
         unitNumber={unitNumber}
@@ -86,6 +87,7 @@ export default async function UnitDetailPage({
         itemNumber={unitItems.length}
         listNumber={listNumber}
         unitCount={listData.unitOrder.length}
+        listLanguage={listData.language}
       />
       {userHasAddedThisList && (
         <>

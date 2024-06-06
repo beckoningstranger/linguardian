@@ -155,8 +155,8 @@ export async function addListToDashboard(
       `Error adding list number ${listNumber} user ${userId}'s dashboard: ${err}`
     );
   }
-  revalidatePath(`/dashboard?lang=${language}`);
-  revalidatePath(`/lists/${listNumber}`);
+  revalidatePath(paths.dashboardLanguagePath(language));
+  revalidatePath(paths.listDetailsPath(listNumber, language));
 }
 
 export async function removeListFromDashboard(
@@ -174,8 +174,8 @@ export async function removeListFromDashboard(
     console.error(`Error removing ${language} list 
   #${listNumber} for user ${userId}: ${err}`);
   }
-  revalidatePath(`/dashboard?lang=${language}`);
-  redirect(`/dashboard?lang=${language}`);
+  revalidatePath(paths.dashboardLanguagePath(language));
+  redirect(paths.dashboardLanguagePath(language));
 }
 
 export async function addNewLanguageToLearn(
@@ -193,10 +193,6 @@ export async function addNewLanguageToLearn(
       `Error adding ${language} as a new language for user ${userId}: ${err}`
     );
   }
-  revalidatePath(`/dashboard?lang=${language}`);
-  revalidatePath(`/dictionary?lang=${language}`);
-  revalidatePath(`/lists?lang=${language}`);
-  revalidatePath(`/languages/new`);
 }
 
 export async function addListForNewLanguage(
@@ -227,22 +223,25 @@ export async function uploadCSV(
   formData: FormData
 ) {
   let newListNumber = 0;
+  let newListLanguage;
   try {
     const response = await fetch(`${server}/lists/uploadCSV`, {
       method: "POST",
-      // headers: { "Content-Type": "multipart/form-data" },
       body: formData,
     });
 
     if (!response.ok) throw new Error(response.statusText);
     const data = await response.json();
-    newListNumber = data.message;
+    newListNumber = data.message.listNumber;
+    newListLanguage = data.message.listLanguage;
   } catch (err) {
     console.error(`Error uploading a csv file to create new list: ${err}`);
     return { message: "Something went wrong" };
   }
-  revalidatePath(`/lists/${newListNumber}`);
-  redirect(`/lists/${newListNumber}`);
+  revalidatePath(paths.listsLanguagePath(newListLanguage));
+  redirect(
+    paths.listDetailsPath(newListNumber, newListLanguage as SupportedLanguage)
+  );
 }
 
 export async function updateLearnedItems(
@@ -265,7 +264,7 @@ export async function updateLearnedItems(
   } catch (err) {
     console.error(`Error passing items to server: ${err}`);
   }
-  revalidatePath(`/dashboard?lang=${language}`);
+  revalidatePath(paths.dashboardLanguagePath(language));
 }
 
 export async function getNextUserId() {

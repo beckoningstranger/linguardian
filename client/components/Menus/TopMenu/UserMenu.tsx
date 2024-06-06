@@ -63,8 +63,7 @@ export default function UserMenu({ user }: UserMenuProps) {
               icon={<RiLogoutBoxLine />}
               label="Logout"
               onClick={() => {
-                signOut({ callbackUrl: "/" });
-                router.push(paths.rootPath());
+                signOut({ callbackUrl: paths.rootPath() });
               }}
             />
           </div>

@@ -2,6 +2,7 @@ import { SupportedLanguage } from "@/types";
 import ItemPageField from "./ItemPageField";
 import Link from "next/link";
 import ItemPageContainer from "./ItemPageContainer";
+import paths from "@/paths";
 
 interface ItemPageDEFTRProps {
   definition?: string;
@@ -21,7 +22,7 @@ export default function ItemPageDEFTRCO({
 
   const renderedTranslations = translations?.map((translation) => (
     <Link
-      href={`/dictionary/${translation.language}/${translation.slug}`}
+      href={paths.dictionaryItemPath(translation.language, translation.slug)}
       key={translation.slug}
     >
       <div className="ml-2 hover:underline">{translation.name}</div>

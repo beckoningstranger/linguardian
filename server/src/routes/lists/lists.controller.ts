@@ -12,12 +12,7 @@ import {
   getList,
   getFullyPopulatedListByListNumber,
 } from "../../models/lists.model.js";
-import {
-  FullyPopulatedList,
-  Item,
-  PopulatedList,
-  SupportedLanguage,
-} from "../../types.js";
+import { FullyPopulatedList, SupportedLanguage } from "../../types.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -35,7 +30,9 @@ export async function httpPostCSV(req: Request, res: Response) {
 
       // Now check whether we can unlock review modes
       await updateUnlockedReviewModes(newListId);
-      return res.status(200).json({ message: newListNumber });
+      return res.status(200).json({
+        message: { listNumber: newListNumber, listLanguage: req.body.language },
+      });
     }
   } catch (err) {
     return res.status(400).json({

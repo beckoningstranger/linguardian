@@ -2,6 +2,7 @@ import { useState } from "react";
 import UnitItemText from "./UnitItemText";
 import { ItemPlusLearningInfo } from "./UnitItems";
 import Link from "next/link";
+import paths from "@/paths";
 
 interface UnitItemProps {
   item: ItemPlusLearningInfo;
@@ -19,7 +20,7 @@ export default function UnitItem({
 
   return (
     <Link
-      href={`/dictionary/${item.language}/${item.slug}`}
+      href={paths.dictionaryItemPath(item.language, item.slug)}
       key={item.name + item.language}
       className={`p-3 rounded-md w-full flex flex-col items-center justify-center ${bgColor(
         item.nextReview,

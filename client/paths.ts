@@ -23,6 +23,9 @@ const paths = {
   listDetailsPath(listNumber: number, listLanguage: SupportedLanguage) {
     return `/${listLanguage}/lists/${listNumber}`;
   },
+  newListPath(language: SupportedLanguage) {
+    return `/${language}/lists/new`;
+  },
   unitDetailsPath(
     listNumber: number,
     unitNumber: number,
@@ -53,6 +56,9 @@ const paths = {
   },
   signInPath() {
     return `/signIn`;
+  },
+  registerPath() {
+    return `/register`;
   },
 };
 

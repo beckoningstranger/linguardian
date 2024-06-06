@@ -80,7 +80,7 @@ export default function LoginForm() {
             {error}
           </div>
         )}
-        <Link href={"/register"} className="mt-3 text-right text-sm">
+        <Link href={paths.registerPath()} className="mt-3 text-right text-sm">
           Don&apos;t have an account?{" "}
           <span className="underline">Register</span>
         </Link>

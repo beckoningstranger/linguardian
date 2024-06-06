@@ -1,3 +1,5 @@
+import paths from "@/paths";
+import { SupportedLanguage } from "@/types";
 import Link from "next/link";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
@@ -6,6 +8,7 @@ interface UnitHeaderProps {
   unitNumber: number;
   itemNumber: number;
   listNumber: number;
+  listLanguage: SupportedLanguage;
   unitCount: number;
 }
 
@@ -14,12 +17,13 @@ export default function UnitHeader({
   unitNumber,
   itemNumber,
   listNumber,
+  listLanguage,
   unitCount,
 }: UnitHeaderProps) {
   return (
     <div className="flex h-20 items-center justify-between border-y-2 border-slate-300 text-xl md:mt-3">
       <Link
-        href={`/lists/${listNumber}/${unitNumber - 1}`}
+        href={paths.unitDetailsPath(listNumber, unitNumber - 1, listLanguage)}
         className={`grid h-20 w-32 place-items-center text-3xl hover:bg-slate-100 hover:text-4xl hover:scale-90 rounded-md ${
           unitNumber < 2 ? "pointer-events-none text-gray-400" : ""
         }`}
@@ -37,7 +41,7 @@ export default function UnitHeader({
         </div>
       </div>
       <Link
-        href={`/lists/${listNumber}/${unitNumber + 1}`}
+        href={paths.unitDetailsPath(listNumber, unitNumber + 1, listLanguage)}
         className={`grid h-20 w-32 place-items-center text-3xl hover:bg-slate-100 hover:text-4xl hover:scale-90 rounded-md ${
           unitNumber > unitCount - 1 ? "pointer-events-none text-gray-400" : ""
         }`}

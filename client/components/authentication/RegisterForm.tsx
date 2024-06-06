@@ -107,7 +107,7 @@ export default function RegisterForm() {
               {error}
             </div>
           )}
-          <Link href={"/"} className="mt-3 text-right text-sm">
+          <Link href={paths.rootPath()} className="mt-3 text-right text-sm">
             Already have an account? <span className="underline">Login</span>
           </Link>
         </form>

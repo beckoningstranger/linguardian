@@ -13,8 +13,6 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const sessionUser = await getUserOnServer();
   const user = await getUserById(sessionUser.id);
 
-  console.log("Dashboard page.tsx", sessionUser);
-
   if (!sessionUser.native) redirect(paths.setNativeLanguagePath());
   if (!sessionUser.isLearning) redirect(paths.learnNewLanguagePath());
 
