@@ -2,9 +2,9 @@ export { default } from "next-auth/middleware";
 
 export const config = {
   matcher: [
-    "/dashboard/:path",
+    "/FR/dashboard/:path",
     "/lists/:path",
-    "/dictionary/:path*",
+    "/FR/dictionary/:path*",
     "/social/:path*",
     "/learn/:path*",
     "/languages/:path*",

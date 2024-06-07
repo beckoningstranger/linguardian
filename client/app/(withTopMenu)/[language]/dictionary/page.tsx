@@ -13,12 +13,14 @@ export async function generateStaticParams() {
 }
 
 export default async function DictionaryPage({ params }: DictionaryPageProps) {
-  const sessionUser = await getUserOnServer();
-  const allUserLanguages = (() => {
-    const array = sessionUser.isLearning.map((_) => _.name);
-    array.push(sessionUser.native.name);
-    return array;
-  })();
+  const userLanguagesWithFlags = await getUserLanguagesWithFlags();
 
-  if (allUserLanguages) return <Search resultLanguages={allUserLanguages} />;
+  return <Search userLanguagesWithFlags={userLanguagesWithFlags} />;
+}
+
+async function getUserLanguagesWithFlags() {
+  const sessionUser = await getUserOnServer();
+  const userLanguagesWithFlags = sessionUser.isLearning;
+  userLanguagesWithFlags.push(sessionUser.native);
+  return userLanguagesWithFlags;
 }

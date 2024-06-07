@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs";
 import { connectMongoDB } from "@/lib/mongodb";
 import User from "@/models/users.model";
 import { getLanguageFeaturesForLanguage } from "@/app/actions";
-import { LearnedLanguage, SupportedLanguage } from "@/types";
+import { LanguageWithFlag, LearnedLanguage, SupportedLanguage } from "@/types";
 
 const GOOGLE_ID = process.env.GOOGLE_ID;
 const GOOGLE_SECRET = process.env.GOOGLE_SECRET;
@@ -54,7 +54,7 @@ const authOptions: NextAuthOptions = {
     signIn: "/",
   },
   callbacks: {
-    jwt({ token, user, account }) {
+    async jwt({ token, user, account }) {
       if (user && account) {
         token.email = user.email;
         token.name = user.name;
@@ -64,29 +64,34 @@ const authOptions: NextAuthOptions = {
             ? user.id
             : account.provider + account.providerAccountId;
       }
+      const userData = await User.findOne(
+        { id: token.id },
+        { native: 1, languages: 1, _id: 0 }
+      );
+      if (!token.native) {
+        const languageFeatures = await getLanguageFeaturesForLanguage(
+          userData.native
+        );
+        token.native = {
+          name: userData.native,
+          flag: languageFeatures?.flagCode,
+        };
+      }
+      if (!token.isLearning) {
+        const userIsLearning: LanguageWithFlag[] = userData.languages.map(
+          (lang: LearnedLanguage) => ({
+            name: lang.code,
+            flag: lang.flag,
+          })
+        );
+        token.isLearning = userIsLearning;
+      }
       return token;
     },
     async session({ session, token }) {
       session.user.id = token.id;
-      const user = await User.findOne(
-        { id: session.user.id },
-        { native: 1, languages: 1, _id: 0 }
-      );
-      if (!user.native) return session;
-      const languageFeatures = await getLanguageFeaturesForLanguage(
-        user.native
-      );
-      session.user.native = {
-        name: user.native,
-        flag: languageFeatures?.flagCode,
-      };
-      const userIsLearning: { name: SupportedLanguage; flag: string }[] =
-        user.languages.map((lang: LearnedLanguage) => ({
-          name: lang.code,
-          flag: lang.flag,
-        }));
-      if (!user.languages || userIsLearning.length < 1) return session;
-      session.user.isLearning = userIsLearning;
+      session.user.native = token.native;
+      session.user.isLearning = token.isLearning;
       return session;
     },
     async signIn({

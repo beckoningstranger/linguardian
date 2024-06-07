@@ -1,29 +1,42 @@
 "use client";
 
-import { DictionarySearchResult, SupportedLanguage } from "@/types";
-import SearchBox from "./SearchBox";
 import { useState } from "react";
+import {
+  DictionarySearchResult,
+  LanguageWithFlag,
+  SupportedLanguage,
+} from "@/types";
 import SearchResults from "./SearchResults";
 import { findItems } from "@/app/actions";
+import SearchBox from "./SearchBox";
 
 interface SearchProps {
-  resultLanguages: SupportedLanguage[];
+  userLanguagesWithFlags: LanguageWithFlag[];
 }
-
-export default function Search({ resultLanguages }: SearchProps) {
+export default function Search({ userLanguagesWithFlags }: SearchProps) {
   const [searchResults, setSearchResults] = useState<DictionarySearchResult[]>(
     []
   );
 
+  const getFlag = (langCode: SupportedLanguage) => {
+    return userLanguagesWithFlags.reduce((a, curr) => {
+      if (curr.name === langCode) a = curr.flag;
+      return a;
+    }, "" as string);
+  };
+
   return (
     <div className="md:mx-12">
       <SearchBox
-        searchLanguages={resultLanguages}
         findItems={findItems}
         searchResults={searchResults}
         setSearchResults={setSearchResults}
+        userLanguagesWithFlags={userLanguagesWithFlags}
+        getFlag={getFlag}
       />
-      {searchResults && <SearchResults results={searchResults} />}
+      {searchResults && (
+        <SearchResults results={searchResults} getFlag={getFlag} />
+      )}
     </div>
   );
 }

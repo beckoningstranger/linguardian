@@ -1,36 +1,31 @@
 "use client";
 
-import {
-  Combobox,
-  ComboboxInput,
-  ComboboxOption,
-  ComboboxOptions,
-} from "@headlessui/react";
+import { Combobox, ComboboxInput } from "@headlessui/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDebounce } from "use-debounce";
-import { DictionarySearchResult, SupportedLanguage } from "@/types";
+import { DictionarySearchResult, LanguageWithFlag } from "@/types";
 import paths from "@/paths";
 
 interface SearchBoxProps {
-  searchLanguages: SupportedLanguage[];
   findItems: Function;
   searchResults: DictionarySearchResult[];
+  userLanguagesWithFlags: LanguageWithFlag[];
   setSearchResults: Function;
+  getFlag: Function;
 }
 export default function SearchBox({
-  searchLanguages,
   findItems,
   searchResults,
   setSearchResults,
+  userLanguagesWithFlags,
 }: SearchBoxProps) {
   const router = useRouter();
   const [query, setQuery] = useState<string>("");
   const [debouncedQuery] = useDebounce(query, 300);
 
-  const NO_OF_RESULTS_SHOWN_IN_SEARCHBOX = 5;
-
   useEffect(() => {
+    const searchLanguages = userLanguagesWithFlags.map((item) => item.name);
     if (query.length < 2 || debouncedQuery.length < 2) setSearchResults([]);
 
     if (debouncedQuery.length > 1) {
@@ -54,7 +49,13 @@ export default function SearchBox({
     } else {
       setSearchResults([]);
     }
-  }, [debouncedQuery, searchLanguages, findItems, query, setSearchResults]);
+  }, [
+    debouncedQuery,
+    findItems,
+    query,
+    setSearchResults,
+    userLanguagesWithFlags,
+  ]);
 
   const handleChange = (result: DictionarySearchResult | "showAll") => {
     if (!result) return;
@@ -73,55 +74,15 @@ export default function SearchBox({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <span className="absolute right-1 flex h-20 items-center px-6 text-sm text-slate-300">
+          <span className="absolute right-1 flex h-20 items-center px-6 text-sm text-slate-500">
             {searchResults.length && searchResults.length > 0 ? (
               <div>
-                {`showing ${
-                  searchResults.length < NO_OF_RESULTS_SHOWN_IN_SEARCHBOX
-                    ? searchResults.length
-                    : NO_OF_RESULTS_SHOWN_IN_SEARCHBOX
-                } of ${searchResults.length} results`}
+                <span>{searchResults.length} results</span>
               </div>
             ) : (
               <div>{debouncedQuery.length > 1 ? "No results" : ""}</div>
             )}
           </span>
-          <ComboboxOptions className="flex flex-col gap-1 bg-white">
-            <ComboboxOption value="showall">
-              {({ focus }) => (
-                <div
-                  className={`px-6 mb-2 flex justify-center flex-col truncate h-20 text-xl border rounded-md border-slate-200 ${
-                    focus ? "bg-slate-100" : ""
-                  }`}
-                >
-                  Show all results
-                </div>
-              )}
-            </ComboboxOption>
-            {searchResults
-              .slice(0, NO_OF_RESULTS_SHOWN_IN_SEARCHBOX)
-              .map((result) => (
-                <ComboboxOption key={result.slug} value={result}>
-                  {({ focus }) => (
-                    <div
-                      className={`px-6 mb-2 flex justify-center flex-col truncate h-20 text-xl border rounded-md border-slate-200 ${
-                        focus ? "bg-slate-100" : ""
-                      }`}
-                    >
-                      <div>
-                        {result.language} - {result.name}{" "}
-                      </div>
-                      <div className="text-sm text-slate-300">
-                        {result.IPA && result.IPA.length > 0
-                          ? `/${result.IPA}/`
-                          : null}
-                      </div>
-                      <div className="text-sm">{result.partOfSpeech}</div>
-                    </div>
-                  )}
-                </ComboboxOption>
-              ))}
-          </ComboboxOptions>
         </Combobox>
       </div>
     </div>

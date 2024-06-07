@@ -1,5 +1,4 @@
 import {
-  checkPassedLanguageAsync,
   getAllSlugsForLanguage,
   getSupportedLanguages,
   lookUpItemBySlug,
@@ -45,13 +44,8 @@ interface ItemPageProps {
 export default async function ItemPage({
   params: { slug, language },
 }: ItemPageProps) {
-  // const sessionUser = await getServerSession();
   const sessionUser = await getUserOnServer();
   const userNative: SupportedLanguage = sessionUser.native.name;
-  const passedLanguage = language?.toUpperCase();
-  const validPassedLanguage = await checkPassedLanguageAsync(passedLanguage);
-  if (!validPassedLanguage)
-    return <div>There is no dictionary for this language</div>;
 
   const item: ItemPopulatedWithTranslations = await lookUpItemBySlug(
     language as SupportedLanguage,
@@ -59,7 +53,6 @@ export default async function ItemPage({
     userNative
   );
   if (!item) return <div>No item found</div>;
-  console.log("page.tsx /[slug]", item.translations[userNative]);
 
   return (
     <ListContainer>
