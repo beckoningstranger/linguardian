@@ -22,13 +22,15 @@ export async function httpGetFullyPopulatedItemBySlug(
   res: Response
 ) {
   const slug = req.params.slug;
-  const language = req.params.language as SupportedLanguage;
-  const userNative = req.params.userNative as SupportedLanguage;
+  const queryItemLanguage = req.params.queryItemLanguage as SupportedLanguage;
+  const userLanguages = req.params.userLanguages.split(
+    ","
+  ) as SupportedLanguage[];
 
   const response = await getFullyPopulatedItemBySlug(
-    language,
+    queryItemLanguage,
     slug,
-    userNative
+    userLanguages
   );
   if (!response)
     return res

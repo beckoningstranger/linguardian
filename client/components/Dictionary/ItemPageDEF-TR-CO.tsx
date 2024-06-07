@@ -1,47 +1,89 @@
-import { SupportedLanguage } from "@/types";
+import { ItemPopulatedWithTranslations, SupportedLanguage } from "@/types";
 import ItemPageField from "./ItemPageField";
 import Link from "next/link";
 import ItemPageContainer from "./ItemPageContainer";
 import paths from "@/paths";
+import { getUserLanguagesWithFlags } from "@/lib/getAllUserLanguages";
+import { getLanguageFeaturesForLanguage } from "@/app/actions";
 
 interface ItemPageDEFTRProps {
   definition?: string;
-  translations?: {
-    name: string;
-    slug: string;
-    language: SupportedLanguage;
-    ipa?: string[];
-  }[];
+  translations?: Record<SupportedLanguage, ItemPopulatedWithTranslations[]>;
 }
 
-export default function ItemPageDEFTRCO({
+export default async function ItemPageDEFTRCO({
   definition,
   translations,
 }: ItemPageDEFTRProps) {
   const renderedDefinition = <div className="ml-2">{definition}</div>;
+  const allUserLanguages = (await getUserLanguagesWithFlags()).map(
+    (lwf) => lwf.name
+  );
 
-  const renderedTranslations = translations?.map((translation) => (
-    <Link
-      href={paths.dictionaryItemPath(translation.language, translation.slug)}
-      key={translation.slug}
-    >
-      <div className="ml-2 hover:underline">{translation.name}</div>
-    </Link>
-  ));
+  const foundTranslations: ItemPopulatedWithTranslations[] = [];
+  allUserLanguages.forEach((lang) => {
+    if (!translations || !translations[lang]) return;
+    translations[lang].forEach((item) => {
+      foundTranslations.push(item);
+    });
+  });
+  foundTranslations.sort((a, b) => a.language.localeCompare(b.language));
+  const languagesWithTranslations: SupportedLanguage[] =
+    foundTranslations.reduce((a, curr) => {
+      if (!a.includes(curr.language)) a.push(curr.language);
+      return a;
+    }, [] as SupportedLanguage[]);
+
+  const translationItemArrays: JSX.Element[][] = [];
+
+  languagesWithTranslations.forEach(async (lang) => {
+    const translationsInThisLanguage = foundTranslations.filter(
+      (translation) => translation.language === lang
+    );
+    const itemsForThisLanguage = translationsInThisLanguage.map(
+      (translation) => (
+        <Link
+          href={paths.dictionaryItemPath(
+            translation.language,
+            translation.slug
+          )}
+          key={translation.slug}
+          className="hover:underline"
+        >
+          {translation.name}
+        </Link>
+      )
+    );
+    translationItemArrays.push(itemsForThisLanguage);
+  });
 
   return (
     <ItemPageContainer>
-      <div className="ml-8 gap-y-2">
+      <div className="ml-2 flex flex-col gap-y-2 sm:ml-8">
         {definition && definition.length > 0 && (
           <ItemPageField type="Definition" content={renderedDefinition} />
         )}
-        {translations && translations?.length > 0 && renderedTranslations && (
+        {translationItemArrays.map(async (lang, index) => (
           <ItemPageField
-            type={`Translations (${translations[0].language})`}
-            content={renderedTranslations}
+            key={index}
+            type={
+              `Translation (` +
+              (await getLanguageName(
+                translationItemArrays[index][0].props.href.slice(1, 3)
+              )) +
+              ")"
+            }
+            content={lang}
           />
-        )}
+        ))}
       </div>
     </ItemPageContainer>
   );
+}
+
+async function getLanguageName(langCode: string) {
+  const langFeatures = await getLanguageFeaturesForLanguage(
+    langCode as SupportedLanguage
+  );
+  return langFeatures?.langName;
 }

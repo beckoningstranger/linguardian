@@ -5,6 +5,7 @@ import ItemPageContainer from "./ItemPageContainer";
 import { SupportedLanguage } from "@/types";
 import Link from "next/link";
 import paths from "@/paths";
+import NavigateBackButton from "../NavigateBackButton";
 
 export default function ItemPageTopIcons({
   language,
@@ -13,9 +14,9 @@ export default function ItemPageTopIcons({
 }) {
   return (
     <ItemPageContainer>
-      <Link href={paths.dictionaryLanguagePath(language)}>
+      <NavigateBackButton>
         <IoArrowBack className="h-8 w-8" />
-      </Link>
+      </NavigateBackButton>
       <div className="flex gap-x-2">
         <Button>
           <MdEdit className="h-8 w-8" />

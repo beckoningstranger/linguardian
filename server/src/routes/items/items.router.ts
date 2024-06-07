@@ -11,7 +11,7 @@ export const itemsRouter = express.Router();
 itemsRouter.get("/getById/:id", httpGetOneItemById);
 
 itemsRouter.get(
-  "/getBySlug/:language/:slug/:userNative",
+  "/getBySlug/:queryItemLanguage/:slug/:userLanguages",
   httpGetFullyPopulatedItemBySlug
 );
 

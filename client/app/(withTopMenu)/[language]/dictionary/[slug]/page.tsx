@@ -7,8 +7,8 @@ import ItemPageDEFTRCO from "@/components/Dictionary/ItemPageDEF-TR-CO";
 import ItemPageMain from "@/components/Dictionary/ItemPageMain";
 import ItemPageTopIcons from "@/components/Dictionary/ItemPageTopIcons";
 import ListContainer from "@/components/Lists/ListContainer";
-import getUserOnServer from "@/lib/getUserOnServer";
-import { ItemPopulatedWithTranslations, SupportedLanguage } from "@/types";
+import { getUserLanguagesWithFlags } from "@/lib/getAllUserLanguages";
+import { SupportedLanguage } from "@/types";
 
 interface SlugLanguageObject {
   language: string;
@@ -44,13 +44,12 @@ interface ItemPageProps {
 export default async function ItemPage({
   params: { slug, language },
 }: ItemPageProps) {
-  const sessionUser = await getUserOnServer();
-  const userNative: SupportedLanguage = sessionUser.native.name;
+  const userLanguagesWithFlags = await getUserLanguagesWithFlags();
 
-  const item: ItemPopulatedWithTranslations = await lookUpItemBySlug(
+  const item = await lookUpItemBySlug(
     language as SupportedLanguage,
     slug,
-    userNative
+    userLanguagesWithFlags.map((lwf) => lwf.name)
   );
   if (!item) return <div>No item found</div>;
 
@@ -67,12 +66,7 @@ export default async function ItemPage({
       />
       <ItemPageDEFTRCO
         definition={item.definition}
-        translations={item.translations[userNative].map((translation) => ({
-          name: translation.name,
-          slug: translation.slug,
-          language: translation.language,
-          ipa: translation.IPA,
-        }))}
+        translations={item.translations}
       />
     </ListContainer>
   );

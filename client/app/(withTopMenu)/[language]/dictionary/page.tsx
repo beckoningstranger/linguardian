@@ -1,6 +1,6 @@
 import { getSupportedLanguages } from "@/app/actions";
 import Search from "@/components/Dictionary/Search";
-import getUserOnServer from "@/lib/getUserOnServer";
+import { getUserLanguagesWithFlags } from "@/lib/getAllUserLanguages";
 
 interface DictionaryPageProps {
   params?: { language: string };
@@ -16,11 +16,4 @@ export default async function DictionaryPage({ params }: DictionaryPageProps) {
   const userLanguagesWithFlags = await getUserLanguagesWithFlags();
 
   return <Search userLanguagesWithFlags={userLanguagesWithFlags} />;
-}
-
-async function getUserLanguagesWithFlags() {
-  const sessionUser = await getUserOnServer();
-  const userLanguagesWithFlags = sessionUser.isLearning;
-  userLanguagesWithFlags.push(sessionUser.native);
-  return userLanguagesWithFlags;
 }

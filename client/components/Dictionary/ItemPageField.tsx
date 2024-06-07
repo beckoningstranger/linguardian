@@ -6,7 +6,7 @@ export default function ItemPageField({ type, content }: ItemPageFieldProps) {
   return (
     <div>
       <h3 className="text-slate-400">{type}</h3>
-      <div>{content}</div>
+      <div className="ml-2 flex flex-col">{content}</div>
     </div>
   );
 }

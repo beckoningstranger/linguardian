@@ -6,12 +6,14 @@ export async function getOneItemById(id: string) {
 }
 
 export async function getFullyPopulatedItemBySlug(
-  language: SupportedLanguage,
+  queryItemLanguage: SupportedLanguage,
   slug: string,
-  userNative: SupportedLanguage
+  userLanguages: SupportedLanguage[]
 ) {
-  return await Items.findOne({ language: language, slug: slug })
-    .populate("translations." + userNative)
+  const paths: string[] = [];
+  userLanguages.forEach((lang) => paths.push("translations." + lang));
+  return await Items.findOne({ language: queryItemLanguage, slug: slug })
+    .populate(paths)
     .exec();
 }
 

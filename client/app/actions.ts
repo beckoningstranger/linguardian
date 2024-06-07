@@ -7,6 +7,7 @@ import {
   DictionarySearchResult,
   FullyPopulatedList,
   ItemForServer,
+  ItemPopulatedWithTranslations,
   LanguageFeatures,
   LearnedLanguageWithPopulatedLists,
   LearningMode,
@@ -318,17 +319,18 @@ export async function fetchAuthors(authors: string[]) {
 }
 
 export async function lookUpItemBySlug(
-  language: SupportedLanguage,
+  queryItemLanguage: SupportedLanguage,
   slug: string,
-  userNative: SupportedLanguage
+  userLanguages: SupportedLanguage[]
 ) {
   try {
     const response = await fetch(
-      `${server}/items/getBySlug/${language}/${slug}/${userNative}`,
-      { method: "GET" }
+      `${server}/items/getBySlug/${queryItemLanguage}/${slug}/${userLanguages.join(
+        ","
+      )}`
     );
     if (!response.ok) throw new Error(response.statusText);
-    return await response.json();
+    return (await response.json()) as ItemPopulatedWithTranslations;
   } catch (err) {
     console.error(`Error looking up item with slug ${slug}: ${err}`);
   }

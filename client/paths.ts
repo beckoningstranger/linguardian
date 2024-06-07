@@ -1,4 +1,3 @@
-import { setNativeLanguage } from "./app/actions";
 import { LearningMode, SupportedLanguage } from "./types";
 
 const paths = {
