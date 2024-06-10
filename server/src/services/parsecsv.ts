@@ -43,6 +43,7 @@ interface ParsedData {
 
 interface FormattedParsedData {
   name: string;
+  normalizedName: string;
   language: SupportedLanguage;
   partOfSpeech: PartOfSpeech;
   case?: Case[];
@@ -56,6 +57,7 @@ interface FormattedParsedData {
 
 interface ItemInPrep {
   name: string;
+  normalizedName: string;
   slug: string;
   language: SupportedLanguage;
   partOfSpeech: PartOfSpeech;
@@ -114,6 +116,10 @@ export async function parseCSV({
         .on("data", async (data: ParsedData) => {
           let formattedData: FormattedParsedData = {
             name: data.name,
+            normalizedName: data.name
+              .normalize("NFD")
+              .replace(/\p{Diacritic}/gu, "")
+              .toLowerCase(),
             language: language,
             partOfSpeech: data.partOfSpeech,
             case: data.case?.split(", ") as Case[],
@@ -281,6 +287,10 @@ async function harvestAndUploadItemsWithoutTranslations(
             // Add as harvested item
             const itemToPush: ItemInPrep = {
               name: translation,
+              normalizedName: translation
+                .normalize("NFD")
+                .replace(/\p{Diacritic}/gu, "")
+                .toLowerCase(),
               slug: slugify(translation),
               language: lang as SupportedLanguage,
               partOfSpeech: item.partOfSpeech,
@@ -306,6 +316,7 @@ async function harvestAndUploadItemsWithoutTranslations(
           {
             $set: {
               name: item.name,
+              normalizedName: item.normalizedName,
               slug: slugify(item.name),
               language: item.language,
               partOfSpeech: item.partOfSpeech,

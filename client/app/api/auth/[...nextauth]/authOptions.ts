@@ -68,7 +68,7 @@ const authOptions: NextAuthOptions = {
         { id: token.id },
         { native: 1, languages: 1, _id: 0 }
       );
-      if (!token.native) {
+      if (!token.native && userData.native) {
         const languageFeatures = await getLanguageFeaturesForLanguage(
           userData.native
         );
@@ -77,7 +77,7 @@ const authOptions: NextAuthOptions = {
           flag: languageFeatures?.flagCode,
         };
       }
-      if (!token.isLearning) {
+      if (!token.isLearning && userData.languages.length > 0) {
         const userIsLearning: LanguageWithFlag[] = userData.languages.map(
           (lang: LearnedLanguage) => ({
             name: lang.code,

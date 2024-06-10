@@ -41,6 +41,7 @@ export type Tags =
 export interface Item {
   _id: Types.ObjectId;
   name: string;
+  normalizedName: string;
   slug: string;
   language: SupportedLanguage;
   partOfSpeech: PartOfSpeech;

@@ -7,6 +7,7 @@ const itemSchema = new Schema<Item>({
     type: String,
     required: true,
   },
+  normalizedName: { type: String, require: true },
   slug: {
     type: String,
     require: true,

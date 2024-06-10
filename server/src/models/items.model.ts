@@ -28,8 +28,15 @@ export async function findItemsByName(
   languages: SupportedLanguage[],
   query: string
 ) {
+  const normalizedLowerCaseQuery = query
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase();
   return await Items.find(
-    { name: { $regex: query }, language: { $in: languages } },
+    {
+      normalizedName: { $regex: normalizedLowerCaseQuery },
+      language: { $in: languages },
+    },
     {
       slug: 1,
       name: 1,
