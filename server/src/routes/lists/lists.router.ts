@@ -5,6 +5,8 @@ import {
   httpGetFullyPopulatedListByListNumber,
   httpPostCSV,
   httpGetList,
+  httpGetListName,
+  httpGetListDataForMetadata,
 } from "./lists.controller.js";
 import multer from "multer";
 import path from "path";
@@ -39,4 +41,10 @@ listsRouter.get(
 listsRouter.get(
   "/getFullyPopulatedList/:userNative/:listNumber",
   httpGetFullyPopulatedListByListNumber
+);
+listsRouter.get("/getListName/:listNumber", httpGetListName);
+
+listsRouter.get(
+  "/getListDataForMetadata/:listNumber/:unitNumber",
+  httpGetListDataForMetadata
 );

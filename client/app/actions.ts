@@ -364,3 +364,28 @@ export async function findItems(languages: SupportedLanguage[], query: string) {
     console.error(`Error looking up items for query ${query}: ${err}`);
   }
 }
+
+export async function getListName(listNumber: number) {
+  try {
+    const response = await fetch(`${server}/lists/getListName/${listNumber}`);
+    if (!response.ok) throw new Error(response.statusText);
+    return (await response.json()) as string;
+  } catch (err) {
+    console.error(`Error fetching list name for list #${listNumber}`);
+  }
+}
+
+export async function getListDataForMetadata(
+  listNumber: number,
+  unitNumber: number
+) {
+  try {
+    const response = await fetch(
+      `${server}/lists/getListDataForMetadata/${listNumber}/${unitNumber}`
+    );
+    if (!response.ok) throw new Error(response.statusText);
+    return await response.json();
+  } catch (err) {
+    console.error(`Error fetching list and unit name for list #${listNumber}`);
+  }
+}

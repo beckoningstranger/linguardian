@@ -5,6 +5,11 @@ import { SupportedLanguage } from "@/types";
 import { fetchAuthors, getListsByLanguage } from "@/app/actions";
 import ListStoreCard from "@/components/Lists/ListStoreCard";
 import paths from "@/paths";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Lists",
+};
 
 interface ListStoreProps {
   params?: { language: string };

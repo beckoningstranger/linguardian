@@ -5,6 +5,8 @@ import getUserOnServer from "@/lib/getUserOnServer";
 import { SupportedLanguage } from "@/types";
 import paths from "@/paths";
 
+export const metadata = { title: "Dashboard" };
+
 interface DashboardPageProps {
   params?: { language: string };
 }

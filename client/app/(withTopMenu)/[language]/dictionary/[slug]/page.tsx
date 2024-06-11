@@ -15,6 +15,8 @@ interface SlugLanguageObject {
   slug: string;
 }
 
+export const metadata = { title: "Dictionary" };
+
 export async function generateStaticParams() {
   const supportedLanguages = await getSupportedLanguages();
   let allSlugs: SlugLanguageObject[] = [];

@@ -1,6 +1,10 @@
 import { getAllLanguageFeatures, getSupportedLanguages } from "@/app/actions";
 import NativeLanguageForm from "@/components/NativeLanguageForm";
 
+export const metadata = {
+  title: "Set your native language",
+};
+
 export default async function Onboarding() {
   const supportedLanguage = await getSupportedLanguages();
   const allLanguageFeatures = await getAllLanguageFeatures();

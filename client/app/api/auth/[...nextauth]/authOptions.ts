@@ -64,27 +64,29 @@ const authOptions: NextAuthOptions = {
             ? user.id
             : account.provider + account.providerAccountId;
       }
-      const userData = await User.findOne(
-        { id: token.id },
-        { native: 1, languages: 1, _id: 0 }
-      );
-      if (!token.native && userData.native) {
-        const languageFeatures = await getLanguageFeaturesForLanguage(
-          userData.native
+      if (!token.native || !token.isLearning) {
+        const userData = await User.findOne(
+          { id: token.id },
+          { native: 1, languages: 1, _id: 0 }
         );
-        token.native = {
-          name: userData.native,
-          flag: languageFeatures?.flagCode,
-        };
-      }
-      if (!token.isLearning && userData.languages.length > 0) {
-        const userIsLearning: LanguageWithFlag[] = userData.languages.map(
-          (lang: LearnedLanguage) => ({
-            name: lang.code,
-            flag: lang.flag,
-          })
-        );
-        token.isLearning = userIsLearning;
+        if (!token.native && userData.native) {
+          const languageFeatures = await getLanguageFeaturesForLanguage(
+            userData.native
+          );
+          token.native = {
+            name: userData.native,
+            flag: languageFeatures?.flagCode,
+          };
+        }
+        if (!token.isLearning && userData.languages.length > 0) {
+          const userIsLearning: LanguageWithFlag[] = userData.languages.map(
+            (lang: LearnedLanguage) => ({
+              name: lang.code,
+              flag: lang.flag,
+            })
+          );
+          token.isLearning = userIsLearning;
+        }
       }
       return token;
     },

@@ -1,7 +1,12 @@
 import { getUserById } from "@/app/actions";
 import getUserOnServer from "@/lib/getUserOnServer";
+import { Metadata } from "next";
 
 interface ProfilePageProps {}
+
+export const metadata: Metadata = {
+  title: "Your Profile",
+};
 
 export default async function ProfilePage({}: ProfilePageProps) {
   const sessionUser = await getUserOnServer();

@@ -11,6 +11,8 @@ import {
   getChapterNameByNumber,
   getList,
   getFullyPopulatedListByListNumber,
+  getListNameAndUnitOrder,
+  getListDataForMetadata,
 } from "../../models/lists.model.js";
 import { FullyPopulatedList, SupportedLanguage } from "../../types.js";
 
@@ -100,4 +102,19 @@ export async function httpGetAllListsForLanguage(req: Request, res: Response) {
   const language = req.params.language as SupportedLanguage;
 
   return res.status(200).json(await getAllListsForLanguage(language));
+}
+
+export async function httpGetListName(req: Request, res: Response) {
+  const listNumber = parseInt(req.params.listNumber);
+  const response = await getListNameAndUnitOrder(listNumber);
+  if (!response) res.status(404).json();
+  return res.status(200).json(response.name);
+}
+
+export async function httpGetListDataForMetadata(req: Request, res: Response) {
+  const listNumber = parseInt(req.params.listNumber);
+  const unitNumber = parseInt(req.params.unitNumber);
+  const response = await getListDataForMetadata(listNumber, unitNumber);
+  if (!response) res.status(404).json();
+  return res.status(200).json(response);
 }

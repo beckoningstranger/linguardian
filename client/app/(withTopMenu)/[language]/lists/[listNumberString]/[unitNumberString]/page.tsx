@@ -1,6 +1,7 @@
 import {
   getFullyPopulatedListByListNumber,
   getLearnedLanguageData,
+  getListDataForMetadata,
   getUserById,
 } from "@/app/actions";
 import ListBarChart from "@/components/Charts/ListBarChart";
@@ -21,6 +22,21 @@ import ListPieChart from "@/components/Charts/ListPieChart";
 import Leaderboard from "@/components/Lists/Leaderboard";
 import UnitItems from "@/components/Lists/UnitItems";
 import { SupportedLanguage } from "@/types";
+
+export async function generateMetadata({ params }: UnitDetailsProps) {
+  const listNumber = parseInt(params.listNumberString);
+  const unitNumber = parseInt(params.unitNumberString);
+
+  const { listName, unitName, langName, description } =
+    await getListDataForMetadata(listNumber, unitNumber);
+
+  return {
+    title: `${unitName} | ${listName}`,
+    description: `Learn ${langName} and enrich your vocabulary by memorizing Linguardian's list "${listName}.${
+      description ? ` ${description}` : ""
+    }"`,
+  };
+}
 
 interface UnitDetailsProps {
   params: {

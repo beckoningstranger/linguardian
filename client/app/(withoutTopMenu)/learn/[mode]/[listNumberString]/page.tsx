@@ -2,7 +2,6 @@ import {
   FullyPopulatedList,
   ItemToLearn,
   LanguageFeatures,
-  LearnedItem,
   LearnedLanguageWithPopulatedLists,
   LearningMode,
   User,
@@ -13,8 +12,15 @@ import {
   getFullyPopulatedListByListNumber,
   getUserById,
   getLearnedLanguageData,
+  getListName,
 } from "@/app/actions";
 import getUserOnServer from "@/lib/getUserOnServer";
+
+export async function generateMetadata({ params }: ReviewPageProps) {
+  const listNumber = parseInt(params.listNumberString);
+  const listName = await getListName(listNumber);
+  return { title: listName };
+}
 
 interface ReviewPageProps {
   params: {

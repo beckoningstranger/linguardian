@@ -2,6 +2,7 @@ import {
   fetchAuthors,
   getLanguageFeaturesForLanguage,
   getLearnedLanguageData,
+  getListDataForMetadata,
   getPopulatedList,
 } from "@/app/actions";
 import Link from "next/link";
@@ -26,6 +27,21 @@ import {
   AllLearningButtonsDesktopContainer,
   AllLearningButtonsMobileContainer,
 } from "@/components/Lists/AllLearningButtonsContainer";
+
+export async function generateMetadata({ params }: ListDetailProps) {
+  const listNumber = parseInt(params.listNumberString);
+
+  const { listName, langName, description } = await getListDataForMetadata(
+    listNumber,
+    1
+  );
+  return {
+    title: listName,
+    description: `Learn ${langName} and enrich your vocabulary by memorizing Linguardian's list "${listName}.${
+      description ? ` ${description}` : ""
+    }"`,
+  };
+}
 
 interface ListDetailProps {
   params: {

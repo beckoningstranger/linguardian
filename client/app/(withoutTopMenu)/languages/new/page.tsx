@@ -5,8 +5,13 @@ import {
 } from "@/app/actions";
 import getUserOnServer from "@/lib/getUserOnServer";
 import { SupportedLanguage } from "@/types";
+import { Metadata } from "next";
 import Link from "next/link";
 import Flag from "react-world-flags";
+
+export const metadata: Metadata = {
+  title: "Start learning a new language",
+};
 
 export default async function AddNewLanguageToLearn() {
   const supportedLanguages = await getSupportedLanguages();

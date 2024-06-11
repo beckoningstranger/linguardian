@@ -1,6 +1,11 @@
 import { getUserById } from "@/app/actions";
 import ParseCSVForm from "@/components/parseCSVForm";
 import getUserOnServer from "@/lib/getUserOnServer";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Upload a new list",
+};
 
 export default async function CreateList() {
   const sessionUser = await getUserOnServer();

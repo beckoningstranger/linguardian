@@ -2,6 +2,8 @@ import { getSupportedLanguages } from "@/app/actions";
 import Search from "@/components/Dictionary/Search";
 import { getUserLanguagesWithFlags } from "@/lib/getAllUserLanguages";
 
+export const metadata = { title: "Dictionary" };
+
 interface DictionaryPageProps {
   params?: { language: string };
 }

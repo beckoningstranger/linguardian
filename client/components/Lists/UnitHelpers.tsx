@@ -4,7 +4,15 @@ import { generateStats } from "./ListHelpers";
 
 export async function calculateUnitStats(listNumber: number, unitName: string) {
   const listData = await getPopulatedList(listNumber);
-  if (!listData) throw new Error("Error getting list data");
+  if (!listData)
+    return {
+      unlearned: 0,
+      readyToReview: 0,
+      learned: 0,
+      learning: 0,
+      ignored: 0,
+    };
+
   const listLanguage = listData?.language;
 
   const sessionUser = await getUserOnServer();
