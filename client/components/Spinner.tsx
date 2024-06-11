@@ -1,8 +1,8 @@
 interface SpinnerProps {
-  size: number;
-  marginY: number;
+  size?: number;
+  marginY?: number | "auto";
 }
-export default function Spinner({ size, marginY }: SpinnerProps) {
+export default function Spinner({ size = 4, marginY = 2 }: SpinnerProps) {
   const renderedSize = "w-" + size;
   const renderedMarginY = "my-" + marginY;
 

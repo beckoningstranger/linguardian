@@ -2,7 +2,6 @@
 import { LearningMode, ListStats, ListStatus } from "@/types";
 import { useRef, useState } from "react";
 import ReviewButton from "../ReviewButton";
-import { useLoaded } from "@/hooks/useLoaded";
 import ContextMenu from "../Menus/ContextMenu";
 import AllLearningButtons from "./ListOverview/AllLearningButtons";
 
@@ -19,7 +18,6 @@ export default function FlexibleLearningButtons({
   listNumber,
   unlockedModes,
 }: FlexibleLearningButtonsProps) {
-  const loaded = useLoaded();
   const [showAllReviewModes, setShowAllReviewModes] = useState(false);
 
   const persistentRandomModes = useRef(pickRandomModes(excluded(status)));
@@ -29,10 +27,11 @@ export default function FlexibleLearningButtons({
 
   if (status === "add") firstButtonMode = "learn";
   if (status === "review") firstButtonMode = "translation";
-  if (status === "practice") firstButtonMode = loaded ? randomMode1 : "spinner";
+  if (status === "practice") firstButtonMode = randomMode1;
+  // if (status === "practice") firstButtonMode = loaded ? randomMode1 : "spinner";
 
   const renderedButtons = (
-    <div className="flex justify-around md:flex-col">
+    <div className="flex justify-around md:mr-2 md:flex-col">
       {/* First Button */}
       <ReviewButton
         listNumber={listNumber}
@@ -43,13 +42,7 @@ export default function FlexibleLearningButtons({
       {/* Second Button */}
       <ReviewButton
         listNumber={listNumber}
-        mode={
-          loaded
-            ? status === "practice"
-              ? randomMode2
-              : randomMode1
-            : "spinner"
-        }
+        mode={status === "practice" ? randomMode2 : randomMode1}
         stats={stats}
         unlockedModes={unlockedModes}
       />
@@ -57,13 +50,7 @@ export default function FlexibleLearningButtons({
       <div className="md:hidden">
         <ReviewButton
           listNumber={listNumber}
-          mode={
-            loaded
-              ? status === "practice"
-                ? randomMode3
-                : randomMode2
-              : "spinner"
-          }
+          mode={status === "practice" ? randomMode3 : randomMode2}
           stats={stats}
           unlockedModes={unlockedModes}
         />

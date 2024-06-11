@@ -76,7 +76,8 @@ export default function ListDashboardCard({
         <div className="md:hidden">
           <ListBarChart stats={stats} />
         </div>
-        <div className="hidden md:block">
+        <div className="hidden h-[267px] w-[300px] md:block">
+          {/* These numbers are the exact dimensions of the PieChart */}
           <ListPieChart stats={stats} />
         </div>
 
