@@ -5,11 +5,13 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import paths from "@/paths";
+import Spinner from "../Spinner";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loggingIn, setLoggingIn] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -18,6 +20,7 @@ export default function LoginForm() {
 
   const handleCredentialsLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoggingIn(true);
 
     try {
       const res = await signIn("credentials", {
@@ -28,6 +31,7 @@ export default function LoginForm() {
 
       if (res?.error) {
         setError("Invalid Credentials");
+        setLoggingIn(false);
         return;
       }
       router.replace(paths.signInPath());
@@ -35,6 +39,18 @@ export default function LoginForm() {
       console.error(err);
     }
   };
+
+  if (loggingIn)
+    return (
+      <div className="grid h-screen place-items-center">
+        <div>
+          <p className="text-2xl font-bold text-green-700">
+            Welcome to Linguardian! We are logging you in...
+          </p>
+          <Spinner size={24} marginY={4} />
+        </div>
+      </div>
+    );
 
   return (
     <div className="grid h-screen place-items-center">
@@ -61,6 +77,7 @@ export default function LoginForm() {
           <button
             className="cursor-pointer bg-red-400 px-6 py-2 font-bold text-white"
             onClick={() => {
+              setLoggingIn(true);
               signIn("google", { callbackUrl: paths.signInPath() });
             }}
           >
@@ -69,6 +86,7 @@ export default function LoginForm() {
           <button
             className="cursor-pointer bg-blue-500 px-6 py-2 font-bold text-white"
             onClick={() => {
+              setLoggingIn(true);
               signIn("facebook", { callbackUrl: paths.signInPath() });
             }}
           >

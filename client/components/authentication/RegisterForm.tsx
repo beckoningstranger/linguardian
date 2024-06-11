@@ -3,12 +3,14 @@ import paths from "@/paths";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
+import Spinner from "../Spinner";
 
 export default function RegisterForm() {
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordVerify, setPasswordVerify] = useState<string>("");
+  const [registeringUser, setRegisteringUser] = useState<boolean>(false);
   const [error, setError] = useState("");
 
   const inputStyling =
@@ -16,6 +18,7 @@ export default function RegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setRegisteringUser(true);
 
     if (!username || !email || !password) {
       setError("All fields are necessary.");
@@ -39,6 +42,7 @@ export default function RegisterForm() {
       const { user } = await resUserExists.json();
 
       if (user) {
+        setRegisteringUser(false);
         setError("User already exists");
         return;
       }
@@ -62,12 +66,26 @@ export default function RegisterForm() {
           callbackUrl: paths.setNativeLanguagePath(),
         });
       } else {
+        setError("User registration failed");
+        setRegisteringUser(false);
         console.error("User registration failed");
       }
     } catch (err) {
       console.error("Error during registration:", err);
     }
   };
+
+  if (registeringUser)
+    return (
+      <div className="grid h-screen place-items-center">
+        <div>
+          <p className="text-2xl font-bold text-green-700">
+            Welcome to Linguardian! Your account is being created...
+          </p>
+          <Spinner size={24} marginY={4} />
+        </div>
+      </div>
+    );
 
   return (
     <div className="grid h-screen place-items-center">
