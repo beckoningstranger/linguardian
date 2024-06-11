@@ -86,38 +86,40 @@ export default function UserMenu({ user }: UserMenuProps) {
       </div>
       <MobileMenu fromDirection="animate-from-right">
         <nav className="flex select-none flex-col items-center transition-all">
-          {user.image && (
-            <Image
-              src={user.image}
-              alt="User profile image"
-              width={200}
-              height={200}
-              className="mb-16 rounded-full"
+          <ul>
+            {user.image && (
+              <Image
+                src={user.image}
+                alt="User profile image"
+                width={200}
+                height={200}
+                className="mb-16 rounded-full"
+              />
+            )}
+            <SidebarItem
+              icon={<FaUserAlt />}
+              label="Profile"
+              href={paths.profilePath()}
             />
-          )}
-          <SidebarItem
-            icon={<FaUserAlt />}
-            label="Profile"
-            href={paths.profilePath()}
-          />
-          <SidebarItem
-            icon={<IoSettings />}
-            label="Settings"
-            href={paths.settingsPath()}
-          />
-          <div
-            className={`my-4 flex select-none justify-center transition-all md:my-0 md:h-14 md:justify-start md:border-none md:p-10 md:hover:scale-100 md:hover:bg-slate-300`}
-            onClick={() => {
-              signOut({ callbackUrl: "/" });
-            }}
-          >
-            <div className="flex w-48 items-center hover:cursor-pointer">
-              <div className="px-3 text-3xl">
-                <RiLogoutBoxLine />
+            <SidebarItem
+              icon={<IoSettings />}
+              label="Settings"
+              href={paths.settingsPath()}
+            />
+            <li
+              className={`my-4 flex select-none justify-center transition-all md:my-0 md:h-14 md:justify-start md:border-none md:p-10 md:hover:scale-100 md:hover:bg-slate-300`}
+              onClick={() => {
+                signOut({ callbackUrl: "/" });
+              }}
+            >
+              <div className="flex w-48 items-center hover:cursor-pointer">
+                <div className="px-3 text-3xl">
+                  <RiLogoutBoxLine />
+                </div>
+                <div className="px-3 text-2xl md:text-xl">Logout</div>
               </div>
-              <div className="px-3 text-2xl md:text-xl">Logout</div>
-            </div>
-          </div>
+            </li>
+          </ul>
         </nav>
       </MobileMenu>
     </>
