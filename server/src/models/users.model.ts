@@ -94,7 +94,7 @@ export async function addNewLanguage(
       return await Users.updateOne(
         { id: userId },
         {
-          $push: {
+          $addToSet: {
             languages: {
               name: languageFeatures.langName,
               code: languageFeatures.langCode,

@@ -7,11 +7,11 @@ const paths = {
   dashboardLanguagePath(language: SupportedLanguage) {
     return `/${language}/dashboard`;
   },
-  dictionaryLanguagePath(language: SupportedLanguage) {
-    return `/${language}/dictionary`;
+  dictionaryPath() {
+    return `/dictionary`;
   },
   dictionaryItemPath(language: SupportedLanguage, slug: string) {
-    return `/${language}/dictionary/${slug}`;
+    return `/dictionary/${language}/${slug}`;
   },
   learnPath(
     language: SupportedLanguage,

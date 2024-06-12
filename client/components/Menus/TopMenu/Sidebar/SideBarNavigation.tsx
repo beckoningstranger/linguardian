@@ -52,7 +52,7 @@ export default function SideBarNavigation({
           <SideNavItem
             icon={<FaBookReader />}
             label="Dictionary"
-            href={paths.dictionaryLanguagePath(currentlyActiveLanguage)}
+            href={paths.dictionaryPath()}
             toggleSidebar={toggleSidebar as MouseEventHandler}
           />
           <SideNavItem

@@ -6,15 +6,16 @@ import { SupportedLanguage, User } from "@/types";
 import { getLearnedLanguageData } from "@/app/actions";
 import paths from "@/paths";
 import getUnlockedModes from "@/lib/getUnlockedModes";
+import getUserOnServer from "@/lib/getUserOnServer";
 
 interface DashboardProps {
-  user: User;
   language: SupportedLanguage;
 }
 
-export default async function Dashboard({ user, language }: DashboardProps) {
+export default async function Dashboard({ language }: DashboardProps) {
+  const sessionUser = await getUserOnServer();
   const userLearningDataForActiveLanguage = await getLearnedLanguageData(
-    user.id,
+    sessionUser.id,
     language
   );
 
@@ -41,7 +42,7 @@ export default async function Dashboard({ user, language }: DashboardProps) {
           allIgnoredItemsForLanguage={
             userLearningDataForActiveLanguage.ignoredItems
           }
-          userId={user.id}
+          userId={sessionUser.id}
           unlockedModes={unlockedModesForLists[index]}
         />
       );

@@ -3,18 +3,14 @@ import {
   getAllLanguageFeatures,
   getSupportedLanguages,
 } from "@/app/actions";
-import DashboardContainer from "@/components/Dashboard/DashboardContainer";
-import TopMenu from "@/components/Menus/TopMenu/TopMenu";
-
 import { ReactNode } from "react";
-import { AuthProvider } from "../../Providers";
 
 interface RootLayoutProps {
   children: ReactNode;
   params: { language: string };
 }
 
-export default async function RootLayoutWithTopMenu({
+export default async function LayoutWithTopMenuWithLanguageParam({
   children,
   params,
 }: RootLayoutProps) {
@@ -28,29 +24,19 @@ export default async function RootLayoutWithTopMenu({
     ]);
 
   let error: string | null = null;
-  if (!allSupportedLanguages || !allLanguageFeatures || !validPassedLanguage)
-    error = "Connection lost";
+  if (!allSupportedLanguages || !allLanguageFeatures)
+    throw new Error(
+      "Failed to fetch supported languages and/or language features"
+    );
   if (!validPassedLanguage)
-    error = `${params?.language} is not a valid language`;
+    throw new Error(`${language} is not a valid language`);
 
   return (
     <div>
       {!error &&
         allSupportedLanguages &&
         allLanguageFeatures &&
-        validPassedLanguage && (
-          <AuthProvider>
-            <TopMenu
-              allSupportedLanguages={allSupportedLanguages}
-              allLanguageFeatures={allLanguageFeatures}
-              language={validPassedLanguage}
-            />
-            <DashboardContainer>
-              {children}
-              <div id="PortalOutlet" />
-            </DashboardContainer>
-          </AuthProvider>
-        )}
+        validPassedLanguage && <>{children}</>}
       {error}
     </div>
   );

@@ -19,7 +19,7 @@ export default function TopMiddleNavigation({
         Lists
       </Link>
       <Link
-        href={paths.dictionaryLanguagePath(language)}
+        href={paths.dictionaryPath()}
         className="flex h-20 items-center px-4 hover:bg-slate-300"
       >
         Dictionary

@@ -1,14 +1,15 @@
 import { ReactNode } from "react";
-import { AuthProvider } from "../Providers";
 
 interface RootLayoutProps {
   children: ReactNode;
 }
 
-export default async function Root({ children }: RootLayoutProps) {
+export default async function LayoutWithoutTopMenu({
+  children,
+}: RootLayoutProps) {
   return (
     <div>
-      <AuthProvider>{children}</AuthProvider>
+      {children}
       <div id="PortalOutlet" />
     </div>
   );

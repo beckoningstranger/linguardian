@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "@/app/globals.css";
 
 import { ReactNode } from "react";
+import { AuthProvider } from "./Providers";
+import { ActiveLanguageProvider } from "@/context/ActiveLanguageContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,12 +17,14 @@ interface RootLayoutProps {
   children: ReactNode;
 }
 
-export default async function RootLayoutWithTopMenu({
-  children,
-}: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <ActiveLanguageProvider activeLanguage="EN">
+          <AuthProvider>{children}</AuthProvider>
+        </ActiveLanguageProvider>
+      </body>
     </html>
   );
 }

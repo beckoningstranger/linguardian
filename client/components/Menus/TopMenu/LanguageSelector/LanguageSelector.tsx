@@ -30,7 +30,11 @@ export default function LanguageSelector({
   const allOfUsersLanguagesAndFlags: {
     name: SupportedLanguage;
     flag: string;
-  }[] = sessionUser.isLearning;
+  }[] = sessionUser?.isLearning
+    ? sessionUser.isLearning
+    : [{ name: "DE" as SupportedLanguage, flag: "XX" }];
+  // The above looks redundant, but app will not build without
+
   const amountOfLanguagesUserLearns = Object.keys(
     allOfUsersLanguagesAndFlags
   ).length;

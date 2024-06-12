@@ -30,7 +30,7 @@ export default function UserMenu({}: UserMenuProps) {
           setShowUserMenu((x) => !x);
         }}
       >
-        {sessionUser.image && (
+        {sessionUser?.image && (
           <Image
             src={sessionUser.image}
             alt="User profile image"
@@ -71,7 +71,7 @@ export default function UserMenu({}: UserMenuProps) {
         className="m-4 h-[60px] w-[60px] select-none rounded-full bg-slate-200 md:hidden md:h-[50px] md:w-[50px]"
         onClick={toggleMobileMenu as MouseEventHandler}
       >
-        {sessionUser.image && (
+        {sessionUser?.image && (
           <Image
             src={sessionUser.image}
             alt="User profile image"
@@ -84,7 +84,7 @@ export default function UserMenu({}: UserMenuProps) {
       <MobileMenu fromDirection="animate-from-right">
         <nav className="flex select-none flex-col items-center transition-all">
           <ul>
-            {sessionUser.image && (
+            {sessionUser?.image && (
               <Image
                 src={sessionUser.image}
                 alt="User profile image"

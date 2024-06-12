@@ -1,29 +1,31 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
-import { LanguageFeatures, SupportedLanguage, User } from "@/types";
+import { LanguageFeatures, SupportedLanguage } from "@/types";
 import SideBarNavigation from "./Sidebar/SideBarNavigation";
 import LanguageSelectorAndUserMenu from "./LanguageSelectorAndUserMenu";
 import { MobileMenuContextProvider } from "../MobileMenu/MobileMenuContext";
 import TopMiddleNavigation from "./TopMiddleNavigation";
 import HamburgerMenu from "./HamburgerMenu";
 import TopMenuLogo from "./TopMenuLogo";
+import { useActiveLanguage } from "@/context/ActiveLanguageContext";
 
 interface TopMenuProps {
   allSupportedLanguages: SupportedLanguage[];
   allLanguageFeatures: LanguageFeatures[];
-  language: SupportedLanguage;
 }
 
 export default function TopMenu({
   allSupportedLanguages,
   allLanguageFeatures,
-  language,
 }: TopMenuProps) {
-  const activeLanguageData = getLanguageAndFlag(language, allLanguageFeatures);
-  const [currentlyActiveLanguage, setCurrentlyActiveLanguage] =
-    useState(language);
+  const { activeLanguage, setActiveLanguage } = useActiveLanguage();
+  if (!activeLanguage) throw new Error("ActiveLanguage is not set");
+  const activeLanguageData = getLanguageAndFlag(
+    activeLanguage,
+    allLanguageFeatures
+  );
   const [showSidebar, setShowSidebar] = useState(false);
 
   const toggleSidebar = () => {
@@ -31,11 +33,18 @@ export default function TopMenu({
   };
   const currentBaseUrl = usePathname();
 
-  allSupportedLanguages.forEach((lang) => {
-    if (currentBaseUrl.includes(lang) && lang !== currentlyActiveLanguage) {
-      setCurrentlyActiveLanguage(lang);
-    }
-  });
+  useEffect(() => {
+    allSupportedLanguages.forEach((lang) => {
+      if (currentBaseUrl.includes(lang) && lang !== activeLanguage) {
+        setActiveLanguage(lang);
+      }
+    });
+  }, [
+    currentBaseUrl,
+    allSupportedLanguages,
+    setActiveLanguage,
+    activeLanguage,
+  ]);
 
   return (
     <>
@@ -43,18 +52,18 @@ export default function TopMenu({
         <SideBarNavigation
           toggleSidebar={toggleSidebar}
           showSidebar={showSidebar}
-          currentlyActiveLanguage={currentlyActiveLanguage}
+          currentlyActiveLanguage={activeLanguage}
         />
         <div className="absolute top-0 flex h-20 w-full select-none items-center justify-between bg-slate-300 bg-opacity-25 text-xl">
           <div className={"flex items-center"}>
             <HamburgerMenu toggleSidebar={toggleSidebar} />
-            <TopMenuLogo language={currentlyActiveLanguage} />
+            <TopMenuLogo language={activeLanguage} />
           </div>
-          <TopMiddleNavigation language={currentlyActiveLanguage} />
+          <TopMiddleNavigation language={activeLanguage} />
           <MobileMenuContextProvider>
             <LanguageSelectorAndUserMenu
               activeLanguageData={activeLanguageData}
-              setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
+              setCurrentlyActiveLanguage={setActiveLanguage}
               allSupportedLanguages={allSupportedLanguages}
             />
           </MobileMenuContextProvider>
@@ -79,7 +88,7 @@ export function checkPassedLanguageSync(
 }
 
 export function getLanguageAndFlag(
-  language: SupportedLanguage | false,
+  language: SupportedLanguage,
   allLanguageFeatures: LanguageFeatures[]
 ) {
   const [langFeaturesForPassedLanguage] = allLanguageFeatures.filter(

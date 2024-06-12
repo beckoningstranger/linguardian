@@ -1,13 +1,8 @@
-import {
-  getLanguageFeaturesForLanguage,
-  getSupportedLanguages,
-  getUserById,
-} from "@/app/actions";
-import getUserOnServer from "@/lib/getUserOnServer";
-import { SupportedLanguage } from "@/types";
+import { getAllLanguageFeatures, getSupportedLanguages } from "@/app/actions";
+import PickNewLanguage from "@/components/PickNewLanguage";
+import { getUserLanguagesWithFlags } from "@/lib/getAllUserLanguages";
+import { LanguageWithFlag } from "@/types";
 import { Metadata } from "next";
-import Link from "next/link";
-import Flag from "react-world-flags";
 
 export const metadata: Metadata = {
   title: "Start learning a new language",
@@ -15,34 +10,28 @@ export const metadata: Metadata = {
 
 export default async function AddNewLanguageToLearn() {
   const supportedLanguages = await getSupportedLanguages();
-  const sessionUser = await getUserOnServer();
-  const user = await getUserById(sessionUser.id);
-  const languagesAlreadyLearned = user?.languages.reduce((a, curr) => {
-    a.push(curr.code);
-    return a;
-  }, [] as SupportedLanguage[]);
+  const allLanguageFeatures = await getAllLanguageFeatures();
 
-  const renderedFlags = supportedLanguages?.map(async (lang) => {
-    if (!languagesAlreadyLearned?.includes(lang) && user?.native !== lang) {
-      const languageFeatures = await getLanguageFeaturesForLanguage(lang);
-
-      return (
-        <Link key={lang} href={`/languages/add?lang=${lang}`}>
-          <Flag
-            code={languageFeatures?.flagCode}
-            className={`my-2 h-24 w-24 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125`}
-          />
-        </Link>
-      );
-    }
+  const allLanguagesAndFlags = supportedLanguages?.map((lang) => {
+    const currentLanguageFeatures = allLanguageFeatures?.filter(
+      (langFeat) => langFeat.langCode === lang
+    )[0];
+    const currentFlag = currentLanguageFeatures?.flagCode;
+    return { name: lang, flag: currentFlag } as LanguageWithFlag;
   });
 
-  return (
-    <div className="flex h-screen flex-col items-center">
-      <div className="mx-auto text-2xl font-semibold">
-        Pick a new language to study:
+  const allUserLanguagesAndFlags = await getUserLanguagesWithFlags();
+
+  if (allLanguagesAndFlags)
+    return (
+      <div className="flex h-screen flex-col items-center">
+        <div className="mx-auto text-2xl font-semibold">
+          Pick a new language to study:
+        </div>
+        <PickNewLanguage
+          allLanguagesAndFlags={allLanguagesAndFlags}
+          allUserLanguagesAndFlags={allUserLanguagesAndFlags}
+        />
       </div>
-      <div className="grid grid-cols-2 gap-5">{renderedFlags}</div>
-    </div>
-  );
+    );
 }

@@ -54,7 +54,7 @@ const authOptions: NextAuthOptions = {
     signIn: "/",
   },
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger, session }) {
       if (user && account) {
         token.email = user.email;
         token.name = user.name;
@@ -64,29 +64,12 @@ const authOptions: NextAuthOptions = {
             ? user.id
             : account.provider + account.providerAccountId;
       }
+      if (trigger === "update") {
+        return { ...token, ...session.user };
+      }
       if (!token.native || !token.isLearning) {
-        const userData = await User.findOne(
-          { id: token.id },
-          { native: 1, languages: 1, _id: 0 }
-        );
-        if (!token.native && userData.native) {
-          const languageFeatures = await getLanguageFeaturesForLanguage(
-            userData.native
-          );
-          token.native = {
-            name: userData.native,
-            flag: languageFeatures?.flagCode,
-          };
-        }
-        if (!token.isLearning && userData.languages.length > 0) {
-          const userIsLearning: LanguageWithFlag[] = userData.languages.map(
-            (lang: LearnedLanguage) => ({
-              name: lang.code,
-              flag: lang.flag,
-            })
-          );
-          token.isLearning = userIsLearning;
-        }
+        const updatedToken = addUserLanguageDataToToken(token);
+        return updatedToken;
       }
       return token;
     },
@@ -136,4 +119,30 @@ interface ProfileExtended {
   email?: string;
   image?: string;
   picture?: string;
+}
+
+async function addUserLanguageDataToToken(token: any) {
+  const userData = await User.findOne(
+    { id: token.id },
+    { native: 1, languages: 1, _id: 0 }
+  );
+  if (!token.native && userData.native) {
+    const languageFeatures = await getLanguageFeaturesForLanguage(
+      userData.native
+    );
+    token.native = {
+      name: userData.native,
+      flag: languageFeatures?.flagCode,
+    };
+  }
+  if (!token.isLearning && userData.languages.length > 0) {
+    const userIsLearning: LanguageWithFlag[] = userData.languages.map(
+      (lang: LearnedLanguage) => ({
+        name: lang.code,
+        flag: lang.flag,
+      })
+    );
+    token.isLearning = userIsLearning;
+  }
+  return token;
 }
