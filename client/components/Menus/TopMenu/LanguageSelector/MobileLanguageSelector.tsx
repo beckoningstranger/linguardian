@@ -5,32 +5,27 @@ import { usePathname } from "next/navigation";
 import Flag from "react-world-flags";
 
 import AddNewLanguageOption from "./AddNewLanguageOption";
-import { SupportedLanguage, User } from "@/types";
+import { SessionUser, SupportedLanguage, User } from "@/types";
 import useMobileMenuContext from "@/hooks/useMobileMenuContext";
 import { moreLanguagesToLearn } from "./LanguageSelector";
+import { useSession } from "next-auth/react";
 
 interface MobileLanguageSelectorProps {
-  user: User;
   setCurrentlyActiveLanguage: Function;
   allSupportedLanguages: SupportedLanguage[];
 }
 
 export default function MobileLanguageSelector({
-  user,
   setCurrentlyActiveLanguage,
   allSupportedLanguages,
 }: MobileLanguageSelectorProps) {
   const { toggleMobileMenu } = useMobileMenuContext();
   const currentPath = usePathname();
-  const languagesAndFlags: { name: SupportedLanguage; flagCode: string }[] = [];
   const amountOfSupportedLanguages = allSupportedLanguages.length;
-
-  user.languages.map((lang) =>
-    languagesAndFlags.push({
-      name: lang.code,
-      flagCode: lang.flag,
-    })
-  );
+  const sessionUser = useSession().data?.user as SessionUser;
+  const languagesAndFlags: { name: SupportedLanguage; flag: string }[] =
+    sessionUser.isLearning;
+  const amountOfLanguagesUserLearns = Object.keys(languagesAndFlags).length;
 
   if (toggleMobileMenu)
     return (
@@ -38,7 +33,7 @@ export default function MobileLanguageSelector({
         {languagesAndFlags.map((lang) => {
           return (
             <Link
-              key={lang.flagCode}
+              key={lang.flag}
               href={`/${lang.name}/${currentPath.split("/")[2]}`}
               onClick={() => {
                 toggleMobileMenu();
@@ -46,16 +41,17 @@ export default function MobileLanguageSelector({
               }}
             >
               <Flag
-                code={lang.flagCode}
+                code={lang.flag}
                 className={`h-24 w-24 rounded-full object-cover shadow-lg transition-all hover:scale-125`}
               />
             </Link>
           );
         })}
-        {user.languages.length < 6 &&
-          moreLanguagesToLearn(user, amountOfSupportedLanguages) && (
-            <AddNewLanguageOption />
-          )}
+        {amountOfLanguagesUserLearns < 6 &&
+          moreLanguagesToLearn(
+            amountOfLanguagesUserLearns,
+            amountOfSupportedLanguages
+          ) && <AddNewLanguageOption />}
       </div>
     );
 }

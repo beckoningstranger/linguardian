@@ -1,12 +1,11 @@
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { MouseEventHandler, useState } from "react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { IoSettings } from "react-icons/io5";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { FaUserAlt } from "react-icons/fa";
 
-import { User } from "@/types";
+import { SessionUser } from "@/types";
 import useMobileMenuContext from "@/hooks/useMobileMenuContext";
 import MobileMenu from "../MobileMenu/MobileMenu";
 import SidebarItem from "./Sidebar/SideNavItem";
@@ -14,15 +13,13 @@ import paths from "@/paths";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import UserMenuItem from "./UserMenuItem";
 
-interface UserMenuProps {
-  user: User;
-}
+interface UserMenuProps {}
 
-export default function UserMenu({ user }: UserMenuProps) {
+export default function UserMenu({}: UserMenuProps) {
   const { toggleMobileMenu } = useMobileMenuContext();
   const [showUserMenu, setShowUserMenu] = useState<Boolean>(false);
-  const router = useRouter();
   const ref = useOutsideClick(setShowUserMenu, showUserMenu);
+  const sessionUser = useSession().data?.user as SessionUser;
 
   return (
     <>
@@ -33,9 +30,9 @@ export default function UserMenu({ user }: UserMenuProps) {
           setShowUserMenu((x) => !x);
         }}
       >
-        {user.image && (
+        {sessionUser.image && (
           <Image
-            src={user.image}
+            src={sessionUser.image}
             alt="User profile image"
             width={100}
             height={100}
@@ -74,9 +71,9 @@ export default function UserMenu({ user }: UserMenuProps) {
         className="m-4 h-[60px] w-[60px] select-none rounded-full bg-slate-200 md:hidden md:h-[50px] md:w-[50px]"
         onClick={toggleMobileMenu as MouseEventHandler}
       >
-        {user.image && (
+        {sessionUser.image && (
           <Image
-            src={user.image}
+            src={sessionUser.image}
             alt="User profile image"
             width={100}
             height={100}
@@ -87,9 +84,9 @@ export default function UserMenu({ user }: UserMenuProps) {
       <MobileMenu fromDirection="animate-from-right">
         <nav className="flex select-none flex-col items-center transition-all">
           <ul>
-            {user.image && (
+            {sessionUser.image && (
               <Image
-                src={user.image}
+                src={sessionUser.image}
                 alt="User profile image"
                 width={200}
                 height={200}

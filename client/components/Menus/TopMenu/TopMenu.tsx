@@ -11,14 +11,12 @@ import HamburgerMenu from "./HamburgerMenu";
 import TopMenuLogo from "./TopMenuLogo";
 
 interface TopMenuProps {
-  user: User;
   allSupportedLanguages: SupportedLanguage[];
   allLanguageFeatures: LanguageFeatures[];
   language: SupportedLanguage;
 }
 
 export default function TopMenu({
-  user,
   allSupportedLanguages,
   allLanguageFeatures,
   language,
@@ -56,7 +54,6 @@ export default function TopMenu({
           <MobileMenuContextProvider>
             <LanguageSelectorAndUserMenu
               activeLanguageData={activeLanguageData}
-              user={user}
               setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
               allSupportedLanguages={allSupportedLanguages}
             />

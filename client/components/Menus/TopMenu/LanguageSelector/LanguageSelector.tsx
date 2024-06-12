@@ -6,18 +6,17 @@ import Flag from "react-world-flags";
 
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import AddNewLanguageOption from "./AddNewLanguageOption";
-import { SupportedLanguage, User } from "@/types";
+import { SessionUser, SupportedLanguage } from "@/types";
 import LanguageSelectorLink from "./LanguageSelectorLink";
+import { useSession } from "next-auth/react";
 
 interface LanguageSelectorProps {
-  user: User;
   setCurrentlyActiveLanguage: Function;
   activeLanguageData: { name: SupportedLanguage; flag: string };
   allSupportedLanguages: SupportedLanguage[];
 }
 
 export default function LanguageSelector({
-  user,
   setCurrentlyActiveLanguage,
   activeLanguageData,
   allSupportedLanguages,
@@ -26,13 +25,15 @@ export default function LanguageSelector({
   const MAX_NUMBER_OF_LANGUAGES_ALLOWED = 6;
   const currentPath = usePathname();
   const amountOfSupportedLanguages = allSupportedLanguages.length;
+  const sessionUser = useSession().data?.user as SessionUser;
 
   const allOfUsersLanguagesAndFlags: {
     name: SupportedLanguage;
     flag: string;
-  }[] = user.languages.map((lang) => {
-    return { name: lang.code, flag: lang.flag };
-  });
+  }[] = sessionUser.isLearning;
+  const amountOfLanguagesUserLearns = Object.keys(
+    allOfUsersLanguagesAndFlags
+  ).length;
 
   const allLanguageAndFlagExceptActive = allOfUsersLanguagesAndFlags.filter(
     (lang) => lang.name !== activeLanguageData.name
@@ -77,19 +78,19 @@ export default function LanguageSelector({
         {showAllLanguageOptions &&
           allLanguageAndFlagExceptActive.length <
             MAX_NUMBER_OF_LANGUAGES_ALLOWED &&
-          moreLanguagesToLearn(user, amountOfSupportedLanguages) && (
-            <AddNewLanguageOption />
-          )}
+          moreLanguagesToLearn(
+            amountOfLanguagesUserLearns,
+            amountOfSupportedLanguages
+          ) && <AddNewLanguageOption />}
       </div>
     </div>
   );
 }
 
 export function moreLanguagesToLearn(
-  user: User,
+  amountOfLanguagesUserLearns: number,
   amountOfSupportedLanguages: number
 ): Boolean {
-  const amountOfLanguagesUserLearns = user.languages.length;
   const amountOfLanguagesThatCanBeLearned = amountOfSupportedLanguages - 1; // native language has to be deducted
   if (amountOfLanguagesUserLearns >= amountOfLanguagesThatCanBeLearned)
     return false;

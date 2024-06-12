@@ -9,19 +9,17 @@ import LanguageSelector from "./LanguageSelector/LanguageSelector";
 import UserMenu from "./UserMenu";
 import MobileLanguageSelector from "./LanguageSelector/MobileLanguageSelector";
 import useMobileMenuContext from "@/hooks/useMobileMenuContext";
-import { SupportedLanguage, User } from "@/types";
+import { SupportedLanguage } from "@/types";
 import { MobileMenuContextProvider } from "../MobileMenu/MobileMenuContext";
 
 interface LanguageSelectorAndUserMenuProps {
   activeLanguageData: { name: SupportedLanguage; flag: string };
-  user: User;
   setCurrentlyActiveLanguage: Function;
   allSupportedLanguages: SupportedLanguage[];
 }
 
 export default function LanguageSelectorAndUserMenu({
   activeLanguageData,
-  user,
   setCurrentlyActiveLanguage,
   allSupportedLanguages,
 }: LanguageSelectorAndUserMenuProps) {
@@ -51,7 +49,6 @@ export default function LanguageSelectorAndUserMenu({
         />
         <MobileMenu fromDirection="animate-from-top">
           <MobileLanguageSelector
-            user={user}
             setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
             allSupportedLanguages={allSupportedLanguages}
           />
@@ -66,12 +63,11 @@ export default function LanguageSelectorAndUserMenu({
           <LanguageSelector
             setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
             activeLanguageData={activeLanguageData}
-            user={user}
             allSupportedLanguages={allSupportedLanguages}
           />
         </div>
         <MobileMenuContextProvider>
-          <UserMenu user={user} />
+          <UserMenu />
         </MobileMenuContextProvider>
       </div>
     </>
