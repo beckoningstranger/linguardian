@@ -2,11 +2,7 @@ import Link from "next/link";
 import { HiOutlinePlusCircle } from "react-icons/hi2";
 
 import ListDashboardCard from "./ListDashboardCard";
-import {
-  LearnedLanguageWithPopulatedLists,
-  SupportedLanguage,
-  User,
-} from "@/types";
+import { SupportedLanguage, User } from "@/types";
 import { getLearnedLanguageData } from "@/app/actions";
 import paths from "@/paths";
 import getUnlockedModes from "@/lib/getUnlockedModes";
@@ -17,13 +13,24 @@ interface DashboardProps {
 }
 
 export default async function Dashboard({ user, language }: DashboardProps) {
-  const userLearningDataForActiveLanguage:
-    | LearnedLanguageWithPopulatedLists
-    | undefined = await getLearnedLanguageData(user.id, language);
+  const userLearningDataForActiveLanguage = await getLearnedLanguageData(
+    user.id,
+    language
+  );
+
+  const unlockedModesForListsPromises =
+    userLearningDataForActiveLanguage?.learnedLists.map(async (list) =>
+      getUnlockedModes(list.listNumber)
+    );
+  if (!unlockedModesForListsPromises)
+    throw new Error("Could not get unlocked modes for lists");
+
+  const unlockedModesForLists = await Promise.all(
+    unlockedModesForListsPromises
+  );
 
   const renderedLists = userLearningDataForActiveLanguage?.learnedLists.map(
-    async (list) => {
-      const unlockedModes = await getUnlockedModes(list.listNumber);
+    (list, index) => {
       return (
         <ListDashboardCard
           key={list.listNumber}
@@ -35,7 +42,7 @@ export default async function Dashboard({ user, language }: DashboardProps) {
             userLearningDataForActiveLanguage.ignoredItems
           }
           userId={user.id}
-          unlockedModes={unlockedModes}
+          unlockedModes={unlockedModesForLists[index]}
         />
       );
     }

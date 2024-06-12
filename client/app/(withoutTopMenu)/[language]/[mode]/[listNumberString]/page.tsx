@@ -1,9 +1,9 @@
 import {
   FullyPopulatedList,
   ItemToLearn,
-  LanguageFeatures,
   LearnedLanguageWithPopulatedLists,
   LearningMode,
+  SupportedLanguage,
   User,
 } from "@/types";
 import LearnAndReview from "@/components/LearningModes/LearnAndReview";
@@ -26,42 +26,36 @@ interface ReviewPageProps {
   params: {
     mode: string;
     listNumberString: string;
+    language: SupportedLanguage;
   };
 }
 
 export default async function LearnAndReviewPage({
-  params: { mode, listNumberString },
+  params: { mode, listNumberString, language },
 }: ReviewPageProps) {
-  // Verify props
   const listNumber = parseInt(listNumberString);
   if (mode !== "translation" && mode !== "learn")
     return `No valid learning mode selected ${mode}`;
-
   const sessionUser = await getUserOnServer();
-  const user = await getUserById(sessionUser.id);
-  if (!user) return "No User";
 
-  const populatedListData = await getFullyPopulatedListByListNumber(
-    user.native,
-    listNumber
-  );
-  if (!populatedListData) return "Error getting populatedListData";
+  const [user, populatedListData, targetLanguageFeatures, learnedLanguageData] =
+    await Promise.all([
+      getUserById(sessionUser.id),
+      getFullyPopulatedListByListNumber(sessionUser.native.name, listNumber),
+      await getLanguageFeaturesForLanguage(language),
+      await getLearnedLanguageData(sessionUser.id, language),
+    ]);
+  if (
+    !user ||
+    !populatedListData ||
+    !targetLanguageFeatures ||
+    !learnedLanguageData
+  )
+    return "Error getting data";
 
   const allItemStringsInList = populatedListData.units.map(
     (unitItem) => unitItem.item.name
   );
-
-  const targetLanguageFeatures: LanguageFeatures | undefined =
-    await getLanguageFeaturesForLanguage(populatedListData!.language);
-  if (!targetLanguageFeatures) return "Error getting targetLanguageFeatures";
-
-  // Fetch all items that user has learned for this language
-  const learnedLanguageData = await getLearnedLanguageData(
-    user.id,
-    populatedListData.language
-  );
-  if (!learnedLanguageData) return "Error getting learnedLanguageData";
-
   const itemsForSession = prepareItemsForSession(
     mode,
     user,
@@ -74,8 +68,8 @@ export default async function LearnAndReviewPage({
       targetLanguageFeatures={targetLanguageFeatures}
       items={itemsForSession}
       listName={populatedListData.name}
-      userNative={user.native}
-      userId={user.id}
+      userNative={sessionUser.native.name}
+      userId={sessionUser.id}
       allItemStringsInList={allItemStringsInList}
       mode={mode}
     />

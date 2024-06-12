@@ -13,8 +13,12 @@ const paths = {
   dictionaryItemPath(language: SupportedLanguage, slug: string) {
     return `/${language}/dictionary/${slug}`;
   },
-  learnPath(mode: LearningMode | "spinner", listId: number) {
-    return `/learn/${mode}/${listId}`;
+  learnPath(
+    language: SupportedLanguage,
+    mode: LearningMode | "spinner",
+    listId: number
+  ) {
+    return `/${language}/${mode}/${listId}`;
   },
   listsLanguagePath(language: SupportedLanguage) {
     return `/${language}/lists`;

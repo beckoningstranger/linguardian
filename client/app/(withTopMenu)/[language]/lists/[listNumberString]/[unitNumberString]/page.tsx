@@ -2,7 +2,6 @@ import {
   getFullyPopulatedListByListNumber,
   getLearnedLanguageData,
   getListDataForMetadata,
-  getUserById,
 } from "@/app/actions";
 import ListBarChart from "@/components/Charts/ListBarChart";
 import {
@@ -40,53 +39,39 @@ export async function generateMetadata({ params }: UnitDetailsProps) {
 
 interface UnitDetailsProps {
   params: {
+    language: SupportedLanguage;
     listNumberString: string;
     unitNumberString: string;
   };
 }
 
 export default async function UnitDetailPage({
-  params: { listNumberString, unitNumberString },
+  params: { listNumberString, unitNumberString, language },
 }: UnitDetailsProps) {
   const listNumber = parseInt(listNumberString);
   const unitNumber = parseInt(unitNumberString);
-  const sessionUser = await getUserOnServer();
-  const unlockedModes = await getUnlockedModes(listNumber);
-  const userNative: SupportedLanguage = sessionUser.native.name;
-  if (!userNative)
-    throw new Error(`Failed to get native language of user ${sessionUser.id}`);
+  const {
+    id: userId,
+    native: { name: userNative },
+  } = await getUserOnServer();
 
-  const listData = await getFullyPopulatedListByListNumber(
-    userNative,
-    listNumber
-  );
-  if (!listData || !listData.unlockedReviewModes)
-    throw new Error("Could not get listData");
+  const [unlockedModes, listData, allListsUserData] = await Promise.all([
+    getUnlockedModes(listNumber),
+    getFullyPopulatedListByListNumber(userNative, listNumber),
+    getLearnedLanguageData(userId, language),
+  ]);
+  if (!listData || !allListsUserData) throw new Error("Could not get data");
 
   const unitName = listData.unitOrder[unitNumber - 1];
   const unitItems = listData?.units
     .filter((unit) => unit.unitName === unitName)
     .map((unitItem) => unitItem.item);
 
-  const user = await getUserById(sessionUser.id);
-
-  if (!unitItems || !user)
-    throw new Error("Failed to get unit data and/or user data");
-  const allListsUserData = await getLearnedLanguageData(
-    user.id,
-    listData.language
-  );
-
-  if (!allListsUserData) throw new Error("Failed to get user data");
-
   const allLearnedListNumbers = allListsUserData?.learnedLists.map(
     (list) => list.listNumber
   );
-
-  const allLearnedItems = allListsUserData.learnedItems;
-
+  const allLearnedItems = allListsUserData?.learnedItems;
   const userHasAddedThisList = allLearnedListNumbers?.includes(listNumber);
-
   const stats = await calculateUnitStats(listNumber, unitName);
 
   return (
@@ -94,7 +79,7 @@ export default async function UnitDetailPage({
       <BackToListAndEditButtons
         listAuthors={listData.authors}
         listNumber={listNumber}
-        userId={user.id}
+        userId={userId}
         listLanguage={listData.language}
       />
       <UnitHeader
@@ -121,6 +106,7 @@ export default async function UnitDetailPage({
             </div>
             <AllLearningButtonsDesktopContainer>
               <AllLearningButtons
+                listLanguage={language}
                 listNumber={listNumber}
                 listStats={stats}
                 unlockedReviewModes={unlockedModes}
@@ -137,6 +123,7 @@ export default async function UnitDetailPage({
       {userHasAddedThisList && (
         <AllLearningButtonsMobileContainer>
           <FlexibleLearningButtons
+            listLanguage={language}
             stats={stats}
             status={determineListStatus(stats)}
             listNumber={listNumber}

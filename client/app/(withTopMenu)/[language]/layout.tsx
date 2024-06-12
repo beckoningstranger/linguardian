@@ -21,11 +21,19 @@ export default async function RootLayoutWithTopMenu({
   params,
 }: RootLayoutProps) {
   const language = params.language;
-  const validPassedLanguage = await checkPassedLanguageAsync(language);
   const sessionUser = await getUserOnServer();
-  const user = await getUserById(sessionUser.id);
-  const allSupportedLanguages = await getSupportedLanguages();
-  const allLanguageFeatures = await getAllLanguageFeatures();
+
+  const [
+    validPassedLanguage,
+    user,
+    allSupportedLanguages,
+    allLanguageFeatures,
+  ] = await Promise.all([
+    checkPassedLanguageAsync(language),
+    getUserById(sessionUser.id),
+    getSupportedLanguages(),
+    getAllLanguageFeatures(),
+  ]);
 
   let error: string | null = null;
   if (

@@ -1,5 +1,10 @@
 "use client";
-import { LearningMode, ListStats, ListStatus } from "@/types";
+import {
+  LearningMode,
+  ListStats,
+  ListStatus,
+  SupportedLanguage,
+} from "@/types";
 import { useRef, useState } from "react";
 import ReviewButton from "../ReviewButton";
 import ContextMenu from "../Menus/ContextMenu";
@@ -10,6 +15,7 @@ interface FlexibleLearningButtonsProps {
   stats: ListStats;
   listNumber: number;
   unlockedModes: LearningMode[];
+  listLanguage: SupportedLanguage;
 }
 
 export default function FlexibleLearningButtons({
@@ -17,6 +23,7 @@ export default function FlexibleLearningButtons({
   stats,
   listNumber,
   unlockedModes,
+  listLanguage,
 }: FlexibleLearningButtonsProps) {
   const [showAllReviewModes, setShowAllReviewModes] = useState(false);
 
@@ -28,12 +35,12 @@ export default function FlexibleLearningButtons({
   if (status === "add") firstButtonMode = "learn";
   if (status === "review") firstButtonMode = "translation";
   if (status === "practice") firstButtonMode = randomMode1;
-  // if (status === "practice") firstButtonMode = loaded ? randomMode1 : "spinner";
 
   const renderedButtons = (
     <div className="flex justify-around md:mr-2 md:flex-col">
       {/* First Button */}
       <ReviewButton
+        listLanguage={listLanguage}
         listNumber={listNumber}
         mode={firstButtonMode}
         stats={stats}
@@ -41,6 +48,7 @@ export default function FlexibleLearningButtons({
       />
       {/* Second Button */}
       <ReviewButton
+        listLanguage={listLanguage}
         listNumber={listNumber}
         mode={status === "practice" ? randomMode2 : randomMode1}
         stats={stats}
@@ -49,6 +57,7 @@ export default function FlexibleLearningButtons({
       {/* Button Only Visible on Mobile */}
       <div className="md:hidden">
         <ReviewButton
+          listLanguage={listLanguage}
           listNumber={listNumber}
           mode={status === "practice" ? randomMode3 : randomMode2}
           stats={stats}
@@ -57,6 +66,7 @@ export default function FlexibleLearningButtons({
       </div>
       {/* More Button */}
       <ReviewButton
+        listLanguage={listLanguage}
         listNumber={listNumber}
         mode="more"
         showAllModes={setShowAllReviewModes}
@@ -75,6 +85,7 @@ export default function FlexibleLearningButtons({
       >
         <div className="grid grid-cols-3 place-items-center md:h-full md:grid-cols-2">
           <AllLearningButtons
+            listLanguage={listLanguage}
             listNumber={listNumber}
             listStats={stats}
             unlockedReviewModes={unlockedModes}

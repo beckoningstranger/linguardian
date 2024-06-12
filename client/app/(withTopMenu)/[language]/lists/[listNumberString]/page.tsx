@@ -55,11 +55,13 @@ export default async function ListDetailPage({
 }: ListDetailProps) {
   const listNumber = parseInt(listNumberString);
 
-  const listData = await getPopulatedList(listNumber);
-  if (!listData || !listData.unlockedReviewModes)
-    throw new Error("Could not get listData");
+  const [listData, sessionUser] = await Promise.all([
+    getPopulatedList(listNumber),
+    getUserOnServer(),
+  ]);
 
-  const sessionUser = await getUserOnServer();
+  if (!listData?.unlockedReviewModes) throw new Error("Could not get listData");
+
   const usersNativeLanguage: SupportedLanguage = sessionUser.native.name;
   if (!usersNativeLanguage)
     throw new Error("Error getting users native language");
@@ -79,7 +81,12 @@ export default async function ListDetailPage({
       listNumber,
     } = listData;
 
-    const allListsUserData = await getLearnedLanguageData(userId, language);
+    const [allListsUserData, renderedAuthors, languageFeatures] =
+      await Promise.all([
+        getLearnedLanguageData(userId, language),
+        fetchAuthors(authors),
+        getLanguageFeaturesForLanguage(language),
+      ]);
 
     if (!allListsUserData)
       throw new Error("Failed to get user data, please report this");
@@ -93,10 +100,6 @@ export default async function ListDetailPage({
     );
     const listId = listData.listNumber;
     const userHasAddedThisList = allLearnedListNumbers?.includes(listId);
-
-    const renderedAuthors = await fetchAuthors(authors);
-
-    const languageFeatures = await getLanguageFeaturesForLanguage(language);
 
     let listStats: ListStats | null = null;
     let listStatus: ListStatus | null = null;
@@ -148,6 +151,7 @@ export default async function ListDetailPage({
                   {listStats && (
                     <AllLearningButtonsDesktopContainer>
                       <AllLearningButtons
+                        listLanguage={language}
                         listNumber={listNumber}
                         listStats={listStats}
                         unlockedReviewModes={unlockedReviewModes}
@@ -173,6 +177,7 @@ export default async function ListDetailPage({
 
                 <AllLearningButtonsMobileContainer>
                   <FlexibleLearningButtons
+                    listLanguage={language}
                     stats={listStats}
                     status={listStatus}
                     listNumber={listNumber}

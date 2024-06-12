@@ -82,6 +82,7 @@ export default function ListDashboardCard({
         </div>
 
         <FlexibleLearningButtons
+          listLanguage={list.language}
           stats={stats}
           status={status}
           listNumber={list.listNumber}

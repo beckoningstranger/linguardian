@@ -13,7 +13,7 @@ import {
 } from "react-icons/fa6"; // Context and Spelling Bee Mode
 import { RxDotsHorizontal, RxDotsVertical } from "react-icons/rx"; // More button
 import Link from "next/link";
-import { LearningMode, ListStats } from "@/types";
+import { LearningMode, ListStats, SupportedLanguage } from "@/types";
 import paths from "@/paths";
 
 interface ReviewButtonProps {
@@ -22,6 +22,7 @@ interface ReviewButtonProps {
   listNumber: number;
   stats: ListStats;
   unlockedModes: LearningMode[];
+  listLanguage: SupportedLanguage;
 }
 
 export default function ReviewButton({
@@ -30,6 +31,7 @@ export default function ReviewButton({
   listNumber,
   stats,
   unlockedModes,
+  listLanguage,
 }: ReviewButtonProps) {
   let icon;
   let color;
@@ -80,7 +82,7 @@ export default function ReviewButton({
     </button>
   ) : (
     <Link
-      href={paths.learnPath(mode, listNumber)}
+      href={paths.learnPath(listLanguage, mode, listNumber)}
       className={`m-1 rounded-lg border-4 border-white ${
         isDisabled()
           ? "bg-gray-300 pointer-events-none"
