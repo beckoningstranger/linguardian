@@ -1,13 +1,22 @@
 export { default } from "next-auth/middleware";
 
+// const reg = new RegExp("^[A-Z]{2}$");
+// Not sure how to use regex expression in the matcher array yet...
+// The above should cover all string with exactly 2 uppercase letters.
+
 export const config = {
   matcher: [
-    "/FR/dashboard/:path",
-    "/lists/:path",
-    "/FR/dictionary/:path*",
-    "/social/:path*",
+    // "/" + reg + "/:path*",
+    "/DE/:path*",
+    "/EN/:path*",
+    "/CN/:path*",
+    "/FR/:path*",
     "/learn/:path*",
+    "/lists/:path*",
     "/languages/:path*",
-    "/nativeLanguage/:path*",
+    "/setNativeLanguage/:path*",
+    "/dictionary/:path*",
+    "/profile/:path*",
+    "/social/:path*",
   ],
 };
