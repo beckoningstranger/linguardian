@@ -2,7 +2,7 @@ import {
   getFullyPopulatedListByListNumber,
   getLearnedLanguageData,
   getListDataForMetadata,
-} from "@/app/actions";
+} from "@/lib/fetchData";
 import ListBarChart from "@/components/Charts/ListBarChart";
 import {
   AllLearningButtonsDesktopContainer,

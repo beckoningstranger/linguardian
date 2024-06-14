@@ -1,4 +1,4 @@
-import { getPopulatedList } from "@/app/actions";
+import { getPopulatedList } from "@/lib/fetchData";
 import getUserOnServer from "./getUserOnServer";
 import { SupportedLanguage } from "@/types";
 

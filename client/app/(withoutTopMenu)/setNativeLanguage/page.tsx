@@ -1,4 +1,4 @@
-import { getAllLanguageFeatures, getSupportedLanguages } from "@/app/actions";
+import { getAllLanguageFeatures, getSupportedLanguages } from "@/lib/fetchData";
 import NativeLanguageForm from "@/components/NativeLanguageForm";
 
 export const metadata = {

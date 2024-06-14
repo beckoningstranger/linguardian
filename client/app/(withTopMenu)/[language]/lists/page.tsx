@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FaPlus } from "react-icons/fa6";
 
 import { SupportedLanguage } from "@/types";
-import { fetchAuthors, getListsByLanguage } from "@/app/actions";
+import { fetchAuthors, getListsByLanguage } from "@/lib/fetchData";
 import ListStoreCard from "@/components/Lists/ListStoreCard";
 import paths from "@/paths";
 import { Metadata } from "next";

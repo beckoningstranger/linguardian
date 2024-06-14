@@ -1,5 +1,3 @@
-import { getPopulatedList } from "@/app/actions";
-import getUserOnServer from "@/lib/getUserOnServer";
 import { LearnedItem, List, ListStats, ListStatus } from "@/types";
 import { Types } from "mongoose";
 

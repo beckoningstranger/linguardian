@@ -1,4 +1,4 @@
-import { getLearnedLanguageData, getPopulatedList } from "@/app/actions";
+import { getLearnedLanguageData, getPopulatedList } from "@/lib/fetchData";
 import getUserOnServer from "@/lib/getUserOnServer";
 import { generateStats } from "./ListHelpers";
 

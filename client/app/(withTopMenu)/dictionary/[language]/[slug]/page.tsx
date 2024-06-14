@@ -2,7 +2,7 @@ import {
   getAllSlugsForLanguage,
   getSupportedLanguages,
   lookUpItemBySlug,
-} from "@/app/actions";
+} from "@/lib/fetchData";
 import ItemPageDEFTRCO from "@/components/Dictionary/ItemPageDEF-TR-CO";
 import ItemPageMain from "@/components/Dictionary/ItemPageMain";
 import ItemPageTopIcons from "@/components/Dictionary/ItemPageTopIcons";

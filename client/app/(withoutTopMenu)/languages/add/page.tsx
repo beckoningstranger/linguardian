@@ -1,4 +1,4 @@
-import { addNewLanguageToLearn } from "@/app/actions";
+import { addNewLanguageToLearn } from "@/lib/fetchData";
 import getUserOnServer from "@/lib/getUserOnServer";
 import paths from "@/paths";
 import { SupportedLanguage } from "@/types";

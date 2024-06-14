@@ -4,7 +4,7 @@ import {
   getLearnedLanguageData,
   getListDataForMetadata,
   getPopulatedList,
-} from "@/app/actions";
+} from "@/lib/fetchData";
 import Link from "next/link";
 
 import paths from "@/paths";

@@ -2,7 +2,7 @@ import {
   checkPassedLanguageAsync,
   getAllLanguageFeatures,
   getSupportedLanguages,
-} from "@/app/actions";
+} from "@/lib/fetchData";
 import { ReactNode } from "react";
 
 interface RootLayoutProps {

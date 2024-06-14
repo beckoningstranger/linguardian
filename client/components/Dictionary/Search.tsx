@@ -7,7 +7,7 @@ import {
   SupportedLanguage,
 } from "@/types";
 import SearchResults from "./SearchResults";
-import { findItems } from "@/app/actions";
+import { findItems } from "@/lib/actions";
 import SearchBox from "./SearchBox";
 
 interface SearchProps {

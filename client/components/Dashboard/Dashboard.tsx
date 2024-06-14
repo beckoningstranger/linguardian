@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { HiOutlinePlusCircle } from "react-icons/hi2";
 
-import ListDashboardCard from "./ListDashboardCard";
-import { SupportedLanguage, User } from "@/types";
-import { getLearnedLanguageData } from "@/app/actions";
-import paths from "@/paths";
 import getUnlockedModes from "@/lib/getUnlockedModes";
+import { getLearnedLanguageData } from "@/lib/fetchData";
 import getUserOnServer from "@/lib/getUserOnServer";
+import paths from "@/paths";
+import { SupportedLanguage } from "@/types";
+import ListDashboardCard from "./ListDashboardCard";
 
 interface DashboardProps {
   language: SupportedLanguage;

@@ -1,4 +1,4 @@
-import { getUserById } from "@/app/actions";
+import { getUserById } from "@/lib/fetchData";
 import getUserOnServer from "@/lib/getUserOnServer";
 import { Metadata } from "next";
 

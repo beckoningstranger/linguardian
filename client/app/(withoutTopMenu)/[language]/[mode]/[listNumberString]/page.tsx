@@ -13,7 +13,7 @@ import {
   getUserById,
   getLearnedLanguageData,
   getListName,
-} from "@/app/actions";
+} from "@/lib/fetchData";
 import getUserOnServer from "@/lib/getUserOnServer";
 
 export async function generateMetadata({ params }: ReviewPageProps) {

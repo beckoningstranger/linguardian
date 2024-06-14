@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 
 import { connectMongoDB } from "@/lib/mongodb";
 import User from "@/models/users.model";
-import { getLanguageFeaturesForLanguage } from "@/app/actions";
+import { getLanguageFeaturesForLanguage } from "@/lib/fetchData";
 import { LanguageWithFlag, LearnedLanguage, SupportedLanguage } from "@/types";
 
 const GOOGLE_ID = process.env.GOOGLE_ID;

@@ -2,7 +2,7 @@ import { connectMongoDB } from "@/lib/mongodb";
 import User from "@/models/users.model";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { getNextUserId } from "@/app/actions";
+import { getNextUserId } from "@/lib/fetchData";
 
 export async function POST(req: NextRequest) {
   try {

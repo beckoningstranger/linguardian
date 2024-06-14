@@ -1,5 +1,5 @@
 "use client";
-import { uploadCSV } from "@/app/actions";
+import { uploadCSV } from "@/lib/actions";
 import { useFormState } from "react-dom";
 
 interface parseCSVFormProps {

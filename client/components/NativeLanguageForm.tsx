@@ -1,6 +1,6 @@
 "use client";
 
-import { setNativeLanguage } from "@/app/actions";
+import { setNativeLanguage } from "@/lib/actions";
 import { LanguageFeatures, SupportedLanguage } from "@/types";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
@@ -46,7 +46,7 @@ export default function NativeLanguageForm({
     );
   });
 
-  const setNativeLanguageForUser = setNativeLanguage.bind(null, {
+  const setNativeLanguageForUserAction = setNativeLanguage.bind(null, {
     language: selectedLanguage as SupportedLanguage,
     userId: userId,
   });
@@ -57,7 +57,7 @@ export default function NativeLanguageForm({
         {renderedFlags}
       </div>
       {selectedLanguage && (
-        <form action={setNativeLanguageForUser}>
+        <form action={setNativeLanguageForUserAction}>
           <button className="rounded-md bg-green-500 p-6 text-white transition-all hover:scale-125">
             I am a native speaker of {selectedLanguageName}
           </button>

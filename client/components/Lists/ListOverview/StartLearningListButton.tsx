@@ -1,7 +1,5 @@
-import Link from "next/link";
-
+import { addListForNewLanguage, addListToDashboard } from "@/lib/actions";
 import { LearnedLanguageWithPopulatedLists, SupportedLanguage } from "@/types";
-import { addListForNewLanguage, addListToDashboard } from "@/app/actions";
 
 interface StartLearningListButtonProps {
   learnedLanguageData?: LearnedLanguageWithPopulatedLists;

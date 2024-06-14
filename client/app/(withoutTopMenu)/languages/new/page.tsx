@@ -1,4 +1,4 @@
-import { getAllLanguageFeatures, getSupportedLanguages } from "@/app/actions";
+import { getAllLanguageFeatures, getSupportedLanguages } from "@/lib/fetchData";
 import PickNewLanguage from "@/components/PickNewLanguage";
 import { getUserLanguagesWithFlags } from "@/lib/getAllUserLanguages";
 import { LanguageWithFlag } from "@/types";

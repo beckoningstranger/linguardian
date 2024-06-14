@@ -15,7 +15,7 @@ import MultipleChoice from "./MultipleChoice";
 import PuzzleMode from "./PuzzleMode";
 import BetterSolutionInput from "./TypeSolution";
 import { useRouter } from "next/navigation";
-import { updateLearnedItems } from "@/app/actions";
+import { updateLearnedItems } from "@/lib/actions";
 import paths from "@/paths";
 
 interface LearnAndReviewProps {

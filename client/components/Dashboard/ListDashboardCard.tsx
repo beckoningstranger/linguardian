@@ -8,7 +8,7 @@ import ListPieChart from "../Charts/ListPieChart";
 import { LearnedItem, LearningMode, List } from "@/types";
 import Link from "next/link";
 import paths from "@/paths";
-import { removeListFromDashboard } from "@/app/actions";
+import { removeListFromDashboard } from "@/lib/actions";
 import FlexibleLearningButtons from "../Lists/FlexibleLearningButtons";
 import { Types } from "mongoose";
 import { calculateListStats, determineListStatus } from "../Lists/ListHelpers";

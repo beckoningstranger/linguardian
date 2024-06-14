@@ -4,7 +4,7 @@ import Link from "next/link";
 import ItemPageContainer from "./ItemPageContainer";
 import paths from "@/paths";
 import { getUserLanguagesWithFlags } from "@/lib/getAllUserLanguages";
-import { getLanguageFeaturesForLanguage } from "@/app/actions";
+import { getLanguageFeaturesForLanguage } from "@/lib/fetchData";
 
 interface ItemPageDEFTRProps {
   definition?: string;
@@ -69,7 +69,7 @@ export default async function ItemPageDEFTRCO({
             type={
               `Translation (` +
               (await getLanguageName(
-                translationItemArrays[index][0].props.href.slice(1, 3)
+                translationItemArrays[index][0].props.href.split("/")[2]
               )) +
               ")"
             }
