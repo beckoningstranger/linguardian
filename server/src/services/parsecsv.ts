@@ -93,6 +93,7 @@ export async function parseCSV({
     authors: author.split(" "),
     unitOrder: [],
     units: [],
+    unlockedReviewModes: null,
   };
 
   const newUploadedList = await Lists.findOneAndUpdate(

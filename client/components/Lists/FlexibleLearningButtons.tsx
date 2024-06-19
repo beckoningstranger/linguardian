@@ -14,7 +14,7 @@ interface FlexibleLearningButtonsProps {
   status: ListStatus;
   stats: ListStats;
   listNumber: number;
-  unlockedModes: LearningMode[];
+  unlockedModes: LearningMode[] | undefined;
   listLanguage: SupportedLanguage;
 }
 

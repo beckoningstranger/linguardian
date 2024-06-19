@@ -4,7 +4,7 @@ import { LearningMode, ListStats, SupportedLanguage } from "@/types";
 interface AllLearningButtonsProps {
   listNumber: number;
   listStats: ListStats;
-  unlockedReviewModes: LearningMode[];
+  unlockedReviewModes: LearningMode[] | undefined;
   listLanguage: SupportedLanguage;
 }
 

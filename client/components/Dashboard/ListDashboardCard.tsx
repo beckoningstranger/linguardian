@@ -18,7 +18,7 @@ interface ListDashboardCardProps {
   allLearnedItemsForLanguage: LearnedItem[];
   allIgnoredItemsForLanguage: Types.ObjectId[];
   userId: string;
-  unlockedModes: Types.Array<LearningMode>;
+  unlockedModes: LearningMode[] | undefined;
 }
 
 export default function ListDashboardCard({

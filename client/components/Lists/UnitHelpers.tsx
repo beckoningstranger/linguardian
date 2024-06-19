@@ -1,31 +1,11 @@
-import { getLearnedLanguageData, getPopulatedList } from "@/lib/fetchData";
-import getUserOnServer from "@/lib/getUserOnServer";
 import { generateStats } from "./ListHelpers";
+import { FullyPopulatedList, LearnedLanguageWithPopulatedLists } from "@/types";
 
-export async function calculateUnitStats(listNumber: number, unitName: string) {
-  const listData = await getPopulatedList(listNumber);
-  if (!listData)
-    return {
-      unlearned: 0,
-      readyToReview: 0,
-      learned: 0,
-      learning: 0,
-      ignored: 0,
-    };
-
-  const listLanguage = listData?.language;
-
-  const sessionUser = await getUserOnServer();
-  const userId = sessionUser.id;
-
-  const learnedLanguageData = await getLearnedLanguageData(
-    userId,
-    listLanguage
-  );
-
-  if (!learnedLanguageData)
-    throw new Error("Error getting learned language data");
-
+export async function calculateUnitStats(
+  unitName: string,
+  learnedLanguageData: LearnedLanguageWithPopulatedLists,
+  listData: FullyPopulatedList
+) {
   const learnedItems = learnedLanguageData.learnedItems;
   const ignoredItems = learnedLanguageData.ignoredItems;
 

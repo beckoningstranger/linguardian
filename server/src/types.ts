@@ -104,7 +104,7 @@ export interface List {
   private: Boolean;
   units: { unitName: string; item: Types.ObjectId }[];
   unitOrder: string[];
-  unlockedReviewModes?: Record<SupportedLanguage, Types.Array<LearningMode>>;
+  unlockedReviewModes: Record<SupportedLanguage, LearningMode[]> | null;
   learners?: Types.ObjectId[];
 }
 

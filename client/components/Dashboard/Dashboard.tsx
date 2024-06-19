@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { HiOutlinePlusCircle } from "react-icons/hi2";
 
-import getUnlockedModes from "@/lib/getUnlockedModes";
 import { getLearnedLanguageData } from "@/lib/fetchData";
 import getUserOnServer from "@/lib/getUserOnServer";
 import paths from "@/paths";
@@ -20,9 +19,10 @@ export default async function Dashboard({ language }: DashboardProps) {
   );
 
   const unlockedModesForListsPromises =
-    userLearningDataForActiveLanguage?.learnedLists.map(async (list) =>
-      getUnlockedModes(list.listNumber)
-    );
+    userLearningDataForActiveLanguage?.learnedLists.map(async (list) => {
+      if (list.unlockedReviewModes)
+        return list.unlockedReviewModes[sessionUser.native.name];
+    });
   if (!unlockedModesForListsPromises)
     throw new Error("Could not get unlocked modes for lists");
 

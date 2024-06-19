@@ -14,7 +14,6 @@ import { determineListStatus } from "@/components/Lists/ListHelpers";
 import AllLearningButtons from "@/components/Lists/ListOverview/AllLearningButtons";
 import UnitHeader from "@/components/Lists/UnitHeader";
 import { calculateUnitStats } from "@/components/Lists/UnitHelpers";
-import getUnlockedModes from "@/lib/getUnlockedModes";
 import getUserOnServer from "@/lib/getUserOnServer";
 import BackToListAndEditButtons from "@/components/Lists/BackToListAndEditButtons";
 import ListPieChart from "@/components/Charts/ListPieChart";
@@ -55,8 +54,7 @@ export default async function UnitDetailPage({
     native: { name: userNative },
   } = await getUserOnServer();
 
-  const [unlockedModes, listData, allListsUserData] = await Promise.all([
-    getUnlockedModes(listNumber),
+  const [listData, allListsUserData] = await Promise.all([
     getFullyPopulatedListByListNumber(userNative, listNumber),
     getLearnedLanguageData(userId, language),
   ]);
@@ -72,7 +70,11 @@ export default async function UnitDetailPage({
   );
   const allLearnedItems = allListsUserData?.learnedItems;
   const userHasAddedThisList = allLearnedListNumbers?.includes(listNumber);
-  const stats = await calculateUnitStats(listNumber, unitName);
+  const stats = await calculateUnitStats(unitName, allListsUserData, listData);
+
+  const unlockedModes = listData.unlockedReviewModes
+    ? listData.unlockedReviewModes[userNative]
+    : [];
 
   return (
     <ListContainer>

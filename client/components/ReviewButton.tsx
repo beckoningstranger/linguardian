@@ -21,7 +21,7 @@ interface ReviewButtonProps {
   showAllModes?: Function;
   listNumber: number;
   stats: ListStats;
-  unlockedModes: LearningMode[];
+  unlockedModes: LearningMode[] | undefined;
   listLanguage: SupportedLanguage;
 }
 
@@ -99,10 +99,12 @@ export default function ReviewButton({
     if (mode === "more") return false;
     if (mode === "spinner") return true;
     if (mode === "learn" && stats.unlearned === 0) return true;
-    if (mode === "learn" && unlockedModes.length > 0) return false;
+    if (mode === "learn" && unlockedModes && unlockedModes.length > 0)
+      return false;
     if (
       mode !== "learn" &&
       stats.readyToReview > 0 &&
+      unlockedModes &&
       unlockedModes.includes(mode)
     )
       return false;
