@@ -3,6 +3,7 @@ import User from "@/models/users.model";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { getNextUserId } from "@/lib/fetchData";
+import { slugify } from "@/lib/slugify";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,6 +14,7 @@ export async function POST(req: NextRequest) {
     await User.create({
       id: "credentials" + id,
       username,
+      usernameSlug: slugify(username),
       email,
       password: hashedPassword,
     });

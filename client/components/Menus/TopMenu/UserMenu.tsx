@@ -47,7 +47,7 @@ export default function UserMenu({}: UserMenuProps) {
         >
           <div className="flex flex-col gap-y-3">
             <UserMenuItem
-              to={paths.profilePath()}
+              to={paths.profilePath(sessionUser.usernameSlug)}
               icon={<FaUserAlt />}
               label="Profile"
             />
@@ -96,7 +96,7 @@ export default function UserMenu({}: UserMenuProps) {
             <SidebarItem
               icon={<FaUserAlt />}
               label="Profile"
-              href={paths.profilePath()}
+              href={paths.profilePath(sessionUser?.usernameSlug)}
             />
             <SidebarItem
               icon={<IoSettings />}

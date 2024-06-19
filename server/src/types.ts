@@ -104,7 +104,9 @@ export interface List {
   private: Boolean;
   units: { unitName: string; item: Types.ObjectId }[];
   unitOrder: string[];
-  unlockedReviewModes: Record<SupportedLanguage, LearningMode[]> | null;
+  unlockedReviewModes:
+    | Record<SupportedLanguage, LearningMode[]>
+    | Record<string, never>;
   learners?: Types.ObjectId[];
 }
 
@@ -198,6 +200,7 @@ export interface LearnedItem {
 export interface User {
   id: string;
   username: string;
+  usernameSlug: string;
   email: string;
   password?: string;
   image: string;
@@ -224,6 +227,7 @@ export interface SessionUser {
   email: string;
   image: string;
   id: string;
+  usernameSlug: string;
   native: LanguageWithFlag;
   isLearning: LanguageWithFlag[];
 }

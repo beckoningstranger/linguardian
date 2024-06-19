@@ -22,6 +22,7 @@ import {
   getPopulatedListByObjectId,
 } from "../models/lists.model.js";
 import { getSupportedLanguages } from "../models/settings.model.js";
+import { slugify } from "./slugify.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -93,7 +94,7 @@ export async function parseCSV({
     authors: author.split(" "),
     unitOrder: [],
     units: [],
-    unlockedReviewModes: null,
+    unlockedReviewModes: {},
   };
 
   const newUploadedList = await Lists.findOneAndUpdate(
@@ -483,11 +484,4 @@ async function defineUnitOrder(newListsId: Types.ObjectId) {
       $set: { unitOrder: foundUnitNames },
     });
   }
-}
-
-function slugify(title: string): string {
-  return title
-    .replace(/[^äöüàáâéèêíìîóòôûúùýỳŷãõũỹa-zA-Z!()': }]/gi, "")
-    .replace(/\s+/g, "-")
-    .toLowerCase();
 }

@@ -20,12 +20,17 @@ export async function getUserById(id: string) {
   }
 }
 
-export async function getUserObjectIdById(id: string) {
+export async function getUserByUsernameSlug(usernameSlug: string) {
   try {
-    const response = await Users.findOne({ id: id }, { id: 1, __v: 0 });
+    const response = await Users.findOne(
+      { usernameSlug: usernameSlug },
+      { _id: 0, __v: 0 }
+    );
     if (response) return response;
   } catch (err) {
-    console.error(`Error getting ObjectId for id ${id}: ${err}`);
+    console.error(
+      `Error getting ObjectId for usernameSlug ${usernameSlug}: ${err}`
+    );
   }
 }
 
@@ -267,4 +272,8 @@ export async function setNativeLanguage(
 export async function getNativeLanguageById(userId: string) {
   const user = await Users.findOne<User>({ id: userId });
   return user?.native;
+}
+
+export async function getAllUserIds() {
+  return await Users.find<User>({}, { username: 1, _id: 0 });
 }

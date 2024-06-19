@@ -9,11 +9,15 @@ import {
   httpSetNativeLanguage,
   httpRemoveListFromDashboard,
   httpGetNativeLanguageById,
+  httpGetAllUserIds,
+  httpGetUserByUsernameSlug,
 } from "./users.controller.js";
 
 export const usersRouter = express.Router();
 
 usersRouter.get("/get/:id", httpGetUserById);
+
+usersRouter.get("/getByUsernameSlug/:usernameSlug", httpGetUserByUsernameSlug);
 
 usersRouter.get(
   "/getLearnedLanguageData/:language/:userId",
@@ -42,3 +46,5 @@ usersRouter.get("/nextUserId", httpGetNextUserId);
 usersRouter.post("/setNativeLanguage/:userId/:language", httpSetNativeLanguage);
 
 usersRouter.get("/getNativeLanguage/:userId", httpGetNativeLanguageById);
+
+usersRouter.get("/getAllUserIds", httpGetAllUserIds);

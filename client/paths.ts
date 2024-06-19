@@ -51,8 +51,8 @@ const paths = {
   setNativeLanguagePath() {
     return `/setNativeLanguage`;
   },
-  profilePath() {
-    return `/profile`;
+  profilePath(usernameSlug: string) {
+    return `/profile/${usernameSlug}`;
   },
   settingsPath() {
     return `/settings`;

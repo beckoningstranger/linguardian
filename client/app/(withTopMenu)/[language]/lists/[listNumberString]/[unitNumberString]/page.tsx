@@ -19,7 +19,7 @@ import BackToListAndEditButtons from "@/components/Lists/BackToListAndEditButton
 import ListPieChart from "@/components/Charts/ListPieChart";
 import Leaderboard from "@/components/Lists/Leaderboard";
 import UnitItems from "@/components/Lists/UnitItems";
-import { SupportedLanguage } from "@/types";
+import { LearningMode, SupportedLanguage } from "@/types";
 
 export async function generateMetadata({ params }: UnitDetailsProps) {
   const listNumber = parseInt(params.listNumberString);
@@ -72,9 +72,8 @@ export default async function UnitDetailPage({
   const userHasAddedThisList = allLearnedListNumbers?.includes(listNumber);
   const stats = await calculateUnitStats(unitName, allListsUserData, listData);
 
-  const unlockedModes = listData.unlockedReviewModes
-    ? listData.unlockedReviewModes[userNative]
-    : [];
+  const unlockedModes: LearningMode[] =
+    listData.unlockedReviewModes[userNative];
 
   return (
     <ListContainer>

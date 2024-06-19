@@ -13,6 +13,11 @@ const userSchema = new Schema<UserType>(
       required: true,
       unique: true,
     },
+    usernameSlug: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     email: { type: String, required: true, unique: true },
     password: {
       type: String,

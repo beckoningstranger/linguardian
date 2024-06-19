@@ -11,12 +11,20 @@ import {
   setNativeLanguage,
   removeListFromDashboard,
   getNativeLanguageById,
+  getAllUserIds,
+  getUserByUsernameSlug,
 } from "../../models/users.model.js";
 
 import { LearningMode, SupportedLanguage } from "../../types.js";
 
 export async function httpGetUserById(req: Request, res: Response) {
   const response = await getUserById(req.params.id);
+  if (response) return res.status(200).json(response);
+  return res.status(404).json();
+}
+
+export async function httpGetUserByUsernameSlug(req: Request, res: Response) {
+  const response = await getUserByUsernameSlug(req.params.usernameSlug);
   if (response) return res.status(200).json(response);
   return res.status(404).json();
 }
@@ -92,6 +100,12 @@ export async function httpGetNativeLanguageById(req: Request, res: Response) {
   const userId = req.params.userId;
 
   const response = await getNativeLanguageById(userId);
+  if (response) return res.status(200).json(response);
+  return res.status(404).json();
+}
+
+export async function httpGetAllUserIds(req: Request, res: Response) {
+  const response = await getAllUserIds();
   if (response) return res.status(200).json(response);
   return res.status(404).json();
 }

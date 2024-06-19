@@ -61,6 +61,19 @@ export async function getUserById(userId: string) {
   }
 }
 
+export async function getUserByUsernameSlug(usernameSlug: string) {
+  try {
+    const response = await fetch(
+      `${server}/users/getByUsernameSlug/${usernameSlug}`
+    );
+    if (!response.ok) throw new Error(response.statusText);
+    const user: User = await response.json();
+    return user;
+  } catch (err) {
+    console.error(`Error getting user: ${err}`);
+  }
+}
+
 export async function getFullyPopulatedListByListNumber(
   userNative: SupportedLanguage,
   listNumber: number
@@ -173,18 +186,6 @@ export async function getNextUserId() {
   }
 }
 
-// export async function getNativeLanguage(userId: string) {
-//   try {
-//     const response = await fetch(`${server}/users/getNativeLanguage/${userId}`);
-
-//     if (!response.ok) throw new Error(response.statusText);
-//     const nativeLanguage: SupportedLanguage = await response.json();
-//     return nativeLanguage;
-//   } catch (err) {
-//     console.error(`Error getting native language for user ${userId}: ${err}`);
-//   }
-// }
-
 export async function fetchAuthors(authors: string[]) {
   const authorDataPromises = authors.map(
     async (author) => await getUserById(author)
@@ -233,7 +234,18 @@ export async function getListName(listNumber: number) {
     if (!response.ok) throw new Error(response.statusText);
     return (await response.json()) as string;
   } catch (err) {
-    console.error(`Error fetching list name for list #${listNumber}`);
+    console.error(`Error fetching list name for list #${listNumber}: ${err}`);
+  }
+}
+
+export async function getAllUserIds() {
+  try {
+    const response = await fetch(`${server}/users/getAllUserIds`);
+    if (!response.ok) throw new Error(response.statusText);
+    return (await response.json()) as string[];
+  } catch (err) {
+    console.error(`Error fetching all user ids: ${err}`);
+    return [];
   }
 }
 
@@ -248,6 +260,8 @@ export async function getListDataForMetadata(
     if (!response.ok) throw new Error(response.statusText);
     return await response.json();
   } catch (err) {
-    console.error(`Error fetching list and unit name for list #${listNumber}`);
+    console.error(
+      `Error fetching list and unit name for list #${listNumber}: ${err}`
+    );
   }
 }

@@ -1,13 +1,14 @@
+import bcrypt from "bcryptjs";
 import { Account, NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
 import FaceBookProvider from "next-auth/providers/facebook";
-import bcrypt from "bcryptjs";
+import GoogleProvider from "next-auth/providers/google";
 
-import { connectMongoDB } from "@/lib/mongodb";
-import User from "@/models/users.model";
 import { getLanguageFeaturesForLanguage } from "@/lib/fetchData";
-import { LanguageWithFlag, LearnedLanguage, SupportedLanguage } from "@/types";
+import { connectMongoDB } from "@/lib/mongodb";
+import { slugify } from "@/lib/slugify";
+import User from "@/models/users.model";
+import { LanguageWithFlag, LearnedLanguage, User as UserType } from "@/types";
 
 const GOOGLE_ID = process.env.GOOGLE_ID;
 const GOOGLE_SECRET = process.env.GOOGLE_SECRET;
@@ -68,7 +69,7 @@ const authOptions: NextAuthOptions = {
         return { ...token, ...session.user };
       }
       if (!token.native || !token.isLearning) {
-        const updatedToken = addUserLanguageDataToToken(token);
+        const updatedToken = addUserDataToToken(token);
         return updatedToken;
       }
       return token;
@@ -77,6 +78,7 @@ const authOptions: NextAuthOptions = {
       session.user.id = token.id;
       session.user.native = token.native;
       session.user.isLearning = token.isLearning;
+      session.user.usernameSlug = token.usernameSlug;
       return session;
     },
     async signIn({
@@ -97,6 +99,7 @@ const authOptions: NextAuthOptions = {
             await User.create({
               id: account?.provider + account?.providerAccountId,
               username: profile?.name,
+              usernameSlug: slugify(profile?.name as string),
               email: profile?.email,
               image: profile?.picture,
             });
@@ -121,12 +124,12 @@ interface ProfileExtended {
   picture?: string;
 }
 
-async function addUserLanguageDataToToken(token: any) {
-  const userData = await User.findOne(
+async function addUserDataToToken(token: any) {
+  const userData = await User.findOne<UserType>(
     { id: token.id },
-    { native: 1, languages: 1, _id: 0 }
+    { native: 1, languages: 1, usernameSlug: 1, _id: 0 }
   );
-  if (!token.native && userData.native) {
+  if (!token.native && userData?.native) {
     const languageFeatures = await getLanguageFeaturesForLanguage(
       userData.native
     );
@@ -135,7 +138,11 @@ async function addUserLanguageDataToToken(token: any) {
       flag: languageFeatures?.flagCode,
     };
   }
-  if (!token.isLearning && userData.languages.length > 0) {
+  if (
+    !token.isLearning &&
+    userData?.languages &&
+    userData.languages.length > 0
+  ) {
     const userIsLearning: LanguageWithFlag[] = userData.languages.map(
       (lang: LearnedLanguage) => ({
         name: lang.code,
@@ -144,5 +151,6 @@ async function addUserLanguageDataToToken(token: any) {
     );
     token.isLearning = userIsLearning;
   }
+  token.usernameSlug = userData?.usernameSlug;
   return token;
 }
