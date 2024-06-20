@@ -22,10 +22,10 @@ export default async function ListStore({ params }: ListStoreProps) {
 
   if (listsForLanguage) {
     const renderedLists = listsForLanguage.map(async (list) => {
-      const authors = await fetchAuthors(list.authors);
+      const authorData = await fetchAuthors(list.authors);
       return (
         <ListStoreCard
-          authors={authors}
+          authorData={authorData}
           title={list.name}
           description={list.description}
           image={list.image}

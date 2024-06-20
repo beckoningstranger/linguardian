@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import CreatedByLine from "./CreatedByLine";
 
 interface ListHeaderProps {
   name: string;
   description?: string;
-  authors: string;
+  authorData: { username: string; usernameSlug: string }[];
   numberOfItems: number;
   image?: string;
   added?: boolean;
@@ -15,7 +16,7 @@ interface ListHeaderProps {
 export default function ListHeader({
   name,
   description,
-  authors,
+  authorData,
   numberOfItems,
   image = "https://picsum.photos/200?grayscale",
   added,
@@ -41,11 +42,8 @@ export default function ListHeader({
           {showDetails && (
             <h3 className={`mx-2 max-w-md text-xs`}>{description}</h3>
           )}
-          {authors && !showDetails && (
-            <h5 className="absolute bottom-1 right-1 text-xs">
-              <span>created by </span>
-              {authors}
-            </h5>
+          {authorData && !showDetails && (
+            <CreatedByLine authorData={authorData} />
           )}
         </div>
       </div>
@@ -65,16 +63,13 @@ export default function ListHeader({
                 {name}
               </h1>
               {!added && <h3 className="text-sm">{numberOfItems} items</h3>}
-              <h3 className={`mx-2 mt-2 max-w-md text-sm ${authors && "mb-4"}`}>
+              <h3
+                className={`mx-2 mt-2 max-w-md text-sm ${authorData && "mb-4"}`}
+              >
                 {description}
               </h3>
             </div>
-            {authors && (
-              <h5 className="absolute bottom-1 right-1 text-xs">
-                <span>created by </span>
-                {authors}
-              </h5>
-            )}
+            {authorData && <CreatedByLine authorData={authorData} />}
           </div>
         </div>
       </div>

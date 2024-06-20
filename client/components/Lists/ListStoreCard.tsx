@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 interface ListStoreCardProps {
-  authors: string;
+  authorData: { username: string; usernameSlug: string }[];
   title: string;
   description: string | undefined;
   image: string | undefined;
@@ -16,7 +16,7 @@ interface ListStoreCardProps {
 }
 
 export default function ListStoreCard({
-  authors,
+  authorData,
   title,
   description = "No description entered yet...",
   image = "https:/picsum.photos/150?grayscale",
@@ -33,8 +33,10 @@ export default function ListStoreCard({
           id="title"
           className="mt-2 flex h-[60px] flex-col items-center justify-center"
         >
-          {authors.length > 0 && (
-            <h3 className="pt-1 text-[0.7rem] leading-3">{authors}&apos;s</h3>
+          {authorData.length > 0 && (
+            <h3 className="pt-1 text-[0.7rem] leading-3">
+              <span>{authorData.map((author) => author.username)}</span>&apos;s
+            </h3>
           )}
           <h2 className="text-[1.4rem]">{title}</h2>
         </div>

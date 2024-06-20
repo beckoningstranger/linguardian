@@ -7,26 +7,26 @@ import {
 } from "@/lib/fetchData";
 import Link from "next/link";
 
-import paths from "@/paths";
-import getUserOnServer from "@/lib/getUserOnServer";
-import ListHeader from "@/components/Lists/ListOverview/ListHeader";
-import StartLearningListButton from "@/components/Lists/ListOverview/StartLearningListButton";
 import ListBarChart from "@/components/Charts/ListBarChart";
-import FlexibleLearningButtons from "@/components/Lists/FlexibleLearningButtons";
-import ListUnits from "@/components/Lists/ListOverview/ListUnits";
-import {
-  calculateListStats,
-  determineListStatus,
-} from "@/components/Lists/ListHelpers";
-import { ListStats, ListStatus, SupportedLanguage } from "@/types";
 import ListPieChart from "@/components/Charts/ListPieChart";
-import Leaderboard from "@/components/Lists/Leaderboard";
-import AllLearningButtons from "@/components/Lists/ListOverview/AllLearningButtons";
-import ListContainer from "@/components/Lists/ListContainer";
 import {
   AllLearningButtonsDesktopContainer,
   AllLearningButtonsMobileContainer,
 } from "@/components/Lists/AllLearningButtonsContainer";
+import FlexibleLearningButtons from "@/components/Lists/FlexibleLearningButtons";
+import Leaderboard from "@/components/Lists/Leaderboard";
+import ListContainer from "@/components/Lists/ListContainer";
+import {
+  calculateListStats,
+  determineListStatus,
+} from "@/components/Lists/ListHelpers";
+import AllLearningButtons from "@/components/Lists/ListOverview/AllLearningButtons";
+import ListHeader from "@/components/Lists/ListOverview/ListHeader";
+import ListUnits from "@/components/Lists/ListOverview/ListUnits";
+import StartLearningListButton from "@/components/Lists/ListOverview/StartLearningListButton";
+import getUserOnServer from "@/lib/getUserOnServer";
+import paths from "@/paths";
+import { ListStats, ListStatus, SupportedLanguage } from "@/types";
 
 export async function generateMetadata({ params }: ListDetailProps) {
   const listNumber = parseInt(params.listNumberString);
@@ -81,12 +81,11 @@ export default async function ListDetailPage({
       listNumber,
     } = listData;
 
-    const [allListsUserData, renderedAuthors, languageFeatures] =
-      await Promise.all([
-        getLearnedLanguageData(userId, language),
-        fetchAuthors(authors),
-        getLanguageFeaturesForLanguage(language),
-      ]);
+    const [allListsUserData, authorData, languageFeatures] = await Promise.all([
+      getLearnedLanguageData(userId, language),
+      fetchAuthors(authors),
+      getLanguageFeaturesForLanguage(language),
+    ]);
 
     if (!allListsUserData)
       throw new Error("Failed to get user data, please report this");
@@ -112,14 +111,14 @@ export default async function ListDetailPage({
       listStatus = determineListStatus(listStats);
     }
 
-    if (languageFeatures)
+    if (languageFeatures && authorData)
       return (
         <ListContainer>
           <div className="mb-24 flex flex-col md:mb-0">
             <ListHeader
               name={name}
               description={description}
-              authors={renderedAuthors}
+              authorData={authorData}
               numberOfItems={listData.units.length}
               image={listData.image}
               added={userHasAddedThisList}

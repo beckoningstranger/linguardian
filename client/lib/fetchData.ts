@@ -190,8 +190,16 @@ export async function fetchAuthors(authors: string[]) {
   const authorDataPromises = authors.map(
     async (author) => await getUserById(author)
   );
-  const authorData = await Promise.all(authorDataPromises);
-  return authorData.map((author) => author?.username).join(" & ");
+  const authorData = (await Promise.all(authorDataPromises)).filter(
+    (author): author is User => !!author
+  );
+
+  return authorData.map((author) => {
+    return {
+      username: author.username,
+      usernameSlug: author.usernameSlug,
+    };
+  });
 }
 
 export async function lookUpItemBySlug(
