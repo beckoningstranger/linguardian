@@ -50,11 +50,13 @@ export default function UserMenu({}: UserMenuProps) {
               to={paths.profilePath(sessionUser.usernameSlug)}
               icon={<FaUserAlt />}
               label="Profile"
+              onClick={() => setShowUserMenu(false)}
             />
             <UserMenuItem
               to={paths.settingsPath()}
               icon={<IoSettings />}
               label="Settings"
+              onClick={() => setShowUserMenu(false)}
             />
             <UserMenuItem
               icon={<RiLogoutBoxLine />}
@@ -97,11 +99,13 @@ export default function UserMenu({}: UserMenuProps) {
               icon={<FaUserAlt />}
               label="Profile"
               href={paths.profilePath(sessionUser?.usernameSlug)}
+              toggleSidebar={toggleMobileMenu as MouseEventHandler}
             />
             <SidebarItem
               icon={<IoSettings />}
               label="Settings"
               href={paths.settingsPath()}
+              toggleSidebar={toggleMobileMenu as MouseEventHandler}
             />
             <li
               className={`my-4 flex select-none justify-center transition-all md:my-0 md:h-14 md:justify-start md:border-none md:p-10 md:hover:scale-100 md:hover:bg-slate-300`}

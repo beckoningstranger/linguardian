@@ -16,7 +16,11 @@ export default function UserMenuItem({
 }: UserMenuItemProps) {
   if (to)
     return (
-      <Link href={to} className="flex items-center hover:cursor-pointer">
+      <Link
+        href={to}
+        className="flex items-center hover:cursor-pointer"
+        onClick={onClick}
+      >
         <span className="mx-4">
           <span className="text-xl">{icon}</span>
         </span>
