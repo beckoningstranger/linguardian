@@ -1,15 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 
-import { LanguageFeatures, SupportedLanguage } from "@/types";
-import SideBarNavigation from "./Sidebar/SideBarNavigation";
-import LanguageSelectorAndUserMenu from "./LanguageSelectorAndUserMenu";
-import { MobileMenuContextProvider } from "../MobileMenu/MobileMenuContext";
-import TopMiddleNavigation from "./TopMiddleNavigation";
-import HamburgerMenu from "./HamburgerMenu";
-import TopMenuLogo from "./TopMenuLogo";
 import { useActiveLanguage } from "@/context/ActiveLanguageContext";
+import { LanguageFeatures, SupportedLanguage } from "@/types";
+import { useSession } from "next-auth/react";
+import { MobileMenuContextProvider } from "../MobileMenu/MobileMenuContext";
+import HamburgerMenu from "./HamburgerMenu";
+import LanguageSelectorAndUserMenu from "./LanguageSelectorAndUserMenu";
+import SideBarNavigation from "./Sidebar/SideBarNavigation";
+import TopMenuLogo from "./TopMenuLogo";
+import TopMiddleNavigation from "./TopMiddleNavigation";
 
 interface TopMenuProps {
   allSupportedLanguages: SupportedLanguage[];
@@ -31,20 +31,11 @@ export default function TopMenu({
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
   };
-  const currentBaseUrl = usePathname();
+  const sessionUser = useSession().data?.user;
 
   useEffect(() => {
-    allSupportedLanguages.forEach((lang) => {
-      if (currentBaseUrl.includes(lang) && lang !== activeLanguage) {
-        setActiveLanguage(lang);
-      }
-    });
-  }, [
-    currentBaseUrl,
-    allSupportedLanguages,
-    setActiveLanguage,
-    activeLanguage,
-  ]);
+    setActiveLanguage(sessionUser.isLearning[0].name);
+  }, [setActiveLanguage, sessionUser]);
 
   return (
     <>

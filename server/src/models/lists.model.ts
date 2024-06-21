@@ -65,7 +65,7 @@ export async function getAllListsForLanguage(language: SupportedLanguage) {
   }
 }
 
-export async function getLatestListNumber() {
+export async function getNextListNumber() {
   const latestList = await Lists.findOne().sort("-listNumber");
   return !latestList?.listNumber ? 1 : latestList.listNumber + 1;
 }
@@ -153,7 +153,7 @@ export async function getListDataForMetadata(
     description: string;
   };
   const { languageFeatures } = (await Settings.findOne(
-    { id: 1 },
+    {},
     { languageFeatures: 1, _id: 0 }
   )) as { languageFeatures: LanguageFeatures[] };
   const languageFeaturesForQueryLanguage = languageFeatures.filter(
@@ -165,4 +165,10 @@ export async function getListDataForMetadata(
     langName: languageFeaturesForQueryLanguage?.langName,
     description: description,
   };
+}
+
+export async function getAmountOfUnits(listNumber: number) {
+  return (
+    await Lists.findOne({ listNumber: listNumber }, { _id: 0, unitOrder: 1 })
+  )?.unitOrder.length;
 }

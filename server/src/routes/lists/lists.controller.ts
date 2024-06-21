@@ -1,19 +1,21 @@
-import fs from "fs";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
 import { Request, Response } from "express";
+import fs from "fs";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
 
-import { parseCSV } from "../../services/parsecsv.js";
 import {
   getAllListsForLanguage,
+  getAmountOfUnits,
+  getChapterNameByNumber,
+  getFullyPopulatedListByListNumber,
+  getList,
+  getListDataForMetadata,
+  getListNameAndUnitOrder,
+  getNextListNumber,
   getPopulatedListByListNumber,
   updateUnlockedReviewModes,
-  getChapterNameByNumber,
-  getList,
-  getFullyPopulatedListByListNumber,
-  getListNameAndUnitOrder,
-  getListDataForMetadata,
 } from "../../models/lists.model.js";
+import { parseCSV } from "../../services/parsecsv.js";
 import { FullyPopulatedList, SupportedLanguage } from "../../types.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -115,6 +117,19 @@ export async function httpGetListDataForMetadata(req: Request, res: Response) {
   const listNumber = parseInt(req.params.listNumber);
   const unitNumber = parseInt(req.params.unitNumber);
   const response = await getListDataForMetadata(listNumber, unitNumber);
+  if (!response) res.status(404).json();
+  return res.status(200).json(response);
+}
+
+export async function httpGetNextListNumber(req: Request, res: Response) {
+  const response = await getNextListNumber();
+  if (!response) res.status(404).json();
+  return res.status(200).json(response);
+}
+
+export async function httpGetAmountOfUnits(req: Request, res: Response) {
+  const listNumber = parseInt(req.params.listNumber);
+  const response = await getAmountOfUnits(listNumber);
   if (!response) res.status(404).json();
   return res.status(200).json(response);
 }

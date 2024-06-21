@@ -2,8 +2,10 @@ import { GlobalSettings } from "../types.js";
 import { model, Schema } from "mongoose";
 
 const settingsSchema = new Schema<GlobalSettings>({
-  id: { type: Number, required: true },
   supportedLanguages: {
+    type: [String],
+  },
+  learningModes: {
     type: [String],
   },
   languageFeatures: [

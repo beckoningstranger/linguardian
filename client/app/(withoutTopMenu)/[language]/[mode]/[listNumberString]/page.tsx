@@ -13,6 +13,9 @@ import {
   getUserById,
   getLearnedLanguageData,
   getListName,
+  getSupportedLanguages,
+  getLearningModes,
+  getListNumbers,
 } from "@/lib/fetchData";
 import getUserOnServer from "@/lib/getUserOnServer";
 
@@ -20,6 +23,33 @@ export async function generateMetadata({ params }: ReviewPageProps) {
   const listNumber = parseInt(params.listNumberString);
   const listName = await getListName(listNumber);
   return { title: listName };
+}
+
+export async function generateStaticParams() {
+  const [supportedLanguages, learningModes, listNumbers] = await Promise.all([
+    getSupportedLanguages(),
+    getLearningModes(),
+    getListNumbers(),
+  ]);
+
+  let possibilities: {
+    language: SupportedLanguage;
+    mode: LearningMode;
+    listNumberString: string;
+  }[] = [];
+
+  supportedLanguages?.forEach((lang) =>
+    learningModes?.forEach((mode) =>
+      listNumbers?.forEach((number) =>
+        possibilities.push({
+          language: lang,
+          mode: mode,
+          listNumberString: number,
+        })
+      )
+    )
+  );
+  return possibilities;
 }
 
 interface ReviewPageProps {

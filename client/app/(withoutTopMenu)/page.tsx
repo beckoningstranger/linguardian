@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default async function Root() {
   const sessionUser = await getUserOnServer();
-  if (sessionUser.native && sessionUser.isLearning)
+  if (sessionUser?.isLearning)
     redirect(paths.dashboardLanguagePath(sessionUser.isLearning[0].name));
 
   return (

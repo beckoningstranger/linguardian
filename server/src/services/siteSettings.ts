@@ -3,6 +3,7 @@ import {
   SRSettings,
   GlobalSettings,
   SupportedLanguage,
+  LearningMode,
 } from "../types.js";
 
 const languageFeatures: LanguageFeatures[] = [
@@ -251,11 +252,20 @@ const defaultSRSettings: SRSettings = {
   },
 };
 
+const learningModes: LearningMode[] = [
+  "learn",
+  "translation",
+  "context",
+  "spellingBee",
+  "dictionary",
+  "visual",
+];
+
 const supportedLanguages: SupportedLanguage[] = ["DE", "EN", "FR", "CN"];
 
 export const siteSettings: GlobalSettings = {
-  id: 1,
-  supportedLanguages: supportedLanguages,
-  languageFeatures: languageFeatures,
-  defaultSRSettings: defaultSRSettings,
+  languageFeatures,
+  learningModes,
+  supportedLanguages,
+  defaultSRSettings,
 };

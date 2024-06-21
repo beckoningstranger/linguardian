@@ -2,6 +2,8 @@ import {
   getFullyPopulatedListByListNumber,
   getLearnedLanguageData,
   getListDataForMetadata,
+  getListNumbers,
+  getUnitNumbers,
 } from "@/lib/fetchData";
 import ListBarChart from "@/components/Charts/ListBarChart";
 import {
@@ -35,6 +37,33 @@ export async function generateMetadata({ params }: UnitDetailsProps) {
     }"`,
   };
 }
+
+// export async function generateStaticParams() {
+//   const listNumbers = await getListNumbers();
+//   if (!listNumbers) throw new Error("Failed to get all list numbers");
+
+//   const listNumbersWithUnitNumbers = Promise.all(
+//     listNumbers.map(async (number) => ({
+//       listNumberString: number,
+//       unitNumberString: await getUnitNumbers(Number(number)),
+//     }))
+//   );
+
+//   let possibilities: {
+//     listNumberString: string;
+//     unitNumberString: string;
+//   }[] = [];
+
+//   (await listNumbersWithUnitNumbers).forEach((listNumber) =>
+//     listNumber.unitNumberString.forEach((unitNumber) =>
+//       possibilities.push({
+//         listNumberString: listNumber.listNumberString,
+//         unitNumberString: String(unitNumber),
+//       })
+//     )
+//   );
+//   return possibilities;
+// }
 
 interface UnitDetailsProps {
   params: {

@@ -1,27 +1,27 @@
-import fs from "fs";
 import { parse } from "csv-parse";
+import fs from "fs";
+import { Types } from "mongoose";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
-import { Types } from "mongoose";
 
-import {
-  PartOfSpeech,
-  SupportedLanguage,
-  Case,
-  Gender,
-  Tags,
-  List,
-  Item,
-  PopulatedList,
-} from "../types.js";
 import Items from "../models/item.schema.js";
 import Lemmas from "../models/lemma.schema.js";
 import Lists from "../models/list.schema.js";
 import {
-  getLatestListNumber,
+  getNextListNumber,
   getPopulatedListByObjectId,
 } from "../models/lists.model.js";
 import { getSupportedLanguages } from "../models/settings.model.js";
+import {
+  Case,
+  Gender,
+  Item,
+  List,
+  PartOfSpeech,
+  PopulatedList,
+  SupportedLanguage,
+  Tags,
+} from "../types.js";
 import { slugify } from "./slugify.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -88,7 +88,7 @@ export async function parseCSV({
   console.log("Parsing CSV File...");
   const newList: List = {
     name: listName,
-    listNumber: await getLatestListNumber(),
+    listNumber: await getNextListNumber(),
     private: false,
     language: language,
     authors: author.split(" "),

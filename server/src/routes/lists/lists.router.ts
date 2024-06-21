@@ -1,15 +1,17 @@
 import express from "express";
-import {
-  httpGetAllListsForLanguage,
-  httpGetPopulatedListByListNumber,
-  httpGetFullyPopulatedListByListNumber,
-  httpPostCSV,
-  httpGetList,
-  httpGetListName,
-  httpGetListDataForMetadata,
-} from "./lists.controller.js";
 import multer from "multer";
 import path from "path";
+import {
+  httpGetAllListsForLanguage,
+  httpGetAmountOfUnits,
+  httpGetFullyPopulatedListByListNumber,
+  httpGetList,
+  httpGetListDataForMetadata,
+  httpGetListName,
+  httpGetNextListNumber,
+  httpGetPopulatedListByListNumber,
+  httpPostCSV,
+} from "./lists.controller.js";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -48,3 +50,7 @@ listsRouter.get(
   "/getListDataForMetadata/:listNumber/:unitNumber",
   httpGetListDataForMetadata
 );
+
+listsRouter.get("/nextListNumber", httpGetNextListNumber);
+
+listsRouter.get("/amountOfUnits/:listNumber", httpGetAmountOfUnits);

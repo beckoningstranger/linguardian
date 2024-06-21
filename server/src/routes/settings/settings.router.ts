@@ -3,6 +3,7 @@ import {
   httpGetAllLanguageFeatures,
   httpGetAllSettings,
   httpGetLanguageFeaturesForLanguage,
+  httpGetLearningModes,
   httpGetSupportedLanguages,
 } from "./settings.controller.js";
 
@@ -17,4 +18,6 @@ settingsRouter.get(
   httpGetLanguageFeaturesForLanguage
 );
 
-settingsRouter.get("/allLanguageFeatures", httpGetAllLanguageFeatures)
+settingsRouter.get("/allLanguageFeatures", httpGetAllLanguageFeatures);
+
+settingsRouter.get("/learningModes", httpGetLearningModes);

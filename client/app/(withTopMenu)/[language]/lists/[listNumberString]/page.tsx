@@ -3,6 +3,7 @@ import {
   getLanguageFeaturesForLanguage,
   getLearnedLanguageData,
   getListDataForMetadata,
+  getListNumbers,
   getPopulatedList,
 } from "@/lib/fetchData";
 import Link from "next/link";
@@ -42,6 +43,12 @@ export async function generateMetadata({ params }: ListDetailProps) {
     }"`,
   };
 }
+
+// export async function generateStaticParams() {
+//   const listNumbers = await getListNumbers();
+//   if (!listNumbers) throw new Error("Failed to fetch all list numbers");
+//   return listNumbers?.map((number) => ({ listNumberString: number }));
+// }
 
 interface ListDetailProps {
   params: {

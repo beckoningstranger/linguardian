@@ -3,6 +3,7 @@ import {
   ItemPopulatedWithTranslations,
   LanguageFeatures,
   LearnedLanguageWithPopulatedLists,
+  LearningMode,
   List,
   PopulatedList,
   SupportedLanguage,
@@ -19,6 +20,31 @@ export async function getSupportedLanguages() {
     return supportedLanguages;
   } catch (err) {
     console.error(`Error getting supported languages: ${err}`);
+  }
+}
+
+export async function getLearningModes() {
+  try {
+    const response = await fetch(`${server}/settings/learningModes`);
+    if (!response.ok) throw new Error(response.statusText);
+    const learningModes: LearningMode[] = await response.json();
+    return learningModes;
+  } catch (err) {
+    console.error(`Error getting learning modes: ${err}`);
+  }
+}
+
+export async function getListNumbers() {
+  try {
+    const response = await fetch(`${server}/lists/nextListNumber`);
+    if (!response.ok) throw new Error(response.statusText);
+    const nextListNumber = (await response.json()) as number;
+    const listNumbers = [...Array(nextListNumber - 1).keys()].map((i) =>
+      String(i + 1)
+    );
+    return listNumbers;
+  } catch (err) {
+    console.error(`Error getting latest list number: ${err}`);
   }
 }
 
@@ -271,5 +297,20 @@ export async function getListDataForMetadata(
     console.error(
       `Error fetching list and unit name for list #${listNumber}: ${err}`
     );
+  }
+}
+
+export async function getUnitNumbers(listNumber: number) {
+  try {
+    const response = await fetch(`${server}/lists/amountOfUnits/${listNumber}`);
+    if (!response.ok) throw new Error(response.statusText);
+    const amountOfUnits = (await response.json()) as number;
+    const unitNumbers = [...Array(amountOfUnits - 1).keys()].map((i) => i + 1);
+    return unitNumbers;
+  } catch (err) {
+    console.error(
+      `Error fetching amount of units for listNumber ${listNumber}: ${err}`
+    );
+    return [];
   }
 }

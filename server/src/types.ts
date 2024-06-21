@@ -168,7 +168,7 @@ export interface LanguageFeatures {
 }
 
 export interface GlobalSettings {
-  id: number;
+  learningModes: LearningMode[];
   supportedLanguages: SupportedLanguage[];
   languageFeatures: LanguageFeatures[];
   defaultSRSettings: SRSettings;

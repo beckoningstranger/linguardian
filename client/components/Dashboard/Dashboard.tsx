@@ -19,7 +19,7 @@ export default async function Dashboard({ language }: DashboardProps) {
   );
 
   const unlockedModesForListsPromises =
-    userLearningDataForActiveLanguage?.learnedLists.map(async (list) => {
+    userLearningDataForActiveLanguage?.learnedLists.map((list) => {
       if (list.unlockedReviewModes)
         return list.unlockedReviewModes[sessionUser.native.name];
     });

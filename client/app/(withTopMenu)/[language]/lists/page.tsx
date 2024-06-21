@@ -2,7 +2,11 @@ import Link from "next/link";
 import { FaPlus } from "react-icons/fa6";
 
 import { SupportedLanguage } from "@/types";
-import { fetchAuthors, getListsByLanguage } from "@/lib/fetchData";
+import {
+  fetchAuthors,
+  getListsByLanguage,
+  getSupportedLanguages,
+} from "@/lib/fetchData";
 import ListStoreCard from "@/components/Lists/ListStoreCard";
 import paths from "@/paths";
 import { Metadata } from "next";
@@ -13,6 +17,13 @@ export const metadata: Metadata = {
 
 interface ListStoreProps {
   params?: { language: string };
+}
+
+export async function generateStaticParams() {
+  const supportedLanguagesData = await getSupportedLanguages();
+  if (!supportedLanguagesData)
+    throw new Error("Could not get supported languages");
+  return supportedLanguagesData.map((lang) => ({ language: lang }));
 }
 
 export default async function ListStore({ params }: ListStoreProps) {
