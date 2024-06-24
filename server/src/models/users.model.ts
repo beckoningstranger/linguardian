@@ -1,8 +1,8 @@
 import {
   ItemForServer,
-  LearnedLanguageWithPopulatedLists,
   SupportedLanguage,
   User,
+  UserWithPopulatedLearnedLists,
 } from "../types.js";
 import { getList } from "./lists.model.js";
 import {
@@ -39,19 +39,6 @@ export async function createUser(user: User) {
     await Users.findOneAndUpdate<User>({ id: user.id }, user, { upsert: true });
   } catch (err) {
     console.error(`Error creating user. ${err}`);
-  }
-}
-
-export async function getUserWithPopulatedLearnedLists(userId: string) {
-  try {
-    return await Users.findOne<User>(
-      { id: userId },
-      { languages: 1, _id: 0 }
-    ).populate<{
-      languages: LearnedLanguageWithPopulatedLists[];
-    }>(`languages.learnedLists`);
-  } catch (err) {
-    console.error(`Error getting learned lists for user ${userId}`);
   }
 }
 
@@ -276,4 +263,11 @@ export async function getNativeLanguageById(userId: string) {
 
 export async function getAllUserIds() {
   return await Users.find<User>({}, { username: 1, _id: 0 });
+}
+
+export async function getAllLearnedLists(userId: string) {
+  return await Users.findOne<UserWithPopulatedLearnedLists>(
+    { id: userId },
+    { languages: 1, _id: 0 }
+  ).populate("languages.learnedLists");
 }

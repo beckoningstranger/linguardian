@@ -12,6 +12,7 @@ import { removeListFromDashboard } from "@/lib/actions";
 import FlexibleLearningButtons from "../Lists/FlexibleLearningButtons";
 import { Types } from "mongoose";
 import { calculateListStats, determineListStatus } from "../Lists/ListHelpers";
+import RemoveListSubmitButton from "./RemoveListSubmitButton";
 
 interface ListDashboardCardProps {
   list: List;
@@ -53,7 +54,10 @@ export default function ListDashboardCard({
       >
         <div className="m-4 flex flex-col">
           <form action={removeListFromDashboardAction}>
-            <button type="submit">Remove list & Stop learning</button>
+            <RemoveListSubmitButton
+              language={list.language}
+              listNumber={list.listNumber}
+            />
           </form>
         </div>
       </ContextMenu>

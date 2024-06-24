@@ -208,6 +208,10 @@ export interface User {
   languages: LearnedLanguage[];
 }
 
+export type UserWithPopulatedLearnedLists = Omit<User, "languages"> & {
+  languages: LearnedLanguageWithPopulatedLists[];
+};
+
 export interface DictionarySearchResult {
   name: string;
   slug: string;
@@ -230,4 +234,5 @@ export interface SessionUser {
   usernameSlug: string;
   native: LanguageWithFlag;
   isLearning: LanguageWithFlag[];
+  learnedLists: Partial<Record<SupportedLanguage, number[]>>;
 }

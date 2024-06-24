@@ -4,11 +4,19 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import FaceBookProvider from "next-auth/providers/facebook";
 import GoogleProvider from "next-auth/providers/google";
 
-import { getLanguageFeaturesForLanguage } from "@/lib/fetchData";
+import {
+  getAllLearnedListsForUser,
+  getLanguageFeaturesForLanguage,
+} from "@/lib/fetchData";
 import { connectMongoDB } from "@/lib/mongodb";
 import { slugify } from "@/lib/slugify";
 import User from "@/models/users.model";
-import { LanguageWithFlag, LearnedLanguage, User as UserType } from "@/types";
+import {
+  LanguageWithFlag,
+  LearnedLanguage,
+  SupportedLanguage,
+  User as UserType,
+} from "@/types";
 
 const GOOGLE_ID = process.env.GOOGLE_ID;
 const GOOGLE_SECRET = process.env.GOOGLE_SECRET;
@@ -69,7 +77,7 @@ const authOptions: NextAuthOptions = {
         return { ...token, ...session.user };
       }
       if (!token.native || !token.isLearning) {
-        const updatedToken = addUserDataToToken(token);
+        const updatedToken = addUserDataToToken(token as any);
         return updatedToken;
       }
       return token;
@@ -79,6 +87,7 @@ const authOptions: NextAuthOptions = {
       session.user.native = token.native;
       session.user.isLearning = token.isLearning;
       session.user.usernameSlug = token.usernameSlug;
+      session.user.learnedLists = token.learnedLists;
       return session;
     },
     async signIn({
@@ -124,7 +133,20 @@ interface ProfileExtended {
   picture?: string;
 }
 
-async function addUserDataToToken(token: any) {
+interface Token {
+  name: string;
+  email: string;
+  picture: string;
+  sub: string;
+  image: string;
+  id: string;
+  native: LanguageWithFlag | undefined;
+  isLearning: LanguageWithFlag[];
+  usernameSlug: string | undefined;
+  learnedLists: Record<SupportedLanguage, number[]> | never[];
+}
+
+async function addUserDataToToken(token: Token) {
   const userData = await User.findOne<UserType>(
     { id: token.id },
     { native: 1, languages: 1, usernameSlug: 1, _id: 0 }
@@ -133,6 +155,7 @@ async function addUserDataToToken(token: any) {
     const languageFeatures = await getLanguageFeaturesForLanguage(
       userData.native
     );
+    if (!languageFeatures) throw new Error("Failed to fetch language features");
     token.native = {
       name: userData.native,
       flag: languageFeatures?.flagCode,
@@ -151,6 +174,7 @@ async function addUserDataToToken(token: any) {
     );
     token.isLearning = userIsLearning;
   }
+  token.learnedLists = await getAllLearnedListsForUser(token.id);
   token.usernameSlug = userData?.usernameSlug;
   return token;
 }

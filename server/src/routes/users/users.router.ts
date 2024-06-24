@@ -2,15 +2,17 @@ import express from "express";
 import {
   httpAddListToDashboard,
   httpAddNewLanguage,
-  httpGetNextUserId,
-  httpGetLearnedLanguageData,
-  httpGetUserById,
-  httpUpdateLearnedItems,
-  httpSetNativeLanguage,
-  httpRemoveListFromDashboard,
-  httpGetNativeLanguageById,
+  httpGetAllLearnedListsForUser,
   httpGetAllUserIds,
+  httpGetLearnedLanguageData,
+  httpGetLearnedList,
+  httpGetNativeLanguageById,
+  httpGetNextUserId,
+  httpGetUserById,
   httpGetUserByUsernameSlug,
+  httpRemoveListFromDashboard,
+  httpSetNativeLanguage,
+  httpUpdateLearnedItems,
 } from "./users.controller.js";
 
 export const usersRouter = express.Router();
@@ -22,6 +24,11 @@ usersRouter.get("/getByUsernameSlug/:usernameSlug", httpGetUserByUsernameSlug);
 usersRouter.get(
   "/getLearnedLanguageData/:language/:userId",
   httpGetLearnedLanguageData
+);
+
+usersRouter.get(
+  "/getLearnedList/:language/:userId/:listNumber",
+  httpGetLearnedList
 );
 
 usersRouter.post(
@@ -48,3 +55,5 @@ usersRouter.post("/setNativeLanguage/:userId/:language", httpSetNativeLanguage);
 usersRouter.get("/getNativeLanguage/:userId", httpGetNativeLanguageById);
 
 usersRouter.get("/getAllUserIds", httpGetAllUserIds);
+
+usersRouter.get("/getLearnedLists/:userId", httpGetAllLearnedListsForUser);

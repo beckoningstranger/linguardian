@@ -1,71 +1,65 @@
 import { addListForNewLanguage, addListToDashboard } from "@/lib/actions";
-import { LearnedLanguageWithPopulatedLists, SupportedLanguage } from "@/types";
+import { getLanguageFeaturesForLanguage } from "@/lib/fetchData";
+import getUserOnServer from "@/lib/getUserOnServer";
+import { SupportedLanguage } from "@/types";
+import AddListSubmitButton from "./AddListSubmitButton";
 
 interface StartLearningListButtonProps {
-  learnedLanguageData?: LearnedLanguageWithPopulatedLists;
   language: SupportedLanguage;
-  userId: string;
   listNumber: number;
-  languageName: string;
 }
 
-export default function StartLearningListButton({
-  learnedLanguageData,
+export default async function StartLearningListButton({
   language,
-  userId,
   listNumber,
-  languageName,
 }: StartLearningListButtonProps) {
+  const sessionUser = await getUserOnServer();
+  const languageFeatures = await getLanguageFeaturesForLanguage(language);
+  if (!languageFeatures || !sessionUser)
+    throw new Error("Failed to fetch language features or session");
+
+  let userIsLearningThisLanguage = false;
+  sessionUser.isLearning.forEach((lang) => {
+    if (lang.name === language) userIsLearningThisLanguage = true;
+  });
+
+  const { langName } = languageFeatures;
   const addListToDashboardAction = addListToDashboard.bind(
     null,
     listNumber,
     language,
-    userId
+    sessionUser.id
   );
 
   const addListForNewLanguageAction = addListForNewLanguage.bind(
     null,
-    userId,
+    sessionUser.id,
     language,
     listNumber
   );
 
   return (
     <>
-      {!learnedLanguageData && (
+      {!userIsLearningThisLanguage && (
         <form
           action={addListForNewLanguageAction}
           className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
         >
-          <button type="submit">
-            Start learning {languageName} with this list!
-          </button>
+          <AddListSubmitButton language={language} listNumber={listNumber}>
+            Start learning {langName} with this list!
+          </AddListSubmitButton>
         </form>
       )}
-      {learnedLanguageData &&
-        userIsNotAlreadyLearningThisList(learnedLanguageData, listNumber) && (
-          <>
-            <form
-              action={addListToDashboardAction}
-              className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
-            >
-              <button>Start learning this list</button>
-            </form>
-          </>
-        )}
+      {userIsLearningThisLanguage && (
+        <form
+          action={addListToDashboardAction}
+          className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
+        >
+          <AddListSubmitButton language={language} listNumber={listNumber}>
+            Start learning this list
+          </AddListSubmitButton>
+        </form>
+      )}
     </>
   );
-}
-
-function userIsNotAlreadyLearningThisList(
-  learnedLanguageData: LearnedLanguageWithPopulatedLists | undefined,
-  listNumber: number
-) {
-  if (learnedLanguageData) {
-    const allListNumberssLearnedByUser: number[] =
-      learnedLanguageData.learnedLists.map((list) => list.listNumber);
-    if (allListNumberssLearnedByUser.includes(listNumber)) return false;
-  }
-
-  return true;
 }

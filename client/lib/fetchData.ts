@@ -2,6 +2,7 @@ import {
   FullyPopulatedList,
   ItemPopulatedWithTranslations,
   LanguageFeatures,
+  LearnedItem,
   LearnedLanguageWithPopulatedLists,
   LearningMode,
   List,
@@ -9,6 +10,7 @@ import {
   SupportedLanguage,
   User,
 } from "@/types";
+import { Types } from "mongoose";
 
 const server = process.env.SERVER_URL;
 
@@ -170,6 +172,28 @@ export async function getLearnedLanguageData(
   }
 }
 
+export async function getLearningDataForList(
+  userId: string,
+  language: SupportedLanguage,
+  listNumber: number
+) {
+  try {
+    const response = await fetch(
+      `${server}/users/getLearnedList/${language}/${userId}/${listNumber}`
+    );
+    if (!response.ok) throw new Error(response.statusText);
+    return (await response.json()) as {
+      learnedList: List;
+      learnedItems: LearnedItem[];
+      ignoredItems: Types.ObjectId[];
+    };
+  } catch (err) {
+    console.error(
+      `Error fetching learned list ${listNumber} for language ${language} for user ${userId}: ${err}`
+    );
+  }
+}
+
 export async function addNewLanguageToLearn(
   userId: string,
   language: SupportedLanguage
@@ -310,6 +334,19 @@ export async function getUnitNumbers(listNumber: number) {
   } catch (err) {
     console.error(
       `Error fetching amount of units for listNumber ${listNumber}: ${err}`
+    );
+    return [];
+  }
+}
+
+export async function getAllLearnedListsForUser(userId: string) {
+  try {
+    const response = await fetch(`${server}/users/getLearnedLists/${userId}`);
+    if (!response.ok) throw new Error(response.statusText);
+    return await response.json();
+  } catch (err) {
+    console.error(
+      `Error fetching learned lists for user with id ${userId}: ${err}`
     );
     return [];
   }
