@@ -9,12 +9,12 @@ import {
   getChapterNameByNumber,
   getFullyPopulatedListByListNumber,
   getList,
-  getListDataForMetadata,
   getListNameAndUnitOrder,
   getNextListNumber,
   getPopulatedListByListNumber,
   updateUnlockedReviewModes,
 } from "../../models/lists.model.js";
+import { getLanguageFeaturesForLanguage } from "../../models/settings.model.js";
 import { parseCSV } from "../../services/parsecsv.js";
 import { FullyPopulatedList, SupportedLanguage } from "../../types.js";
 
@@ -45,16 +45,12 @@ export async function httpPostCSV(req: Request, res: Response) {
   } finally {
     // Remove uploaded file so things don't clog up
     if (req.file)
-      try {
-        fs.unlink(
-          join(__dirname + `/../../../data/csvUploads/${req.file.filename}`),
-          () => {
-            console.log(`Deleting uploaded file.`);
-          }
-        );
-      } catch (err) {
-        console.error(`Error deleting file ${req.file.filename}`);
-      }
+      fs.unlink(
+        join(__dirname + `/../../../data/csvUploads/${req.file.filename}`),
+        () => {
+          console.log(`Deleting uploaded file.`);
+        }
+      );
   }
 }
 
@@ -78,10 +74,9 @@ export async function httpGetFullyPopulatedListByListNumber(
     listNumber
   )) as FullyPopulatedList;
 
-  if (listData)
-    return res
-      .status(200)
-      .json(await getFullyPopulatedListByListNumber(userNative, listNumber));
+  if (listData) {
+    return res.status(200).json(listData);
+  }
   return res.status(404).json();
 }
 
@@ -109,16 +104,26 @@ export async function httpGetAllListsForLanguage(req: Request, res: Response) {
 export async function httpGetListName(req: Request, res: Response) {
   const listNumber = parseInt(req.params.listNumber);
   const response = await getListNameAndUnitOrder(listNumber);
-  if (!response) res.status(404).json();
+  if (!response) return res.status(404).json();
   return res.status(200).json(response.name);
 }
 
 export async function httpGetListDataForMetadata(req: Request, res: Response) {
   const listNumber = parseInt(req.params.listNumber);
   const unitNumber = parseInt(req.params.unitNumber);
-  const response = await getListDataForMetadata(listNumber, unitNumber);
-  if (!response) res.status(404).json();
-  return res.status(200).json(response);
+  const list = await getList(listNumber);
+  if (!list) return res.status(404).json();
+
+  const { name, unitOrder, language, description } = list;
+  const languageFeatures = await getLanguageFeaturesForLanguage(language);
+  if (!languageFeatures) return res.status(404).json();
+
+  return res.status(200).json({
+    listName: name,
+    unitName: unitOrder[unitNumber - 1],
+    langName: languageFeatures.langName,
+    description,
+  });
 }
 
 export async function httpGetNextListNumber(req: Request, res: Response) {

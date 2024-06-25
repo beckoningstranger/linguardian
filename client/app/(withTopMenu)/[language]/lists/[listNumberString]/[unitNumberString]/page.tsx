@@ -1,27 +1,26 @@
-import {
-  getFullyPopulatedListByListNumber,
-  getLearnedLanguageData,
-  getListDataForMetadata,
-  getListNumbers,
-  getUnitNumbers,
-} from "@/lib/fetchData";
 import ListBarChart from "@/components/Charts/ListBarChart";
+import ListPieChart from "@/components/Charts/ListPieChart";
 import {
   AllLearningButtonsDesktopContainer,
   AllLearningButtonsMobileContainer,
 } from "@/components/Lists/AllLearningButtonsContainer";
+import BackToListAndEditButtons from "@/components/Lists/BackToListAndEditButtons";
 import FlexibleLearningButtons from "@/components/Lists/FlexibleLearningButtons";
+import Leaderboard from "@/components/Lists/Leaderboard";
 import ListContainer from "@/components/Lists/ListContainer";
 import { determineListStatus } from "@/components/Lists/ListHelpers";
 import AllLearningButtons from "@/components/Lists/ListOverview/AllLearningButtons";
 import UnitHeader from "@/components/Lists/UnitHeader";
 import { calculateUnitStats } from "@/components/Lists/UnitHelpers";
-import getUserOnServer from "@/lib/getUserOnServer";
-import BackToListAndEditButtons from "@/components/Lists/BackToListAndEditButtons";
-import ListPieChart from "@/components/Charts/ListPieChart";
-import Leaderboard from "@/components/Lists/Leaderboard";
 import UnitItems from "@/components/Lists/UnitItems";
+import {
+  getFullyPopulatedListByListNumber,
+  getLearnedLanguageData,
+  getListDataForMetadata,
+} from "@/lib/fetchData";
+import getUserOnServer from "@/lib/getUserOnServer";
 import { LearningMode, SupportedLanguage } from "@/types";
+import { notFound } from "next/navigation";
 
 export async function generateMetadata({ params }: UnitDetailsProps) {
   const listNumber = parseInt(params.listNumberString);
@@ -90,6 +89,8 @@ export default async function UnitDetailPage({
   if (!listData || !allListsUserData) throw new Error("Could not get data");
 
   const unitName = listData.unitOrder[unitNumber - 1];
+  if (!unitName) notFound();
+
   const unitItems = listData?.units
     .filter((unit) => unit.unitName === unitName)
     .map((unitItem) => unitItem.item);

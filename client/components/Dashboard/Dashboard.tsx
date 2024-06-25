@@ -4,7 +4,7 @@ import { HiOutlinePlusCircle } from "react-icons/hi2";
 import { getLearnedLanguageData } from "@/lib/fetchData";
 import getUserOnServer from "@/lib/getUserOnServer";
 import paths from "@/paths";
-import { SupportedLanguage } from "@/types";
+import { SessionUser, SupportedLanguage } from "@/types";
 import ListDashboardCard from "./ListDashboardCard";
 
 interface DashboardProps {
@@ -13,6 +13,9 @@ interface DashboardProps {
 
 export default async function Dashboard({ language }: DashboardProps) {
   const sessionUser = await getUserOnServer();
+  if (!userIsLearningThisLanguage(sessionUser, language))
+    throw new Error("You are not learning this language yet.");
+
   const userLearningDataForActiveLanguage = await getLearnedLanguageData(
     sessionUser.id,
     language
@@ -70,4 +73,13 @@ export default async function Dashboard({ language }: DashboardProps) {
       </div>
     </div>
   );
+}
+
+function userIsLearningThisLanguage(
+  sessionUser: SessionUser,
+  language: SupportedLanguage
+) {
+  const check = sessionUser.isLearning.filter((lang) => lang.name === language);
+  if (check.length > 0) return true;
+  return false;
 }

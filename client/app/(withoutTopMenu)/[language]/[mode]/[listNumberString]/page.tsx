@@ -18,6 +18,8 @@ import {
   getListNumbers,
 } from "@/lib/fetchData";
 import getUserOnServer from "@/lib/getUserOnServer";
+import { notFound } from "next/navigation";
+import NavigateBackButton from "@/components/NavigateBackButton";
 
 export async function generateMetadata({ params }: ReviewPageProps) {
   const listNumber = parseInt(params.listNumberString);
@@ -65,7 +67,25 @@ export default async function LearnAndReviewPage({
 }: ReviewPageProps) {
   const listNumber = parseInt(listNumberString);
   if (mode !== "translation" && mode !== "learn")
-    return `No valid learning mode selected ${mode}`;
+    return (
+      <div className="grid place-items-center h-screen">
+        <div className="flex flex-col items-center">
+          <h1 className="text-center text-2xl mb-5">
+            Sorry, we could not create a learning session!
+          </h1>
+          <p>
+            No valid learning mode selected. Mode &apos;{mode}&apos; either does
+            not exist or has not been unlocked for this list.
+          </p>
+          <NavigateBackButton className="w-52 mt-4 bg-slate-200 p-4 rounded-md">
+            Navigate Back
+          </NavigateBackButton>
+        </div>
+      </div>
+    );
+  // throw new Error(
+  //   `No valid learning mode selected. Mode '${mode}' either does not exist or has not been unlocked for this list.`
+  // );
   const sessionUser = await getUserOnServer();
 
   const [user, populatedListData, targetLanguageFeatures, learnedLanguageData] =
@@ -81,7 +101,7 @@ export default async function LearnAndReviewPage({
     !targetLanguageFeatures ||
     !learnedLanguageData
   )
-    return "Error getting data";
+    notFound();
 
   const allItemStringsInList = populatedListData.units.map(
     (unitItem) => unitItem.item.name

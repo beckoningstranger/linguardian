@@ -11,6 +11,7 @@ import {
   User,
 } from "@/types";
 import { Types } from "mongoose";
+import { notFound } from "next/navigation";
 
 const server = process.env.SERVER_URL;
 
@@ -321,6 +322,7 @@ export async function getListDataForMetadata(
     console.error(
       `Error fetching list and unit name for list #${listNumber}: ${err}`
     );
+    notFound();
   }
 }
 

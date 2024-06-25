@@ -1,5 +1,6 @@
 "use client";
 
+import NavigateBackButton from "@/components/NavigateBackButton";
 import { useEffect } from "react";
 
 interface ErrorProps {
@@ -18,7 +19,7 @@ export default function Error({ error, reset }: ErrorProps) {
       <div className="text-center">
         <h2 className="text-xl font-bold">Something went wrong!</h2>
         <p>{error.message}</p>
-        <button
+        {/* <button
           className="m-4 rounded-sm bg-slate-200 px-4 py-2"
           onClick={
             // Attempt to recover by trying to re-render the segment
@@ -26,7 +27,10 @@ export default function Error({ error, reset }: ErrorProps) {
           }
         >
           Try again
-        </button>
+        </button> */}
+        <NavigateBackButton className="w-52 mt-4 bg-slate-200 px-4 py-2 rounded-md">
+          Navigate Back
+        </NavigateBackButton>
       </div>
     </div>
   );

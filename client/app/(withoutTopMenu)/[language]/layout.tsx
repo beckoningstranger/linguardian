@@ -9,7 +9,7 @@ interface RootLayoutProps {
   params: { language: string };
 }
 
-export default async function LayoutWithTopMenuWithLanguageParam({
+export default async function LayoutWithoutTopMenuWithLanguageParam({
   children,
   params,
 }: RootLayoutProps) {

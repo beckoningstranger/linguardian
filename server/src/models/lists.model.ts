@@ -2,18 +2,19 @@ import { Types } from "mongoose";
 import {
   Item,
   ItemPopulatedWithTranslations,
-  LanguageFeatures,
   LearningMode,
+  List,
   PopulatedList,
   SupportedLanguage,
 } from "../types.js";
 import Lists from "./list.schema.js";
 import { getSupportedLanguages } from "./settings.model.js";
-import Settings from "./settings.schema.js";
 
 export async function getList(listNumber: number) {
   try {
-    return await Lists.findOne({ listNumber: listNumber });
+    return (await Lists.findOne({ listNumber: listNumber })) as
+      | (List & { _id: Types.ObjectId })
+      | undefined;
   } catch (err) {
     console.error(`Error getting list with listNumber ${listNumber} `);
   }
@@ -137,34 +138,6 @@ export async function getListNameAndUnitOrder(listNumber: number) {
     { listNumber: listNumber },
     { _id: 0, name: 1, unitOrder: 1 }
   )) as { name: string; unitOrder: string[] };
-}
-
-export async function getListDataForMetadata(
-  listNumber: number,
-  unitNumber: number
-) {
-  const { name, unitOrder, language, description } = (await Lists.findOne(
-    { listNumber: listNumber },
-    { _id: 0, name: 1, unitOrder: 1, language: 1, description: 1 }
-  )) as {
-    name: string;
-    unitOrder: string[];
-    language: SupportedLanguage;
-    description: string;
-  };
-  const { languageFeatures } = (await Settings.findOne(
-    {},
-    { languageFeatures: 1, _id: 0 }
-  )) as { languageFeatures: LanguageFeatures[] };
-  const languageFeaturesForQueryLanguage = languageFeatures.filter(
-    (lang) => lang.langCode === language
-  )[0];
-  return {
-    listName: name,
-    unitName: unitOrder[unitNumber - 1],
-    langName: languageFeaturesForQueryLanguage?.langName,
-    description: description,
-  };
 }
 
 export async function getAmountOfUnits(listNumber: number) {

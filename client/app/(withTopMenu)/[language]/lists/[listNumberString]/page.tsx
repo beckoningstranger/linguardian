@@ -1,39 +1,29 @@
 import {
   fetchAuthors,
   getListDataForMetadata,
-  getListNumbers,
   getPopulatedList,
 } from "@/lib/fetchData";
-import Link from "next/link";
 
 import ListContainer from "@/components/Lists/ListContainer";
 import ListFlexibleContent from "@/components/Lists/ListOverview/ListFlexibleContent";
 import ListHeader from "@/components/Lists/ListOverview/ListHeader";
 import ListUnits from "@/components/Lists/ListOverview/ListUnits";
-import paths from "@/paths";
-import { SupportedLanguage } from "@/types";
-import { Suspense } from "react";
 import Spinner from "@/components/Spinner";
+import { SupportedLanguage } from "@/types";
+import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 export async function generateMetadata({ params }: ListDetailProps) {
   const listNumber = parseInt(params.listNumberString);
 
-  const { listName, langName, description } = await getListDataForMetadata(
-    listNumber,
-    1
-  );
+  const listData = await getListDataForMetadata(listNumber, 1);
+  const { listName, langName, description } = listData;
   return {
     title: listName,
     description: `Learn ${langName} and enrich your vocabulary by memorizing Linguardian's list "${listName}.${
       description ? ` ${description}` : ""
     }"`,
   };
-}
-
-export async function generateStaticParams() {
-  const listNumbers = await getListNumbers();
-  if (!listNumbers) throw new Error("Failed to fetch all list numbers");
-  return listNumbers?.map((number) => ({ listNumberString: number }));
 }
 
 interface ListDetailProps {
@@ -50,7 +40,7 @@ export default async function ListDetailPage({
 
   const [listData] = await Promise.all([getPopulatedList(listNumber)]);
 
-  if (listData) {
+  if (listData?.name) {
     const { name, description, authors, unitOrder, units, listNumber } =
       listData;
 
@@ -65,7 +55,7 @@ export default async function ListDetailPage({
           numberOfItems={listData.units.length}
           image={listData.image}
         />
-        <Suspense fallback={<Spinner />}>
+        <Suspense fallback={<Spinner size={8} />}>
           <ListFlexibleContent language={language} listNumber={listNumber} />
         </Suspense>
         <ListUnits
@@ -77,20 +67,5 @@ export default async function ListDetailPage({
       </ListContainer>
     );
   }
-  if (!listData)
-    return (
-      <div>
-        <h1>List or user not found</h1>
-        <p>
-          Either the list does not exist yet or there was a problem fetching it
-          from the database. Make sure you are logged in.
-        </p>
-        <div>
-          <Link href={paths.dashboardLanguagePath(language)}>
-            Back to Dashboard
-          </Link>
-          <Link href={paths.listsLanguagePath(language)}>List Store</Link>
-        </div>
-      </div>
-    );
+  if (!listData) notFound();
 }
