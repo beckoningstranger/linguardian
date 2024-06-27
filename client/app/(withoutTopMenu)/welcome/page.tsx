@@ -19,7 +19,7 @@ export default async function Welcome() {
   if (!sessionUser || !supportedLanguages || !allLanguageFeatures)
     throw new Error("Error fetching data");
 
-  if (sessionUser.native && sessionUser.isLearning.length > 0) redirect("/");
+  if (sessionUser.native && sessionUser.isLearning?.length > 0) redirect("/");
 
   return (
     <div className="relative grid h-screen bg-green-300">

@@ -21,9 +21,9 @@ const ActiveLanguageContext = createContext<ActiveLanguageContext>({
 });
 
 export const ActiveLanguageProvider = ({
-  activeLanguage: initialActiveLanguage,
+  initialActiveLanguage,
   children,
-}: PropsWithChildren<{ activeLanguage: SupportedLanguage }>) => {
+}: PropsWithChildren<{ initialActiveLanguage: SupportedLanguage }>) => {
   const [activeLanguage, setActiveLanguage] = useState(initialActiveLanguage);
 
   return (
