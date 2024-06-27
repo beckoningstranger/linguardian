@@ -63,7 +63,7 @@ export default async function ItemPage({
         partOfSpeech={item.partOfSpeech}
         gender={item.gender}
         case={item.case}
-        ipa={item.IPA}
+        IPA={item.IPA}
         pluralForm={item.pluralForm}
       />
       <ItemPageDEFTRCO

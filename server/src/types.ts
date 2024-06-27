@@ -48,8 +48,8 @@ export interface Item {
   lemmas?: Types.ObjectId[];
   definition?: string;
   translations?: Partial<Record<SupportedLanguage, Types.ObjectId[]>>;
-  gender?: Gender;
-  pluralForm?: string;
+  gender?: Types.Array<Gender>;
+  pluralForm?: Types.Array<string>;
   case?: Case;
   audio?: Types.Array<string>;
   pics?: Types.Array<string>;
