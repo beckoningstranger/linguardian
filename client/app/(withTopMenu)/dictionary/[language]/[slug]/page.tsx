@@ -1,13 +1,13 @@
+import ItemPageDEFTRCO from "@/components/Dictionary/ItemPageDEF-TR-CO";
+import ItemPageMain from "@/components/Dictionary/ItemPageMain";
+import ItemPageTopIcons from "@/components/Dictionary/ItemPageTopIcons";
+import ListContainer from "@/components/Lists/ListContainer";
 import {
   getAllSlugsForLanguage,
   getSupportedLanguages,
   lookUpItemBySlug,
 } from "@/lib/fetchData";
-import ItemPageDEFTRCO from "@/components/Dictionary/ItemPageDEF-TR-CO";
-import ItemPageMain from "@/components/Dictionary/ItemPageMain";
-import ItemPageTopIcons from "@/components/Dictionary/ItemPageTopIcons";
-import ListContainer from "@/components/Lists/ListContainer";
-import { getUserLanguagesWithFlags } from "@/lib/getAllUserLanguages";
+import { getUserLanguagesWithFlags } from "@/lib/helperFunctions";
 import { SupportedLanguage } from "@/types";
 
 interface SlugLanguageObject {

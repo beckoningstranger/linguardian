@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^2.6.0",
-    "@headlessui/react": "^2.0.4",
+    "@headlessui/react": "^2.1.0",
+    "@heroicons/react": "^2.1.4",
     "@types/bcryptjs": "^2.4.6",
     "apexcharts": "^3.45.2",
     "bcryptjs": "^2.4.3",

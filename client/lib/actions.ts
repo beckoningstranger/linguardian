@@ -9,7 +9,8 @@ import {
 } from "@/types";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { addNewLanguageToLearn } from "./fetchData";
+import { getSupportedLanguages } from "./fetchData";
+import getUserOnServer from "./helperFunctions";
 
 const server = process.env.SERVER_URL;
 
@@ -140,4 +141,50 @@ export async function findItems(languages: SupportedLanguage[], query: string) {
   } catch (err) {
     console.error(`Error looking up items for query ${query}: ${err}`);
   }
+}
+
+export async function addNewLanguageToLearn(
+  userId: string,
+  language: SupportedLanguage
+) {
+  try {
+    const response = await fetch(
+      `${server}/users/addNewLanguage/${userId}/${language}`,
+      { method: "POST" }
+    );
+    if (!response.ok) throw new Error(response.statusText);
+  } catch (err) {
+    console.error(
+      `Error adding ${language} as a new language for user ${userId}: ${err}`
+    );
+  }
+  redirect(paths.listsLanguagePath(language));
+}
+
+export async function finishOnboarding({ userNative, languageToLearn }: any) {
+  const [sessionUser, supportedLanguages] = await Promise.all([
+    getUserOnServer(),
+    getSupportedLanguages(),
+  ]);
+
+  // Validation
+  if (languageToLearn === userNative)
+    throw new Error(
+      "Your native language and the one you want to learn can not be the same."
+    );
+  if (
+    !supportedLanguages?.includes(languageToLearn) ||
+    !supportedLanguages?.includes(userNative)
+  )
+    throw new Error("Language is not supported");
+  if (!sessionUser) throw new Error("Please log in to do this.");
+
+  const nativeResponse = await fetch(
+    `${server}/users/setNativeLanguage/${sessionUser.id}/${userNative}`,
+    {
+      method: "POST",
+    }
+  );
+  if (!nativeResponse.ok) throw new Error("Could not set native language");
+  addNewLanguageToLearn(sessionUser.id, languageToLearn);
 }

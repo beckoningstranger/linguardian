@@ -8,8 +8,8 @@ import {
   getAllLearnedListsForUser,
   getLanguageFeaturesForLanguage,
 } from "@/lib/fetchData";
+import { slugify } from "@/lib/helperFunctions";
 import { connectMongoDB } from "@/lib/mongodb";
-import { slugify } from "@/lib/slugify";
 import User from "@/models/users.model";
 import {
   LanguageWithFlag,

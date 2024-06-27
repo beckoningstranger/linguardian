@@ -226,6 +226,12 @@ export interface LanguageWithFlag {
   flag: string;
 }
 
+export interface LanguageWithFlagAndName {
+  name: SupportedLanguage;
+  flag: string;
+  langName: string;
+}
+
 export interface SessionUser {
   name: string;
   email: string;

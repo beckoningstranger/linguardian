@@ -1,43 +1,44 @@
 "use client";
 
+import { addNewLanguageToLearn } from "@/lib/actions";
 import { LanguageWithFlag } from "@/types";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
+import { useState } from "react";
 import Flag from "react-world-flags";
 
 interface PickNewLanguageProps {
-  allUserLanguagesAndFlags: LanguageWithFlag[];
-  allLanguagesAndFlags: LanguageWithFlag[];
+  languagesAndFlag: LanguageWithFlag;
 }
 
 export default function PickNewLanguage({
-  allLanguagesAndFlags,
-  allUserLanguagesAndFlags,
+  languagesAndFlag,
 }: PickNewLanguageProps) {
   const { data: session, update } = useSession();
+  const [updating, setUpdating] = useState(false);
+  if (!session) throw new Error("No session found. Are you logged in?");
 
-  const renderedFlags = allLanguagesAndFlags?.map((lwf) => {
-    if (
-      !allUserLanguagesAndFlags.some(
-        (languageWithFlag) => languageWithFlag.name === lwf.name
-      )
-    )
-      return (
-        <Link
-          key={lwf.name}
-          href={`/languages/add?lang=${lwf.name}`}
-          onClick={() => {
-            session?.user.isLearning.push(lwf);
-            update(session);
-          }}
-        >
-          <Flag
-            code={lwf.flag}
-            className={`my-2 h-24 w-24 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125`}
-          />
-        </Link>
-      );
-  });
+  const addNewLanguageToLearnAction = addNewLanguageToLearn.bind(
+    null,
+    session.user.id,
+    languagesAndFlag.name
+  );
 
-  return <div className="grid grid-cols-2 gap-5">{renderedFlags}</div>;
+  return (
+    <button
+      key={languagesAndFlag.name}
+      onClick={() => {
+        setUpdating(true);
+        if (!session.user.isLearning) session.user.isLearning = [];
+        session?.user.isLearning.push(languagesAndFlag);
+        update(session);
+        addNewLanguageToLearnAction();
+      }}
+      disabled={updating}
+    >
+      <Flag
+        code={languagesAndFlag.flag}
+        className={`my-2 h-24 w-24 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125`}
+      />
+    </button>
+  );
 }

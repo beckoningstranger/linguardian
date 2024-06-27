@@ -1,5 +1,5 @@
 import Search from "@/components/Dictionary/Search";
-import { getUserLanguagesWithFlags } from "@/lib/getAllUserLanguages";
+import { getUserLanguagesWithFlags } from "@/lib/helperFunctions";
 
 export const metadata = { title: "Dictionary" };
 

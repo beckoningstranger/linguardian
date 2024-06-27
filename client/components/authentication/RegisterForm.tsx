@@ -63,7 +63,7 @@ export default function RegisterForm() {
         await signIn("credentials", {
           email,
           password,
-          callbackUrl: paths.setNativeLanguagePath(),
+          callbackUrl: paths.welcomePath(),
         });
       } else {
         setError("User registration failed");
@@ -82,7 +82,7 @@ export default function RegisterForm() {
           <p className="text-2xl font-bold text-green-700">
             Welcome to Linguardian! Your account is being created...
           </p>
-          <Spinner size={24} marginY={4} />
+          <Spinner size="big" />
         </div>
       </div>
     );

@@ -1,5 +1,5 @@
 import ParseCSVForm from "@/components/parseCSVForm";
-import getUserOnServer from "@/lib/getUserOnServer";
+import getUserOnServer from "@/lib/helperFunctions";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

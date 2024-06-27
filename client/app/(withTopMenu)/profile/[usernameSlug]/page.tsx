@@ -1,5 +1,4 @@
 import { getAllUserIds, getUserByUsernameSlug } from "@/lib/fetchData";
-import { Metadata } from "next";
 
 interface ProfilePageProps {
   params: { usernameSlug: string };

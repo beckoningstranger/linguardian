@@ -1,14 +1,15 @@
 interface SpinnerProps {
-  size?: number;
-  marginY?: number | "auto";
+  size?: "big" | "mini";
 }
-export default function Spinner({ size = 4, marginY = 2 }: SpinnerProps) {
-  const renderedSize = "w-" + size;
-  const renderedMarginY = "my-" + marginY;
+export default function Spinner({ size }: SpinnerProps) {
+  let computedValues = "";
+  if (size === undefined) computedValues += "border-4 my-4 w-12";
+  if (size === "mini") computedValues += "border-2 my-1 w-4";
+  if (size === "big") computedValues += "border-8 my-8 w-32";
 
   return (
     <div
-      className={`mx-auto aspect-square ${renderedSize} ${renderedMarginY} animate-spin rounded-full border-8 border-gray-400 border-r-gray-300`}
+      className={`aspect-square animate-spin rounded-full border-gray-400 border-r-gray-300 ${computedValues}`}
     />
   );
 }

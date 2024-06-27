@@ -21,7 +21,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ActiveLanguageProvider activeLanguage="EN">
+        <ActiveLanguageProvider activeLanguage="">
           <AuthProvider>{children}</AuthProvider>
         </ActiveLanguageProvider>
       </body>

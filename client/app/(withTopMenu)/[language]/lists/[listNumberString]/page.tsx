@@ -55,7 +55,13 @@ export default async function ListDetailPage({
           numberOfItems={listData.units.length}
           image={listData.image}
         />
-        <Suspense fallback={<Spinner size={8} />}>
+        <Suspense
+          fallback={
+            <div className="grid w-full place-items-center">
+              <Spinner />
+            </div>
+          }
+        >
           <ListFlexibleContent language={language} listNumber={listNumber} />
         </Suspense>
         <ListUnits

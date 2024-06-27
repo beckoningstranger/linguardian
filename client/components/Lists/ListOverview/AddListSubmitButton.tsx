@@ -1,7 +1,6 @@
 "use client";
 
 import { SessionUser, SupportedLanguage } from "@/types";
-import { Session } from "inspector";
 import { useSession } from "next-auth/react";
 import { ReactNode } from "react";
 

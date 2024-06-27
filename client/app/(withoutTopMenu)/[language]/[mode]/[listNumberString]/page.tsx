@@ -1,3 +1,16 @@
+import LearnAndReview from "@/components/LearningModes/LearnAndReview";
+import NavigateBackButton from "@/components/NavigateBackButton";
+import {
+  getFullyPopulatedListByListNumber,
+  getLanguageFeaturesForLanguage,
+  getLearnedLanguageData,
+  getLearningModes,
+  getListName,
+  getListNumbers,
+  getSupportedLanguages,
+  getUserById,
+} from "@/lib/fetchData";
+import getUserOnServer from "@/lib/helperFunctions";
 import {
   FullyPopulatedList,
   ItemToLearn,
@@ -6,20 +19,7 @@ import {
   SupportedLanguage,
   User,
 } from "@/types";
-import LearnAndReview from "@/components/LearningModes/LearnAndReview";
-import {
-  getLanguageFeaturesForLanguage,
-  getFullyPopulatedListByListNumber,
-  getUserById,
-  getLearnedLanguageData,
-  getListName,
-  getSupportedLanguages,
-  getLearningModes,
-  getListNumbers,
-} from "@/lib/fetchData";
-import getUserOnServer from "@/lib/getUserOnServer";
 import { notFound } from "next/navigation";
-import NavigateBackButton from "@/components/NavigateBackButton";
 
 export async function generateMetadata({ params }: ReviewPageProps) {
   const listNumber = parseInt(params.listNumberString);
@@ -68,16 +68,16 @@ export default async function LearnAndReviewPage({
   const listNumber = parseInt(listNumberString);
   if (mode !== "translation" && mode !== "learn")
     return (
-      <div className="grid place-items-center h-screen">
+      <div className="grid h-screen place-items-center">
         <div className="flex flex-col items-center">
-          <h1 className="text-center text-2xl mb-5">
+          <h1 className="mb-5 text-center text-2xl">
             Sorry, we could not create a learning session!
           </h1>
           <p>
             No valid learning mode selected. Mode &apos;{mode}&apos; either does
             not exist or has not been unlocked for this list.
           </p>
-          <NavigateBackButton className="w-52 mt-4 bg-slate-200 p-4 rounded-md">
+          <NavigateBackButton className="mt-4 w-52 rounded-md bg-slate-200 p-4">
             Navigate Back
           </NavigateBackButton>
         </div>

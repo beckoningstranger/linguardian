@@ -43,11 +43,9 @@ export default function LoginForm() {
   if (loggingIn)
     return (
       <div className="grid h-screen place-items-center">
-        <div>
-          <p className="text-2xl font-bold text-green-700">
-            Welcome to Linguardian! We are logging you in...
-          </p>
-          <Spinner size={24} marginY={4} />
+        <div className="flex flex-col items-center justify-center text-2xl font-bold text-green-700">
+          <div>Welcome to Linguardian! We are logging you in...</div>
+          <Spinner size="big" />
         </div>
       </div>
     );

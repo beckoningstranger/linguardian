@@ -195,37 +195,6 @@ export async function getLearningDataForList(
   }
 }
 
-export async function addNewLanguageToLearn(
-  userId: string,
-  language: SupportedLanguage
-) {
-  try {
-    const response = await fetch(
-      `${server}/users/addNewLanguage/${userId}/${language}`,
-      { method: "POST" }
-    );
-    if (!response.ok) throw new Error(response.statusText);
-  } catch (err) {
-    console.error(
-      `Error adding ${language} as a new language for user ${userId}: ${err}`
-    );
-  }
-}
-
-export async function checkPassedLanguageAsync(
-  passedLanguage: string | undefined
-) {
-  const supportedLanguages = await getSupportedLanguages();
-  if (
-    !passedLanguage ||
-    !supportedLanguages ||
-    !supportedLanguages.includes(passedLanguage as SupportedLanguage)
-  ) {
-    return null;
-  }
-  return passedLanguage as SupportedLanguage;
-}
-
 export async function getNextUserId() {
   try {
     const response = await fetch(`${server}/users/nextUserId`);

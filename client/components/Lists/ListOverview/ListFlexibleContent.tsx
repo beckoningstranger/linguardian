@@ -2,10 +2,10 @@ import {
   getAllLearnedListsForUser,
   getLearningDataForList,
 } from "@/lib/fetchData";
+import getUserOnServer from "@/lib/helperFunctions";
+import { SupportedLanguage } from "@/types";
 import ChartsLButtonsLeaderboard from "./ChartsLearningButtonsLeaderBoard";
 import StartLearningListButton from "./StartLearningListButton";
-import getUserOnServer from "@/lib/getUserOnServer";
-import { SupportedLanguage } from "@/types";
 
 interface ListFlexibleContentProps {
   language: SupportedLanguage;

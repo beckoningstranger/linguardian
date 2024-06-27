@@ -2,7 +2,7 @@ import Link from "next/link";
 import { HiOutlinePlusCircle } from "react-icons/hi2";
 
 import { getLearnedLanguageData } from "@/lib/fetchData";
-import getUserOnServer from "@/lib/getUserOnServer";
+import getUserOnServer from "@/lib/helperFunctions";
 import paths from "@/paths";
 import { SessionUser, SupportedLanguage } from "@/types";
 import ListDashboardCard from "./ListDashboardCard";

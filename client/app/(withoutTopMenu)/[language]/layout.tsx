@@ -1,7 +1,5 @@
-import {
-  checkPassedLanguageAsync,
-  getSupportedLanguages,
-} from "@/lib/fetchData";
+import { getSupportedLanguages } from "@/lib/fetchData";
+import { checkPassedLanguageAsync } from "@/lib/helperFunctions";
 import { ReactNode } from "react";
 
 interface RootLayoutProps {

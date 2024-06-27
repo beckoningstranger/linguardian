@@ -1,10 +1,10 @@
+import { getLanguageFeaturesForLanguage } from "@/lib/fetchData";
+import { getUserLanguagesWithFlags } from "@/lib/helperFunctions";
+import paths from "@/paths";
 import { ItemPopulatedWithTranslations, SupportedLanguage } from "@/types";
-import ItemPageField from "./ItemPageField";
 import Link from "next/link";
 import ItemPageContainer from "./ItemPageContainer";
-import paths from "@/paths";
-import { getUserLanguagesWithFlags } from "@/lib/getAllUserLanguages";
-import { getLanguageFeaturesForLanguage } from "@/lib/fetchData";
+import ItemPageField from "./ItemPageField";
 
 interface ItemPageDEFTRProps {
   definition?: string;

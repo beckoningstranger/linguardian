@@ -1,6 +1,6 @@
 import { addListForNewLanguage, addListToDashboard } from "@/lib/actions";
 import { getLanguageFeaturesForLanguage } from "@/lib/fetchData";
-import getUserOnServer from "@/lib/getUserOnServer";
+import getUserOnServer from "@/lib/helperFunctions";
 import { SupportedLanguage } from "@/types";
 import AddListSubmitButton from "./AddListSubmitButton";
 

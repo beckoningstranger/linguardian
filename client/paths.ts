@@ -4,6 +4,9 @@ const paths = {
   rootPath() {
     return "/";
   },
+  welcomePath() {
+    return "/welcome";
+  },
   dashboardLanguagePath(language: SupportedLanguage) {
     return `/${language}/dashboard`;
   },
@@ -46,10 +49,7 @@ const paths = {
     return `/about`;
   },
   learnNewLanguagePath() {
-    return `/languages/new`;
-  },
-  setNativeLanguagePath() {
-    return `/setNativeLanguage`;
+    return `/newLanguage`;
   },
   profilePath(usernameSlug: string) {
     return `/profile/${usernameSlug}`;

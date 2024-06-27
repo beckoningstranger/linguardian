@@ -1,9 +1,9 @@
+import { getNextUserId } from "@/lib/fetchData";
+import { slugify } from "@/lib/helperFunctions";
 import { connectMongoDB } from "@/lib/mongodb";
 import User from "@/models/users.model";
-import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { getNextUserId } from "@/lib/fetchData";
-import { slugify } from "@/lib/slugify";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
