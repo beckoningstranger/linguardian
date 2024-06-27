@@ -242,3 +242,8 @@ export interface SessionUser {
   isLearning: LanguageWithFlag[];
   learnedLists: Partial<Record<SupportedLanguage, number[]>>;
 }
+
+export interface SlugLanguageObject {
+  language: string;
+  slug: string;
+}

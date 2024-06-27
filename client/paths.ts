@@ -16,6 +16,9 @@ const paths = {
   dictionaryItemPath(language: SupportedLanguage, slug: string) {
     return `/dictionary/${language}/${slug}`;
   },
+  editDictionaryItemPath(language: SupportedLanguage, slug: string) {
+    return `/dictionary/${language}/edit/${slug}`;
+  },
   learnPath(
     language: SupportedLanguage,
     mode: LearningMode | "spinner",

@@ -8,12 +8,7 @@ import {
   lookUpItemBySlug,
 } from "@/lib/fetchData";
 import { getUserLanguagesWithFlags } from "@/lib/helperFunctions";
-import { SupportedLanguage } from "@/types";
-
-interface SlugLanguageObject {
-  language: string;
-  slug: string;
-}
+import { SlugLanguageObject, SupportedLanguage } from "@/types";
 
 export const metadata = { title: "Dictionary" };
 
@@ -57,7 +52,7 @@ export default async function ItemPage({
 
   return (
     <ListContainer>
-      <ItemPageTopIcons language={item.language} />
+      <ItemPageTopIcons language={item.language} slug={item.slug} />
       <ItemPageMain
         itemName={item.name}
         partOfSpeech={item.partOfSpeech}

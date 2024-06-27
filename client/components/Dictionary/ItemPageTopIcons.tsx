@@ -7,11 +7,14 @@ import Link from "next/link";
 import paths from "@/paths";
 import NavigateBackButton from "../NavigateBackButton";
 
+interface ItemPageTopIconsProps {
+  language: SupportedLanguage;
+  slug: string;
+}
 export default function ItemPageTopIcons({
   language,
-}: {
-  language: SupportedLanguage;
-}) {
+  slug,
+}: ItemPageTopIconsProps) {
   return (
     <ItemPageContainer>
       <NavigateBackButton>
@@ -19,7 +22,9 @@ export default function ItemPageTopIcons({
       </NavigateBackButton>
       <div className="flex gap-x-2">
         <Button>
-          <MdEdit className="h-8 w-8" />
+          <Link href={paths.editDictionaryItemPath(language, slug)}>
+            <MdEdit className="h-8 w-8" />
+          </Link>
         </Button>
         <Button>
           <MdNoteAdd className="h-8 w-8" />

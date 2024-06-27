@@ -7,6 +7,7 @@ import {
   LearningMode,
   List,
   PopulatedList,
+  SlugLanguageObject,
   SupportedLanguage,
   User,
 } from "@/types";
@@ -225,11 +226,11 @@ export async function fetchAuthors(authors: string[]) {
 export async function lookUpItemBySlug(
   queryItemLanguage: SupportedLanguage,
   slug: string,
-  userLanguages: SupportedLanguage[]
+  userLanguages?: SupportedLanguage[]
 ) {
   try {
     const response = await fetch(
-      `${server}/items/getBySlug/${queryItemLanguage}/${slug}/${userLanguages.join(
+      `${server}/items/getBySlug/${queryItemLanguage}/${slug}/${userLanguages?.join(
         ","
       )}`
     );
@@ -246,10 +247,7 @@ export async function getAllSlugsForLanguage(language: SupportedLanguage) {
       `${server}/items/getAllSlugsForLanguage/${language}`
     );
     if (!response.ok) throw new Error(response.statusText);
-    const slugLanguageObjects: {
-      language: SupportedLanguage;
-      slug: string;
-    }[] = await response.json();
+    const slugLanguageObjects: SlugLanguageObject[] = await response.json();
     return slugLanguageObjects;
   } catch (err) {
     console.error(`Error looking up all slugs for ${language}: ${err}`);
