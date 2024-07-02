@@ -3,8 +3,8 @@ import { HiOutlinePlusCircle } from "react-icons/hi2";
 
 import { getLearnedLanguageData } from "@/lib/fetchData";
 import getUserOnServer from "@/lib/helperFunctions";
-import paths from "@/paths";
-import { SessionUser, SupportedLanguage } from "@/types";
+import paths from "@/lib/paths";
+import { SessionUser, SupportedLanguage } from "@/lib/types";
 import ListDashboardCard from "./ListDashboardCard";
 
 interface DashboardProps {

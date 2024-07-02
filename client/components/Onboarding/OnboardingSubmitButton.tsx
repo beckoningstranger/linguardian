@@ -1,13 +1,13 @@
 "use client";
-import { LanguageWithFlagAndName, SessionUser } from "@/types";
+import { LanguageWithFlagAndName, SessionUser } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import Spinner from "../Spinner";
 import { finishOnboarding } from "@/lib/actions";
 
 interface OnboardingSubmitButtonProps {
-  userNative: LanguageWithFlagAndName | null;
-  languageToLearn: LanguageWithFlagAndName | null;
+  userNative: LanguageWithFlagAndName;
+  languageToLearn: LanguageWithFlagAndName;
 }
 
 export default function OnboardingSubmitButton({
@@ -17,10 +17,11 @@ export default function OnboardingSubmitButton({
   const { data: session, update } = useSession();
   const [updating, setUpdating] = useState<boolean>(false);
 
-  const finishOnboardingAction = finishOnboarding.bind(null, {
-    userNative: userNative?.name,
-    languageToLearn: languageToLearn?.name,
-  });
+  const finishOnboardingAction = finishOnboarding.bind(
+    null,
+    userNative.name,
+    languageToLearn.name
+  );
 
   return (
     <button

@@ -1,4 +1,4 @@
-import { GlobalSettings } from "../types.js";
+import { GlobalSettings } from "../lib/types.js";
 import { model, Schema } from "mongoose";
 
 const settingsSchema = new Schema<GlobalSettings>({

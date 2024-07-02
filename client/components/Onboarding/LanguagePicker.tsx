@@ -1,4 +1,4 @@
-import { LanguageWithFlagAndName } from "@/types";
+import { LanguageWithFlagAndName } from "@/lib/types";
 import { Listbox, ListboxButton, ListboxOptions } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import Flag from "react-world-flags";

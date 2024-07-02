@@ -1,6 +1,6 @@
 "use client";
 
-import { LanguageFeatures } from "@/types";
+import { LanguageFeatures } from "@/lib/types";
 import HelperKeysSelector from "../Menus/HelperKeysSelector";
 import MobileMenu from "../Menus/MobileMenu/MobileMenu";
 import { RefObject, useContext, useState } from "react";

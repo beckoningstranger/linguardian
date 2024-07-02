@@ -19,7 +19,7 @@ import {
   getListDataForMetadata,
 } from "@/lib/fetchData";
 import getUserOnServer from "@/lib/helperFunctions";
-import { LearningMode, SupportedLanguage } from "@/types";
+import { LearningMode, SupportedLanguage } from "@/lib/types";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata({ params }: UnitDetailsProps) {

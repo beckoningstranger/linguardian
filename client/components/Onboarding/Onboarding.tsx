@@ -1,7 +1,6 @@
 "use client";
 
-import { finishOnboarding } from "@/lib/actions";
-import { LanguageFeatures, LanguageWithFlagAndName } from "@/types";
+import { LanguageFeatures, LanguageWithFlagAndName } from "@/lib/types";
 import { ListboxOption } from "@headlessui/react";
 import { MouseEventHandler, useState } from "react";
 import Flag from "react-world-flags";

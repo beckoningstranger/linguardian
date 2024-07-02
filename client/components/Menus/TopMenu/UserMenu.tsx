@@ -5,11 +5,11 @@ import { IoSettings } from "react-icons/io5";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { FaUserAlt } from "react-icons/fa";
 
-import { SessionUser } from "@/types";
+import { SessionUser } from "@/lib/types";
 import useMobileMenuContext from "@/hooks/useMobileMenuContext";
 import MobileMenu from "../MobileMenu/MobileMenu";
 import SidebarItem from "./Sidebar/SideNavItem";
-import paths from "@/paths";
+import paths from "@/lib/paths";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import UserMenuItem from "./UserMenuItem";
 

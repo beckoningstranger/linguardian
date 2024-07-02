@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import paths from "@/paths";
+import paths from "@/lib/paths";
 import Spinner from "../Spinner";
 
 export default function LoginForm() {

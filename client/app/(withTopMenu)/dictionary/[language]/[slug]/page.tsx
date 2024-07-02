@@ -1,14 +1,14 @@
+import ItemPageContainer from "@/components/Dictionary/ItemPageContainer";
 import ItemPageDEFTRCO from "@/components/Dictionary/ItemPageDEF-TR-CO";
 import ItemPageMain from "@/components/Dictionary/ItemPageMain";
 import ItemPageTopIcons from "@/components/Dictionary/ItemPageTopIcons";
-import ListContainer from "@/components/Lists/ListContainer";
 import {
   getAllSlugsForLanguage,
+  getItemBySlug,
   getSupportedLanguages,
-  lookUpItemBySlug,
 } from "@/lib/fetchData";
 import { getUserLanguagesWithFlags } from "@/lib/helperFunctions";
-import { SlugLanguageObject, SupportedLanguage } from "@/types";
+import { SlugLanguageObject, SupportedLanguage } from "@/lib/types";
 
 export const metadata = { title: "Dictionary" };
 
@@ -43,7 +43,7 @@ export default async function ItemPage({
 }: ItemPageProps) {
   const userLanguagesWithFlags = await getUserLanguagesWithFlags();
 
-  const item = await lookUpItemBySlug(
+  const item = await getItemBySlug(
     language as SupportedLanguage,
     slug,
     userLanguagesWithFlags.map((lwf) => lwf.name)
@@ -51,7 +51,7 @@ export default async function ItemPage({
   if (!item) return <div>No item found</div>;
 
   return (
-    <ListContainer>
+    <ItemPageContainer>
       <ItemPageTopIcons language={item.language} slug={item.slug} />
       <ItemPageMain
         itemName={item.name}
@@ -65,6 +65,6 @@ export default async function ItemPage({
         definition={item.definition}
         translations={item.translations}
       />
-    </ListContainer>
+    </ItemPageContainer>
   );
 }

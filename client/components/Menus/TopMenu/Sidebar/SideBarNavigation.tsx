@@ -9,8 +9,8 @@ import { FaRegQuestionCircle, FaBookReader } from "react-icons/fa";
 import { FaPeopleRoof } from "react-icons/fa6";
 import { RiFileList3Fill } from "react-icons/ri";
 import CloseButton from "@/components/Menus/MobileMenu/MobileMenuCloseButton";
-import { SupportedLanguage } from "@/types";
-import paths from "@/paths";
+import { SupportedLanguage } from "@/lib/types";
+import paths from "@/lib/paths";
 
 interface SideBarNavigationProps {
   toggleSidebar: MouseEventHandler;

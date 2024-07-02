@@ -6,7 +6,7 @@ import {
   LanguageFeatures,
   LearningMode,
   SupportedLanguage,
-} from "@/types";
+} from "@/lib/types";
 import TopBar from "./TopBar";
 import ItemPrompt from "./ItemPrompt";
 import { useState, useTransition } from "react";
@@ -16,7 +16,7 @@ import PuzzleMode from "./PuzzleMode";
 import BetterSolutionInput from "./TypeSolution";
 import { useRouter } from "next/navigation";
 import { updateLearnedItems } from "@/lib/actions";
-import paths from "@/paths";
+import paths from "@/lib/paths";
 
 interface LearnAndReviewProps {
   listName: string;

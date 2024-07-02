@@ -3,7 +3,7 @@ import {
   SupportedLanguage,
   User,
   UserWithPopulatedLearnedLists,
-} from "../types.js";
+} from "../lib/types.js";
 import { getList } from "./lists.model.js";
 import {
   getAllSettings,

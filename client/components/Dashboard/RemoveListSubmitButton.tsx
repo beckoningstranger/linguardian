@@ -1,6 +1,6 @@
 "use client";
 
-import { SupportedLanguage } from "@/types";
+import { SupportedLanguage } from "@/lib/types";
 import { useSession } from "next-auth/react";
 
 interface RemoveListSubmitButtonProps {

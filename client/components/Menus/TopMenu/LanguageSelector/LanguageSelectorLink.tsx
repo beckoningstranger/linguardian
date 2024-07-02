@@ -1,4 +1,4 @@
-import { SupportedLanguage } from "@/types";
+import { SupportedLanguage } from "@/lib/types";
 import Link from "next/link";
 import Flag from "react-world-flags";
 

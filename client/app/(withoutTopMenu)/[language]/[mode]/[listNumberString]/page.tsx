@@ -18,7 +18,7 @@ import {
   LearningMode,
   SupportedLanguage,
   User,
-} from "@/types";
+} from "@/lib/types";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata({ params }: ReviewPageProps) {

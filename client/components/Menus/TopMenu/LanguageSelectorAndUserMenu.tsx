@@ -9,7 +9,7 @@ import LanguageSelector from "./LanguageSelector/LanguageSelector";
 import UserMenu from "./UserMenu";
 import MobileLanguageSelector from "./LanguageSelector/MobileLanguageSelector";
 import useMobileMenuContext from "@/hooks/useMobileMenuContext";
-import { SupportedLanguage } from "@/types";
+import { SupportedLanguage } from "@/lib/types";
 import { MobileMenuContextProvider } from "../MobileMenu/MobileMenuContext";
 
 interface LanguageSelectorAndUserMenuProps {

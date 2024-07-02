@@ -1,4 +1,4 @@
-import { GlobalSettings, SupportedLanguage } from "../types.js";
+import { GlobalSettings, SupportedLanguage } from "../lib/types.js";
 import Settings from "./settings.schema.js";
 
 export async function setSiteSettings(siteSettings: GlobalSettings) {

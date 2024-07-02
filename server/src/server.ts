@@ -3,9 +3,9 @@ import app from "./app.js";
 // import https from "https";
 import dotenv from "dotenv";
 
-import { siteSettings } from "./services/siteSettings.js";
+import { siteSettings } from "./lib/siteSettings.js";
 
-import { mongoConnect } from "./services/mongo.js";
+import { mongoConnect } from "./lib/mongo.js";
 // import { fileURLToPath } from "url";
 // import { dirname, join } from "path";
 import { createServer } from "http";

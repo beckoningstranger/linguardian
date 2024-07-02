@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  httpEditItem,
   httpFindItemsByName,
   httpGetAllSlugForLanguage,
   httpGetFullyPopulatedItemBySlug,
@@ -18,3 +19,5 @@ itemsRouter.get(
 itemsRouter.get("/getAllSlugsForLanguage/:language", httpGetAllSlugForLanguage);
 
 itemsRouter.get("/findItems/:languages/:query", httpFindItemsByName);
+
+itemsRouter.post("/editBySlug/:slug", httpEditItem);

@@ -1,5 +1,5 @@
 "use client";
-import paths from "@/paths";
+import paths from "@/lib/paths";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";

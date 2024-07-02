@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa6";
 
-import { SupportedLanguage } from "@/types";
+import { SupportedLanguage } from "@/lib/types";
 import {
   fetchAuthors,
   getListsByLanguage,
   getSupportedLanguages,
 } from "@/lib/fetchData";
 import ListStoreCard from "@/components/Lists/ListStoreCard";
-import paths from "@/paths";
+import paths from "@/lib/paths";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

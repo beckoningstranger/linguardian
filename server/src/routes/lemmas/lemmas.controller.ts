@@ -3,7 +3,7 @@ import {
   getAllLemmas,
 } from "../../models/lemmas.model.js";
 import { Request, Response } from "express";
-import { SupportedLanguage } from "../../types.js";
+import { SupportedLanguage } from "../../lib/types.js";
 
 export async function httpGetAllItemsForLemma(req: Request, res: Response) {
   const lemma = req.params.lemma;

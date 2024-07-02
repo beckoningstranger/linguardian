@@ -3,7 +3,7 @@ import { MobileMenuContextProvider } from "../Menus/MobileMenu/MobileMenuContext
 import HelperKeys from "./HelperKeys";
 import SolutionInput from "./SolutionInput";
 import { ReviewStatus } from "./LearnAndReview";
-import { ItemToLearn, LanguageFeatures } from "@/types";
+import { ItemToLearn, LanguageFeatures } from "@/lib/types";
 import GenderCaseReview from "./GenderCaseReview";
 import { MoreReviewsMode } from "./MoreReviews";
 

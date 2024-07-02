@@ -1,5 +1,8 @@
 import { generateStats } from "./ListHelpers";
-import { FullyPopulatedList, LearnedLanguageWithPopulatedLists } from "@/types";
+import {
+  FullyPopulatedList,
+  LearnedLanguageWithPopulatedLists,
+} from "@/lib/types";
 
 export async function calculateUnitStats(
   unitName: string,

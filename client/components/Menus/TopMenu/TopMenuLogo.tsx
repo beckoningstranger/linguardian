@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import { SupportedLanguage } from "@/types";
-import paths from "@/paths";
+import { SupportedLanguage } from "@/lib/types";
+import paths from "@/lib/paths";
 
 interface TopMenuLogoProps {
   language: SupportedLanguage;

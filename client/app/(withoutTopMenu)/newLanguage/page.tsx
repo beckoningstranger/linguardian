@@ -1,7 +1,7 @@
 import PickNewLanguage from "@/components/PickNewLanguage";
 import { getAllLanguageFeatures } from "@/lib/fetchData";
 import { getUserLanguagesWithFlags } from "@/lib/helperFunctions";
-import { LanguageWithFlag } from "@/types";
+import { LanguageWithFlag } from "@/lib/types";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

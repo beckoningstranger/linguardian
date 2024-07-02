@@ -1,20 +1,20 @@
 "use client";
 
 import {
-  ItemPopulatedWithTranslations,
+  ItemWithPopulatedTranslations,
   LearnedItem,
   SupportedLanguage,
-} from "@/types";
+} from "@/lib/types";
 import { useState } from "react";
 import UnitItem from "./UnitItem";
 
 interface UnitItemsProps {
-  unitItems: ItemPopulatedWithTranslations[];
+  unitItems: ItemWithPopulatedTranslations[];
   allLearnedItems: LearnedItem[];
   userNative: SupportedLanguage;
 }
 
-export interface ItemPlusLearningInfo extends ItemPopulatedWithTranslations {
+export interface ItemPlusLearningInfo extends ItemWithPopulatedTranslations {
   learned: boolean;
   nextReview?: number;
   level?: number;

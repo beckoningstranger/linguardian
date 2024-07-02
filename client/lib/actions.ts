@@ -1,14 +1,15 @@
 "use server";
 
-import paths from "@/paths";
+import paths from "@/lib/paths";
 import {
   DictionarySearchResult,
   ItemForServer,
+  ItemWithPopulatedTranslations,
   LearningMode,
   SupportedLanguage,
-} from "@/types";
+} from "@/lib/types";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { RedirectType, redirect } from "next/navigation";
 import { getSupportedLanguages } from "./fetchData";
 import getUserOnServer from "./helperFunctions";
 
@@ -128,6 +129,7 @@ export async function addListForNewLanguage(
 ) {
   addNewLanguageToLearn(userId, language);
   addListToDashboard(listNumber, language, userId);
+  redirect(paths.listsLanguagePath(language));
 }
 
 export async function findItems(languages: SupportedLanguage[], query: string) {
@@ -158,10 +160,12 @@ export async function addNewLanguageToLearn(
       `Error adding ${language} as a new language for user ${userId}: ${err}`
     );
   }
-  redirect(paths.listsLanguagePath(language));
 }
 
-export async function finishOnboarding({ userNative, languageToLearn }: any) {
+export async function finishOnboarding(
+  userNative: SupportedLanguage,
+  languageToLearn: SupportedLanguage
+) {
   const [sessionUser, supportedLanguages] = await Promise.all([
     getUserOnServer(),
     getSupportedLanguages(),
@@ -187,4 +191,32 @@ export async function finishOnboarding({ userNative, languageToLearn }: any) {
   );
   if (!nativeResponse.ok) throw new Error("Could not set native language");
   addNewLanguageToLearn(sessionUser.id, languageToLearn);
+  redirect(paths.listsLanguagePath(languageToLearn));
+}
+
+export async function submitItemEdit(
+  slug: string,
+  item: ItemWithPopulatedTranslations
+) {
+  const response = await fetch(`${server}/items/editBySlug/${slug}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(item),
+  });
+  if (!response.ok) {
+    const responseData = await response.json();
+    throw new Error(responseData?.error);
+  }
+  const updatedItem = await response.json();
+  revalidatePath(paths.editDictionaryItemPath(item.language, item.slug));
+  revalidatePath(paths.editDictionaryItemPath(item.language, item.slug));
+  revalidatePath(
+    paths.dictionaryItemPath(updatedItem.language, updatedItem.slug)
+  );
+  revalidatePath(
+    paths.dictionaryItemPath(updatedItem.language, updatedItem.slug)
+  );
+  redirect(
+    paths.editDictionaryItemPath(updatedItem.language, updatedItem.slug)
+  );
 }

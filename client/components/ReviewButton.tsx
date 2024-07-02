@@ -13,8 +13,8 @@ import {
 } from "react-icons/fa6"; // Context and Spelling Bee Mode
 import { RxDotsHorizontal, RxDotsVertical } from "react-icons/rx"; // More button
 import Link from "next/link";
-import { LearningMode, ListStats, SupportedLanguage } from "@/types";
-import paths from "@/paths";
+import { LearningMode, ListStats, SupportedLanguage } from "@/lib/types";
+import paths from "@/lib/paths";
 
 interface ReviewButtonProps {
   mode: LearningMode | "more" | "spinner";

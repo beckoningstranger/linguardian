@@ -1,4 +1,4 @@
-import { ItemToLearn } from "@/types";
+import { ItemToLearn } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { ReviewStatus } from "./LearnAndReview";
 

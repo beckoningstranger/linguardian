@@ -1,5 +1,5 @@
-import paths from "@/paths";
-import { Item, SupportedLanguage } from "@/types";
+import paths from "@/lib/paths";
+import { Item, SupportedLanguage } from "@/lib/types";
 import Link from "next/link";
 
 interface ListUnitsProps {

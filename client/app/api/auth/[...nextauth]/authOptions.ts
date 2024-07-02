@@ -16,7 +16,7 @@ import {
   LearnedLanguage,
   SupportedLanguage,
   User as UserType,
-} from "@/types";
+} from "@/lib/types";
 
 const GOOGLE_ID = process.env.GOOGLE_ID;
 const GOOGLE_SECRET = process.env.GOOGLE_SECRET;

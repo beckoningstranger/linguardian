@@ -1,7 +1,7 @@
 import ListBarChart from "@/components/Charts/ListBarChart";
 import ListPieChart from "@/components/Charts/ListPieChart";
 import getUserOnServer from "@/lib/helperFunctions";
-import { LearnedItem, List } from "@/types";
+import { LearnedItem, List } from "@/lib/types";
 import { Types } from "mongoose";
 import {
   AllLearningButtonsDesktopContainer,

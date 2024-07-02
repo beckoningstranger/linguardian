@@ -1,4 +1,4 @@
-import { LearningMode } from "@/types";
+import { LearningMode } from "@/lib/types";
 
 interface TopBarProps {
   listName: string;

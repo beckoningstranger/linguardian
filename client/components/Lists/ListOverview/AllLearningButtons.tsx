@@ -1,5 +1,5 @@
 import ReviewButton from "@/components/ReviewButton";
-import { LearningMode, ListStats, SupportedLanguage } from "@/types";
+import { LearningMode, ListStats, SupportedLanguage } from "@/lib/types";
 
 interface AllLearningButtonsProps {
   listNumber: number;

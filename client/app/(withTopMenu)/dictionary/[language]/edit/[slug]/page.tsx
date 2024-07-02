@@ -1,5 +1,7 @@
-import { lookUpItemBySlug } from "@/lib/fetchData";
-import { SlugLanguageObject, SupportedLanguage } from "@/types";
+import EditItem from "@/components/Dictionary/EditItem";
+import { getItemBySlug } from "@/lib/fetchData";
+import { getUserLanguagesWithFlags } from "@/lib/helperFunctions";
+import { SlugLanguageObject, SupportedLanguage } from "@/lib/types";
 
 interface EditPageProps {
   params: SlugLanguageObject;
@@ -8,12 +10,21 @@ interface EditPageProps {
 export async function generateMetadata({
   params: { slug, language },
 }: EditPageProps) {
-  const item = await lookUpItemBySlug(language as SupportedLanguage, slug);
+  const item = await getItemBySlug(language as SupportedLanguage, slug);
   return { title: `Edit ${item?.name}` };
 }
 
-export default function EditPage({
+export default async function EditPage({
   params: { slug, language },
 }: EditPageProps) {
-  return <div>Edit</div>;
+  const userLanguages = (await getUserLanguagesWithFlags()).map(
+    (lang) => lang.name
+  );
+  const item = await getItemBySlug(
+    language as SupportedLanguage,
+    slug,
+    userLanguages
+  );
+
+  return item ? <EditItem item={item} /> : null;
 }

@@ -1,5 +1,5 @@
 import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
-import { SessionUser, SupportedLanguage } from "@/types";
+import { SessionUser, SupportedLanguage } from "@/lib/types";
 import { getServerSession } from "next-auth";
 import { getSupportedLanguages } from "./fetchData";
 

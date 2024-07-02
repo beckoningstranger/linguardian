@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { DictionarySearchResult, SupportedLanguage } from "@/types";
-import paths from "@/paths";
+import { DictionarySearchResult, SupportedLanguage } from "@/lib/types";
+import paths from "@/lib/paths";
 import Flag from "react-world-flags";
 
 interface SearchResultsProps {

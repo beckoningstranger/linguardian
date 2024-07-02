@@ -15,8 +15,8 @@ import {
   updateUnlockedReviewModes,
 } from "../../models/lists.model.js";
 import { getLanguageFeaturesForLanguage } from "../../models/settings.model.js";
-import { parseCSV } from "../../services/parsecsv.js";
-import { FullyPopulatedList, SupportedLanguage } from "../../types.js";
+import { parseCSV } from "../../lib/parsecsv.js";
+import { FullyPopulatedList, SupportedLanguage } from "../../lib/types.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { Item } from "../types.js";
+import { Item } from "../lib/types.js";
 
 const itemSchema = new Schema<Item>({
   _id: { type: Schema.Types.ObjectId },
@@ -29,7 +29,7 @@ const itemSchema = new Schema<Item>({
     },
   ],
   definition: {
-    type: String,
+    type: [String],
   },
   translations: {
     DE: [
@@ -58,13 +58,13 @@ const itemSchema = new Schema<Item>({
     ],
   },
   gender: {
-    type: [String],
+    type: String,
   },
   pluralForm: {
     type: [String],
   },
   case: {
-    type: [String],
+    type: String,
   },
   audio: {
     type: [String],

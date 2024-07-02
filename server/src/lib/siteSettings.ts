@@ -1,10 +1,11 @@
 import {
-  LanguageFeatures,
-  SRSettings,
-  GlobalSettings,
-  SupportedLanguage,
-  LearningMode,
-} from "../types.js";
+  type LanguageFeatures,
+  type SRSettings,
+  type GlobalSettings,
+  type SupportedLanguage,
+  type LearningMode,
+  type PartOfSpeech,
+} from "./types.js";
 
 const languageFeatures: LanguageFeatures[] = [
   {
@@ -75,7 +76,9 @@ const languageFeatures: LanguageFeatures[] = [
       },
       helperSymbols: [":", ".", "ˈ", "ˌ"],
     },
-  },
+    hasRomanization: false,
+    hasTones: false,
+  } as const,
   {
     langName: "French",
     langCode: "FR",
@@ -147,7 +150,10 @@ const languageFeatures: LanguageFeatures[] = [
       dipthongs: [],
       helperSymbols: [":", ".", "‿"],
     },
-  },
+    hasCases: [],
+    hasRomanization: false,
+    hasTones: false,
+  } as const,
   {
     langName: "English",
     langCode: "EN",
@@ -183,7 +189,12 @@ const languageFeatures: LanguageFeatures[] = [
       rare: { vowels: ["æ̃", "ɜː", "ɒ̃"], consonants: ["x", "ʔ"] },
       helperSymbols: ["ː", "ˈ", "ˌ"],
     },
-  },
+    hasCases: [],
+    hasGender: [],
+    hasRomanization: false,
+    hasTones: false,
+    requiresHelperKeys: [],
+  } as const,
   {
     langName: "Chinese",
     langCode: "CN",
@@ -230,8 +241,12 @@ const languageFeatures: LanguageFeatures[] = [
       dipthongs: ["aɪ", "aʊ", "eɪ", "oʊ"],
       helperSymbols: [],
     },
-  },
-];
+    hasCases: [],
+    hasGender: [],
+    hasTones: true,
+    requiresHelperKeys: [],
+  } as const,
+] as const;
 
 const defaultSRSettings: SRSettings = {
   reviewTimes: {
@@ -250,7 +265,7 @@ const defaultSRSettings: SRSettings = {
     learning: 5,
     reviewing: 20,
   },
-};
+} as const;
 
 const learningModes: LearningMode[] = [
   "learn",
@@ -259,9 +274,28 @@ const learningModes: LearningMode[] = [
   "spellingBee",
   "dictionary",
   "visual",
-];
+] as const;
 
-const supportedLanguages: SupportedLanguage[] = ["DE", "EN", "FR", "CN"];
+const supportedLanguages: SupportedLanguage[] = [
+  "DE",
+  "EN",
+  "FR",
+  "CN",
+] as const;
+
+const allPartsOfSpeech: PartOfSpeech[] = [
+  "noun",
+  "pronoun",
+  "verb",
+  "adjective",
+  "adverb",
+  "preposition",
+  "conjunction",
+  "determiner",
+  "interjection",
+  "particle",
+  "phrase",
+] as const;
 
 export const siteSettings: GlobalSettings = {
   languageFeatures,

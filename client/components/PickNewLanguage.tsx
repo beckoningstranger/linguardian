@@ -1,7 +1,7 @@
 "use client";
 
 import { addNewLanguageToLearn } from "@/lib/actions";
-import { LanguageWithFlag } from "@/types";
+import { LanguageWithFlag } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import Flag from "react-world-flags";

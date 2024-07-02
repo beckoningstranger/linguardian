@@ -9,7 +9,7 @@ import ListFlexibleContent from "@/components/Lists/ListOverview/ListFlexibleCon
 import ListHeader from "@/components/Lists/ListOverview/ListHeader";
 import ListUnits from "@/components/Lists/ListOverview/ListUnits";
 import Spinner from "@/components/Spinner";
-import { SupportedLanguage } from "@/types";
+import { SupportedLanguage } from "@/lib/types";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 

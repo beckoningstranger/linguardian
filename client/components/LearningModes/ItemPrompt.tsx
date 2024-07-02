@@ -1,7 +1,7 @@
-import { ItemPopulatedWithTranslations, SupportedLanguage } from "@/types";
+import { ItemWithPopulatedTranslations, SupportedLanguage } from "@/lib/types";
 
 interface ItemPromptProps {
-  item: ItemPopulatedWithTranslations;
+  item: ItemWithPopulatedTranslations;
   userNative: SupportedLanguage;
 }
 

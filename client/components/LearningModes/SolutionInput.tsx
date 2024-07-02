@@ -1,5 +1,5 @@
 import { RefObject, useEffect, useState } from "react";
-import { ItemPopulatedWithTranslations, LanguageFeatures } from "@/types";
+import { ItemWithPopulatedTranslations, LanguageFeatures } from "@/lib/types";
 import { ReviewStatus } from "./LearnAndReview";
 
 interface SolutionInputProps {
@@ -10,7 +10,7 @@ interface SolutionInputProps {
   reviewStatus: ReviewStatus;
   setReviewStatus: Function;
   disable: boolean | undefined;
-  item: ItemPopulatedWithTranslations;
+  item: ItemWithPopulatedTranslations;
   setMoreReviews: Function;
   finalizeReview: Function;
 }

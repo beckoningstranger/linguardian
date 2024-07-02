@@ -1,4 +1,9 @@
 import { Types } from "mongoose";
+import { z } from "zod";
+import {
+  itemSchemaWithPopulatedTranslations,
+  completeItemSchema,
+} from "./validations.js";
 
 export type PartOfSpeech =
   | "noun"
@@ -38,33 +43,12 @@ export type Tags =
   | "slang"
   | "humorous";
 
-export interface Item {
-  _id: Types.ObjectId;
-  name: string;
-  normalizedName: string;
-  slug: string;
-  language: SupportedLanguage;
-  partOfSpeech: PartOfSpeech;
-  lemmas?: Types.ObjectId[];
-  definition?: string;
-  translations?: Partial<Record<SupportedLanguage, Types.ObjectId[]>>;
-  gender?: Types.Array<Gender>;
-  pluralForm?: Types.Array<string>;
-  case?: Case;
-  audio?: Types.Array<string>;
-  pics?: Types.Array<string>;
-  vids?: Types.Array<string>;
-  IPA?: Types.Array<string>;
-  tags?: Types.Array<Tags>;
-  relevance?: Types.ObjectId[];
-  collocations?: Types.ObjectId[];
-}
+export type Item = z.infer<typeof completeItemSchema>;
+export type ItemWithPopulatedTranslations = z.infer<
+  typeof itemSchemaWithPopulatedTranslations
+>;
 
-export type ItemPopulatedWithTranslations = Omit<Item, "translations"> & {
-  translations: Record<SupportedLanguage, ItemPopulatedWithTranslations[]>;
-};
-
-export type ItemToLearn = ItemPopulatedWithTranslations & {
+export type ItemToLearn = ItemWithPopulatedTranslations & {
   learningStep: number;
   firstPresentation: Boolean;
   increaseLevel: Boolean;
@@ -111,7 +95,7 @@ export interface List {
 }
 
 export type FullyPopulatedList = Omit<List, "units"> & {
-  units: { unitName: string; item: ItemPopulatedWithTranslations }[];
+  units: { unitName: string; item: ItemWithPopulatedTranslations }[];
 };
 
 export type PopulatedList = Omit<List, "units"> & {
@@ -159,12 +143,12 @@ export interface LanguageFeatures {
   langName: string;
   langCode: SupportedLanguage;
   flagCode: string;
-  requiresHelperKeys?: string[];
-  hasGender?: Gender[];
-  hasCases?: Case[];
-  hasRomanization?: Boolean;
-  hasTones?: Boolean;
-  ipa?: IPA;
+  requiresHelperKeys: string[];
+  hasGender: Gender[];
+  hasCases: Case[];
+  hasRomanization: Boolean;
+  hasTones: Boolean;
+  ipa: IPA;
 }
 
 export interface GlobalSettings {

@@ -1,14 +1,13 @@
 import { getLanguageFeaturesForLanguage } from "@/lib/fetchData";
 import { getUserLanguagesWithFlags } from "@/lib/helperFunctions";
-import paths from "@/paths";
-import { ItemPopulatedWithTranslations, SupportedLanguage } from "@/types";
+import paths from "@/lib/paths";
+import { Item, SupportedLanguage } from "@/lib/types";
 import Link from "next/link";
-import ItemPageContainer from "./ItemPageContainer";
 import ItemPageField from "./ItemPageField";
 
 interface ItemPageDEFTRProps {
-  definition?: string;
-  translations?: Record<SupportedLanguage, ItemPopulatedWithTranslations[]>;
+  definition?: string[];
+  translations?: Partial<Record<SupportedLanguage, Item[]>>;
 }
 
 export default async function ItemPageDEFTRCO({
@@ -20,10 +19,10 @@ export default async function ItemPageDEFTRCO({
     (lwf) => lwf.name
   );
 
-  const foundTranslations: ItemPopulatedWithTranslations[] = [];
+  const foundTranslations: Item[] = [];
   allUserLanguages.forEach((lang) => {
     if (!translations || !translations[lang]) return;
-    translations[lang].forEach((item) => {
+    translations[lang]?.forEach((item) => {
       foundTranslations.push(item);
     });
   });
@@ -58,26 +57,24 @@ export default async function ItemPageDEFTRCO({
   });
 
   return (
-    <ItemPageContainer>
-      <div className="ml-2 flex flex-col gap-y-2 sm:ml-8">
-        {definition && definition.length > 0 && (
-          <ItemPageField type="Definition" content={renderedDefinition} />
-        )}
-        {translationItemArrays.map(async (lang, index) => (
-          <ItemPageField
-            key={index}
-            type={
-              `Translation (` +
-              (await getLanguageName(
-                translationItemArrays[index][0].props.href.split("/")[2]
-              )) +
-              ")"
-            }
-            content={lang}
-          />
-        ))}
-      </div>
-    </ItemPageContainer>
+    <div className="ml-2 flex flex-col gap-y-2 sm:ml-8">
+      {definition && definition.length > 0 && (
+        <ItemPageField type="Definition" content={renderedDefinition} />
+      )}
+      {translationItemArrays.map(async (lang, index) => (
+        <ItemPageField
+          key={index}
+          type={
+            `Translation (` +
+            (await getLanguageName(
+              translationItemArrays[index][0].props.href.split("/")[2]
+            )) +
+            ")"
+          }
+          content={lang}
+        />
+      ))}
+    </div>
   );
 }
 

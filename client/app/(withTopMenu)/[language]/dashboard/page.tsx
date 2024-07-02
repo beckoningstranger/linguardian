@@ -1,8 +1,8 @@
 import Dashboard from "@/components/Dashboard/Dashboard";
 import { getSupportedLanguages } from "@/lib/fetchData";
 import getUserOnServer from "@/lib/helperFunctions";
-import paths from "@/paths";
-import { SupportedLanguage } from "@/types";
+import paths from "@/lib/paths";
+import { SupportedLanguage } from "@/lib/types";
 import { redirect } from "next/navigation";
 
 export const metadata = { title: "Dashboard" };

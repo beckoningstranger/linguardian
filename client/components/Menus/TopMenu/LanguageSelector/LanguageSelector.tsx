@@ -6,7 +6,7 @@ import Flag from "react-world-flags";
 
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import AddNewLanguageOption from "./AddNewLanguageOption";
-import { SessionUser, SupportedLanguage } from "@/types";
+import { SessionUser, SupportedLanguage } from "@/lib/types";
 import LanguageSelectorLink from "./LanguageSelectorLink";
 import { useSession } from "next-auth/react";
 

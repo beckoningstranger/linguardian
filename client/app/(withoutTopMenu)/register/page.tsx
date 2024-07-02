@@ -1,6 +1,6 @@
 import RegisterForm from "@/components/authentication/RegisterForm";
 import getUserOnServer from "@/lib/helperFunctions";
-import paths from "@/paths";
+import paths from "@/lib/paths";
 import { redirect } from "next/navigation";
 
 export const metadata = {

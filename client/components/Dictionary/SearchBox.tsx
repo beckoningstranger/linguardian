@@ -4,8 +4,8 @@ import { Combobox, ComboboxInput } from "@headlessui/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDebounce } from "use-debounce";
-import { DictionarySearchResult, LanguageWithFlag } from "@/types";
-import paths from "@/paths";
+import { DictionarySearchResult, LanguageWithFlag } from "@/lib/types";
+import paths from "@/lib/paths";
 
 interface SearchBoxProps {
   findItems: Function;

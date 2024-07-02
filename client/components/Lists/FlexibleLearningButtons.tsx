@@ -4,7 +4,7 @@ import {
   ListStats,
   ListStatus,
   SupportedLanguage,
-} from "@/types";
+} from "@/lib/types";
 import { useRef, useState } from "react";
 import ReviewButton from "../ReviewButton";
 import ContextMenu from "../Menus/ContextMenu";

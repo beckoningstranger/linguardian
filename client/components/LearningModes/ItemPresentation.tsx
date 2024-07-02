@@ -1,4 +1,4 @@
-import { ItemToLearn, SupportedLanguage } from "@/types";
+import { ItemToLearn, SupportedLanguage } from "@/lib/types";
 
 interface ItemPresentationProps {
   item: ItemToLearn;

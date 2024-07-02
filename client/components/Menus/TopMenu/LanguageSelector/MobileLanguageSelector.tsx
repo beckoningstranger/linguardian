@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import Flag from "react-world-flags";
 
 import AddNewLanguageOption from "./AddNewLanguageOption";
-import { SessionUser, SupportedLanguage, User } from "@/types";
+import { SessionUser, SupportedLanguage, User } from "@/lib/types";
 import useMobileMenuContext from "@/hooks/useMobileMenuContext";
 import { moreLanguagesToLearn } from "./LanguageSelector";
 import { useSession } from "next-auth/react";

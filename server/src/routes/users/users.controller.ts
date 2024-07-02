@@ -15,7 +15,7 @@ import {
   updateReviewedItems,
 } from "../../models/users.model.js";
 
-import { LearningMode, SupportedLanguage } from "../../types.js";
+import { LearningMode, SupportedLanguage } from "../../lib/types.js";
 import { getSupportedLanguages } from "../../models/settings.model.js";
 
 export async function httpGetUserById(req: Request, res: Response) {

@@ -6,7 +6,7 @@ import {
   getLearningModes,
   getSupportedLanguages,
 } from "../../models/settings.model.js";
-import { SupportedLanguage } from "../../types.js";
+import { SupportedLanguage } from "../../lib/types.js";
 
 export async function httpGetAllSettings(req: Request, res: Response) {
   return res.status(200).json(await getAllSettings());

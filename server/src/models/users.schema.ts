@@ -1,4 +1,4 @@
-import { User } from "../../../client/types.js";
+import { User } from "../../../client/lib/types.js";
 import { model, Schema } from "mongoose";
 
 const userSchema = new Schema<User>(

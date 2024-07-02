@@ -1,6 +1,6 @@
 "use client";
 
-import { ListStats } from "@/types";
+import { ListStats } from "@/lib/types";
 import dynamic from "next/dynamic";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {

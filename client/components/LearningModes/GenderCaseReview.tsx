@@ -1,16 +1,16 @@
 import {
   Case,
   Gender,
-  ItemPopulatedWithTranslations,
+  ItemWithPopulatedTranslations,
   LanguageFeatures,
-} from "@/types";
+} from "@/lib/types";
 import MoreReviews, { MoreReviewsMode } from "./MoreReviews";
 import { useRef } from "react";
 
 interface GenderCaseReviewProps {
   mode: MoreReviewsMode;
   targetLanguageFeatures: LanguageFeatures;
-  item: ItemPopulatedWithTranslations;
+  item: ItemWithPopulatedTranslations;
   solution: string;
   setSolution: Function;
   setReviewStatus: Function;
@@ -37,7 +37,15 @@ export default function GenderCaseReview({
     let correct = true;
     if (mode === "gender") {
       setSolution(`${solution} (${moreReviewsSolution})`);
-      if (item.gender && !item.gender.includes(moreReviewsSolution)) {
+      let solutionIsIncorrect = true;
+
+      if (item.gender) {
+        const correct = item.gender.find(
+          (genderOption) => genderOption === moreReviewsSolution
+        );
+        if (correct) solutionIsIncorrect = false;
+      }
+      if (item.gender && solutionIsIncorrect) {
         setReviewStatus("incorrect");
         correct = false;
       }

@@ -1,11 +1,13 @@
+import { Request, Response } from "express";
+import { SupportedLanguage } from "../../lib/types.js";
+import { itemSchemaWithPopulatedTranslations } from "../../lib/validations.js";
 import {
+  editBySlug,
   findItemsByName,
   getAllSlugsForLanguage,
-  getOneItemById,
   getFullyPopulatedItemBySlug,
+  getOneItemById,
 } from "../../models/items.model.js";
-import { Request, Response } from "express";
-import { SupportedLanguage } from "../../types.js";
 
 export async function httpGetOneItemById(req: Request, res: Response) {
   const id = req.params.id;
@@ -68,4 +70,25 @@ export async function httpFindItemsByName(req: Request, res: Response) {
   return res.status(404).json({
     message: `Error finding items for ${languages} and query ${query}: None found`,
   });
+}
+
+export async function httpEditItem(req: Request, res: Response) {
+  const item = req.body as unknown;
+  const passedSlug = req.params.slug as string;
+
+  const {
+    data: validatedItem,
+    success,
+    error,
+  } = itemSchemaWithPopulatedTranslations.safeParse(item);
+  if (!success) {
+    let errorMessage = "";
+    error.issues.forEach(
+      (issue) => (errorMessage += `${issue.path[0]}: ${issue.message}. `)
+    );
+    return res.status(400).json({ error: errorMessage });
+  }
+  const response = await editBySlug(passedSlug, validatedItem);
+  if (response) return res.status(201).json(response);
+  return res.status(500).json({ error: "Problem in database" });
 }

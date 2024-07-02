@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { Lemma } from "../types.js";
+import { Lemma } from "../lib/types.js";
 import Item from "./item.schema.js";
 
 const lemmaSchema = new Schema<Lemma>({

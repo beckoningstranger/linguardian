@@ -1,4 +1,4 @@
-import { SupportedLanguage, LanguageFeatures } from "@/types";
+import { SupportedLanguage, LanguageFeatures } from "@/lib/types";
 
 interface HelperKeysSelectorProps {
   targetLanguageFeatures: LanguageFeatures;

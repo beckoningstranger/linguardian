@@ -1,6 +1,5 @@
 import {
   FullyPopulatedList,
-  ItemPopulatedWithTranslations,
   LanguageFeatures,
   LearnedItem,
   LearnedLanguageWithPopulatedLists,
@@ -10,9 +9,10 @@ import {
   SlugLanguageObject,
   SupportedLanguage,
   User,
-} from "@/types";
+} from "@/lib/types";
 import { Types } from "mongoose";
 import { notFound } from "next/navigation";
+import { itemSchemaWithPopulatedTranslations } from "./validations";
 
 const server = process.env.SERVER_URL;
 
@@ -223,7 +223,7 @@ export async function fetchAuthors(authors: string[]) {
   });
 }
 
-export async function lookUpItemBySlug(
+export async function getItemBySlug(
   queryItemLanguage: SupportedLanguage,
   slug: string,
   userLanguages?: SupportedLanguage[]
@@ -235,7 +235,14 @@ export async function lookUpItemBySlug(
       )}`
     );
     if (!response.ok) throw new Error(response.statusText);
-    return (await response.json()) as ItemPopulatedWithTranslations;
+    const responseData = (await response.json()) as unknown;
+    const validatedResponseData =
+      itemSchemaWithPopulatedTranslations.safeParse(responseData);
+    if (!validatedResponseData.success) {
+      console.error(validatedResponseData.error);
+      return;
+    }
+    return validatedResponseData.data;
   } catch (err) {
     console.error(`Error looking up item with slug ${slug}: ${err}`);
   }

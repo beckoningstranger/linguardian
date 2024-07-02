@@ -1,4 +1,4 @@
-import { LearnedItem, List, ListStats, ListStatus } from "@/types";
+import { LearnedItem, List, ListStats, ListStatus } from "@/lib/types";
 import { Types } from "mongoose";
 
 export function calculateListStats(

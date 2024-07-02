@@ -1,5 +1,5 @@
-import paths from "@/paths";
-import { SupportedLanguage } from "@/types";
+import paths from "@/lib/paths";
+import { SupportedLanguage } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
 

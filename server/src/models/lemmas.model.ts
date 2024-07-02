@@ -1,4 +1,4 @@
-import { SupportedLanguage } from "../types.js";
+import { SupportedLanguage } from "../lib/types.js";
 import Lemmas from "./lemma.schema.js";
 
 export async function getAllItemsForLemma(

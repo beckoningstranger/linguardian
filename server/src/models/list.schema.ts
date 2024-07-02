@@ -1,4 +1,4 @@
-import { List } from "../types.js";
+import { List } from "../lib/types.js";
 import { model, Schema } from "mongoose";
 
 const listSchema = new Schema<List>({

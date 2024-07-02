@@ -3,7 +3,7 @@ import {
   getLearningDataForList,
 } from "@/lib/fetchData";
 import getUserOnServer from "@/lib/helperFunctions";
-import { SupportedLanguage } from "@/types";
+import { SupportedLanguage } from "@/lib/types";
 import ChartsLButtonsLeaderboard from "./ChartsLearningButtonsLeaderBoard";
 import StartLearningListButton from "./StartLearningListButton";
 

@@ -4,6 +4,7 @@ import "@/app/globals.css";
 
 import { ReactNode } from "react";
 import { AuthProvider } from "./Providers";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,6 +22,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>{children}</AuthProvider>
+        <Toaster position="top-right" reverseOrder={true} />
       </body>
     </html>
   );

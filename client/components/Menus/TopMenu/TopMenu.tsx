@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 
 import { useActiveLanguage } from "@/context/ActiveLanguageContext";
-import { LanguageFeatures, SupportedLanguage } from "@/types";
+import { LanguageFeatures, SupportedLanguage } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import { MobileMenuContextProvider } from "../MobileMenu/MobileMenuContext";
 import HamburgerMenu from "./HamburgerMenu";

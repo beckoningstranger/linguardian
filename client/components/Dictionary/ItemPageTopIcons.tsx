@@ -1,10 +1,9 @@
+import paths from "@/lib/paths";
+import { SupportedLanguage } from "@/lib/types";
 import { Button } from "@headlessui/react";
+import Link from "next/link";
 import { IoArrowBack } from "react-icons/io5";
 import { MdEdit, MdNoteAdd } from "react-icons/md";
-import ItemPageContainer from "./ItemPageContainer";
-import { SupportedLanguage } from "@/types";
-import Link from "next/link";
-import paths from "@/paths";
 import NavigateBackButton from "../NavigateBackButton";
 
 interface ItemPageTopIconsProps {
@@ -16,7 +15,7 @@ export default function ItemPageTopIcons({
   slug,
 }: ItemPageTopIconsProps) {
   return (
-    <ItemPageContainer>
+    <div className="flex justify-between">
       <NavigateBackButton>
         <IoArrowBack className="h-8 w-8" />
       </NavigateBackButton>
@@ -30,6 +29,6 @@ export default function ItemPageTopIcons({
           <MdNoteAdd className="h-8 w-8" />
         </Button>
       </div>
-    </ItemPageContainer>
+    </div>
   );
 }

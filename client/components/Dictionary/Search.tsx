@@ -5,7 +5,7 @@ import {
   DictionarySearchResult,
   LanguageWithFlag,
   SupportedLanguage,
-} from "@/types";
+} from "@/lib/types";
 import SearchResults from "./SearchResults";
 import { findItems } from "@/lib/actions";
 import SearchBox from "./SearchBox";

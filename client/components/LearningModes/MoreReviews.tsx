@@ -1,9 +1,9 @@
 import {
   Case,
-  ItemPopulatedWithTranslations,
+  ItemWithPopulatedTranslations,
   LanguageFeatures,
   SupportedLanguage,
-} from "@/types";
+} from "@/lib/types";
 import { RefObject } from "react";
 
 export type MoreReviewsMode = "gender" | "case";
@@ -11,7 +11,7 @@ export type MoreReviewsMode = "gender" | "case";
 interface MoreReviewsProps {
   mode: MoreReviewsMode;
   moreReviewsInputRef: RefObject<HTMLInputElement>;
-  item: ItemPopulatedWithTranslations;
+  item: ItemWithPopulatedTranslations;
   target: SupportedLanguage;
   targetLanguageFeatures: LanguageFeatures;
   handleSubmit: Function;

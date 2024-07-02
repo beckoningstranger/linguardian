@@ -1,12 +1,12 @@
 import { Types } from "mongoose";
 import {
   Item,
-  ItemPopulatedWithTranslations,
+  ItemWithPopulatedTranslations,
   LearningMode,
   List,
   PopulatedList,
   SupportedLanguage,
-} from "../types.js";
+} from "../lib/types.js";
 import Lists from "./list.schema.js";
 import { getSupportedLanguages } from "./settings.model.js";
 
@@ -46,7 +46,7 @@ export async function getFullyPopulatedListByListNumber(
 ) {
   try {
     return await Lists.findOne({ listNumber: listNumber }).populate<{
-      units: { unitName: string; item: ItemPopulatedWithTranslations }[];
+      units: { unitName: string; item: ItemWithPopulatedTranslations }[];
     }>({
       path: "units.item",
       populate: { path: "translations." + userNative },

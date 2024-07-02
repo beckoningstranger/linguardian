@@ -1,5 +1,5 @@
 import getUserOnServer from "@/lib/helperFunctions";
-import paths from "@/paths";
+import paths from "@/lib/paths";
 import { redirect } from "next/navigation";
 
 export const metadata = { title: "Signing in..." };

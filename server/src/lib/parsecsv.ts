@@ -21,8 +21,8 @@ import {
   PopulatedList,
   SupportedLanguage,
   Tags,
-} from "../types.js";
-import { slugify } from "./slugify.js";
+} from "./types.js";
+import { normalizeString, slugifyString } from "./helperFunctions.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -47,8 +47,8 @@ interface FormattedParsedData {
   normalizedName: string;
   language: SupportedLanguage;
   partOfSpeech: PartOfSpeech;
-  case?: Case[];
-  gender?: Gender[];
+  case?: Case;
+  gender?: Gender;
   pluralForm?: string[];
   relevance?: string[];
   tags?: Tags[];
@@ -63,8 +63,8 @@ interface ItemInPrep {
   language: SupportedLanguage;
   partOfSpeech: PartOfSpeech;
   lemmas: Types.ObjectId[];
-  case?: Case[];
-  gender?: Gender[];
+  case?: Case;
+  gender?: Gender;
   pluralForm?: string[];
   relevance?: string[];
   tags?: Tags[];
@@ -118,14 +118,11 @@ export async function parseCSV({
         .on("data", async (data: ParsedData) => {
           let formattedData: FormattedParsedData = {
             name: data.name,
-            normalizedName: data.name
-              .normalize("NFD")
-              .replace(/\p{Diacritic}/gu, "")
-              .toLowerCase(),
+            normalizedName: normalizeString(data.name),
             language: language,
             partOfSpeech: data.partOfSpeech,
-            case: data.case?.split(", ") as Case[],
-            gender: data.gender?.split(", ") as Gender[],
+            case: data.case as Case,
+            gender: data.gender as Gender,
             pluralForm: data.pluralForm?.split(", "),
             relevance: data.relevance,
             tags: data.tags?.split(", ") as Tags[],
@@ -268,7 +265,8 @@ async function harvestAndUploadItemsWithoutTranslations(
   // Add as harvested item
   harvestedItems.push({
     ...item,
-    slug: slugify(item.name),
+    gender: cleanUpGenderPropery(item.gender),
+    slug: slugifyString(item.name, item.language),
     lemmas: allFoundLemmaObjectIds,
   });
 
@@ -289,11 +287,8 @@ async function harvestAndUploadItemsWithoutTranslations(
             // Add as harvested item
             const itemToPush: ItemInPrep = {
               name: translation,
-              normalizedName: translation
-                .normalize("NFD")
-                .replace(/\p{Diacritic}/gu, "")
-                .toLowerCase(),
-              slug: slugify(translation),
+              normalizedName: normalizeString(translation),
+              slug: slugifyString(translation, lang as SupportedLanguage),
               language: lang as SupportedLanguage,
               partOfSpeech: item.partOfSpeech,
               lemmas: allFoundLemmaObjectIds,
@@ -319,7 +314,7 @@ async function harvestAndUploadItemsWithoutTranslations(
             $set: {
               name: item.name,
               normalizedName: item.normalizedName,
-              slug: slugify(item.name),
+              slug: slugifyString(item.name, item.language),
               language: item.language,
               partOfSpeech: item.partOfSpeech,
               lemmas: item.lemmas,
@@ -422,6 +417,13 @@ async function linkItemsToLemmas(harvestedItems: ItemInPrep[]): Promise<void> {
       }
     });
   });
+}
+
+function cleanUpGenderPropery(gender: string | undefined) {
+  if (gender && gender.length > 0) {
+    return gender as Gender;
+  }
+  return undefined;
 }
 
 async function cleanUpTranslationProperty(
