@@ -38,9 +38,9 @@ export default function ComboBoxWrapper({
   return (
     <>
       <Combobox value={value} onChange={onChange}>
-        <div className="relative mt-3">
+        <div className="relative">
           <div className="relative cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
-            <ComboboxButton className="inset-y-0 right-0 flex w-full items-center pr-2">
+            <ComboboxButton className="inset-y-0 right-0 flex w-full items-center justify-between pr-2">
               <ComboboxInput
                 className={`w-40 border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0`}
                 onChange={(event) => setQuery(event.target.value)}

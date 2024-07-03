@@ -33,7 +33,6 @@ interface ParsedData {
   case?: string;
   gender?: string;
   pluralForm?: string;
-  relevance?: string[];
   tags?: string;
   tDE?: string;
   tEN?: string;
@@ -50,7 +49,6 @@ interface FormattedParsedData {
   case?: Case;
   gender?: Gender;
   pluralForm?: string[];
-  relevance?: string[];
   tags?: Tags[];
   translations: Partial<Record<SupportedLanguage, string[]>>;
   unit?: string;
@@ -66,7 +64,6 @@ interface ItemInPrep {
   case?: Case;
   gender?: Gender;
   pluralForm?: string[];
-  relevance?: string[];
   tags?: Tags[];
   translations?: Partial<Record<SupportedLanguage, string[]>>;
   unit?: string;
@@ -121,10 +118,18 @@ export async function parseCSV({
             normalizedName: normalizeString(data.name),
             language: language,
             partOfSpeech: data.partOfSpeech,
-            case: data.case as Case,
-            gender: data.gender as Gender,
-            pluralForm: data.pluralForm?.split(", "),
-            relevance: data.relevance,
+            case:
+              data.case && data.case.length > 0
+                ? (data.case as Case)
+                : undefined,
+            gender:
+              data.gender && data.gender.length > 0
+                ? (data.gender as Gender)
+                : undefined,
+            pluralForm:
+              data.pluralForm && data.pluralForm.length > 0
+                ? data.pluralForm?.split(", ")
+                : undefined,
             tags: data.tags?.split(", ") as Tags[],
             translations: {
               DE: data.tDE?.split(", "),
@@ -265,7 +270,6 @@ async function harvestAndUploadItemsWithoutTranslations(
   // Add as harvested item
   harvestedItems.push({
     ...item,
-    gender: cleanUpGenderPropery(item.gender),
     slug: slugifyString(item.name, item.language),
     lemmas: allFoundLemmaObjectIds,
   });
@@ -417,13 +421,6 @@ async function linkItemsToLemmas(harvestedItems: ItemInPrep[]): Promise<void> {
       }
     });
   });
-}
-
-function cleanUpGenderPropery(gender: string | undefined) {
-  if (gender && gender.length > 0) {
-    return gender as Gender;
-  }
-  return undefined;
 }
 
 async function cleanUpTranslationProperty(

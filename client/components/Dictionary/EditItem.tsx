@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import { IoArrowBack } from "react-icons/io5";
 import ComboBoxWrapper from "./ComboBoxWrapper";
 import ItemPageContainer from "./ItemPageContainer";
+import EnterMultiple from "./EnterMultiple";
 
 interface EditItemProps {
   item: ItemWithPopulatedTranslations;
@@ -19,7 +20,7 @@ interface EditItemProps {
 }
 
 export default function EditItem({ item, languageFeatures }: EditItemProps) {
-  const { partsOfSpeech, hasGender } = languageFeatures;
+  const { partsOfSpeech, hasGender, hasCases } = languageFeatures;
   const {
     name: itemName,
     partOfSpeech,
@@ -35,9 +36,9 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
   } = item;
 
   const {
-    register,
     control,
     handleSubmit,
+    setValue,
     formState: { errors, isDirty, isSubmitting },
     watch,
   } = useForm<ItemWithPopulatedTranslations>({
@@ -48,8 +49,12 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
       partOfSpeech,
       slug,
       language,
+      case: Case,
+      pluralForm,
+      IPA,
     },
   });
+
   const onSubmit = async (data: ItemWithPopulatedTranslations) => {
     toast.promise(submitItemEdit(slug, data), {
       loading: "Loading",
@@ -57,11 +62,12 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
       error: (err) => err.toString(),
     });
   };
+
   return (
     <ItemPageContainer>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-x-4 gap-y-1"
+        className="flex flex-col gap-x-4 gap-y-2"
       >
         <div className="flex w-full items-center justify-stretch gap-x-2">
           <div>
@@ -85,7 +91,7 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
         <Controller
           name="name"
           control={control}
-          render={({ field: { onChange, value, onBlur } }) => (
+          render={({ field: { onChange, onBlur } }) => (
             <Input
               onChange={onChange}
               onBlur={onBlur}
@@ -98,23 +104,25 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
         {errors.name && (
           <p className="text-sm text-red-500">{`${errors.name.message}`}</p>
         )}
-        <div className="ml-4">
-          <div className="flex gap-2">
+        <div className="ml-4 flex flex-col justify-center gap-3">
+          <div className="flex flex-col gap-2 sm:flex-row">
             {watch().partOfSpeech === "noun" && hasGender.length > 0 && (
-              <Controller
-                name="gender"
-                control={control}
-                render={({ field: { onChange, value, onBlur } }) => (
-                  <ComboBoxWrapper
-                    placeholder="Noun gender"
-                    value={value ? value : ""}
-                    onChange={onChange}
-                    onBlur={onBlur}
-                    options={hasGender}
-                    error={errors.gender}
-                  />
-                )}
-              />
+              <div className="z-10">
+                <Controller
+                  name="gender"
+                  control={control}
+                  render={({ field: { onChange, value, onBlur } }) => (
+                    <ComboBoxWrapper
+                      placeholder="Noun gender"
+                      value={value ? value : ""}
+                      onChange={onChange}
+                      onBlur={onBlur}
+                      options={hasGender}
+                      error={errors.gender}
+                    />
+                  )}
+                />
+              </div>
             )}
             <Controller
               name="partOfSpeech"
@@ -130,30 +138,56 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
                 />
               )}
             />
+            {watch().partOfSpeech === "preposition" && hasCases.length > 0 && (
+              <Controller
+                name="case"
+                control={control}
+                render={({ field: { onChange, value, onBlur } }) => (
+                  <ComboBoxWrapper
+                    placeholder="Case after preposition"
+                    value={value ? value : ""}
+                    onChange={onChange}
+                    onBlur={onBlur}
+                    options={hasCases}
+                    error={errors.case}
+                  />
+                )}
+              />
+            )}
+          </div>
+          <div className="">
+            {watch().partOfSpeech === "noun" && (
+              <div className="flex items-center gap-x-1 text-sm">
+                <div className="ml-2">Plural Forms:</div>
+                <EnterMultiple
+                  setFormValue={setValue}
+                  formField="pluralForm"
+                  initialValue={watch().pluralForm}
+                />
+              </div>
+            )}
           </div>
         </div>
-        <input type="hidden" {...register("language")} />
-        <input type="hidden" {...register("slug")} />
       </form>
     </ItemPageContainer>
   );
   {
-    /* <ItemPageContainer>
-    <div>
-    <form className="flex items-center gap-4">
-    <h1 className="text-xl font-bold">{itemName}</h1>
-    <div>
-              {gender && <span>{gender.join("/")}</span>}
-              <span> {partOfSpeech}</span>
-            </div>
-          </form>
-          {IPA && IPA.length > 0 && (
-            <div className="ml-2">/ {IPA.join(", ")} /</div>
-          )}
-          {pluralForm && pluralForm.length > 0 && pluralForm[0].length > 0 && (
-            <div className="ml-2 mt-1 text-sm">plural: {pluralForm}</div>
-          )}
-        </div>
-      </ItemPageContainer> */
+    // <ItemPageContainer>
+    //   <div>
+    //     <form className="flex items-center gap-4">
+    //       <h1 className="text-xl font-bold">{itemName}</h1>
+    //       <div>
+    //         {gender && <span>{gender.join("/")}</span>}
+    //         <span> {partOfSpeech}</span>
+    //       </div>
+    //     </form>
+    //     {IPA && IPA.length > 0 && (
+    //       <div className="ml-2">/ {IPA.join(", ")} /</div>
+    //     )}
+    //     {pluralForm && pluralForm.length > 0 && pluralForm[0].length > 0 && (
+    //       <div className="ml-2 mt-1 text-sm">plural: {pluralForm}</div>
+    //     )}
+    //   </div>
+    // </ItemPageContainer>;
   }
 }
