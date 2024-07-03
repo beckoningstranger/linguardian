@@ -4,9 +4,7 @@ import Settings from "./settings.schema.js";
 export async function setSiteSettings(siteSettings: GlobalSettings) {
   try {
     await Settings.collection.drop();
-    return await Settings.create({
-      ...siteSettings,
-    });
+    return await Settings.create(siteSettings);
   } catch (err) {
     console.error(`Error updating settings: ${err}`);
   }

@@ -1,5 +1,5 @@
-import { GlobalSettings } from "../lib/types.js";
 import { model, Schema } from "mongoose";
+import { GlobalSettings } from "../lib/types.js";
 
 const settingsSchema = new Schema<GlobalSettings>({
   supportedLanguages: {
@@ -10,12 +10,26 @@ const settingsSchema = new Schema<GlobalSettings>({
   },
   languageFeatures: [
     {
-      langCode: { type: String },
-      langName: { type: String },
-      flagCode: { type: String },
-      requiresHelperKeys: { type: [String] },
-      hasGender: { type: [String] },
-      hasCases: { type: [String] },
+      langName: String,
+      langCode: String,
+      flagCode: String,
+      requiresHelperKeys: [String],
+      hasGender: [String],
+      hasCases: [String],
+      ipa: {
+        help: String,
+        consonants: [String],
+        vowels: [String],
+        dipthongs: [String],
+        rare: {
+          vowels: [String],
+          consonants: [String],
+        },
+        helperSymbols: [String],
+      },
+      hasRomanization: Boolean,
+      hasTones: Boolean,
+      partsOfSpeech: [String],
     },
   ],
   defaultSRSettings: {

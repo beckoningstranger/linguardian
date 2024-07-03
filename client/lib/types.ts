@@ -149,6 +149,7 @@ export interface LanguageFeatures {
   hasRomanization: Boolean;
   hasTones: Boolean;
   ipa: IPA;
+  partsOfSpeech: PartOfSpeech[];
 }
 
 export interface GlobalSettings {

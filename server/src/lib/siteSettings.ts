@@ -1,11 +1,25 @@
 import {
-  type LanguageFeatures,
-  type SRSettings,
+  PartOfSpeech,
   type GlobalSettings,
-  type SupportedLanguage,
+  type LanguageFeatures,
   type LearningMode,
-  type PartOfSpeech,
+  type SRSettings,
+  type SupportedLanguage,
 } from "./types.js";
+
+const allPartsOfSpeech: PartOfSpeech[] = [
+  "noun",
+  "pronoun",
+  "verb",
+  "adjective",
+  "adverb",
+  "preposition",
+  "conjunction",
+  "determiner",
+  "interjection",
+  "particle",
+  "phrase",
+];
 
 const languageFeatures: LanguageFeatures[] = [
   {
@@ -78,6 +92,7 @@ const languageFeatures: LanguageFeatures[] = [
     },
     hasRomanization: false,
     hasTones: false,
+    partsOfSpeech: allPartsOfSpeech,
   } as const,
   {
     langName: "French",
@@ -153,6 +168,7 @@ const languageFeatures: LanguageFeatures[] = [
     hasCases: [],
     hasRomanization: false,
     hasTones: false,
+    partsOfSpeech: allPartsOfSpeech,
   } as const,
   {
     langName: "English",
@@ -194,6 +210,7 @@ const languageFeatures: LanguageFeatures[] = [
     hasRomanization: false,
     hasTones: false,
     requiresHelperKeys: [],
+    partsOfSpeech: allPartsOfSpeech,
   } as const,
   {
     langName: "Chinese",
@@ -245,6 +262,7 @@ const languageFeatures: LanguageFeatures[] = [
     hasGender: [],
     hasTones: true,
     requiresHelperKeys: [],
+    partsOfSpeech: allPartsOfSpeech,
   } as const,
 ] as const;
 
@@ -281,20 +299,6 @@ const supportedLanguages: SupportedLanguage[] = [
   "EN",
   "FR",
   "CN",
-] as const;
-
-const allPartsOfSpeech: PartOfSpeech[] = [
-  "noun",
-  "pronoun",
-  "verb",
-  "adjective",
-  "adverb",
-  "preposition",
-  "conjunction",
-  "determiner",
-  "interjection",
-  "particle",
-  "phrase",
 ] as const;
 
 export const siteSettings: GlobalSettings = {

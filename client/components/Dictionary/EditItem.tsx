@@ -2,20 +2,24 @@
 
 import { submitItemEdit } from "@/lib/actions";
 import paths from "@/lib/paths";
-import { ItemWithPopulatedTranslations } from "@/lib/types";
+import { ItemWithPopulatedTranslations, LanguageFeatures } from "@/lib/types";
 import { itemSchemaWithPopulatedTranslations } from "@/lib/validations";
+import { Input } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { IoArrowBack } from "react-icons/io5";
+import ComboBoxWrapper from "./ComboBoxWrapper";
 import ItemPageContainer from "./ItemPageContainer";
 
 interface EditItemProps {
   item: ItemWithPopulatedTranslations;
+  languageFeatures: LanguageFeatures;
 }
 
-export default function EditItem({ item }: EditItemProps) {
+export default function EditItem({ item, languageFeatures }: EditItemProps) {
+  const { partsOfSpeech, hasGender } = languageFeatures;
   const {
     name: itemName,
     partOfSpeech,
@@ -35,6 +39,7 @@ export default function EditItem({ item }: EditItemProps) {
     control,
     handleSubmit,
     formState: { errors, isDirty, isSubmitting },
+    watch,
   } = useForm<ItemWithPopulatedTranslations>({
     resolver: zodResolver(itemSchemaWithPopulatedTranslations),
     defaultValues: {
@@ -45,7 +50,6 @@ export default function EditItem({ item }: EditItemProps) {
       language,
     },
   });
-
   const onSubmit = async (data: ItemWithPopulatedTranslations) => {
     toast.promise(submitItemEdit(slug, data), {
       loading: "Loading",
@@ -53,7 +57,6 @@ export default function EditItem({ item }: EditItemProps) {
       error: (err) => err.toString(),
     });
   };
-
   return (
     <ItemPageContainer>
       <form
@@ -79,53 +82,58 @@ export default function EditItem({ item }: EditItemProps) {
             Save Changes
           </button>
         </div>
-        <input
-          {...register("name")}
-          defaultValue={itemName}
-          placeholder="Item name"
-          className="text-xl font-bold focus:px-2"
+        <Controller
+          name="name"
+          control={control}
+          render={({ field: { onChange, value, onBlur } }) => (
+            <Input
+              onChange={onChange}
+              onBlur={onBlur}
+              defaultValue={itemName}
+              placeholder="Item name"
+              className="text-xl font-bold focus:px-2"
+            />
+          )}
         />
         {errors.name && (
           <p className="text-sm text-red-500">{`${errors.name.message}`}</p>
         )}
         <div className="ml-4">
-          <div className="flex">
-            {partOfSpeech === "noun" && (
-              <>
-                <input
-                  {...register("gender", {
-                    // validate: (value) =>
-                    //   ["masculine", "feminine"].includes(getValues("gender")) ||
-                    //   "Must be masculine or feminine",
-                  })}
-                  placeholder="noun gender"
-                  defaultValue={gender}
-                  className="mr-2 w-24"
-                />
-                {errors.gender && (
-                  <p className="max-w-fit text-sm text-red-500">{`${errors.gender.message}`}</p>
+          <div className="flex gap-2">
+            {watch().partOfSpeech === "noun" && hasGender.length > 0 && (
+              <Controller
+                name="gender"
+                control={control}
+                render={({ field: { onChange, value, onBlur } }) => (
+                  <ComboBoxWrapper
+                    placeholder="Noun gender"
+                    value={value ? value : ""}
+                    onChange={onChange}
+                    onBlur={onBlur}
+                    options={hasGender}
+                    error={errors.gender}
+                  />
                 )}
-              </>
-            )}
-            <div>
-              <input
-                {...register("partOfSpeech")}
-                placeholder="Part of Speech"
-                defaultValue={partOfSpeech}
-                className="inline"
               />
-              {errors.partOfSpeech && (
-                <p className="text-sm text-red-500">{`${errors.partOfSpeech.message}`}</p>
+            )}
+            <Controller
+              name="partOfSpeech"
+              control={control}
+              render={({ field: { onChange, value, onBlur } }) => (
+                <ComboBoxWrapper
+                  placeholder="Part of Speech"
+                  value={value}
+                  onChange={onChange}
+                  onBlur={onBlur}
+                  options={partsOfSpeech}
+                  error={errors.partOfSpeech}
+                />
               )}
-            </div>
+            />
           </div>
         </div>
-        <input
-          type="hidden"
-          {...register("language")}
-          defaultValue={language}
-        />
-        <input type="hidden" {...register("slug")} defaultValue={slug} />
+        <input type="hidden" {...register("language")} />
+        <input type="hidden" {...register("slug")} />
       </form>
     </ItemPageContainer>
   );
