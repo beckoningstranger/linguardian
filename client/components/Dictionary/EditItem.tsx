@@ -155,25 +155,19 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
               />
             )}
           </div>
-          <div className="">
-            {watch().partOfSpeech === "noun" && (
-              <div className="flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:gap-x-1">
-                <EnterMultiple
-                  setFormValue={setValue}
-                  formField="pluralForm"
-                  initialValue={watch().pluralForm}
-                  label={
-                    pluralForm && pluralForm?.length > 1
-                      ? "plural forms"
-                      : "plural form"
-                  }
-                />
-                {errors.pluralForm && (
-                  <p className="mt-1 text-sm text-red-500">{`${errors.pluralForm.message}`}</p>
-                )}
-              </div>
-            )}
-          </div>
+          {watch().partOfSpeech === "noun" && (
+            <div className="flex flex-col gap-2 text-sm sm:gap-x-1">
+              <EnterMultiple
+                setFormValue={setValue}
+                formField="pluralForm"
+                initialValue={watch().pluralForm}
+                label={{ singular: "plural form", plural: "plural forms" }}
+              />
+              {errors.pluralForm && (
+                <p className="mt-1 text-sm text-red-500">{`${errors.pluralForm.message}`}</p>
+              )}
+            </div>
+          )}
         </div>
       </form>
     </ItemPageContainer>

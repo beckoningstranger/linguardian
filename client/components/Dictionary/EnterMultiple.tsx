@@ -9,7 +9,7 @@ interface EnterMultipleProps {
   setFormValue: Function;
   formField: string;
   initialValue: string[] | undefined;
-  label: string;
+  label: { singular: string; plural: string };
 }
 
 export default function EnterMultiple({
@@ -29,10 +29,16 @@ export default function EnterMultiple({
           setArray([...array, ""]);
         }}
       >
-        <p className="flex h-full items-center font-semibold capitalize">
-          {label}
-        </p>
-        <PlusCircleIcon className="flex h-full w-5 items-center text-green-400" />
+        <>
+          <p className="flex h-full items-center font-semibold capitalize">
+            {array.length > 1 ? (
+              <span>{label.plural}</span>
+            ) : (
+              <span>{label.singular}</span>
+            )}
+          </p>
+          <PlusCircleIcon className="flex h-full w-5 items-center text-green-400" />
+        </>
       </Button>
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
         <div className="flex flex-wrap gap-2">

@@ -21,21 +21,30 @@ export default function EnterMultipleField({
   initialValue,
 }: EnterMultipleFieldProps) {
   const [value, setValue] = useState(initialValue);
+  const [changedValue, setChangedValue] = useState(value);
 
   return (
-    <div className="relative flex w-full items-center">
+    <div className="relative flex items-center">
       <input
         type="text"
         className="w-full rounded-md border px-2 py-2 shadow-md sm:w-48"
         spellCheck={false}
-        onChange={(e) => setValue(e.target.value)}
-        value={value}
+        onChange={(e) => setChangedValue(e.target.value)}
+        placeholder="Plural form"
+        value={changedValue}
         onBlur={() => onBlur()}
         autoFocus={initialValue === "" ? true : false}
         onKeyDown={(e) => {
           const target = e.target as HTMLInputElement;
-          if (e.key === "Escape" || e.key === "Enter") {
-            target.blur();
+          switch (e.key) {
+            case "Escape":
+              setChangedValue(value);
+              target.blur();
+              break;
+            case "Enter":
+              setValue(changedValue);
+              target.blur();
+              break;
           }
         }}
       />
