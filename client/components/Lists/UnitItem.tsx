@@ -6,7 +6,7 @@ import paths from "@/lib/paths";
 
 interface UnitItemProps {
   item: ItemPlusLearningInfo;
-  translations: string;
+  translations: string | undefined;
   showTranslations: boolean;
 }
 

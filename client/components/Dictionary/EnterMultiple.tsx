@@ -1,8 +1,8 @@
 "use client";
 
+import { PlusCircleIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
 import EnterMultipleField from "./EnterMultipleField";
-import { PlusCircleIcon } from "@heroicons/react/16/solid";
 
 interface EnterMultipleProps {
   setFormValue: Function;
@@ -16,29 +16,28 @@ export default function EnterMultiple({
   initialValue,
 }: EnterMultipleProps) {
   const [array, setArray] = useState(initialValue ? initialValue : []);
-  const [numberOfFields, setNumberOfFields] = useState(1);
-
-  const renderedFields = [];
-  for (let i = 0; i < numberOfFields; i++) {
-    renderedFields.push(
-      <EnterMultipleField
-        key={i}
-        identifier={i}
-        array={array}
-        setArray={setArray}
-        formField={formField}
-        setFormValue={setFormValue}
-        numberOfFields={numberOfFields}
-        setNumberOfFields={setNumberOfFields}
-      />
-    );
-  }
 
   return (
     <div className="flex items-center gap-1">
-      <div className="flex flex-wrap gap-2">{renderedFields}</div>
-      <div onClick={() => setNumberOfFields(numberOfFields + 1)}>
-        <PlusCircleIcon className="h-6 w-6 text-green-400" />
+      <div className="flex flex-wrap gap-2">
+        {array.map((value, index) => (
+          <EnterMultipleField
+            key={value}
+            identifier={index}
+            array={array}
+            setArray={setArray}
+            formField={formField}
+            setFormValue={setFormValue}
+            initialValue={value}
+          />
+        ))}
+      </div>
+      <div
+        onClick={() => {
+          setArray([...array, ""]);
+        }}
+      >
+        <PlusCircleIcon className="h-5 w-5 text-green-400" />
       </div>
     </div>
   );

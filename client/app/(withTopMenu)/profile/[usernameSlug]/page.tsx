@@ -11,10 +11,10 @@ export async function generateMetadata({
   return { title: `${user?.username}'s Profile` };
 }
 
-export async function generateStaticParams() {
-  const allUserIds = await getAllUserIds();
-  return allUserIds;
-}
+// export async function generateStaticParams() {
+//   const allUserIds = await getAllUserIds();
+//   return allUserIds;
+// }
 
 export default async function ProfilePage({
   params: { usernameSlug },

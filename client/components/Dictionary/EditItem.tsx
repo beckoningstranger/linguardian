@@ -25,6 +25,7 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
     name: itemName,
     partOfSpeech,
     language,
+    normalizedName,
     definition,
     gender,
     pluralForm,
@@ -39,7 +40,7 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
     control,
     handleSubmit,
     setValue,
-    formState: { errors, isDirty, isSubmitting },
+    formState: { errors, isDirty, isSubmitting, isValid },
     watch,
   } = useForm<ItemWithPopulatedTranslations>({
     resolver: zodResolver(itemSchemaWithPopulatedTranslations),
@@ -52,6 +53,7 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
       case: Case,
       pluralForm,
       IPA,
+      normalizedName,
     },
   });
 
@@ -83,7 +85,7 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
           </div>
           <button
             className="flex h-full items-center justify-center rounded-md bg-green-400 px-6 hover:bg-green-500 disabled:bg-gray-300 disabled:hover:bg-gray-300"
-            disabled={isSubmitting || !isDirty}
+            disabled={isSubmitting || !isDirty || !isValid}
           >
             Save Changes
           </button>
@@ -105,24 +107,22 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
           <p className="text-sm text-red-500">{`${errors.name.message}`}</p>
         )}
         <div className="ml-4 flex flex-col justify-center gap-3">
-          <div className="flex flex-col gap-2 sm:flex-row">
+          <div className="z-10 flex flex-col gap-2 sm:flex-row">
             {watch().partOfSpeech === "noun" && hasGender.length > 0 && (
-              <div className="z-10">
-                <Controller
-                  name="gender"
-                  control={control}
-                  render={({ field: { onChange, value, onBlur } }) => (
-                    <ComboBoxWrapper
-                      placeholder="Noun gender"
-                      value={value ? value : ""}
-                      onChange={onChange}
-                      onBlur={onBlur}
-                      options={hasGender}
-                      error={errors.gender}
-                    />
-                  )}
-                />
-              </div>
+              <Controller
+                name="gender"
+                control={control}
+                render={({ field: { onChange, value, onBlur } }) => (
+                  <ComboBoxWrapper
+                    placeholder="Noun gender"
+                    value={value ? value : ""}
+                    onChange={onChange}
+                    onBlur={onBlur}
+                    options={hasGender}
+                    error={errors.gender}
+                  />
+                )}
+              />
             )}
             <Controller
               name="partOfSpeech"
@@ -164,6 +164,9 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
                   formField="pluralForm"
                   initialValue={watch().pluralForm}
                 />
+                {errors.pluralForm && (
+                  <p className="text-sm text-red-500">{`${errors.pluralForm.message}`}</p>
+                )}
               </div>
             )}
           </div>

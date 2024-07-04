@@ -35,45 +35,25 @@ export default function GenderCaseReview({
     moreReviewsSolution: Gender | Case
   ) {
     let correct = true;
-    if (mode === "gender") {
-      setSolution(`${solution} (${moreReviewsSolution})`);
-      let solutionIsIncorrect = true;
+    setSolution(`${solution} (${moreReviewsSolution})`);
 
-      if (item.gender) {
-        const correct = item.gender.find(
-          (genderOption) => genderOption === moreReviewsSolution
-        );
-        if (correct) solutionIsIncorrect = false;
-      }
-      if (item.gender && solutionIsIncorrect) {
-        setReviewStatus("incorrect");
-        correct = false;
-      }
-    }
-
-    if (mode === "case") {
-      setSolution(`${solution} (${moreReviewsSolution})`);
-      if (item.case && !item.case.includes(moreReviewsSolution)) {
-        setReviewStatus("incorrect");
-        correct = false;
-      }
+    if (item[mode] && !item[mode]?.includes(moreReviewsSolution)) {
+      setReviewStatus("incorrect");
+      correct = false;
     }
 
     setMoreReviews(null);
     finalizeReview(correct);
   }
 
-  if (mode)
-    return (
-      <MoreReviews
-        mode={mode}
-        moreReviewsInputRef={moreReviewsInputRef}
-        item={item}
-        target={targetLanguageFeatures.langCode}
-        targetLanguageFeatures={targetLanguageFeatures}
-        handleSubmit={handleMoreReviewsSubmit}
-      />
-    );
-
-  return null;
+  return (
+    <MoreReviews
+      mode={mode}
+      moreReviewsInputRef={moreReviewsInputRef}
+      item={item}
+      target={targetLanguageFeatures.langCode}
+      targetLanguageFeatures={targetLanguageFeatures}
+      handleSubmit={handleMoreReviewsSubmit}
+    />
+  );
 }

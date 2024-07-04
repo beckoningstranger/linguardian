@@ -431,8 +431,8 @@ async function cleanUpTranslationProperty(
   if (!supportedLanguages) throw new Error("Failed to get supported languages");
   supportedLanguages.forEach((lang) => {
     if (
-      formattedData.translations[lang] &&
-      formattedData.translations[lang]![0].length < 1
+      formattedData.translations[lang]
+      // formattedData.translations[lang]![0].length < 1
     ) {
       delete formattedData.translations[lang];
     }

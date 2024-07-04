@@ -3,7 +3,9 @@ import { z } from "zod";
 import { Item, SupportedLanguage } from "./types.js";
 
 const itemSchemaWithoutTranslations = z.object({
+  _id: z.custom<Types.ObjectId>(),
   name: z.string().max(30, "Item names can be no longer than 30 characters"),
+  normalizedName: z.string().max(30),
   language: z.custom<SupportedLanguage>(),
   partOfSpeech: z.enum([
     "noun",
@@ -84,14 +86,7 @@ const populatedTranslationsSchema = z.object({
   translations: z.custom<Partial<Record<SupportedLanguage, Item[]>>>(),
 });
 
-const itemSchemAddons = z.object({
-  _id: z.custom<Types.ObjectId>(),
-  normalizedName: z.string().max(30),
-});
-
 export const itemSchemaWithTranslations =
   itemSchemaWithoutTranslations.merge(translationsSchema);
 export const itemSchemaWithPopulatedTranslations =
   itemSchemaWithoutTranslations.merge(populatedTranslationsSchema);
-export const completeItemSchema =
-  itemSchemaWithTranslations.merge(itemSchemAddons);

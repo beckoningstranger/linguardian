@@ -34,7 +34,7 @@ export default function ItemPresentation({
         {item.firstPresentation && (
           <div className="text-2xl">
             {item.translations[userNative]
-              .map((transl) => transl.name)
+              ?.map((transl) => transl.name)
               .join(", ")}
           </div>
         )}

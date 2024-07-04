@@ -7,10 +7,7 @@ interface ItemPromptProps {
 
 export default function ItemPrompt({ item, userNative }: ItemPromptProps) {
   const promptString = item.translations[userNative]
-    .reduce((a, curr) => {
-      a.push(curr.name);
-      return a;
-    }, [] as string[])
+    ?.map((item) => item.name)
     .join(", ");
 
   return (

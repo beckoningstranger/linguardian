@@ -45,7 +45,7 @@ export default function UnitItems({
 
   enrichedItems.forEach((item, index) => {
     const translations = item.translations[userNative]
-      .map((trans) => trans.name)
+      ?.map((trans) => trans.name)
       .join(", ");
     const renderedItem = (
       <UnitItem

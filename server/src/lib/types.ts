@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { z } from "zod";
 import {
   itemSchemaWithPopulatedTranslations,
-  completeItemSchema,
+  itemSchemaWithTranslations,
 } from "./validations.js";
 
 export type PartOfSpeech =
@@ -43,7 +43,7 @@ export type Tags =
   | "slang"
   | "humorous";
 
-export type Item = z.infer<typeof completeItemSchema>;
+export type Item = z.infer<typeof itemSchemaWithTranslations>;
 export type ItemWithPopulatedTranslations = z.infer<
   typeof itemSchemaWithPopulatedTranslations
 >;

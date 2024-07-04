@@ -112,8 +112,3 @@ export default function ComboBoxWrapper({
     </>
   );
 }
-
-function getNeededWidth(x: any) {
-  console.log("X", x);
-  //   console.log("Y", y);
-}
