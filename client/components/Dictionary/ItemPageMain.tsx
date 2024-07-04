@@ -29,7 +29,10 @@ export default function ItemPageMain({
         <div className="ml-2">/ {IPA.join(", ")} /</div>
       )}
       {pluralForm && pluralForm.length > 0 && pluralForm[0].length > 0 && (
-        <div className="ml-2 mt-1 text-sm">plural: {pluralForm}</div>
+        <div className="ml-2 mt-1 text-sm">
+          {pluralForm.length > 1 ? "plural forms: " : "plural form: "}
+          {pluralForm.join(", ")}
+        </div>
       )}
     </div>
   );

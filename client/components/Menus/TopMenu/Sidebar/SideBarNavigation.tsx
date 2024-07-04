@@ -29,7 +29,7 @@ export default function SideBarNavigation({
     <>
       <div
         className={`flex flex-col justify-center md:justify-between md:items-start md:space-between h-full backdrop-blur-md absolute top-0 transition-all md:bg-slate-100 border-r-2 z-10 ${
-          showSidebar ? "w-full md:w-auto" : "-translate-x-[300px]"
+          showSidebar ? "w-full md:w-auto z-50" : "-translate-x-[300px]"
         }
         `}
         ref={ref}

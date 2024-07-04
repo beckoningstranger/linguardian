@@ -11,8 +11,8 @@ import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { IoArrowBack } from "react-icons/io5";
 import ComboBoxWrapper from "./ComboBoxWrapper";
-import ItemPageContainer from "./ItemPageContainer";
 import EnterMultiple from "./EnterMultiple";
+import ItemPageContainer from "./ItemPageContainer";
 
 interface EditItemProps {
   item: ItemWithPopulatedTranslations;
@@ -84,7 +84,7 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
             Edit mode
           </div>
           <button
-            className="flex h-full items-center justify-center rounded-md bg-green-400 px-6 hover:bg-green-500 disabled:bg-gray-300 disabled:hover:bg-gray-300"
+            className="flex h-full items-center justify-center rounded-md bg-green-400 px-3 hover:bg-green-500 disabled:bg-gray-300 disabled:hover:bg-gray-300 sm:px-6"
             disabled={isSubmitting || !isDirty || !isValid}
           >
             Save Changes
@@ -107,7 +107,7 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
           <p className="text-sm text-red-500">{`${errors.name.message}`}</p>
         )}
         <div className="ml-4 flex flex-col justify-center gap-3">
-          <div className="z-10 flex flex-col gap-2 sm:flex-row">
+          <div className="flex flex-col gap-2 bg-white sm:flex-row">
             {watch().partOfSpeech === "noun" && hasGender.length > 0 && (
               <Controller
                 name="gender"
@@ -157,15 +157,19 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
           </div>
           <div className="">
             {watch().partOfSpeech === "noun" && (
-              <div className="flex items-center gap-x-1 text-sm">
-                <div className="ml-2">Plural Forms:</div>
+              <div className="flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:gap-x-1">
                 <EnterMultiple
                   setFormValue={setValue}
                   formField="pluralForm"
                   initialValue={watch().pluralForm}
+                  label={
+                    pluralForm && pluralForm?.length > 1
+                      ? "plural forms"
+                      : "plural form"
+                  }
                 />
                 {errors.pluralForm && (
-                  <p className="text-sm text-red-500">{`${errors.pluralForm.message}`}</p>
+                  <p className="mt-1 text-sm text-red-500">{`${errors.pluralForm.message}`}</p>
                 )}
               </div>
             )}

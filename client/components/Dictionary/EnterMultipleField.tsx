@@ -23,10 +23,11 @@ export default function EnterMultipleField({
   const [value, setValue] = useState(initialValue);
 
   return (
-    <div className="relative flex items-center">
+    <div className="relative flex w-full items-center">
       <input
         type="text"
-        className="w-48 rounded-md border px-2 py-1 shadow-md"
+        className="w-full rounded-md border px-2 py-2 shadow-md sm:w-48"
+        spellCheck={false}
         onChange={(e) => setValue(e.target.value)}
         value={value}
         onBlur={() => onBlur()}
