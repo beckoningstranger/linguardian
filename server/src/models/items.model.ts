@@ -69,7 +69,9 @@ export async function editBySlug(
       case: item.partOfSpeech === "preposition" ? item.case : undefined,
       pluralForm:
         item.partOfSpeech === "noun" || item.partOfSpeech === "adjective"
-          ? item.pluralForm
+          ? item.pluralForm && item.pluralForm.length > 0
+            ? item.pluralForm
+            : undefined
           : undefined,
     },
     {

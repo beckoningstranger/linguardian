@@ -1,7 +1,8 @@
 "use client";
 
+import { useOutsideClick } from "@/hooks/useOutsideClick";
 import { MinusCircleIcon } from "@heroicons/react/20/solid";
-import { useState } from "react";
+import { RefObject, useState } from "react";
 
 interface EnterMultipleFieldProps {
   identifier: number;
@@ -22,29 +23,37 @@ export default function EnterMultipleField({
 }: EnterMultipleFieldProps) {
   const [value, setValue] = useState(initialValue);
   const [changedValue, setChangedValue] = useState(value);
+  const [inputIsFocused, setInputIsFocused] = useState(false);
+  const ref = useOutsideClick(mouseBlur, inputIsFocused);
 
   return (
     <div className="relative flex items-center">
       <input
+        ref={ref as RefObject<HTMLInputElement>}
         type="text"
         className="w-full rounded-md border px-2 py-2 shadow-md sm:w-48"
         spellCheck={false}
         onChange={(e) => setChangedValue(e.target.value)}
         placeholder="Plural form"
         value={changedValue}
-        onBlur={() => onBlur()}
+        onFocus={() => setInputIsFocused(true)}
         autoFocus={initialValue === "" ? true : false}
         onKeyDown={(e) => {
-          const target = e.target as HTMLInputElement;
           switch (e.key) {
             case "Escape":
               setChangedValue(value);
-              target.blur();
+              array[identifier] = value;
+              blurAndUpdate(array);
               break;
             case "Enter":
               setValue(changedValue);
-              target.blur();
+              array[identifier] = changedValue;
+              blurAndUpdate(array);
               break;
+            case "Tab":
+              setValue(changedValue);
+              array[identifier] = changedValue;
+              blurAndUpdate(array);
           }
         }}
       />
@@ -62,6 +71,19 @@ export default function EnterMultipleField({
     </div>
   );
 
+  function blurAndUpdate(array: string[]) {
+    setInputIsFocused(false);
+    const newArray = getUniqueNonEmptyArray(array);
+    updateState(newArray);
+    if (ref.current) ref.current.blur();
+  }
+
+  function mouseBlur() {
+    setValue(changedValue);
+    array[identifier] = changedValue;
+    blurAndUpdate(array);
+  }
+
   function getUniqueNonEmptyArray(array: string[]) {
     const set = new Set();
     const nonEmptyValuesArray = array.filter(
@@ -69,12 +91,6 @@ export default function EnterMultipleField({
     );
     nonEmptyValuesArray.forEach((item) => set.add(item));
     return [...set] as string[];
-  }
-
-  function onBlur() {
-    array[identifier] = value;
-    const newArray = getUniqueNonEmptyArray(array);
-    updateState(newArray);
   }
 
   function updateState(newArray: string[]) {

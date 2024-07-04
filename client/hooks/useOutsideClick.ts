@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
-export const useOutsideClick = (callback: Function, condition?: Boolean) => {
-  const ref = useRef<HTMLDivElement>(null);
+export function useOutsideClick(callback: Function, condition?: Boolean) {
+  const ref = useRef<HTMLDivElement | HTMLInputElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -22,4 +22,4 @@ export const useOutsideClick = (callback: Function, condition?: Boolean) => {
   }, [callback, condition]);
 
   return ref;
-};
+}
