@@ -21,10 +21,7 @@ const settingsSchema = new Schema<GlobalSettings>({
         consonants: [String],
         vowels: [String],
         dipthongs: [String],
-        rare: {
-          vowels: [String],
-          consonants: [String],
-        },
+        rare: [String],
         helperSymbols: [String],
       },
       hasRomanization: Boolean,

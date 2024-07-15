@@ -1,8 +1,13 @@
 "use client";
 
+import useMobileMenuContext from "@/hooks/useMobileMenuContext";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import { MinusCircleIcon } from "@heroicons/react/20/solid";
-import { RefObject, useState } from "react";
+import { RefObject, useEffect, useState } from "react";
+import MobileMenu from "../Menus/MobileMenu/MobileMenu";
+import { IPA } from "@/lib/types";
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
+import IPAKeys from "./IPAKeys";
 
 interface EnterMultipleFieldProps {
   identifier: number;
@@ -11,6 +16,9 @@ interface EnterMultipleFieldProps {
   setFormValue: Function;
   setArray: Function;
   initialValue: string;
+  placeholder: string;
+  mode: "IPA" | "strings";
+  IPA?: IPA;
 }
 
 export default function EnterMultipleField({
@@ -20,11 +28,25 @@ export default function EnterMultipleField({
   setArray,
   identifier,
   initialValue,
+  placeholder,
+  mode,
+  IPA,
 }: EnterMultipleFieldProps) {
   const [value, setValue] = useState(initialValue);
   const [changedValue, setChangedValue] = useState(value);
   const [inputIsFocused, setInputIsFocused] = useState(false);
-  const ref = useOutsideClick(mouseBlur, inputIsFocused);
+  const ref = useOutsideClick(mouseBlur);
+
+  const { toggleMobileMenu } = useMobileMenuContext();
+  if (!toggleMobileMenu) throw new Error("No mobile menu");
+
+  useEffect(() => {
+    if (inputIsFocused && mode === "IPA") {
+      toggleMobileMenu(true);
+    } else {
+      toggleMobileMenu(false);
+    }
+  });
 
   return (
     <div className="relative flex items-center">
@@ -34,9 +56,11 @@ export default function EnterMultipleField({
         className="w-full rounded-md border px-2 py-2 shadow-md sm:w-48"
         spellCheck={false}
         onChange={(e) => setChangedValue(e.target.value)}
-        placeholder="Plural form"
+        placeholder={placeholder}
         value={changedValue}
-        onFocus={() => setInputIsFocused(true)}
+        onFocus={() => {
+          setInputIsFocused(true);
+        }}
         autoFocus={initialValue === "" ? true : false}
         onKeyDown={(e) => {
           switch (e.key) {
@@ -56,6 +80,13 @@ export default function EnterMultipleField({
               blurAndUpdate(array);
           }
         }}
+        onBlur={(e) => {
+          if (
+            !(e.relatedTarget?.id.slice(0, 7) === "IPAKeys") &&
+            !(e.relatedTarget?.role === "tab")
+          )
+            setInputIsFocused(false);
+        }}
       />
       <MinusCircleIcon
         className="absolute right-1 h-5 w-5 text-red-500"
@@ -68,11 +99,63 @@ export default function EnterMultipleField({
           updateState(newArray);
         }}
       />
+      <MobileMenu mode="keyboard" fromDirection="animate-from-bottom">
+        <TabGroup className="h-full">
+          <TabList className="mx-5 flex justify-between">
+            <Tab>Consonants</Tab>
+            <Tab>Vowels</Tab>
+            <Tab>Dipthongs</Tab>
+            <Tab>Rare</Tab>
+            <Tab>Helpers</Tab>
+          </TabList>
+          <TabPanels className="h-full">
+            <TabPanel className="h-full">
+              <IPAKeys
+                keys={IPA?.consonants}
+                inputFieldRef={ref}
+                inputFieldValue={changedValue}
+                inputFieldValueSetter={setChangedValue}
+              />
+            </TabPanel>
+            <TabPanel>
+              <IPAKeys
+                keys={IPA?.vowels}
+                inputFieldRef={ref}
+                inputFieldValue={changedValue}
+                inputFieldValueSetter={setChangedValue}
+              />
+            </TabPanel>
+            <TabPanel>
+              <IPAKeys
+                keys={IPA?.dipthongs}
+                inputFieldRef={ref}
+                inputFieldValue={changedValue}
+                inputFieldValueSetter={setChangedValue}
+              />
+            </TabPanel>
+            <TabPanel>
+              <IPAKeys
+                keys={IPA?.rare}
+                inputFieldRef={ref}
+                inputFieldValue={changedValue}
+                inputFieldValueSetter={setChangedValue}
+              />
+            </TabPanel>
+            <TabPanel>
+              <IPAKeys
+                keys={IPA?.helperSymbols}
+                inputFieldRef={ref}
+                inputFieldValue={changedValue}
+                inputFieldValueSetter={setChangedValue}
+              />
+            </TabPanel>
+          </TabPanels>
+        </TabGroup>
+      </MobileMenu>
     </div>
   );
 
   function blurAndUpdate(array: string[]) {
-    setInputIsFocused(false);
     const newArray = getUniqueNonEmptyArray(array);
     updateState(newArray);
     if (ref.current) ref.current.blur();

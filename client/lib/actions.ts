@@ -9,7 +9,7 @@ import {
   SupportedLanguage,
 } from "@/lib/types";
 import { revalidatePath } from "next/cache";
-import { RedirectType, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { getSupportedLanguages } from "./fetchData";
 import getUserOnServer from "./helperFunctions";
 
@@ -198,6 +198,7 @@ export async function submitItemEdit(
   slug: string,
   item: ItemWithPopulatedTranslations
 ) {
+  console.log(item);
   const response = await fetch(`${server}/items/editBySlug/${slug}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

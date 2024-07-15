@@ -13,7 +13,11 @@ export const MobileMenuContext = createContext<MobileMenuContextType>({
 export function MobileMenuContextProvider({ children }: PropsWithChildren) {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
-  function toggleMobileMenu() {
+  function toggleMobileMenu(arg?: boolean) {
+    if (arg !== undefined) {
+      setShowMobileMenu(arg);
+      return;
+    }
     setShowMobileMenu((active) => !active);
   }
 

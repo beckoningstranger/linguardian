@@ -13,6 +13,7 @@ import { IoArrowBack } from "react-icons/io5";
 import ComboBoxWrapper from "./ComboBoxWrapper";
 import EnterMultiple from "./EnterMultiple";
 import ItemPageContainer from "./ItemPageContainer";
+import Spinner from "../Spinner";
 
 interface EditItemProps {
   item: ItemWithPopulatedTranslations;
@@ -84,10 +85,10 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
             Edit mode
           </div>
           <button
-            className="flex h-full items-center justify-center rounded-md bg-green-400 px-3 hover:bg-green-500 disabled:bg-gray-300 disabled:hover:bg-gray-300 sm:px-6"
+            className="flex h-full w-40 items-center justify-center rounded-md bg-green-400 px-3 hover:bg-green-500 disabled:bg-gray-300 disabled:hover:bg-gray-300 sm:px-6"
             disabled={isSubmitting || !isDirty || !isValid}
           >
-            Save Changes
+            {isSubmitting ? <Spinner size="mini" /> : <span>Save Changes</span>}
           </button>
         </div>
         <Controller
@@ -162,30 +163,20 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
               initialValue={watch().pluralForm}
               label={{ singular: "plural form", plural: "plural forms" }}
               errors={errors && errors?.pluralForm}
+              mode="strings"
             />
           )}
-          {/* <div className="">IPA</div> */}
+          <EnterMultiple
+            setFormValue={setValue}
+            formField="IPA"
+            initialValue={watch().IPA}
+            label={{ singular: "IPA", plural: "IPA" }}
+            errors={errors && errors?.IPA}
+            mode="IPA"
+            IPA={languageFeatures.ipa}
+          />
         </div>
       </form>
     </ItemPageContainer>
   );
-  {
-    // <ItemPageContainer>
-    //   <div>
-    //     <form className="flex items-center gap-4">
-    //       <h1 className="text-xl font-bold">{itemName}</h1>
-    //       <div>
-    //         {gender && <span>{gender.join("/")}</span>}
-    //         <span> {partOfSpeech}</span>
-    //       </div>
-    //     </form>
-    //     {IPA && IPA.length > 0 && (
-    //       <div className="ml-2">/ {IPA.join(", ")} /</div>
-    //     )}
-    //     {pluralForm && pluralForm.length > 0 && pluralForm[0].length > 0 && (
-    //       <div className="ml-2 mt-1 text-sm">plural: {pluralForm}</div>
-    //     )}
-    //   </div>
-    // </ItemPageContainer>;
-  }
 }

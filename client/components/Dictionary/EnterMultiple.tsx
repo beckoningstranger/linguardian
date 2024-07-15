@@ -5,6 +5,8 @@ import { PlusCircleIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
 import { FieldError, Merge } from "react-hook-form";
 import EnterMultipleField from "./EnterMultipleField";
+import { MobileMenuContextProvider } from "../Menus/MobileMenu/MobileMenuContext";
+import { IPA } from "@/lib/types";
 
 interface EnterMultipleProps {
   setFormValue: Function;
@@ -12,6 +14,8 @@ interface EnterMultipleProps {
   initialValue: string[] | undefined;
   label: { singular: string; plural: string };
   errors: Merge<FieldError, (FieldError | undefined)[]> | undefined;
+  mode: "IPA" | "strings";
+  IPA?: IPA;
 }
 
 export default function EnterMultiple({
@@ -20,6 +24,8 @@ export default function EnterMultiple({
   initialValue,
   label,
   errors,
+  mode,
+  IPA,
 }: EnterMultipleProps) {
   const [array, setArray] = useState(initialValue ? initialValue : []);
 
@@ -27,7 +33,7 @@ export default function EnterMultiple({
     <div className="flex flex-col gap-2 text-sm sm:gap-x-1">
       <>
         <Button
-          className="flex items-center gap-1 pb-2"
+          className="flex w-32 items-center gap-1 pb-2"
           onClick={(e) => {
             e.preventDefault();
             setArray([...array, ""]);
@@ -45,19 +51,24 @@ export default function EnterMultiple({
           </>
         </Button>
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
-          <div className="flex flex-wrap gap-2">
-            {array.map((value, index) => (
-              <EnterMultipleField
-                key={value}
-                identifier={index}
-                array={array}
-                setArray={setArray}
-                formField={formField}
-                setFormValue={setFormValue}
-                initialValue={value}
-              />
-            ))}
-          </div>
+          <MobileMenuContextProvider>
+            <div className="flex flex-wrap gap-2">
+              {array.map((value, index) => (
+                <EnterMultipleField
+                  key={value + index}
+                  identifier={index}
+                  array={array}
+                  setArray={setArray}
+                  formField={formField}
+                  setFormValue={setFormValue}
+                  initialValue={value}
+                  placeholder={label.singular}
+                  mode={mode}
+                  IPA={IPA}
+                />
+              ))}
+            </div>
+          </MobileMenuContextProvider>
         </div>
       </>
       {errors && (

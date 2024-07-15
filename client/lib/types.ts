@@ -135,7 +135,7 @@ export interface IPA {
   consonants: string[];
   vowels: string[];
   dipthongs?: string[];
-  rare?: { vowels: string[]; consonants: string[] };
+  rare?: string[];
   helperSymbols: string[];
 }
 

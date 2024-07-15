@@ -1,9 +1,8 @@
 "use client";
+import useMobileMenuContext from "@/hooks/useMobileMenuContext";
 import { MouseEventHandler, ReactNode, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import Logo from "@/components/Logo";
-import MobileMenuCloseButton from "./MobileMenuCloseButton";
-import useMobileMenuContext from "@/hooks/useMobileMenuContext";
+import LogoWithCloseButton from "../LogoWithCloseButton";
 
 interface MobileMenuProps {
   children: ReactNode;
@@ -12,11 +11,13 @@ interface MobileMenuProps {
     | "animate-from-right"
     | "animate-from-left"
     | "animate-from-bottom";
+  mode?: "fullscreen" | "keyboard";
 }
 
 export default function MobileMenu({
   children,
   fromDirection = "animate-from-top",
+  mode,
 }: MobileMenuProps) {
   const ref = useRef<Element | null>(null);
   const { showMobileMenu, toggleMobileMenu } = useMobileMenuContext();
@@ -25,32 +26,25 @@ export default function MobileMenu({
     ref.current = document.querySelector<HTMLElement>("#PortalOutlet");
   }, [showMobileMenu]);
 
-  if (
-    // typeof window === "object" &&
-    showMobileMenu &&
-    toggleMobileMenu &&
-    ref.current
-  ) {
+  if (showMobileMenu && toggleMobileMenu && ref.current) {
     return createPortal(
-      // This returns a logo at the top, options (passed as children) in the middle and a button to close the menu at the bottom
-
-      <div className="absolute top-0 h-full w-full overflow-hidden backdrop-blur-md">
+      <div
+        className={`absolute w-full overflow-hidden backdrop-blur-md ${fromDirection} ${
+          mode === "keyboard"
+            ? "bottom-0 h-1/3 border-t border-t-black"
+            : "top-0 h-full"
+        }`}
+      >
+        {mode !== "keyboard" && (
+          <LogoWithCloseButton
+            toggleFunction={toggleMobileMenu as MouseEventHandler}
+          />
+        )}
         <div
-          className={
-            "h-full flex flex-col items-center justify-center gap-3 overflow-hidden " +
-            fromDirection
-          }
+          className={`h-full  
+            ${mode === "keyboard" ? "" : "flex flex-col items-center mt-20"}`}
         >
-          <Logo />
-          <div className="mt-12 flex h-96 flex-col justify-center">
-            {children}
-          </div>
-          <div
-            onClick={toggleMobileMenu as MouseEventHandler}
-            className="absolute bottom-5"
-          >
-            <MobileMenuCloseButton />
-          </div>
+          {children}
         </div>
       </div>,
       document.querySelector("#PortalOutlet") as HTMLElement

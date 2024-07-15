@@ -1,9 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useActiveLanguage } from "@/context/ActiveLanguageContext";
 import { LanguageFeatures, SupportedLanguage } from "@/lib/types";
-import { useSession } from "next-auth/react";
 import { MobileMenuContextProvider } from "../MobileMenu/MobileMenuContext";
 import HamburgerMenu from "./HamburgerMenu";
 import LanguageSelectorAndUserMenu from "./LanguageSelectorAndUserMenu";
@@ -31,11 +30,6 @@ export default function TopMenu({
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
   };
-  const sessionUser = useSession().data?.user;
-
-  useEffect(() => {
-    setActiveLanguage(sessionUser.isLearning[0].name);
-  }, [setActiveLanguage, sessionUser]);
 
   return (
     <>
@@ -62,20 +56,6 @@ export default function TopMenu({
       </header>
     </>
   );
-}
-
-export function checkPassedLanguageSync(
-  passedLanguage: string | null,
-  supportedLanguages: SupportedLanguage[]
-) {
-  if (
-    !passedLanguage ||
-    !supportedLanguages ||
-    !supportedLanguages.includes(passedLanguage as SupportedLanguage)
-  ) {
-    return false;
-  }
-  return passedLanguage as SupportedLanguage;
 }
 
 export function getLanguageAndFlag(
