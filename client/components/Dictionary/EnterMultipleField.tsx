@@ -1,52 +1,44 @@
 "use client";
 
-import useMobileMenuContext from "@/hooks/useMobileMenuContext";
-import { useOutsideClick } from "@/hooks/useOutsideClick";
+import { useOutsideInputAndKeyboardClick } from "@/hooks/useOutsideClick";
 import { MinusCircleIcon } from "@heroicons/react/20/solid";
 import { RefObject, useEffect, useState } from "react";
-import MobileMenu from "../Menus/MobileMenu/MobileMenu";
-import { IPA } from "@/lib/types";
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
-import IPAKeys from "./IPAKeys";
 
 interface EnterMultipleFieldProps {
-  identifier: number;
   array: string[];
-  formField: string;
-  setFormValue: Function;
   setArray: Function;
-  initialValue: string;
+  identifier: string;
   placeholder: string;
-  mode: "IPA" | "strings";
-  IPA?: IPA;
+  activeField: string | null;
+  setActiveField: Function;
 }
 
 export default function EnterMultipleField({
   array,
-  setFormValue,
-  formField,
   setArray,
   identifier,
-  initialValue,
   placeholder,
-  mode,
-  IPA,
+  activeField,
+  setActiveField,
 }: EnterMultipleFieldProps) {
-  const [value, setValue] = useState(initialValue);
-  const [changedValue, setChangedValue] = useState(value);
-  const [inputIsFocused, setInputIsFocused] = useState(false);
-  const ref = useOutsideClick(mouseBlur);
-
-  const { toggleMobileMenu } = useMobileMenuContext();
-  if (!toggleMobileMenu) throw new Error("No mobile menu");
+  const ref = useOutsideInputAndKeyboardClick(blur);
+  const [value, setValue] = useState(array[parseInt(identifier.slice(-1))]);
 
   useEffect(() => {
-    if (inputIsFocused && mode === "IPA") {
-      toggleMobileMenu(true);
-    } else {
-      toggleMobileMenu(false);
+    if (activeField && identifier) {
+      if (parseInt(activeField.slice(-1)) === parseInt(identifier.slice(-1)))
+        ref.current?.focus();
     }
-  });
+  }, [activeField, identifier, ref]);
+
+  useEffect(() => {
+    if (value !== array[parseInt(identifier.slice(-1))]) {
+      const newArray = array.slice();
+      newArray[parseInt(identifier.slice(-1))] = value;
+      const uniqueArray = getUniqueArray(newArray);
+      setArray(uniqueArray);
+    }
+  }, [value, identifier, array, setArray]);
 
   return (
     <div className="relative flex items-center">
@@ -55,133 +47,58 @@ export default function EnterMultipleField({
         type="text"
         className="w-full rounded-md border px-2 py-2 shadow-md sm:w-48"
         spellCheck={false}
-        onChange={(e) => setChangedValue(e.target.value)}
-        placeholder={placeholder}
-        value={changedValue}
-        onFocus={() => {
-          setInputIsFocused(true);
+        id={identifier}
+        onChange={(e) => {
+          setValue(e.target.value);
         }}
-        autoFocus={initialValue === "" ? true : false}
+        placeholder={placeholder}
+        value={value}
+        onFocus={() => {
+          setActiveField("field" + identifier);
+        }}
+        autoFocus={value === "" ? true : false}
         onKeyDown={(e) => {
           switch (e.key) {
             case "Escape":
-              setChangedValue(value);
-              array[identifier] = value;
-              blurAndUpdate(array);
-              break;
             case "Enter":
-              setValue(changedValue);
-              array[identifier] = changedValue;
-              blurAndUpdate(array);
-              break;
             case "Tab":
-              setValue(changedValue);
-              array[identifier] = changedValue;
-              blurAndUpdate(array);
+              blur();
+              break;
           }
-        }}
-        onBlur={(e) => {
-          if (
-            !(e.relatedTarget?.id.slice(0, 7) === "IPAKeys") &&
-            !(e.relatedTarget?.role === "tab")
-          )
-            setInputIsFocused(false);
         }}
       />
       <MinusCircleIcon
         className="absolute right-1 h-5 w-5 text-red-500"
         onClick={() => {
-          const index = array.indexOf(value);
-          const newArray = [
-            ...array.slice(0, index),
-            ...array.slice(index + 1),
-          ];
-          updateState(newArray);
+          setValue("");
         }}
       />
-      <MobileMenu mode="keyboard" fromDirection="animate-from-bottom">
-        <TabGroup className="h-full">
-          <TabList className="mx-5 flex justify-between">
-            <Tab>Consonants</Tab>
-            <Tab>Vowels</Tab>
-            <Tab>Dipthongs</Tab>
-            <Tab>Rare</Tab>
-            <Tab>Helpers</Tab>
-          </TabList>
-          <TabPanels className="h-full">
-            <TabPanel className="h-full">
-              <IPAKeys
-                keys={IPA?.consonants}
-                inputFieldRef={ref}
-                inputFieldValue={changedValue}
-                inputFieldValueSetter={setChangedValue}
-              />
-            </TabPanel>
-            <TabPanel>
-              <IPAKeys
-                keys={IPA?.vowels}
-                inputFieldRef={ref}
-                inputFieldValue={changedValue}
-                inputFieldValueSetter={setChangedValue}
-              />
-            </TabPanel>
-            <TabPanel>
-              <IPAKeys
-                keys={IPA?.dipthongs}
-                inputFieldRef={ref}
-                inputFieldValue={changedValue}
-                inputFieldValueSetter={setChangedValue}
-              />
-            </TabPanel>
-            <TabPanel>
-              <IPAKeys
-                keys={IPA?.rare}
-                inputFieldRef={ref}
-                inputFieldValue={changedValue}
-                inputFieldValueSetter={setChangedValue}
-              />
-            </TabPanel>
-            <TabPanel>
-              <IPAKeys
-                keys={IPA?.helperSymbols}
-                inputFieldRef={ref}
-                inputFieldValue={changedValue}
-                inputFieldValueSetter={setChangedValue}
-              />
-            </TabPanel>
-          </TabPanels>
-        </TabGroup>
-      </MobileMenu>
     </div>
   );
 
-  function blurAndUpdate(array: string[]) {
-    const newArray = getUniqueNonEmptyArray(array);
-    updateState(newArray);
-    if (ref.current) ref.current.blur();
+  function blur() {
+    setActiveField(null);
+    if (value === "") {
+      const noEmptyStringsArray = getArrayWithNoEmptyStrings(array);
+      setArray(noEmptyStringsArray);
+      if (ref.current) ref.current.blur();
+      return;
+    }
+    if (array.includes(value)) {
+      const uniqueArray = getUniqueArray(array);
+      setArray(uniqueArray);
+      if (ref.current) ref.current.blur();
+      return;
+    }
   }
 
-  function mouseBlur() {
-    setValue(changedValue);
-    array[identifier] = changedValue;
-    blurAndUpdate(array);
+  function getArrayWithNoEmptyStrings(array: string[]) {
+    return array.filter((string) => string !== undefined && string !== "");
   }
 
-  function getUniqueNonEmptyArray(array: string[]) {
-    const set = new Set();
-    const nonEmptyValuesArray = array.filter(
-      (value) => value !== undefined && value !== ""
-    );
-    nonEmptyValuesArray.forEach((item) => set.add(item));
+  function getUniqueArray(array: string[]) {
+    const set = new Set<string>();
+    array.forEach((item) => set.add(item));
     return [...set] as string[];
-  }
-
-  function updateState(newArray: string[]) {
-    setArray(newArray);
-    setFormValue(formField, newArray, {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    });
   }
 }

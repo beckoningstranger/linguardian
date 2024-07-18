@@ -2,16 +2,16 @@ import { Dispatch, RefObject, SetStateAction } from "react";
 
 interface IPAKeysProps {
   keys: string[] | undefined;
-  inputFieldRef: RefObject<HTMLDivElement | HTMLInputElement>;
-  inputFieldValue: string;
-  inputFieldValueSetter: Dispatch<SetStateAction<string>>;
+  arrayIndex: number;
+  array: string[];
+  setArray: Dispatch<SetStateAction<string[]>>;
 }
 
 export default function IPAKeys({
   keys,
-  inputFieldRef,
-  inputFieldValue,
-  inputFieldValueSetter,
+  arrayIndex,
+  array,
+  setArray,
 }: IPAKeysProps) {
   if (keys && keys.length > 0)
     return (
@@ -19,10 +19,10 @@ export default function IPAKeys({
         {keys.map((key, index) => (
           <button
             key={key + index}
-            id={"IPAKeys" + index}
+            id={"IPAKeys" + index} // This is used in useOutsideInputAndKeyboardClick
             onClick={() => {
-              inputFieldValueSetter(inputFieldValue + key);
-              inputFieldRef.current?.focus();
+              array[arrayIndex] = array[arrayIndex] + key;
+              setArray(array.slice());
             }}
             className="grid h-9 w-9 place-items-center rounded-md border border-black p-2 text-sm"
           >

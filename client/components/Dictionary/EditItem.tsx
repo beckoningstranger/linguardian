@@ -10,10 +10,11 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { IoArrowBack } from "react-icons/io5";
+import { MobileMenuContextProvider } from "../Menus/MobileMenu/MobileMenuContext";
+import Spinner from "../Spinner";
 import ComboBoxWrapper from "./ComboBoxWrapper";
 import EnterMultiple from "./EnterMultiple";
 import ItemPageContainer from "./ItemPageContainer";
-import Spinner from "../Spinner";
 
 interface EditItemProps {
   item: ItemWithPopulatedTranslations;
@@ -60,7 +61,7 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
 
   const onSubmit = async (data: ItemWithPopulatedTranslations) => {
     toast.promise(submitItemEdit(slug, data), {
-      loading: "Loading",
+      loading: "Updating...",
       success: () => "Item updated! 🎉",
       error: (err) => err.toString(),
     });
@@ -156,25 +157,28 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
               />
             )}
           </div>
-          {watch().partOfSpeech === "noun" && (
+          <MobileMenuContextProvider>
+            {watch().partOfSpeech === "noun" && (
+              <EnterMultiple
+                setValue={setValue}
+                formField="pluralForm"
+                initialValue={watch().pluralForm}
+                label={{ singular: "plural form", plural: "plural forms" }}
+                errors={errors && errors?.pluralForm}
+                mode="strings"
+              />
+            )}
+
             <EnterMultiple
-              setFormValue={setValue}
-              formField="pluralForm"
-              initialValue={watch().pluralForm}
-              label={{ singular: "plural form", plural: "plural forms" }}
-              errors={errors && errors?.pluralForm}
-              mode="strings"
+              setValue={setValue}
+              formField="IPA"
+              initialValue={watch().IPA}
+              label={{ singular: "IPA", plural: "IPA" }}
+              errors={errors && errors?.IPA}
+              mode="IPA"
+              IPA={languageFeatures.ipa}
             />
-          )}
-          <EnterMultiple
-            setFormValue={setValue}
-            formField="IPA"
-            initialValue={watch().IPA}
-            label={{ singular: "IPA", plural: "IPA" }}
-            errors={errors && errors?.IPA}
-            mode="IPA"
-            IPA={languageFeatures.ipa}
-          />
+          </MobileMenuContextProvider>
         </div>
       </form>
     </ItemPageContainer>
