@@ -31,11 +31,11 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
     definition,
     gender,
     pluralForm,
-    translations,
+    // translations,
     case: Case,
     IPA,
     slug,
-    tags,
+    // tags,
   } = item;
 
   const {
@@ -56,6 +56,7 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
       pluralForm,
       IPA,
       normalizedName,
+      definition,
     },
   });
 
@@ -73,97 +74,102 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-x-4 gap-y-2"
       >
-        <div className="flex w-full items-center justify-stretch gap-x-2">
-          <div>
-            <Link
-              href={paths.dictionaryItemPath(language, slug)}
-              className="flex h-10 w-10 items-center justify-center rounded-md border-2 border-black"
+        <MobileMenuContextProvider>
+          <div className="flex w-full items-center justify-stretch gap-x-2">
+            <div>
+              <Link
+                href={paths.dictionaryItemPath(language, slug)}
+                className="flex h-10 w-10 items-center justify-center rounded-md border-2 border-black"
+              >
+                <IoArrowBack className="h-7 w-7 rounded-md" />
+              </Link>
+            </div>
+            <div className="flex h-full flex-1 items-center justify-center rounded-md bg-red-400 uppercase">
+              Edit mode
+            </div>
+            <button
+              className="flex h-full w-40 items-center justify-center rounded-md bg-green-400 px-3 hover:bg-green-500 disabled:bg-gray-300 disabled:hover:bg-gray-300 sm:px-6"
+              disabled={isSubmitting || !isDirty || !isValid}
             >
-              <IoArrowBack className="h-7 w-7 rounded-md" />
-            </Link>
+              {isSubmitting ? (
+                <Spinner size="mini" />
+              ) : (
+                <span>Save Changes</span>
+              )}
+            </button>
           </div>
-          <div className="flex h-full flex-1 items-center justify-center rounded-md bg-red-400 uppercase">
-            Edit mode
-          </div>
-          <button
-            className="flex h-full w-40 items-center justify-center rounded-md bg-green-400 px-3 hover:bg-green-500 disabled:bg-gray-300 disabled:hover:bg-gray-300 sm:px-6"
-            disabled={isSubmitting || !isDirty || !isValid}
-          >
-            {isSubmitting ? <Spinner size="mini" /> : <span>Save Changes</span>}
-          </button>
-        </div>
-        <Controller
-          name="name"
-          control={control}
-          render={({ field: { onChange, onBlur } }) => (
-            <Input
-              onChange={onChange}
-              onBlur={onBlur}
-              defaultValue={itemName}
-              placeholder="Item name"
-              className="text-xl font-bold focus:px-2"
-            />
-          )}
-        />
-        {errors.name && (
-          <p className="text-sm text-red-500">{`${errors.name.message}`}</p>
-        )}
-        <div className="ml-4 flex flex-col justify-center gap-3">
-          <div className="flex flex-col gap-2 bg-white sm:flex-row">
-            {watch().partOfSpeech === "noun" && hasGender.length > 0 && (
-              <Controller
-                name="gender"
-                control={control}
-                render={({ field: { onChange, value, onBlur } }) => (
-                  <ComboBoxWrapper
-                    placeholder="Noun gender"
-                    value={value ? value : ""}
-                    onChange={onChange}
-                    onBlur={onBlur}
-                    options={hasGender}
-                    error={errors.gender}
-                  />
-                )}
+          <Controller
+            name="name"
+            control={control}
+            render={({ field: { onChange, onBlur } }) => (
+              <Input
+                onChange={onChange}
+                onBlur={onBlur}
+                defaultValue={itemName}
+                placeholder="Item name"
+                className="text-xl font-bold focus:px-2"
               />
             )}
-            <Controller
-              name="partOfSpeech"
-              control={control}
-              render={({ field: { onChange, value, onBlur } }) => (
-                <ComboBoxWrapper
-                  placeholder="Part of Speech"
-                  value={value}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  options={partsOfSpeech}
-                  error={errors.partOfSpeech}
+          />
+          {errors.name && (
+            <p className="text-sm text-red-500">{`${errors.name.message}`}</p>
+          )}
+          <div className="ml-4 flex flex-col justify-center gap-3">
+            <div className="flex flex-col gap-2 bg-white sm:flex-row">
+              {watch().partOfSpeech === "noun" && hasGender.length > 0 && (
+                <Controller
+                  name="gender"
+                  control={control}
+                  render={({ field: { onChange, value, onBlur } }) => (
+                    <ComboBoxWrapper
+                      placeholder="Noun gender"
+                      value={value ? value : ""}
+                      onChange={onChange}
+                      onBlur={onBlur}
+                      options={hasGender}
+                      error={errors.gender}
+                    />
+                  )}
                 />
               )}
-            />
-            {watch().partOfSpeech === "preposition" && hasCases.length > 0 && (
               <Controller
-                name="case"
+                name="partOfSpeech"
                 control={control}
                 render={({ field: { onChange, value, onBlur } }) => (
                   <ComboBoxWrapper
-                    placeholder="Case after preposition"
-                    value={value ? value : ""}
+                    placeholder="Part of Speech"
+                    value={value}
                     onChange={onChange}
                     onBlur={onBlur}
-                    options={hasCases}
-                    error={errors.case}
+                    options={partsOfSpeech}
+                    error={errors.partOfSpeech}
                   />
                 )}
               />
-            )}
-          </div>
-          <MobileMenuContextProvider>
+              {watch().partOfSpeech === "preposition" &&
+                hasCases.length > 0 && (
+                  <Controller
+                    name="case"
+                    control={control}
+                    render={({ field: { onChange, value, onBlur } }) => (
+                      <ComboBoxWrapper
+                        placeholder="Case after preposition"
+                        value={value ? value : ""}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        options={hasCases}
+                        error={errors.case}
+                      />
+                    )}
+                  />
+                )}
+            </div>
             {watch().partOfSpeech === "noun" && (
               <EnterMultiple
                 setValue={setValue}
                 formField="pluralForm"
                 initialValue={watch().pluralForm}
-                label={{ singular: "plural form", plural: "plural forms" }}
+                label={{ singular: "Plural Form", plural: "Plural Forms" }}
                 errors={errors && errors?.pluralForm}
                 mode="strings"
               />
@@ -178,8 +184,16 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
               mode="IPA"
               IPA={languageFeatures.ipa}
             />
-          </MobileMenuContextProvider>
-        </div>
+            <EnterMultiple
+              setValue={setValue}
+              formField="definition"
+              initialValue={watch().definition}
+              label={{ singular: "Definition", plural: "Definitions" }}
+              errors={errors && errors?.definition}
+              mode="longstrings"
+            />
+          </div>
+        </MobileMenuContextProvider>
       </form>
     </ItemPageContainer>
   );

@@ -23,7 +23,7 @@ interface EnterMultipleProps {
   initialValue: string[] | undefined;
   label: { singular: string; plural: string };
   errors: Merge<FieldError, (FieldError | undefined)[]> | undefined;
-  mode: "IPA" | "strings";
+  mode: "IPA" | "strings" | "longstrings";
   IPA?: IPA;
 }
 
@@ -43,12 +43,12 @@ export default function EnterMultiple({
   if (!toggleMobileMenu) throw new Error("No mobile menu context");
 
   useEffect(() => {
-    if (!activeField) {
+    if (mode === "IPA" && !activeField) {
       toggleMobileMenu(false);
     } else {
-      toggleMobileMenu(true);
+      if (mode === "IPA") toggleMobileMenu(true);
     }
-  }, [activeField, toggleMobileMenu]);
+  }, [activeField, toggleMobileMenu, mode]);
 
   useEffect(() => {
     setValue(formField, array, {
@@ -80,20 +80,22 @@ export default function EnterMultiple({
               <PlusCircleIcon className="flex h-full w-5 items-center text-green-400" />
             </>
           </Button>
-          <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
-            <div className="flex flex-wrap gap-2">
-              {array.map((value, index) => (
-                <EnterMultipleField
-                  key={value + index}
-                  identifier={mode + index}
-                  array={array}
-                  setArray={setArray}
-                  placeholder={label.singular}
-                  activeField={activeField}
-                  setActiveField={setActiveField}
-                />
-              ))}
-            </div>
+          <div
+            className={`flex w-full flex-col flex-wrap gap-2 ${
+              mode === "longstrings" ? "" : "sm:flex-row sm:items-center"
+            }`}
+          >
+            {array.map((value, index) => (
+              <EnterMultipleField
+                key={value + index}
+                identifier={mode + index}
+                array={array}
+                setArray={setArray}
+                placeholder={label.singular}
+                activeField={activeField}
+                setActiveField={setActiveField}
+              />
+            ))}
           </div>
         </>
         {errors && (
