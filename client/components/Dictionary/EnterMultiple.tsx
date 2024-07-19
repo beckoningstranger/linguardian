@@ -103,14 +103,16 @@ export default function EnterMultiple({
       {activeField && (
         <MobileMenu mode="keyboard" fromDirection="animate-from-bottom">
           <TabGroup className="h-full">
-            <TabList className="mx-5 flex justify-between">
+            <TabList className="flex h-10 justify-evenly bg-slate-200">
               <Tab>Consonants</Tab>
               <Tab>Vowels</Tab>
-              <Tab>Dipthongs</Tab>
-              <Tab>Rare</Tab>
+              {IPA?.dipthongs && IPA?.dipthongs?.length > 0 && (
+                <Tab>Dipthongs</Tab>
+              )}
+              {IPA?.rare && IPA.rare.length > 0 && <Tab>Rare</Tab>}
               <Tab>Helpers</Tab>
             </TabList>
-            <TabPanels className="h-full">
+            <TabPanels className="h-full px-2">
               <TabPanel className="h-full">
                 <IPAKeys
                   keys={IPA?.consonants}
@@ -127,22 +129,26 @@ export default function EnterMultiple({
                   setArray={setArray}
                 />
               </TabPanel>
-              <TabPanel>
-                <IPAKeys
-                  arrayIndex={parseInt(activeField.slice(-1))}
-                  array={array}
-                  setArray={setArray}
-                  keys={IPA?.dipthongs}
-                />
-              </TabPanel>
-              <TabPanel>
-                <IPAKeys
-                  arrayIndex={parseInt(activeField.slice(-1))}
-                  array={array}
-                  setArray={setArray}
-                  keys={IPA?.rare}
-                />
-              </TabPanel>
+              {IPA?.dipthongs && IPA?.dipthongs?.length > 0 && (
+                <TabPanel>
+                  <IPAKeys
+                    arrayIndex={parseInt(activeField.slice(-1))}
+                    array={array}
+                    setArray={setArray}
+                    keys={IPA?.dipthongs}
+                  />
+                </TabPanel>
+              )}
+              {IPA?.rare && IPA.rare.length > 0 && (
+                <TabPanel>
+                  <IPAKeys
+                    arrayIndex={parseInt(activeField.slice(-1))}
+                    array={array}
+                    setArray={setArray}
+                    keys={IPA?.rare}
+                  />
+                </TabPanel>
+              )}
               <TabPanel>
                 <IPAKeys
                   arrayIndex={parseInt(activeField.slice(-1))}

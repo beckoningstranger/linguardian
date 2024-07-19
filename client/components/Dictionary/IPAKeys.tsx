@@ -15,7 +15,7 @@ export default function IPAKeys({
 }: IPAKeysProps) {
   if (keys && keys.length > 0)
     return (
-      <div className="m-2 grid h-48 grid-cols-8 py-4">
+      <div className="grid h-48 grid-cols-8 place-content-start">
         {keys.map((key, index) => (
           <button
             key={key + index}
@@ -24,7 +24,7 @@ export default function IPAKeys({
               array[arrayIndex] = array[arrayIndex] + key;
               setArray(array.slice());
             }}
-            className="grid h-9 w-9 place-items-center rounded-md border border-black p-2 text-sm"
+            className="my-2 grid h-9 w-9 place-items-center rounded-md border border-black p-2 text-sm"
           >
             {key}
           </button>
