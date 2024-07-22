@@ -36,12 +36,20 @@ export type Case =
   | "vocative"
   | "accusative & dative";
 
-export type Tags =
-  | "intransitive"
+export type Tag =
   | "archaic"
-  | "literary"
+  | "obsolete"
+  | "vulgar"
   | "slang"
-  | "humorous";
+  | "humorous"
+  | "literary"
+  | "transitive"
+  | "intransitive";
+
+export interface sortedTags {
+  forAll: Tag[];
+  [key: string]: Tag[];
+}
 
 export type Item = z.infer<typeof itemSchemaWithTranslations>;
 export type ItemWithPopulatedTranslations = z.infer<
@@ -150,6 +158,7 @@ export interface LanguageFeatures {
   hasTones: Boolean;
   ipa: IPA;
   partsOfSpeech: PartOfSpeech[];
+  tags: sortedTags;
 }
 
 export interface GlobalSettings {
@@ -232,3 +241,5 @@ export interface SlugLanguageObject {
   language: string;
   slug: string;
 }
+
+export type StringOrPickOne = string | "Pick one...";

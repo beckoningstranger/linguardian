@@ -15,6 +15,7 @@ import Spinner from "../Spinner";
 import ComboBoxWrapper from "./ComboBoxWrapper";
 import EnterMultiple from "./EnterMultiple";
 import ItemPageContainer from "./ItemPageContainer";
+import PickMultiple from "./PickMultiple";
 
 interface EditItemProps {
   item: ItemWithPopulatedTranslations;
@@ -35,7 +36,7 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
     case: Case,
     IPA,
     slug,
-    // tags,
+    tags,
   } = item;
 
   const {
@@ -57,6 +58,7 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
       IPA,
       normalizedName,
       definition,
+      tags,
     },
   });
 
@@ -115,6 +117,16 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
             <p className="text-sm text-red-500">{`${errors.name.message}`}</p>
           )}
           <div className="ml-4 flex flex-col justify-center gap-3">
+            <PickMultiple
+              setValue={setValue}
+              formField="tags"
+              initialValue={watch().tags}
+              label={{ singular: "Tag", plural: "Tags" }}
+              errors={errors && errors?.tags}
+              options={languageFeatures.tags}
+              partOfSpeech={watch().partOfSpeech}
+            />
+            <div className="text-sm font-semibold">Part of Speech</div>
             <div className="flex flex-col gap-2 bg-white sm:flex-row">
               {watch().partOfSpeech === "noun" && hasGender.length > 0 && (
                 <Controller
@@ -174,7 +186,6 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
                 mode="strings"
               />
             )}
-
             <EnterMultiple
               setValue={setValue}
               formField="IPA"

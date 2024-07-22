@@ -60,6 +60,7 @@ export default async function ItemPage({
         case={item.case}
         IPA={item.IPA}
         pluralForm={item.pluralForm}
+        tags={item.tags}
       />
       <ItemPageDEFTRCO
         definition={item.definition}

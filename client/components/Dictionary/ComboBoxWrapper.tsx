@@ -38,11 +38,11 @@ export default function ComboBoxWrapper({
   return (
     <>
       <Combobox value={value} onChange={onChange}>
-        <div className="relative">
-          <div className="relative cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md sm:text-sm">
+        <div className="relative rounded-md border">
+          <div className="relative cursor-default rounded-lg bg-white text-left shadow-md sm:text-sm">
             <ComboboxButton className="flex w-full items-center justify-between pr-2">
               <ComboboxInput
-                className={`w-full py-2 pl-3 pr-10 text-sm text-gray-900 sm:w-40`}
+                className={`w-full rounded-l-md py-2 pl-3 pr-10 text-sm text-gray-900 focus:outline-[10px] focus:outline-black sm:w-40`}
                 onChange={(event) => setQuery(event.target.value)}
                 displayValue={(option: string) => option}
                 placeholder={placeholder}
@@ -63,8 +63,8 @@ export default function ComboBoxWrapper({
           >
             <ComboboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border-b border-b-black bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
               {filteredOptions.length === 0 && query !== "" ? (
-                <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
-                  Nothing found.
+                <div className="relative cursor-default select-none px-4 py-2 text-red-500">
+                  No valid option found
                 </div>
               ) : (
                 filteredOptions.map((option) => (

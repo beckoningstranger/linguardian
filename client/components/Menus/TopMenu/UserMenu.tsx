@@ -18,7 +18,6 @@ interface UserMenuProps {}
 export default function UserMenu({}: UserMenuProps) {
   const { toggleMobileMenu } = useMobileMenuContext();
   const [showUserMenu, setShowUserMenu] = useState<Boolean>(false);
-  const ref = useOutsideClick(setShowUserMenu, showUserMenu);
   const sessionUser = useSession().data?.user as SessionUser;
 
   return (
@@ -41,10 +40,7 @@ export default function UserMenu({}: UserMenuProps) {
         )}
       </div>
       {showUserMenu && (
-        <div
-          className="absolute -right-16 top-20 z-50 mr-2 mt-2 flex h-36 w-64 -translate-x-16 flex-col justify-center rounded-md border border-slate-500 bg-slate-100 p-6"
-          ref={ref}
-        >
+        <div className="absolute -right-16 top-20 z-50 mr-2 mt-2 flex h-36 w-64 -translate-x-16 flex-col justify-center rounded-md border border-slate-500 bg-slate-100 p-6">
           <div className="flex flex-col gap-y-3">
             <UserMenuItem
               to={paths.profilePath(sessionUser.usernameSlug)}

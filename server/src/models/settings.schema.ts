@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import { GlobalSettings } from "../lib/types.js";
+import { allTags } from "../lib/siteSettings.js";
 
 const settingsSchema = new Schema<GlobalSettings>({
   supportedLanguages: {
@@ -27,6 +28,7 @@ const settingsSchema = new Schema<GlobalSettings>({
       hasRomanization: Boolean,
       hasTones: Boolean,
       partsOfSpeech: [String],
+      tags: allTags,
     },
   ],
   defaultSRSettings: {

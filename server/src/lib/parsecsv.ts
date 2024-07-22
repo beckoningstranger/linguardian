@@ -20,7 +20,7 @@ import {
   PartOfSpeech,
   PopulatedList,
   SupportedLanguage,
-  Tags,
+  Tag,
 } from "./types.js";
 import { normalizeString, slugifyString } from "./helperFunctions.js";
 
@@ -49,7 +49,7 @@ interface FormattedParsedData {
   case?: Case;
   gender?: Gender;
   pluralForm?: string[];
-  tags?: Tags[];
+  tags?: Tag[];
   translations: Partial<Record<SupportedLanguage, string[]>>;
   unit?: string;
 }
@@ -64,7 +64,7 @@ interface ItemInPrep {
   case?: Case;
   gender?: Gender;
   pluralForm?: string[];
-  tags?: Tags[];
+  tags?: Tag[];
   translations?: Partial<Record<SupportedLanguage, string[]>>;
   unit?: string;
 }
@@ -130,7 +130,7 @@ export async function parseCSV({
               data.pluralForm && data.pluralForm.length > 0
                 ? data.pluralForm?.split(", ")
                 : undefined,
-            tags: data.tags?.split(", ") as Tags[],
+            tags: data.tags?.split(", ") as Tag[],
             translations: {
               DE: data.tDE?.split(", "),
               FR: data.tFR?.split(", "),

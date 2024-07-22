@@ -1,11 +1,17 @@
 import {
   PartOfSpeech,
+  sortedTags,
   type GlobalSettings,
   type LanguageFeatures,
   type LearningMode,
   type SRSettings,
   type SupportedLanguage,
 } from "./types.js";
+
+export const allTags: sortedTags = {
+  forAll: ["archaic", "obsolete", "vulgar", "slang", "humorous", "literary"],
+  verb: ["transitive", "intransitive"],
+};
 
 const allPartsOfSpeech: PartOfSpeech[] = [
   "noun",
@@ -105,6 +111,7 @@ const languageFeatures: LanguageFeatures[] = [
     hasRomanization: false,
     hasTones: false,
     partsOfSpeech: allPartsOfSpeech,
+    tags: allTags,
   } as const,
   {
     langName: "French",
@@ -178,6 +185,7 @@ const languageFeatures: LanguageFeatures[] = [
     hasRomanization: false,
     hasTones: false,
     partsOfSpeech: allPartsOfSpeech,
+    tags: allTags,
   } as const,
   {
     langName: "English",
@@ -220,6 +228,7 @@ const languageFeatures: LanguageFeatures[] = [
     hasTones: false,
     requiresHelperKeys: [],
     partsOfSpeech: allPartsOfSpeech,
+    tags: allTags,
   } as const,
   {
     langName: "Chinese",
@@ -272,6 +281,7 @@ const languageFeatures: LanguageFeatures[] = [
     hasTones: true,
     requiresHelperKeys: [],
     partsOfSpeech: allPartsOfSpeech,
+    tags: allTags,
   } as const,
 ] as const;
 

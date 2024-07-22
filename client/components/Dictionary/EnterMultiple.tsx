@@ -97,72 +97,97 @@ export default function EnterMultiple({
               />
             ))}
           </div>
+
+          {errors && (
+            <div>
+              {Array.isArray(errors) ? (
+                errors.map((error, index) => (
+                  <div key={index} className="mt-1 text-sm text-red-500">
+                    {error?.message}
+                  </div>
+                ))
+              ) : (
+                <div className="mt-1 text-sm text-red-500">
+                  {errors.message}
+                </div>
+              )}
+            </div>
+          )}
         </>
-        {errors && (
-          <p className="mt-1 text-sm text-red-500">{`${errors.message}`}</p>
+        {activeField && (
+          <MobileMenu mode="keyboard" fromDirection="animate-from-bottom">
+            <TabGroup className="h-full">
+              <TabList className="flex h-10 justify-evenly bg-slate-200 font-medium">
+                <Tab className="underline-offset-4 data-[selected]:underline">
+                  Consonants
+                </Tab>
+                <Tab className="underline-offset-4 data-[selected]:underline">
+                  Vowels
+                </Tab>
+                {IPA?.dipthongs && IPA?.dipthongs?.length > 0 && (
+                  <Tab className="underline-offset-4 data-[selected]:underline">
+                    Dipthongs
+                  </Tab>
+                )}
+                {IPA?.rare && IPA.rare.length > 0 && (
+                  <Tab className="underline-offset-4 data-[selected]:underline">
+                    Rare
+                  </Tab>
+                )}
+                <Tab className="underline-offset-4 data-[selected]:underline">
+                  Helpers
+                </Tab>
+              </TabList>
+              <TabPanels className="h-full px-2">
+                <TabPanel className="h-full">
+                  <IPAKeys
+                    keys={IPA?.consonants}
+                    arrayIndex={parseInt(activeField.slice(-1))}
+                    array={array}
+                    setArray={setArray}
+                  />
+                </TabPanel>
+                <TabPanel>
+                  <IPAKeys
+                    keys={IPA?.vowels}
+                    arrayIndex={parseInt(activeField.slice(-1))}
+                    array={array}
+                    setArray={setArray}
+                  />
+                </TabPanel>
+                {IPA?.dipthongs && IPA?.dipthongs?.length > 0 && (
+                  <TabPanel>
+                    <IPAKeys
+                      arrayIndex={parseInt(activeField.slice(-1))}
+                      array={array}
+                      setArray={setArray}
+                      keys={IPA?.dipthongs}
+                    />
+                  </TabPanel>
+                )}
+                {IPA?.rare && IPA.rare.length > 0 && (
+                  <TabPanel>
+                    <IPAKeys
+                      arrayIndex={parseInt(activeField.slice(-1))}
+                      array={array}
+                      setArray={setArray}
+                      keys={IPA?.rare}
+                    />
+                  </TabPanel>
+                )}
+                <TabPanel>
+                  <IPAKeys
+                    arrayIndex={parseInt(activeField.slice(-1))}
+                    array={array}
+                    setArray={setArray}
+                    keys={IPA?.helperSymbols}
+                  />
+                </TabPanel>
+              </TabPanels>
+            </TabGroup>
+          </MobileMenu>
         )}
       </div>
-      {activeField && (
-        <MobileMenu mode="keyboard" fromDirection="animate-from-bottom">
-          <TabGroup className="h-full">
-            <TabList className="flex h-10 justify-evenly bg-slate-200">
-              <Tab>Consonants</Tab>
-              <Tab>Vowels</Tab>
-              {IPA?.dipthongs && IPA?.dipthongs?.length > 0 && (
-                <Tab>Dipthongs</Tab>
-              )}
-              {IPA?.rare && IPA.rare.length > 0 && <Tab>Rare</Tab>}
-              <Tab>Helpers</Tab>
-            </TabList>
-            <TabPanels className="h-full px-2">
-              <TabPanel className="h-full">
-                <IPAKeys
-                  keys={IPA?.consonants}
-                  arrayIndex={parseInt(activeField.slice(-1))}
-                  array={array}
-                  setArray={setArray}
-                />
-              </TabPanel>
-              <TabPanel>
-                <IPAKeys
-                  keys={IPA?.vowels}
-                  arrayIndex={parseInt(activeField.slice(-1))}
-                  array={array}
-                  setArray={setArray}
-                />
-              </TabPanel>
-              {IPA?.dipthongs && IPA?.dipthongs?.length > 0 && (
-                <TabPanel>
-                  <IPAKeys
-                    arrayIndex={parseInt(activeField.slice(-1))}
-                    array={array}
-                    setArray={setArray}
-                    keys={IPA?.dipthongs}
-                  />
-                </TabPanel>
-              )}
-              {IPA?.rare && IPA.rare.length > 0 && (
-                <TabPanel>
-                  <IPAKeys
-                    arrayIndex={parseInt(activeField.slice(-1))}
-                    array={array}
-                    setArray={setArray}
-                    keys={IPA?.rare}
-                  />
-                </TabPanel>
-              )}
-              <TabPanel>
-                <IPAKeys
-                  arrayIndex={parseInt(activeField.slice(-1))}
-                  array={array}
-                  setArray={setArray}
-                  keys={IPA?.helperSymbols}
-                />
-              </TabPanel>
-            </TabPanels>
-          </TabGroup>
-        </MobileMenu>
-      )}
     </>
   );
 }

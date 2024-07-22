@@ -78,11 +78,9 @@ const itemSchema = new Schema<Item>({
   IPA: {
     type: [String],
   },
-  tags: [
-    {
-      type: [String],
-    },
-  ],
+  tags: {
+    type: [String],
+  },
   relevance: {
     type: [Schema.Types.ObjectId],
   },

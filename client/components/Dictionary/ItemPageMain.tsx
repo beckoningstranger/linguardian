@@ -1,4 +1,4 @@
-import { Case, Gender, PartOfSpeech } from "@/lib/types";
+import { Case, Gender, PartOfSpeech, Tag } from "@/lib/types";
 
 interface ItemPageMainProps {
   itemName: string;
@@ -7,6 +7,7 @@ interface ItemPageMainProps {
   case?: Case;
   IPA?: string[];
   pluralForm?: string[];
+  tags?: Tag[];
 }
 
 export default function ItemPageMain({
@@ -15,14 +16,27 @@ export default function ItemPageMain({
   gender,
   IPA,
   pluralForm,
+  tags,
 }: ItemPageMainProps) {
   return (
     <div>
       <div className="flex items-center gap-4">
-        <h1 className="text-xl font-bold">{itemName}</h1>
         <div>
-          {gender && <span>{gender}</span>}
-          <span> {partOfSpeech}</span>
+          <div className="flex items-center">
+            <h1 className="text-2xl font-bold">{itemName}</h1>
+            {tags?.map((tag) => (
+              <span
+                key={tag}
+                className="ml-2 rounded-md border border-slate-400 bg-slate-100 px-3 py-1 text-xs"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+          <div className="ml-2">
+            {gender && <span>{gender}</span>}
+            <span> {partOfSpeech}</span>
+          </div>
         </div>
       </div>
       {IPA && IPA.length > 0 && (
