@@ -52,7 +52,7 @@ export default function PickMultipleOptions({
   return (
     <Listbox value={value} onChange={setValue}>
       <div className="flex flex-col gap-y-2">
-        <ListboxButton className="relative mb-2 flex w-32 rounded-md border px-3 py-2 shadow-md">
+        <ListboxButton className="relative mb-2 flex w-32 rounded-md px-3 py-2 shadow-md data-[open]:outline data-[open]:outline-2">
           {value}
           <MinusCircleIcon
             className="absolute right-1 h-5 w-5 text-red-500"
@@ -65,10 +65,29 @@ export default function PickMultipleOptions({
         >
           {options.map((option, index) => (
             <ListboxOption key={option + index} value={option} as={Fragment}>
-              <div className="group flex w-32 gap-2 bg-white px-2 py-2 text-sm data-[focus]:bg-orange-600 data-[focus]:font-bold data-[focus]:text-white group-data-[selected]:font-bold">
-                <CheckIcon className="invisible size-5 group-data-[selected]:visible group-data-[focus]:text-orange-50 group-data-[selected]:text-orange-600" />
-                {option}
-              </div>
+              {({ focus, selected }) => (
+                <div
+                  className={`group flex w-32 gap-2  px-2 py-2 text-sm ${
+                    focus
+                      ? "bg-orange-600 text-white font-bold"
+                      : "bg-white text-gray-900"
+                  }`}
+                >
+                  {selected ? (
+                    <CheckIcon
+                      className={`size-5 ${
+                        focus
+                          ? "bg-orange-600 text-white"
+                          : "bg-white text-gray-900"
+                      }`}
+                    />
+                  ) : (
+                    <CheckIcon className="invisible size-5" />
+                  )}
+
+                  {option}
+                </div>
+              )}
             </ListboxOption>
           ))}
         </ListboxOptions>
