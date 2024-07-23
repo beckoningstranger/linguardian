@@ -1,7 +1,7 @@
 "use client";
 
 import useMobileMenuContext from "@/hooks/useMobileMenuContext";
-import { IPA } from "@/lib/types";
+import { IPA, Label } from "@/lib/types";
 import {
   Button,
   Tab,
@@ -21,7 +21,7 @@ interface EnterMultipleProps {
   setValue: Function;
   formField: string;
   initialValue: string[] | undefined;
-  label: { singular: string; plural: string };
+  label: Label;
   errors: Merge<FieldError, (FieldError | undefined)[]> | undefined;
   mode: "IPA" | "strings" | "longstrings";
   IPA?: IPA;

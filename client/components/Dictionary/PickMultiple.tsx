@@ -1,20 +1,19 @@
 "use client";
 
-import { PartOfSpeech, sortedTags, StringOrPickOne } from "@/lib/types";
+import { Label, StringOrPickOne } from "@/lib/types";
 import { Button } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/20/solid";
 import { useEffect, useState } from "react";
 import { FieldError, Merge } from "react-hook-form";
-import PickMultipleTagsOptions from "./PickMultipleOptions";
+import PickMultipleOptions from "./PickMultipleOptions";
 
 interface PickMultipleProps {
   setValue: Function;
   formField: string;
   initialValue: string[] | undefined;
-  label: { singular: string; plural: string };
+  label: Label;
   errors: Merge<FieldError, (FieldError | undefined)[]> | undefined;
-  options: sortedTags;
-  partOfSpeech: PartOfSpeech;
+  options: string[];
 }
 
 export default function PickMultiple({
@@ -24,26 +23,26 @@ export default function PickMultiple({
   label,
   errors,
   options,
-  partOfSpeech,
 }: PickMultipleProps) {
+  const placeholder = `Pick a ${label.singular}`;
   const [array, setArray] = useState<StringOrPickOne[]>(
     initialValue ? initialValue : []
   );
 
   useEffect(() => {
-    if (array.filter((item) => item === "Pick a tag").length > 1) {
+    if (array.filter((item) => item === placeholder).length > 1) {
       const newArray = array.slice();
-      const index = newArray.indexOf("Pick a tag");
+      const index = newArray.indexOf(placeholder);
       newArray.splice(index, 1);
       setArray(newArray);
     }
-    if (!array.includes("Pick a tag"))
+    if (!array.includes(placeholder))
       setValue(formField, array, {
         shouldDirty: true,
         shouldTouch: true,
         shouldValidate: true,
       });
-  }, [array, setValue, formField]);
+  }, [array, setValue, formField, placeholder]);
 
   return (
     <div>
@@ -53,7 +52,7 @@ export default function PickMultiple({
             className="flex w-32 items-center gap-1 pb-2"
             onClick={(e) => {
               e.preventDefault();
-              setArray([...array, "Pick a tag"]);
+              setArray([...array, placeholder]);
             }}
           >
             <>
@@ -65,13 +64,13 @@ export default function PickMultiple({
           </Button>
           <div className={`flex w-full flex-wrap gap-x-2 sm:items-center`}>
             {array.map((option, index) => (
-              <PickMultipleTagsOptions
+              <PickMultipleOptions
                 key={label.singular + "-" + option + index}
                 arrayIndexNumber={index}
                 array={array}
                 setArray={setArray}
                 options={options}
-                partOfSpeech={partOfSpeech}
+                label={label}
               />
             ))}
           </div>

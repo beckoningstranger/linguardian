@@ -123,8 +123,9 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
               initialValue={watch().tags}
               label={{ singular: "Tag", plural: "Tags" }}
               errors={errors && errors?.tags}
-              options={languageFeatures.tags}
-              partOfSpeech={watch().partOfSpeech}
+              options={languageFeatures.tags.forAll
+                .concat(languageFeatures.tags[watch().partOfSpeech])
+                .filter((item) => item !== undefined)}
             />
             <div className="text-sm font-semibold">Part of Speech</div>
             <div className="flex flex-col gap-2 bg-white sm:flex-row">

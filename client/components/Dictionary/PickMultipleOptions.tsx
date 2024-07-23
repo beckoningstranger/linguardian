@@ -1,6 +1,6 @@
 "use client";
 
-import { PartOfSpeech, sortedTags, StringOrPickOne } from "@/lib/types";
+import { Label, StringOrPickOne } from "@/lib/types";
 import {
   Listbox,
   ListboxButton,
@@ -8,14 +8,14 @@ import {
   ListboxOptions,
 } from "@headlessui/react";
 import { CheckIcon, MinusCircleIcon } from "@heroicons/react/20/solid";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 
 interface PickMultipleOptionsProps {
   array: StringOrPickOne[];
   arrayIndexNumber: number;
   setArray: Function;
-  options: sortedTags;
-  partOfSpeech: PartOfSpeech;
+  options: string[];
+  label: Label;
 }
 
 export default function PickMultipleOptions({
@@ -23,42 +23,47 @@ export default function PickMultipleOptions({
   arrayIndexNumber,
   setArray,
   options,
-  partOfSpeech,
+  label,
 }: PickMultipleOptionsProps) {
-  const optionsForThisWord = options.forAll.concat(
-    options[partOfSpeech] ? options[partOfSpeech] : []
-  );
-
-  const [tag, setTag] = useState<StringOrPickOne>(
-    array[arrayIndexNumber] ? array[arrayIndexNumber] : "Pick a tag"
+  const placeholder = `Pick a ${label.singular}`;
+  const [value, setValue] = useState<StringOrPickOne>(
+    array[arrayIndexNumber] || placeholder
   );
 
   useEffect(() => {
-    if (tag === "Pick a tag") return;
-    if (tag !== array[arrayIndexNumber]) {
-      const newArray = array.slice();
-      newArray[arrayIndexNumber] = tag;
-      const uniqueArray = new Set<string>();
-      newArray.forEach((item) => uniqueArray.add(item));
-      setArray([...uniqueArray]);
+    if (value === placeholder) return;
+    if (value !== array[arrayIndexNumber]) {
+      const newArray = [...array];
+      newArray[arrayIndexNumber] = value;
+      const uniqueArray = Array.from(new Set(newArray));
+      setArray(uniqueArray);
     }
-  }, [tag, array, arrayIndexNumber, setArray]);
+  }, [value, array, arrayIndexNumber, setArray, placeholder]);
+
+  const removeItemFromArray = useCallback(() => {
+    const newArray = [...array];
+    const index = array.indexOf(value);
+    if (index > -1) {
+      newArray.splice(index, 1);
+      setArray(newArray);
+    }
+  }, [value, array, setArray]);
 
   return (
-    <Listbox value={tag} onChange={setTag}>
+    <Listbox value={value} onChange={setValue}>
       <div className="flex flex-col gap-y-2">
         <ListboxButton className="relative mb-2 flex w-32 rounded-md border px-3 py-2 shadow-md">
-          {tag}
+          {value}
           <MinusCircleIcon
             className="absolute right-1 h-5 w-5 text-red-500"
-            onClick={removeTagFromArray}
+            onClick={removeItemFromArray}
           />
         </ListboxButton>
         <ListboxOptions
           anchor="bottom"
           className="relative mt-1 rounded-md border bg-white"
         >
-          {optionsForThisWord.map((option, index) => (
+          {options.map((option, index) => (
             <ListboxOption key={option + index} value={option} as={Fragment}>
               <div className="group flex w-32 gap-2 bg-white px-2 py-2 text-sm data-[focus]:bg-orange-600 data-[focus]:font-bold data-[focus]:text-white group-data-[selected]:font-bold">
                 <CheckIcon className="invisible size-5 group-data-[selected]:visible group-data-[focus]:text-orange-50 group-data-[selected]:text-orange-600" />
@@ -70,11 +75,4 @@ export default function PickMultipleOptions({
       </div>
     </Listbox>
   );
-
-  function removeTagFromArray() {
-    const newArray = array.slice();
-    const index = array.indexOf(tag);
-    newArray.splice(index, 1);
-    setArray(newArray);
-  }
 }

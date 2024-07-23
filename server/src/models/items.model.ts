@@ -1,9 +1,12 @@
 import { normalizeString, slugifyString } from "../lib/helperFunctions.js";
 import {
   ItemWithPopulatedTranslations,
+  PartOfSpeech,
   SupportedLanguage,
+  Tag,
 } from "../lib/types.js";
 import Items from "./item.schema.js";
+import { getLanguageFeaturesForLanguage } from "./settings.model.js";
 
 export async function getOneItemById(id: string) {
   return await Items.findOne({ _id: id });
@@ -63,6 +66,11 @@ export async function editBySlug(
     { slug: slug },
     {
       ...item,
+      tags: await filterOutInvalidTags(
+        item.tags,
+        item.partOfSpeech,
+        item.language
+      ),
       slug: slugifyString(item.name, item.language),
       normalizedName: normalizeString(item.name),
       gender: item.partOfSpeech === "noun" ? item.gender : undefined,
@@ -78,4 +86,20 @@ export async function editBySlug(
       new: true,
     }
   );
+}
+
+async function filterOutInvalidTags(
+  tagArray: string[] | undefined,
+  partOfSpeech: PartOfSpeech,
+  language: SupportedLanguage
+) {
+  if (!tagArray) return [];
+  const languageFeatures = await getLanguageFeaturesForLanguage(language);
+  const validTags = languageFeatures?.tags.forAll
+    .concat(languageFeatures.tags[partOfSpeech])
+    .filter((item) => item !== undefined);
+
+  if (validTags)
+    return tagArray.filter((tag) => validTags.includes(tag as Tag));
+  return [];
 }

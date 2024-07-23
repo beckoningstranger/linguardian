@@ -65,7 +65,7 @@ const itemSchemaWithoutTranslations = z.object({
     .optional(),
   IPA: z
     .string()
-    .max(35, "IPA transcription can be no longer than 35 characters")
+    .max(35, "IPA transcriptions can be no longer than 35 characters")
     .array()
     .optional(),
   tags: z

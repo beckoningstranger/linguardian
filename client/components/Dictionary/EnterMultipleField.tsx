@@ -35,7 +35,7 @@ export default function EnterMultipleField({
     if (value !== array[parseInt(identifier.slice(-1))]) {
       const newArray = array.slice();
       newArray[parseInt(identifier.slice(-1))] = value;
-      const uniqueArray = getUniqueArray(newArray);
+      const uniqueArray = Array.from(new Set(newArray));
       setArray(uniqueArray);
     }
   }, [value, identifier, array, setArray]);
@@ -85,7 +85,7 @@ export default function EnterMultipleField({
       return;
     }
     if (array.includes(value)) {
-      const uniqueArray = getUniqueArray(array);
+      const uniqueArray = Array.from(new Set(array));
       setArray(uniqueArray);
       if (ref.current) ref.current.blur();
       return;
@@ -94,11 +94,5 @@ export default function EnterMultipleField({
 
   function getArrayWithNoEmptyStrings(array: string[]) {
     return array.filter((string) => string !== undefined && string !== "");
-  }
-
-  function getUniqueArray(array: string[]) {
-    const set = new Set<string>();
-    array.forEach((item) => set.add(item));
-    return [...set] as string[];
   }
 }
