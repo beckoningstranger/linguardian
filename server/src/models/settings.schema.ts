@@ -21,7 +21,6 @@ const settingsSchema = new Schema<GlobalSettings>({
         help: String,
         consonants: [String],
         vowels: [String],
-        dipthongs: [String],
         rare: [String],
         helperSymbols: [String],
       },

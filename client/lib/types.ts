@@ -142,7 +142,6 @@ export interface IPA {
   help: string;
   consonants: string[];
   vowels: string[];
-  dipthongs?: string[];
   rare?: string[];
   helperSymbols: string[];
 }

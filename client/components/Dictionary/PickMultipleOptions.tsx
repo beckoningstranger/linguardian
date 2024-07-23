@@ -52,7 +52,7 @@ export default function PickMultipleOptions({
   return (
     <Listbox value={value} onChange={setValue}>
       <div className="flex flex-col gap-y-2">
-        <ListboxButton className="relative mb-2 flex w-32 rounded-md px-3 py-2 shadow-md data-[open]:outline data-[open]:outline-2">
+        <ListboxButton className="relative mb-2 flex w-32 rounded-md border px-3 py-2 shadow-md data-[open]:outline data-[open]:outline-2">
           {value}
           <MinusCircleIcon
             className="absolute right-1 h-5 w-5 text-red-500"

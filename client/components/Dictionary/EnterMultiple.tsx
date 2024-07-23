@@ -10,7 +10,7 @@ import {
   TabPanel,
   TabPanels,
 } from "@headlessui/react";
-import { PlusCircleIcon } from "@heroicons/react/16/solid";
+import { PlusCircleIcon, XCircleIcon } from "@heroicons/react/16/solid";
 import { useEffect, useState } from "react";
 import { FieldError, Merge } from "react-hook-form";
 import MobileMenu from "../Menus/MobileMenu/MobileMenu";
@@ -124,11 +124,6 @@ export default function EnterMultiple({
                 <Tab className="underline-offset-4 data-[selected]:underline">
                   Vowels
                 </Tab>
-                {IPA?.dipthongs && IPA?.dipthongs?.length > 0 && (
-                  <Tab className="underline-offset-4 data-[selected]:underline">
-                    Dipthongs
-                  </Tab>
-                )}
                 {IPA?.rare && IPA.rare.length > 0 && (
                   <Tab className="underline-offset-4 data-[selected]:underline">
                     Rare
@@ -136,6 +131,9 @@ export default function EnterMultiple({
                 )}
                 <Tab className="underline-offset-4 data-[selected]:underline">
                   Helpers
+                </Tab>
+                <Tab onClick={() => setActiveField(null)}>
+                  <XCircleIcon className="h-6 w-full rounded-full text-red-500 outline outline-1 hover:scale-105" />
                 </Tab>
               </TabList>
               <TabPanels className="h-full px-2">
@@ -155,16 +153,6 @@ export default function EnterMultiple({
                     setArray={setArray}
                   />
                 </TabPanel>
-                {IPA?.dipthongs && IPA?.dipthongs?.length > 0 && (
-                  <TabPanel>
-                    <IPAKeys
-                      arrayIndex={parseInt(activeField.slice(-1))}
-                      array={array}
-                      setArray={setArray}
-                      keys={IPA?.dipthongs}
-                    />
-                  </TabPanel>
-                )}
                 {IPA?.rare && IPA.rare.length > 0 && (
                   <TabPanel>
                     <IPAKeys

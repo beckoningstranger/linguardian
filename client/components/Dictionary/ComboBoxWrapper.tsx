@@ -40,7 +40,7 @@ export default function ComboBoxWrapper({
       <Combobox value={value} onChange={onChange}>
         <div className="relative rounded-md border">
           <div className="relative cursor-default rounded-lg bg-white text-left shadow-md sm:text-sm">
-            <ComboboxButton className="flex w-full items-center justify-between pr-2">
+            <ComboboxButton className="flex w-full items-center">
               <ComboboxInput
                 className={`w-full rounded-l-md py-2 pl-3 pr-10 text-sm text-gray-900 focus:outline-[10px] focus:outline-black sm:w-40`}
                 onChange={(event) => setQuery(event.target.value)}
@@ -48,10 +48,12 @@ export default function ComboBoxWrapper({
                 placeholder={placeholder}
                 onBlur={onBlur}
               />
-              <ChevronUpDownIcon
-                className="h-5 w-5 text-gray-400"
-                aria-hidden="true"
-              />
+              <div className="mx-1">
+                <ChevronUpDownIcon
+                  className="h-5 w-5 text-gray-400"
+                  aria-hidden="true"
+                />
+              </div>
             </ComboboxButton>
           </div>
           <Transition
