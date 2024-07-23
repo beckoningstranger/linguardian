@@ -5,6 +5,7 @@ import { Button } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/20/solid";
 import { useEffect, useState } from "react";
 import { FieldError, Merge } from "react-hook-form";
+import FormErrors from "./FormErrors";
 import PickMultipleOptions from "./PickMultipleOptions";
 
 interface PickMultipleProps {
@@ -25,9 +26,7 @@ export default function PickMultiple({
   options,
 }: PickMultipleProps) {
   const placeholder = `Pick a ${label.singular}`;
-  const [array, setArray] = useState<StringOrPickOne[]>(
-    initialValue ? initialValue : []
-  );
+  const [array, setArray] = useState<StringOrPickOne[]>(initialValue || []);
 
   useEffect(() => {
     if (array.filter((item) => item === placeholder).length > 1) {
@@ -47,7 +46,7 @@ export default function PickMultiple({
   }, [array, setValue, formField, placeholder]);
 
   return (
-    <div>
+    <>
       <div className="flex flex-col gap-2 text-sm sm:gap-x-1">
         <>
           <Button
@@ -78,19 +77,7 @@ export default function PickMultiple({
           </div>
         </>
       </div>
-      {errors && (
-        <div>
-          {Array.isArray(errors) ? (
-            errors.map((error, index) => (
-              <div key={index} className="mt-1 text-sm text-red-500">
-                {error?.message}
-              </div>
-            ))
-          ) : (
-            <div className="mt-1 text-sm text-red-500">{errors.message}</div>
-          )}
-        </div>
-      )}
-    </div>
+      <FormErrors errors={errors} />
+    </>
   );
 }

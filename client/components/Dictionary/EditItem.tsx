@@ -2,7 +2,11 @@
 
 import { submitItemEdit } from "@/lib/actions";
 import paths from "@/lib/paths";
-import { ItemWithPopulatedTranslations, LanguageFeatures } from "@/lib/types";
+import {
+  ItemWithPopulatedTranslations,
+  LanguageFeatures,
+  LanguageWithFlag,
+} from "@/lib/types";
 import { itemSchemaWithPopulatedTranslations } from "@/lib/validations";
 import { Input } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,11 +19,16 @@ import Spinner from "../Spinner";
 import ComboBoxWrapper from "./ComboBoxWrapper";
 import EnterMultiple from "./EnterMultiple";
 import ItemPageContainer from "./ItemPageContainer";
+import ManageTranslations from "./ManageTranslations";
 import PickMultiple from "./PickMultiple";
 
 interface EditItemProps {
   item: ItemWithPopulatedTranslations;
   languageFeatures: LanguageFeatures;
+  userLanguagesWithFlags: {
+    native: LanguageWithFlag;
+    isLearning: LanguageWithFlag[];
+  };
 }
 
 export default function EditItem({ item, languageFeatures }: EditItemProps) {
@@ -32,7 +41,7 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
     definition,
     gender,
     pluralForm,
-    // translations,
+    translations,
     case: Case,
     IPA,
     slug,
@@ -59,6 +68,7 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
       normalizedName,
       definition,
       tags,
+      translations,
     },
   });
 
@@ -140,7 +150,7 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
                       onChange={onChange}
                       onBlur={onBlur}
                       options={hasGender}
-                      error={errors.gender}
+                      errors={errors && errors?.gender}
                     />
                   )}
                 />
@@ -155,7 +165,7 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
                     onChange={onChange}
                     onBlur={onBlur}
                     options={partsOfSpeech}
-                    error={errors.partOfSpeech}
+                    errors={errors && errors?.partOfSpeech}
                   />
                 )}
               />
@@ -171,7 +181,7 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
                         onChange={onChange}
                         onBlur={onBlur}
                         options={hasCases}
-                        error={errors.case}
+                        errors={errors && errors?.case}
                       />
                     )}
                   />
@@ -203,6 +213,11 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
               label={{ singular: "Definition", plural: "Definitions" }}
               errors={errors && errors?.definition}
               mode="longstrings"
+            />
+            <ManageTranslations
+              setValue={setValue}
+              initialValue={watch().translations["FR"]?.map((item) => item._id)}
+              errors={errors && errors?.translations}
             />
           </div>
         </MobileMenuContextProvider>

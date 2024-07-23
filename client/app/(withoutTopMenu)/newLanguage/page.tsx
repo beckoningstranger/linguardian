@@ -1,6 +1,6 @@
 import PickNewLanguage from "@/components/PickNewLanguage";
 import { getAllLanguageFeatures } from "@/lib/fetchData";
-import { getUserLanguagesWithFlags } from "@/lib/helperFunctions";
+import { getAllUserLanguages } from "@/lib/helperFunctions";
 import { LanguageWithFlag } from "@/lib/types";
 import { Metadata } from "next";
 
@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 
 export default async function AddNewLanguageToLearn() {
   const allLanguageFeatures = await getAllLanguageFeatures();
-  const allUserLanguagesAndFlags = await getUserLanguagesWithFlags();
   if (!allLanguageFeatures) throw new Error("Failed to get language features");
 
-  const allUserLanguages = allUserLanguagesAndFlags.map((lwf) => lwf.name);
+  const allUserLanguages = await getAllUserLanguages();
+
   const allAvailableLanguageFeatures = allLanguageFeatures?.filter(
     ({ langCode }) => !allUserLanguages.includes(langCode)
   );

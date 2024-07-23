@@ -244,3 +244,8 @@ export interface SlugLanguageObject {
 export type StringOrPickOne = string | "Pick one...";
 
 export type Label = { singular: string; plural: string };
+
+export type UserLanguages = {
+  native: SupportedLanguage;
+  learning: SupportedLanguage[];
+};

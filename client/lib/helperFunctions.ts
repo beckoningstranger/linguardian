@@ -8,13 +8,37 @@ export default async function getUserOnServer() {
   return session?.user as SessionUser;
 }
 
-export async function getUserLanguagesWithFlags() {
+export async function getAllUserLanguagesWithFlags() {
   const sessionUser = await getUserOnServer();
   const userLanguagesWithFlags = [];
   if (sessionUser.native) userLanguagesWithFlags.push(sessionUser.native);
   if (sessionUser.isLearning)
     sessionUser.isLearning.forEach((obj) => userLanguagesWithFlags.push(obj));
   return userLanguagesWithFlags;
+}
+
+export async function getSeperatedUserLanguagesWithFlags() {
+  const sessionUser = await getUserOnServer();
+  return {
+    native: sessionUser.native,
+    isLearning: sessionUser.isLearning,
+  };
+}
+
+export async function getAllUserLanguages() {
+  const sessionUser = await getUserOnServer();
+  const allLanguages: SupportedLanguage[] = [];
+  allLanguages.push(sessionUser.native.name);
+  sessionUser.isLearning.forEach((lwf) => lwf.name);
+  return allLanguages;
+}
+
+export async function getSeperatedUserLanguages() {
+  const sessionUser = await getUserOnServer();
+  return {
+    native: sessionUser.native.name,
+    isLearning: sessionUser.isLearning.map((lang) => lang.name),
+  };
 }
 
 export function slugify(title: string): string {

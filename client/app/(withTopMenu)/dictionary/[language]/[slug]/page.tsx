@@ -7,7 +7,7 @@ import {
   getItemBySlug,
   getSupportedLanguages,
 } from "@/lib/fetchData";
-import { getUserLanguagesWithFlags } from "@/lib/helperFunctions";
+import { getAllUserLanguages } from "@/lib/helperFunctions";
 import { SlugLanguageObject, SupportedLanguage } from "@/lib/types";
 
 export const metadata = { title: "Dictionary" };
@@ -41,12 +41,12 @@ interface ItemPageProps {
 export default async function ItemPage({
   params: { slug, language },
 }: ItemPageProps) {
-  const userLanguagesWithFlags = await getUserLanguagesWithFlags();
+  const userLanguages = await getAllUserLanguages();
 
   const item = await getItemBySlug(
     language as SupportedLanguage,
     slug,
-    userLanguagesWithFlags.map((lwf) => lwf.name)
+    userLanguages
   );
   if (!item) return <div>No item found</div>;
 

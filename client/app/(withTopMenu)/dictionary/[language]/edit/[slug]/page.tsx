@@ -1,6 +1,9 @@
 import EditItem from "@/components/Dictionary/EditItem";
 import { getItemBySlug, getLanguageFeaturesForLanguage } from "@/lib/fetchData";
-import { getUserLanguagesWithFlags } from "@/lib/helperFunctions";
+import {
+  getAllUserLanguages,
+  getSeperatedUserLanguagesWithFlags,
+} from "@/lib/helperFunctions";
 import { SlugLanguageObject, SupportedLanguage } from "@/lib/types";
 
 interface EditPageProps {
@@ -17,15 +20,22 @@ export async function generateMetadata({
 export default async function EditPage({
   params: { slug, language },
 }: EditPageProps) {
-  const userLanguages = (await getUserLanguagesWithFlags()).map(
-    (lang) => lang.name
+  const [allUserLanguages, seperatedUserLanguagesWithFlags] = await Promise.all(
+    [getAllUserLanguages(), getSeperatedUserLanguagesWithFlags()]
   );
+
   const [item, languageFeatures] = await Promise.all([
-    getItemBySlug(language as SupportedLanguage, slug, userLanguages),
+    getItemBySlug(language as SupportedLanguage, slug, allUserLanguages),
     getLanguageFeaturesForLanguage(language as SupportedLanguage),
   ]);
   if (!item || !languageFeatures)
     throw new Error("Could not get data from server");
 
-  return <EditItem item={item} languageFeatures={languageFeatures} />;
+  return (
+    <EditItem
+      item={item}
+      languageFeatures={languageFeatures}
+      userLanguagesWithFlags={seperatedUserLanguagesWithFlags}
+    />
+  );
 }

@@ -8,9 +8,19 @@ import {
   Transition,
 } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { FieldError } from "react-hook-form";
+import { FieldError, Merge } from "react-hook-form";
+import FormErrors from "./FormErrors";
 
 export type ValueType = string | undefined;
+
+interface ComboBoxWrapperProps {
+  placeholder: string;
+  value: ValueType;
+  onChange: any;
+  onBlur: any;
+  options: string[];
+  errors: Merge<FieldError, (FieldError | undefined)[]> | undefined;
+}
 
 export default function ComboBoxWrapper({
   placeholder,
@@ -18,15 +28,8 @@ export default function ComboBoxWrapper({
   onChange,
   onBlur,
   options,
-  error,
-}: {
-  placeholder: string;
-  value: ValueType;
-  onChange: any;
-  onBlur: any;
-  options: string[];
-  error: FieldError | undefined;
-}) {
+  errors,
+}: ComboBoxWrapperProps) {
   const [query, setQuery] = useState("");
 
   const filteredOptions =
@@ -108,7 +111,7 @@ export default function ComboBoxWrapper({
           </Transition>
         </div>
       </Combobox>
-      {error && <p className="mt-2 text-sm text-red-600">{error.message}</p>}
+      <FormErrors errors={errors} />
     </>
   );
 }

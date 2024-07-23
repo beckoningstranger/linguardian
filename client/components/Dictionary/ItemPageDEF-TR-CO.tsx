@@ -1,5 +1,5 @@
 import { getLanguageFeaturesForLanguage } from "@/lib/fetchData";
-import { getUserLanguagesWithFlags } from "@/lib/helperFunctions";
+import { getAllUserLanguages } from "@/lib/helperFunctions";
 import paths from "@/lib/paths";
 import { Item, SupportedLanguage } from "@/lib/types";
 import Link from "next/link";
@@ -15,9 +15,8 @@ export default async function ItemPageDEFTRCO({
   translations,
 }: ItemPageDEFTRProps) {
   const renderedDefinition = <div className="ml-2">{definition}</div>;
-  const allUserLanguages = (await getUserLanguagesWithFlags()).map(
-    (lwf) => lwf.name
-  );
+
+  const allUserLanguages = await getAllUserLanguages();
 
   const foundTranslations: Item[] = [];
   allUserLanguages.forEach((lang) => {

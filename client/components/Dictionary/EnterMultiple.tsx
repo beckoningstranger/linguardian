@@ -16,6 +16,7 @@ import { FieldError, Merge } from "react-hook-form";
 import MobileMenu from "../Menus/MobileMenu/MobileMenu";
 import EnterMultipleField from "./EnterMultipleField";
 import IPAKeys from "./IPAKeys";
+import FormErrors from "./FormErrors";
 
 interface EnterMultipleProps {
   setValue: Function;
@@ -97,22 +98,7 @@ export default function EnterMultiple({
               />
             ))}
           </div>
-
-          {errors && (
-            <div>
-              {Array.isArray(errors) ? (
-                errors.map((error, index) => (
-                  <div key={index} className="mt-1 text-sm text-red-500">
-                    {error?.message}
-                  </div>
-                ))
-              ) : (
-                <div className="mt-1 text-sm text-red-500">
-                  {errors.message}
-                </div>
-              )}
-            </div>
-          )}
+          <FormErrors errors={errors} />
         </>
         {activeField && (
           <MobileMenu mode="keyboard" fromDirection="animate-from-bottom">
