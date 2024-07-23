@@ -33,8 +33,10 @@ export default function PickMultiple({
     if (array.filter((item) => item === placeholder).length > 1) {
       const newArray = array.slice();
       const index = newArray.indexOf(placeholder);
-      newArray.splice(index, 1);
-      setArray(newArray);
+      if (index > -1) {
+        newArray.splice(index, 1);
+        setArray(newArray);
+      }
     }
     if (!array.includes(placeholder))
       setValue(formField, array, {

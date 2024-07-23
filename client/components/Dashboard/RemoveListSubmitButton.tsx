@@ -20,8 +20,10 @@ export default function RemoveListSubmitButton({
       onClick={() => {
         const indexOfNumberToRemove =
           session?.user.learnedLists[language].indexOf(listNumber);
-        session?.user.learnedLists[language].splice(indexOfNumberToRemove, 1);
-        update(session);
+        if (indexOfNumberToRemove > -1) {
+          session?.user.learnedLists[language].splice(indexOfNumberToRemove, 1);
+          update(session);
+        }
       }}
     >
       Remove list & Stop learning
