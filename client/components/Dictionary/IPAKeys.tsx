@@ -1,4 +1,4 @@
-import { Dispatch, RefObject, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
 
 interface IPAKeysProps {
   keys: string[] | undefined;
@@ -16,10 +16,10 @@ export default function IPAKeys({
   if (keys && keys.length > 0)
     return (
       <div className="grid h-48 grid-cols-8 place-content-start">
-        {keys.map((key, index) => (
+        {keys.map((key) => (
           <button
-            key={key + index}
-            id={"IPAKeys" + index} // This is used in useOutsideInputAndKeyboardClick
+            key={key}
+            id={"IPAKeys-" + key} // This is used in useOutsideInputAndKeyboardClick
             onClick={() => {
               array[arrayIndex] = array[arrayIndex] + key;
               setArray(array.slice());

@@ -1,22 +1,14 @@
 "use client";
 
-import useMobileMenuContext from "@/hooks/useMobileMenuContext";
 import { IPA, Label } from "@/lib/types";
-import {
-  Button,
-  Tab,
-  TabGroup,
-  TabList,
-  TabPanel,
-  TabPanels,
-} from "@headlessui/react";
-import { PlusCircleIcon, XCircleIcon } from "@heroicons/react/16/solid";
+import { Button } from "@headlessui/react";
+import { PlusCircleIcon } from "@heroicons/react/16/solid";
 import { useEffect, useState } from "react";
 import { FieldError, Merge } from "react-hook-form";
-import MobileMenu from "../Menus/MobileMenu/MobileMenu";
+import { MobileMenuContextProvider } from "../Menus/MobileMenu/MobileMenuContext";
 import EnterMultipleField from "./EnterMultipleField";
-import IPAKeys from "./IPAKeys";
 import FormErrors from "./FormErrors";
+import IPAKeyboard from "./IPAKeyboard";
 
 interface EnterMultipleProps {
   setValue: Function;
@@ -39,17 +31,6 @@ export default function EnterMultiple({
 }: EnterMultipleProps) {
   const [array, setArray] = useState(initialValue ? initialValue : []);
   const [activeField, setActiveField] = useState<string | null>(null);
-
-  const { toggleMobileMenu } = useMobileMenuContext();
-  if (!toggleMobileMenu) throw new Error("No mobile menu context");
-
-  useEffect(() => {
-    if (mode === "IPA" && !activeField) {
-      toggleMobileMenu(false);
-    } else {
-      if (mode === "IPA") toggleMobileMenu(true);
-    }
-  }, [activeField, toggleMobileMenu, mode]);
 
   useEffect(() => {
     setValue(formField, array, {
@@ -100,66 +81,15 @@ export default function EnterMultiple({
           </div>
           <FormErrors errors={errors} />
         </>
-        {activeField && (
-          <MobileMenu mode="keyboard" fromDirection="animate-from-bottom">
-            <TabGroup className="h-full">
-              <TabList className="flex h-10 justify-evenly bg-slate-200 font-medium">
-                <Tab className="underline-offset-4 data-[selected]:underline">
-                  Consonants
-                </Tab>
-                <Tab className="underline-offset-4 data-[selected]:underline">
-                  Vowels
-                </Tab>
-                {IPA?.rare && IPA.rare.length > 0 && (
-                  <Tab className="underline-offset-4 data-[selected]:underline">
-                    Rare
-                  </Tab>
-                )}
-                <Tab className="underline-offset-4 data-[selected]:underline">
-                  Helpers
-                </Tab>
-                <Tab onClick={() => setActiveField(null)}>
-                  <XCircleIcon className="h-6 w-full rounded-full text-red-500 outline outline-1 hover:scale-105" />
-                </Tab>
-              </TabList>
-              <TabPanels className="h-full px-2">
-                <TabPanel className="h-full">
-                  <IPAKeys
-                    keys={IPA?.consonants}
-                    arrayIndex={parseInt(activeField.slice(-1))}
-                    array={array}
-                    setArray={setArray}
-                  />
-                </TabPanel>
-                <TabPanel>
-                  <IPAKeys
-                    keys={IPA?.vowels}
-                    arrayIndex={parseInt(activeField.slice(-1))}
-                    array={array}
-                    setArray={setArray}
-                  />
-                </TabPanel>
-                {IPA?.rare && IPA.rare.length > 0 && (
-                  <TabPanel>
-                    <IPAKeys
-                      arrayIndex={parseInt(activeField.slice(-1))}
-                      array={array}
-                      setArray={setArray}
-                      keys={IPA?.rare}
-                    />
-                  </TabPanel>
-                )}
-                <TabPanel>
-                  <IPAKeys
-                    arrayIndex={parseInt(activeField.slice(-1))}
-                    array={array}
-                    setArray={setArray}
-                    keys={IPA?.helperSymbols}
-                  />
-                </TabPanel>
-              </TabPanels>
-            </TabGroup>
-          </MobileMenu>
+        {mode === "IPA" && IPA && (
+          <MobileMenuContextProvider>
+            <IPAKeyboard
+              IPA={IPA}
+              array={array}
+              setArray={setArray}
+              activeField={activeField}
+            />
+          </MobileMenuContextProvider>
         )}
       </div>
     </>

@@ -75,7 +75,6 @@ const languageFeatures: LanguageFeatures[] = [
         "ə",
         "ɛ",
         "e",
-        "ə",
         "ɪ",
         "i",
         "ɔ",
