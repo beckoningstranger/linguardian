@@ -3,9 +3,11 @@
 import { submitItemEdit } from "@/lib/actions";
 import paths from "@/lib/paths";
 import {
+  Item,
   ItemWithPopulatedTranslations,
   LanguageFeatures,
   LanguageWithFlag,
+  SupportedLanguage,
 } from "@/lib/types";
 import { itemSchemaWithPopulatedTranslations } from "@/lib/validations";
 import { Input } from "@headlessui/react";
@@ -30,7 +32,11 @@ interface EditItemProps {
   };
 }
 
-export default function EditItem({ item, languageFeatures }: EditItemProps) {
+export default function EditItem({
+  item,
+  languageFeatures,
+  userLanguagesWithFlags,
+}: EditItemProps) {
   const { partsOfSpeech, hasGender, hasCases } = languageFeatures;
   const {
     name: itemName,
@@ -209,11 +215,28 @@ export default function EditItem({ item, languageFeatures }: EditItemProps) {
           />
           <ManageTranslations
             setValue={setValue}
-            initialValue={watch().translations["FR"]?.map((item) => item._id)}
+            visibleTranslations={getTranslationsForUserLanguages()}
+            allTranslations={watch().translations}
             errors={errors && errors?.translations}
           />
         </div>
       </form>
     </ItemPageContainer>
   );
+
+  function getTranslationsForUserLanguages() {
+    const translations: Partial<Record<SupportedLanguage, Item[]>> =
+      watch().translations;
+    const userLanguages = userLanguagesWithFlags.isLearning
+      .concat(userLanguagesWithFlags.native)
+      .map((lang) => lang.name);
+
+    const copyOfTranslations = JSON.parse(JSON.stringify(translations));
+
+    Object.keys(copyOfTranslations).forEach((lang) => {
+      if (!userLanguages.includes(lang as SupportedLanguage))
+        delete copyOfTranslations[lang as SupportedLanguage];
+    });
+    return copyOfTranslations;
+  }
 }

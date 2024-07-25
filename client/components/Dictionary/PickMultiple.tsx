@@ -50,7 +50,7 @@ export default function PickMultiple({
       <div className="flex flex-col gap-2 text-sm sm:gap-x-1">
         <>
           <Button
-            className="flex w-32 items-center gap-1 pb-2"
+            className="flex w-32 items-center gap-1"
             onClick={(e) => {
               e.preventDefault();
               setArray([...array, placeholder]);

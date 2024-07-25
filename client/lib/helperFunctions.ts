@@ -13,7 +13,9 @@ export async function getAllUserLanguagesWithFlags() {
   const userLanguagesWithFlags = [];
   if (sessionUser.native) userLanguagesWithFlags.push(sessionUser.native);
   if (sessionUser.isLearning)
-    sessionUser.isLearning.forEach((obj) => userLanguagesWithFlags.push(obj));
+    sessionUser.isLearning.forEach((languageWithFlag) =>
+      userLanguagesWithFlags.push(languageWithFlag)
+    );
   return userLanguagesWithFlags;
 }
 
@@ -29,7 +31,9 @@ export async function getAllUserLanguages() {
   const sessionUser = await getUserOnServer();
   const allLanguages: SupportedLanguage[] = [];
   allLanguages.push(sessionUser.native.name);
-  sessionUser.isLearning.forEach((lwf) => lwf.name);
+  sessionUser.isLearning.forEach((languageWithFlag) =>
+    allLanguages.push(languageWithFlag.name)
+  );
   return allLanguages;
 }
 
