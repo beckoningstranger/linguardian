@@ -63,30 +63,48 @@ export async function editBySlug(
   slug: string,
   item: ItemWithPopulatedTranslations
 ) {
-  return await Items.findOneAndUpdate(
-    { slug: slug },
-    {
-      ...item,
-      tags: await filterOutInvalidTags(
-        item.tags,
-        item.partOfSpeech,
-        item.language
-      ),
-      slug: slugifyString(item.name, item.language),
-      normalizedName: normalizeString(item.name),
-      gender: item.partOfSpeech === "noun" ? item.gender : undefined,
-      case: item.partOfSpeech === "preposition" ? item.case : undefined,
-      pluralForm:
-        item.partOfSpeech === "noun" || item.partOfSpeech === "adjective"
-          ? item.pluralForm && item.pluralForm.length > 0
-            ? item.pluralForm
-            : undefined
-          : undefined,
-    },
-    {
-      new: true,
-    }
+  const update: any = {
+    ...item,
+    tags: await filterOutInvalidTags(
+      item.tags,
+      item.partOfSpeech,
+      item.language
+    ),
+    slug: slugifyString(item.name, item.language),
+    normalizedName: normalizeString(item.name),
+    gender: item.partOfSpeech === "noun" ? item.gender : undefined,
+    case: item.partOfSpeech === "preposition" ? item.case : undefined,
+    pluralForm:
+      item.partOfSpeech === "noun" || item.partOfSpeech === "adjective"
+        ? item.pluralForm && item.pluralForm.length > 0
+          ? item.pluralForm
+          : undefined
+        : undefined,
+  };
+
+  // When doing the above update, MongoDB will save undefined values as null, which collides with zod validation
+  // and causes problems. Below code fixes this by instead unsetting the keys who have undefined values.
+  const conflictFreeUpdate: any = { $set: {}, $unset: {} };
+
+  const propertiesToSet = Object.entries(update).filter(
+    (entry) => entry[1] !== undefined
   );
+  propertiesToSet.forEach(
+    (entry) => (conflictFreeUpdate.$set[entry[0]] = entry[1])
+  );
+
+  const propertiesToUnset: any = {};
+  const propertiesWithValueUndefined = Object.keys(update).filter(
+    (key) => update[key] === undefined
+  );
+  propertiesWithValueUndefined.forEach(
+    (property) => (propertiesToUnset[property] = 1)
+  );
+  conflictFreeUpdate.$unset = propertiesToUnset;
+
+  return await Items.findOneAndUpdate({ slug: slug }, conflictFreeUpdate, {
+    new: true,
+  });
 }
 
 async function filterOutInvalidTags(

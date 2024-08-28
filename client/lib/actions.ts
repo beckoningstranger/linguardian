@@ -198,7 +198,7 @@ export async function submitItemEdit(
   slug: string,
   item: ItemWithPopulatedTranslations
 ) {
-  console.log(item);
+  console.log("actions.ts", item);
   const response = await fetch(`${server}/items/editBySlug/${slug}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
