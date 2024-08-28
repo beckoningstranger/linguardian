@@ -217,7 +217,5 @@ export async function submitItemEdit(
   revalidatePath(
     paths.dictionaryItemPath(updatedItem.language, updatedItem.slug)
   );
-  redirect(
-    paths.editDictionaryItemPath(updatedItem.language, updatedItem.slug)
-  );
+  redirect(paths.dictionaryItemPath(updatedItem.language, updatedItem.slug));
 }
