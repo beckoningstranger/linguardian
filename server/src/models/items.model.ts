@@ -49,7 +49,8 @@ export async function findItemsByName(
     {
       slug: 1,
       name: 1,
-      _id: 0,
+      _id: 1,
+      normalizedName: 1,
       partOfSpeech: 1,
       IPA: 1,
       definition: 1,

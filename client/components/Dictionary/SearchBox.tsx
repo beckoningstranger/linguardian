@@ -10,7 +10,7 @@ import paths from "@/lib/paths";
 interface SearchBoxProps {
   findItems: Function;
   searchResults: DictionarySearchResult[];
-  userLanguagesWithFlags: LanguageWithFlag[];
+  searchLanguagesWithFlags: LanguageWithFlag[];
   setSearchResults: Function;
   getFlag: Function;
 }
@@ -18,14 +18,14 @@ export default function SearchBox({
   findItems,
   searchResults,
   setSearchResults,
-  userLanguagesWithFlags,
+  searchLanguagesWithFlags,
 }: SearchBoxProps) {
   const router = useRouter();
   const [query, setQuery] = useState<string>("");
   const [debouncedQuery] = useDebounce(query, 300);
 
   useEffect(() => {
-    const searchLanguages = userLanguagesWithFlags.map((item) => item.name);
+    const searchLanguages = searchLanguagesWithFlags.map((item) => item.name);
     if (query.length < 2 || debouncedQuery.length < 2) setSearchResults([]);
 
     if (debouncedQuery.length > 1) {
@@ -54,7 +54,7 @@ export default function SearchBox({
     findItems,
     query,
     setSearchResults,
-    userLanguagesWithFlags,
+    searchLanguagesWithFlags,
   ]);
 
   const handleChange = (result: DictionarySearchResult | "showAll") => {

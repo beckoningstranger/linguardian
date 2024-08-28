@@ -1,47 +1,62 @@
 "use client";
 
-import { Item, SupportedLanguage } from "@/lib/types";
+import {
+  Item,
+  ItemWithPopulatedTranslations,
+  SupportedLanguage,
+  UserLanguagesWithFlags,
+} from "@/lib/types";
+import { Button } from "@headlessui/react";
+import { MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/20/solid";
+import { Types } from "mongoose";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FieldError, Merge } from "react-hook-form";
-import FormErrors from "./FormErrors";
 import Flag from "react-world-flags";
-import { MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/20/solid";
-import { Button } from "@headlessui/react";
-import { Types } from "mongoose";
+import AddTranslationDialog from "./AddTranslationDialog";
+import FormErrors from "./FormErrors";
 
 interface ManageTranslationsProps {
+  item: ItemWithPopulatedTranslations;
   setValue: Function;
   errors: Merge<FieldError, (FieldError | undefined)[]> | undefined;
   allTranslations: Partial<Record<SupportedLanguage, Item[]>> | undefined;
   visibleTranslations: Partial<Record<SupportedLanguage, Item[]>> | undefined;
+  userLanguagesWithFlags: UserLanguagesWithFlags;
 }
 
 export default function ManageTranslations({
+  item,
   setValue,
   errors,
   allTranslations,
   visibleTranslations,
+  userLanguagesWithFlags,
 }: ManageTranslationsProps) {
   const label = { singular: "Translation", plural: "Translations" };
-  const [translationsArray, setTranslationsArray] = useState(
-    visibleTranslations || {}
-  );
+  const [translations, setTranslations] = useState(visibleTranslations || {});
+  const [showAddTranslationDialog, setShowAddTranslationDialog] =
+    useState(false);
 
-  console.log("all", allTranslations);
   useEffect(() => {
-    const updatedTranslations = getupdatedTranslations(
-      translationsArray,
-      allTranslations
+    const touchedTranslations = getTouchedTranslations(
+      translations,
+      allTranslations,
+      userLanguagesWithFlags.isLearning.map((lang) => lang.name)
     );
-    if (JSON.stringify(updatedTranslations) !== JSON.stringify(allTranslations))
-      setValue("translations", updatedTranslations, {
+    if (JSON.stringify(touchedTranslations) !== JSON.stringify(allTranslations))
+      setValue("translations", touchedTranslations, {
         shouldDirty: true,
         shouldTouch: true,
         shouldValidate: true,
       });
-  }, [translationsArray, setValue, allTranslations]);
+  }, [
+    translations,
+    setValue,
+    allTranslations,
+    userLanguagesWithFlags.isLearning,
+  ]);
 
-  const renderedTranslations = Object.values(translationsArray).map((x) =>
+  const renderedTranslations = Object.values(translations).map((x) =>
     x.map((translation) => (
       <div
         key={translation.slug}
@@ -56,9 +71,9 @@ export default function ManageTranslations({
           className="flex h-6 w-6 items-center justify-center"
           onClick={() =>
             removeTranslationById(
-              translationsArray,
+              translations,
               translation._id,
-              setTranslationsArray
+              setTranslations
             )
           }
         >
@@ -75,11 +90,11 @@ export default function ManageTranslations({
           className="flex w-32 items-center gap-1"
           onClick={(e) => {
             e.preventDefault();
-            console.log("Add new translations");
+            setShowAddTranslationDialog(true);
           }}
         >
           <p className="flex h-full items-center font-semibold capitalize">
-            {Object.values(translationsArray).flat().length > 1 ? (
+            {Object.values(translations).flat().length > 1 ? (
               <span>{label.plural}</span>
             ) : (
               <span>{label.singular}</span>
@@ -90,6 +105,14 @@ export default function ManageTranslations({
         <div className="flex flex-wrap gap-2">{renderedTranslations}</div>
       </div>
       <FormErrors errors={errors} />
+      <AddTranslationDialog
+        item={item}
+        isOpen={showAddTranslationDialog}
+        setIsOpen={setShowAddTranslationDialog}
+        userLanguagesWithFlags={userLanguagesWithFlags}
+        translations={translations}
+        setTranslations={setTranslations}
+      />
     </>
   );
 }
@@ -97,7 +120,7 @@ export default function ManageTranslations({
 function removeTranslationById(
   visibleTranslations: Partial<Record<SupportedLanguage, Item[]>>,
   idToRemove: Types.ObjectId,
-  setTranslationsArray: Dispatch<
+  setTranslations: Dispatch<
     SetStateAction<Partial<Record<SupportedLanguage, Item[]>>>
   >
 ) {
@@ -114,17 +137,18 @@ function removeTranslationById(
       updatedTranslations[key] = itemArray;
     }
   });
-  setTranslationsArray(updatedTranslations);
+  setTranslations(updatedTranslations);
 }
 
-function getupdatedTranslations(
-  translationsArray: Partial<Record<SupportedLanguage, Item[]>>,
-  allTranslations: Partial<Record<SupportedLanguage, Item[]>> | undefined
+function getTouchedTranslations(
+  translations: Partial<Record<SupportedLanguage, Item[]>>,
+  allTranslations: Partial<Record<SupportedLanguage, Item[]>> | undefined,
+  languagesUserIsLearning: SupportedLanguage[]
 ) {
-  if (!allTranslations) return translationsArray;
-  const languagesInTranslationArray = Object.keys(translationsArray);
+  if (!allTranslations) return translations;
   const languagesUserHasNotTouched = Object.keys(allTranslations).filter(
-    (language) => !languagesInTranslationArray.includes(language)
+    (language) =>
+      !languagesUserIsLearning.includes(language as SupportedLanguage)
   );
 
   const translationsUserHasNotTouched: Partial<
@@ -138,10 +162,6 @@ function getupdatedTranslations(
 
   return {
     ...translationsUserHasNotTouched,
-    ...translationsArray,
+    ...translations,
   };
 }
-
-// See that users can ADD translations. This will probably be handled best if a modal opens
-// after clicking the plus icon. In the modal, users will be able to search for translations.
-// Clicking a translation will add it to the array.

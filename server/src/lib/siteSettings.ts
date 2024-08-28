@@ -169,7 +169,6 @@ const languageFeatures: LanguageFeatures[] = [
         "œ",
         "ø",
         "o",
-        "o",
         "ɔ",
         "u",
         "y",

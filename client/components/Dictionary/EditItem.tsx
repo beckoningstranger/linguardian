@@ -6,8 +6,8 @@ import {
   Item,
   ItemWithPopulatedTranslations,
   LanguageFeatures,
-  LanguageWithFlag,
   SupportedLanguage,
+  UserLanguagesWithFlags,
 } from "@/lib/types";
 import { itemSchemaWithPopulatedTranslations } from "@/lib/validations";
 import { Input } from "@headlessui/react";
@@ -26,10 +26,7 @@ import PickMultiple from "./PickMultiple";
 interface EditItemProps {
   item: ItemWithPopulatedTranslations;
   languageFeatures: LanguageFeatures;
-  userLanguagesWithFlags: {
-    native: LanguageWithFlag;
-    isLearning: LanguageWithFlag[];
-  };
+  userLanguagesWithFlags: UserLanguagesWithFlags;
 }
 
 export default function EditItem({
@@ -214,10 +211,12 @@ export default function EditItem({
             mode="longstrings"
           />
           <ManageTranslations
+            item={item}
             setValue={setValue}
             visibleTranslations={getTranslationsForUserLanguages()}
             allTranslations={watch().translations}
             errors={errors && errors?.translations}
+            userLanguagesWithFlags={userLanguagesWithFlags}
           />
         </div>
       </form>
@@ -231,7 +230,8 @@ export default function EditItem({
       .concat(userLanguagesWithFlags.native)
       .map((lang) => lang.name);
 
-    const copyOfTranslations = JSON.parse(JSON.stringify(translations));
+    const copyOfTranslations: Partial<Record<SupportedLanguage, Item[]>> =
+      JSON.parse(JSON.stringify(translations));
 
     Object.keys(copyOfTranslations).forEach((lang) => {
       if (!userLanguages.includes(lang as SupportedLanguage))

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import {
   DictionarySearchResult,
+  Item,
   LanguageWithFlag,
   SupportedLanguage,
 } from "@/lib/types";
@@ -11,32 +12,43 @@ import { findItems } from "@/lib/actions";
 import SearchBox from "./SearchBox";
 
 interface SearchProps {
-  userLanguagesWithFlags: LanguageWithFlag[];
+  searchLanguagesWithFlags: LanguageWithFlag[];
+  mode: "returnLinkToItem" | "returnItem";
+  addTranslation?: Function;
 }
-export default function Search({ userLanguagesWithFlags }: SearchProps) {
+export default function Search({
+  searchLanguagesWithFlags,
+  mode,
+  addTranslation,
+}: SearchProps) {
   const [searchResults, setSearchResults] = useState<DictionarySearchResult[]>(
     []
   );
 
   const getFlag = (langCode: SupportedLanguage) => {
-    return userLanguagesWithFlags.reduce((a, curr) => {
+    return searchLanguagesWithFlags.reduce((a, curr) => {
       if (curr.name === langCode) a = curr.flag;
       return a;
     }, "" as string);
   };
 
   return (
-    <div className="md:mx-12">
+    <>
       <SearchBox
         findItems={findItems}
         searchResults={searchResults}
         setSearchResults={setSearchResults}
-        userLanguagesWithFlags={userLanguagesWithFlags}
+        searchLanguagesWithFlags={searchLanguagesWithFlags}
         getFlag={getFlag}
       />
       {searchResults && (
-        <SearchResults results={searchResults} getFlag={getFlag} />
+        <SearchResults
+          results={searchResults}
+          getFlag={getFlag}
+          mode={mode}
+          addTranslation={addTranslation}
+        />
       )}
-    </div>
+    </>
   );
 }

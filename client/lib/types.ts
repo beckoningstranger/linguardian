@@ -206,11 +206,13 @@ export type UserWithPopulatedLearnedLists = Omit<User, "languages"> & {
 };
 
 export interface DictionarySearchResult {
+  _id: Types.ObjectId;
+  normalizedName: string;
   name: string;
   slug: string;
   partOfSpeech: PartOfSpeech;
-  IPA?: string;
-  definition?: string;
+  IPA?: string[];
+  definition?: string[];
   language: SupportedLanguage;
 }
 
@@ -248,4 +250,9 @@ export type Label = { singular: string; plural: string };
 export type UserLanguages = {
   native: SupportedLanguage;
   learning: SupportedLanguage[];
+};
+
+export type UserLanguagesWithFlags = {
+  native: LanguageWithFlag;
+  isLearning: LanguageWithFlag[];
 };
