@@ -198,7 +198,6 @@ export async function submitItemEdit(
   slug: string,
   item: ItemWithPopulatedTranslations
 ) {
-  console.log("actions.ts", item);
   const response = await fetch(`${server}/items/editBySlug/${slug}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -218,4 +217,30 @@ export async function submitItemEdit(
     paths.dictionaryItemPath(updatedItem.language, updatedItem.slug)
   );
   redirect(paths.dictionaryItemPath(updatedItem.language, updatedItem.slug));
+}
+
+export async function updateRecentDictionarySearches(slug: string) {
+  const [sessionUser] = await Promise.all([getUserOnServer()]);
+  const response = await fetch(
+    `${server}/users/addRecentDictionarySearches/${sessionUser.id}/${slug}`,
+    {
+      method: "POST",
+    }
+  );
+  if (!response.ok) {
+    const responseData = await response.json();
+    throw new Error(responseData?.error);
+  }
+}
+
+export async function getRecentDictionarySearches() {
+  const [sessionUser] = await Promise.all([getUserOnServer()]);
+  const response = await fetch(
+    `${server}/users/getRecentDictionarySearches/${sessionUser.id}`
+  );
+  if (!response.ok) {
+    const responseData = await response.json();
+    throw new Error(responseData?.error);
+  }
+  return response.json();
 }

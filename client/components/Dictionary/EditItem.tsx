@@ -3,6 +3,7 @@
 import { submitItemEdit } from "@/lib/actions";
 import paths from "@/lib/paths";
 import {
+  DictionarySearchResult,
   Item,
   ItemWithPopulatedTranslations,
   LanguageFeatures,
@@ -27,12 +28,14 @@ interface EditItemProps {
   item: ItemWithPopulatedTranslations;
   languageFeatures: LanguageFeatures;
   userLanguagesWithFlags: UserLanguagesWithFlags;
+  recentSearches: DictionarySearchResult[];
 }
 
 export default function EditItem({
   item,
   languageFeatures,
   userLanguagesWithFlags,
+  recentSearches,
 }: EditItemProps) {
   const { partsOfSpeech, hasGender, hasCases } = languageFeatures;
   const {
@@ -217,6 +220,7 @@ export default function EditItem({
             allTranslations={watch().translations}
             errors={errors && errors?.translations}
             userLanguagesWithFlags={userLanguagesWithFlags}
+            recentSearches={recentSearches}
           />
         </div>
       </form>

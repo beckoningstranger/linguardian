@@ -60,6 +60,12 @@ const userSchema = new Schema<User>(
         },
       },
     ],
+    recentDictionarySearches: [
+      {
+        itemSlug: { type: String },
+        dateSearched: { type: Date },
+      },
+    ],
   },
   { timestamps: true }
 );

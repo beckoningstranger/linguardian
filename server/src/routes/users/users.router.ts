@@ -2,12 +2,14 @@ import express from "express";
 import {
   httpAddListToDashboard,
   httpAddNewLanguage,
+  httpAddNewRecentDictionarySearches,
   httpGetAllLearnedListsForUser,
   httpGetAllUserIds,
   httpGetLearnedLanguageData,
   httpGetLearnedList,
   httpGetNativeLanguageById,
   httpGetNextUserId,
+  httpGetRecentDictionarySearches,
   httpGetUserById,
   httpGetUserByUsernameSlug,
   httpRemoveListFromDashboard,
@@ -57,3 +59,13 @@ usersRouter.get("/getNativeLanguage/:userId", httpGetNativeLanguageById);
 usersRouter.get("/getAllUserIds", httpGetAllUserIds);
 
 usersRouter.get("/getLearnedLists/:userId", httpGetAllLearnedListsForUser);
+
+usersRouter.post(
+  "/addRecentDictionarySearches/:userId/:slug",
+  httpAddNewRecentDictionarySearches
+);
+
+usersRouter.get(
+  "/getRecentDictionarySearches/:userId",
+  httpGetRecentDictionarySearches
+);

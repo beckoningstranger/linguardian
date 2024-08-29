@@ -1,4 +1,5 @@
 import EditItem from "@/components/Dictionary/EditItem";
+import { getRecentDictionarySearches } from "@/lib/actions";
 import { getItemBySlug, getLanguageFeaturesForLanguage } from "@/lib/fetchData";
 import {
   getAllUserLanguages,
@@ -20,9 +21,12 @@ export async function generateMetadata({
 export default async function EditPage({
   params: { slug, language },
 }: EditPageProps) {
-  const [allUserLanguages, seperatedUserLanguagesWithFlags] = await Promise.all(
-    [getAllUserLanguages(), getSeperatedUserLanguagesWithFlags()]
-  );
+  const [allUserLanguages, seperatedUserLanguagesWithFlags, recentSearches] =
+    await Promise.all([
+      getAllUserLanguages(),
+      getSeperatedUserLanguagesWithFlags(),
+      getRecentDictionarySearches(),
+    ]);
 
   const [item, languageFeatures] = await Promise.all([
     getItemBySlug(language as SupportedLanguage, slug, allUserLanguages),
@@ -36,6 +40,7 @@ export default async function EditPage({
       item={item}
       languageFeatures={languageFeatures}
       userLanguagesWithFlags={seperatedUserLanguagesWithFlags}
+      recentSearches={recentSearches}
     />
   );
 }

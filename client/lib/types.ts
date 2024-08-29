@@ -199,6 +199,12 @@ export interface User {
   image: string;
   native: SupportedLanguage;
   languages: LearnedLanguage[];
+  recentDictionarySearches: RecentDictionarySearches[];
+}
+
+export interface RecentDictionarySearches {
+  itemSlug: string;
+  dateSearched: Date;
 }
 
 export type UserWithPopulatedLearnedLists = Omit<User, "languages"> & {

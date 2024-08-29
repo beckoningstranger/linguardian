@@ -1,5 +1,6 @@
 import {
   ItemForServer,
+  RecentDictionarySearches,
   SupportedLanguage,
   User,
   UserWithPopulatedLearnedLists,
@@ -270,4 +271,46 @@ export async function getAllLearnedLists(userId: string) {
     { id: userId },
     { languages: 1, _id: 0 }
   ).populate("languages.learnedLists");
+}
+
+export async function addRecentDictionarySearches(
+  userId: string,
+  slug: string
+) {
+  const user = await Users.findOne<User>(
+    { id: userId },
+    { _id: 0, recentDictionarySearches: 1 }
+  );
+  let recentSearches = user?.recentDictionarySearches;
+  if (!recentSearches) recentSearches = [];
+
+  recentSearches.push({ itemSlug: slug, dateSearched: new Date() });
+  const tenSortedUniqueSearches = recentSearches
+    .reduce((acc, curr) => {
+      if (
+        !acc.some(
+          (obj: RecentDictionarySearches) => obj.itemSlug === curr.itemSlug
+        )
+      ) {
+        acc.push(curr);
+      }
+      return acc;
+    }, [] as RecentDictionarySearches[])
+    .sort((a, b) => b.dateSearched.getTime() - a.dateSearched.getTime())
+    .slice(0, 10);
+
+  return await Users.findOneAndUpdate<User>(
+    { id: userId },
+    {
+      recentDictionarySearches: tenSortedUniqueSearches,
+    },
+    { new: true }
+  );
+}
+
+export async function getRecentDictionarySearches(userId: string) {
+  return await Users.findOne<User>(
+    { id: userId },
+    { recentDictionarySearches: 1, _id: 0 }
+  );
 }

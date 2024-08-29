@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  DictionarySearchResult,
   Item,
   ItemWithPopulatedTranslations,
   SupportedLanguage,
@@ -22,6 +23,7 @@ interface ManageTranslationsProps {
   allTranslations: Partial<Record<SupportedLanguage, Item[]>> | undefined;
   visibleTranslations: Partial<Record<SupportedLanguage, Item[]>> | undefined;
   userLanguagesWithFlags: UserLanguagesWithFlags;
+  recentSearches: DictionarySearchResult[];
 }
 
 export default function ManageTranslations({
@@ -31,6 +33,7 @@ export default function ManageTranslations({
   allTranslations,
   visibleTranslations,
   userLanguagesWithFlags,
+  recentSearches,
 }: ManageTranslationsProps) {
   const label = { singular: "Translation", plural: "Translations" };
   const [translations, setTranslations] = useState(visibleTranslations || {});

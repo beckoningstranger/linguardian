@@ -1,25 +1,27 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState } from "react";
+import { findItems } from "@/lib/actions";
 import {
   DictionarySearchResult,
-  Item,
   LanguageWithFlag,
   SupportedLanguage,
 } from "@/lib/types";
-import SearchResults from "./SearchResults";
-import { findItems } from "@/lib/actions";
+import { useState } from "react";
 import SearchBox from "./SearchBox";
+import SearchResults from "./SearchResults";
+import RecentSearches from "./RecentSearches";
 
 interface SearchProps {
   searchLanguagesWithFlags: LanguageWithFlag[];
   mode: "returnLinkToItem" | "returnItem";
   addTranslation?: Function;
+  recentSearches?: DictionarySearchResult[];
 }
 export default function Search({
   searchLanguagesWithFlags,
   mode,
   addTranslation,
+  recentSearches = [],
 }: SearchProps) {
   const [searchResults, setSearchResults] = useState<DictionarySearchResult[]>(
     []
@@ -45,10 +47,15 @@ export default function Search({
         <SearchResults
           results={searchResults}
           getFlag={getFlag}
-          mode={mode}
           addTranslation={addTranslation}
+          mode={mode}
         />
       )}
+      {recentSearches.length > 0 &&
+        searchResults.length === 0 &&
+        mode === "returnLinkToItem" && (
+          <RecentSearches recentSearches={recentSearches} getFlag={getFlag} />
+        )}
     </>
   );
 }

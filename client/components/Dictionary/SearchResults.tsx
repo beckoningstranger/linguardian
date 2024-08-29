@@ -1,5 +1,6 @@
 "use client";
 
+import { updateRecentDictionarySearches } from "@/lib/actions";
 import paths from "@/lib/paths";
 import { DictionarySearchResult } from "@/lib/types";
 import Link from "next/link";
@@ -25,6 +26,9 @@ export default function SearchResults({
           <Link
             href={paths.dictionaryItemPath(result.language, result.slug)}
             key={result.slug}
+            onClick={async () =>
+              await updateRecentDictionarySearches(result.slug)
+            }
           >
             <ItemElement getFlag={getFlag} result={result} />
           </Link>

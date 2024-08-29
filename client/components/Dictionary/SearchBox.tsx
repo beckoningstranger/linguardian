@@ -65,7 +65,7 @@ export default function SearchBox({
   };
 
   return (
-    <div className="m-1 flex justify-stretch rounded-md border-2 border-slate-200">
+    <div className="m-1 flex justify-stretch rounded-md border-2 border-slate-600">
       <div className="relative flex w-full flex-col justify-stretch rounded-md px-2">
         <Combobox onChange={handleChange}>
           <ComboboxInput

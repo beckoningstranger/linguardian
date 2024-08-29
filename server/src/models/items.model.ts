@@ -47,10 +47,28 @@ export async function findItemsByName(
       language: { $in: languages },
     },
     {
-      slug: 1,
-      name: 1,
       _id: 1,
       normalizedName: 1,
+      name: 1,
+      slug: 1,
+      partOfSpeech: 1,
+      IPA: 1,
+      definition: 1,
+      language: 1,
+    }
+  );
+}
+
+export async function findItemBySlug(slug: string) {
+  return await Items.findOne(
+    {
+      slug: slug,
+    },
+    {
+      _id: 1,
+      normalizedName: 1,
+      name: 1,
+      slug: 1,
       partOfSpeech: 1,
       IPA: 1,
       definition: 1,

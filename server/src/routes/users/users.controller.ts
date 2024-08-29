@@ -4,10 +4,12 @@ import {
   addListToDashboard,
   addNewLanguage,
   addNewlyLearnedItems,
+  addRecentDictionarySearches,
   getAllLearnedLists,
   getAllUserIds,
   getNativeLanguageById,
   getNextUserId,
+  getRecentDictionarySearches,
   getUserById,
   getUserByUsernameSlug,
   removeListFromDashboard,
@@ -16,6 +18,7 @@ import {
 } from "../../models/users.model.js";
 
 import { LearningMode, SupportedLanguage } from "../../lib/types.js";
+import { findItemBySlug } from "../../models/items.model.js";
 import { getSupportedLanguages } from "../../models/settings.model.js";
 
 export async function httpGetUserById(req: Request, res: Response) {
@@ -161,4 +164,33 @@ export async function httpGetLearnedList(req: Request, res: Response) {
     learnedItems,
     ignoredItems,
   });
+}
+
+export async function httpAddNewRecentDictionarySearches(
+  req: Request,
+  res: Response
+) {
+  const userId = req.params.userId;
+  const slug = req.params.slug;
+
+  const response = await addRecentDictionarySearches(userId, slug);
+  if (!response) return res.status(404).json();
+  return res.status(201).json(response);
+}
+
+export async function httpGetRecentDictionarySearches(
+  req: Request,
+  res: Response
+) {
+  const userId = req.params.userId;
+
+  const user = await getRecentDictionarySearches(userId);
+  if (!user) return res.status(404).json();
+
+  const itemSlugsToGet = user.recentDictionarySearches.map(
+    (item) => item.itemSlug
+  );
+  const itemPromises = itemSlugsToGet.map(async (slug) => findItemBySlug(slug));
+  const items = await Promise.all(itemPromises);
+  return res.status(200).json(items);
 }
