@@ -9,7 +9,7 @@ export default function LogoWithCloseButton({
   toggleFunction,
 }: LogoWithCloseButtonProps) {
   return (
-    <div className="relative sm:hidden">
+    <div className="relative md:hidden">
       <div
         className="absolute left-0 grid h-20 w-20 place-items-center border-r border-black"
         onClick={() => toggleFunction()}

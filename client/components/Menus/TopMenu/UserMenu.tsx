@@ -1,16 +1,15 @@
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { MouseEventHandler, useState } from "react";
-import { signOut, useSession } from "next-auth/react";
+import { FaUserAlt } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
 import { RiLogoutBoxLine } from "react-icons/ri";
-import { FaUserAlt } from "react-icons/fa";
 
-import { SessionUser } from "@/lib/types";
 import useMobileMenuContext from "@/hooks/useMobileMenuContext";
+import paths from "@/lib/paths";
+import { SessionUser } from "@/lib/types";
 import MobileMenu from "../MobileMenu/MobileMenu";
 import SidebarItem from "./Sidebar/SideNavItem";
-import paths from "@/lib/paths";
-import { useOutsideClick } from "@/hooks/useOutsideClick";
 import UserMenuItem from "./UserMenuItem";
 
 interface UserMenuProps {}
