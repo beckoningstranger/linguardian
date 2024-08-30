@@ -6,12 +6,15 @@ import {
   SupportedLanguage,
 } from "@/lib/types";
 import { useState } from "react";
+import ListAddItemButton from "./ListAddItemButton";
 import UnitItem from "./UnitItem";
 
 interface UnitItemsProps {
   unitItems: ItemWithPopulatedTranslations[];
   allLearnedItems: LearnedItem[];
   userNative: SupportedLanguage;
+  userIsAuthor: boolean;
+  pathToUnit: string;
 }
 
 export interface ItemPlusLearningInfo extends ItemWithPopulatedTranslations {
@@ -24,6 +27,8 @@ export default function UnitItems({
   unitItems,
   allLearnedItems,
   userNative,
+  userIsAuthor,
+  pathToUnit,
 }: UnitItemsProps) {
   const [showTranslations, setShowTranslations] = useState<boolean>(false);
   const enrichedItems = unitItems.map((item) => {
@@ -53,6 +58,7 @@ export default function UnitItems({
         translations={translations}
         showTranslations={showTranslations}
         key={index}
+        pathToUnit={pathToUnit}
       />
     );
     item.learned
@@ -61,14 +67,15 @@ export default function UnitItems({
   });
 
   return (
-    <div className="grid grid-cols-1 justify-items-center gap-2 p-2 md:grid-cols-2">
+    <div className="relative grid grid-cols-1 justify-items-center gap-2 p-2 md:grid-cols-2">
       <div
         className="grid w-full select-none place-items-center rounded-md bg-slate-100 p-4 hover:bg-slate-200 md:hidden"
         onClick={() => setShowTranslations(!showTranslations)}
       >
-        Show item translations
+        {showTranslations ? "Tap to show items" : "Tap to show translations"}
       </div>
       {learnedItems} {unlearnedItems}
+      {userIsAuthor && <ListAddItemButton />}
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import DictionaryBottomRightButton from "@/components/Dictionary/DictionaryBottomRightButton";
 import Search from "@/components/Dictionary/Search";
 import { getRecentDictionarySearches } from "@/lib/actions";
 import { getAllUserLanguagesWithFlags } from "@/lib/helperFunctions";
@@ -17,6 +18,7 @@ export default async function DictionaryPage() {
         mode="returnLinkToItem"
         recentSearches={recentSearches}
       />
+      <DictionaryBottomRightButton />
     </div>
   );
 }

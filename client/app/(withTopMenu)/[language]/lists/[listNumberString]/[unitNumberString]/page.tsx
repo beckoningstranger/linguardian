@@ -4,8 +4,8 @@ import {
   AllLearningButtonsDesktopContainer,
   AllLearningButtonsMobileContainer,
 } from "@/components/Lists/AllLearningButtonsContainer";
-import BackToListAndEditButtons from "@/components/Lists/BackToListAndEditButtons";
 import FlexibleLearningButtons from "@/components/Lists/FlexibleLearningButtons";
+import ItemBackButton from "@/components/Lists/ItemBackButton";
 import Leaderboard from "@/components/Lists/Leaderboard";
 import ListContainer from "@/components/Lists/ListContainer";
 import { determineListStatus } from "@/components/Lists/ListHelpers";
@@ -19,6 +19,7 @@ import {
   getListDataForMetadata,
 } from "@/lib/fetchData";
 import getUserOnServer from "@/lib/helperFunctions";
+import paths from "@/lib/paths";
 import { LearningMode, SupportedLanguage } from "@/lib/types";
 import { notFound } from "next/navigation";
 
@@ -107,12 +108,7 @@ export default async function UnitDetailPage({
 
   return (
     <ListContainer>
-      <BackToListAndEditButtons
-        listAuthors={listData.authors}
-        listNumber={listNumber}
-        userId={userId}
-        listLanguage={listData.language}
-      />
+      <ItemBackButton path={paths.listDetailsPath(listNumber, language)} />
       <UnitHeader
         unitNumber={unitNumber}
         unitName={unitName}
@@ -150,6 +146,8 @@ export default async function UnitDetailPage({
         allLearnedItems={allLearnedItems}
         unitItems={unitItems}
         userNative={userNative}
+        userIsAuthor={listData.authors.includes(userId)}
+        pathToUnit={paths.unitDetailsPath(listNumber, unitNumber, language)}
       />
       {userHasAddedThisList && (
         <AllLearningButtonsMobileContainer>

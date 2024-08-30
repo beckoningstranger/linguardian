@@ -8,19 +8,24 @@ interface UnitItemProps {
   item: ItemPlusLearningInfo;
   translations: string | undefined;
   showTranslations: boolean;
+  pathToUnit: string;
 }
 
 export default function UnitItem({
   item,
   translations,
   showTranslations,
+  pathToUnit,
 }: UnitItemProps) {
   const [showItemTranslation, setShowItemTranslation] =
     useState<boolean>(false);
 
   return (
     <Link
-      href={paths.dictionaryItemPath(item.language, item.slug)}
+      href={
+        paths.dictionaryItemPath(item.language, item.slug) +
+        `?comingFrom=${pathToUnit}`
+      }
       key={item.name + item.language}
       className={`p-3 rounded-md w-full flex flex-col items-center justify-center ${bgColor(
         item.nextReview,
