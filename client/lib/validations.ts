@@ -4,7 +4,7 @@ import { Item, SupportedLanguage } from "./types.js";
 
 const itemSchemaWithoutTranslations = z.object({
   _id: z.custom<Types.ObjectId>(),
-  name: z.string().max(30, "Item names can be no longer than 30 characters"),
+  name: z.string().max(60, "Item names can be no longer than 60 characters"),
   normalizedName: z.string().max(30),
   language: z.custom<SupportedLanguage>(),
   partOfSpeech: z.enum([
@@ -23,7 +23,7 @@ const itemSchemaWithoutTranslations = z.object({
   lemmas: z.custom<Types.ObjectId>().optional(),
   definition: z
     .string()
-    .max(200, "Item definitions can be no longer than 200 characters")
+    .max(300, "Item definitions can be no longer than 300 characters")
     .array()
     .optional(),
   gender: z
@@ -35,7 +35,7 @@ const itemSchemaWithoutTranslations = z.object({
     .array()
     .max(2, "There can be no more than 2 different plural forms")
     .optional(),
-  slug: z.string().max(30),
+  slug: z.string().max(60),
   case: z
     .enum([
       "nominative",
@@ -50,22 +50,22 @@ const itemSchemaWithoutTranslations = z.object({
     .optional(),
   audio: z
     .string()
-    .max(50, "URLs to audio files can be no longer than 50 characters")
+    .max(80, "URLs to audio files can be no longer than 80 characters")
     .array()
     .optional(),
   pics: z
     .string()
-    .max(50, "URLs to pictures can be no longer than 50 characters")
+    .max(80, "URLs to pictures can be no longer than 80 characters")
     .array()
     .optional(),
   vids: z
     .string()
-    .max(50, "URLs to videos can be no longer than 50 characters")
+    .max(80, "URLs to videos can be no longer than 80 characters")
     .array()
     .optional(),
   IPA: z
     .string()
-    .max(35, "IPA transcriptions can be no longer than 35 characters")
+    .max(50, "IPA transcriptions can be no longer than 50 characters")
     .array()
     .optional(),
   tags: z
