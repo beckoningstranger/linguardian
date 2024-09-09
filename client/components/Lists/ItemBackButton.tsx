@@ -12,9 +12,17 @@ export default function ItemBackButton({ path }: ItemBackButtonProps) {
       <div className="md:hidden">
         <Link
           className="absolute left-1/2 top-5 w-36 -translate-x-1/2 transform text-center text-[1rem] leading-tight md:hidden"
-          href={path ? path : paths.dictionaryPath() + `?comingFrom=${path}`}
+          href={path ? path : paths.dictionaryPath()}
         >
-          Back to <br /> List Overview
+          {path ? (
+            <span>
+              Back to <br /> List Overview
+            </span>
+          ) : (
+            <span>
+              Back to <br /> dictionary
+            </span>
+          )}
         </Link>
       </div>
 

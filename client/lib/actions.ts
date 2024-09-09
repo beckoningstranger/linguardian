@@ -6,6 +6,7 @@ import {
   ItemForServer,
   ItemWithPopulatedTranslations,
   LearningMode,
+  ListAndUnitData,
   SupportedLanguage,
 } from "@/lib/types";
 import { revalidatePath } from "next/cache";
@@ -194,11 +195,12 @@ export async function finishOnboarding(
   redirect(paths.listsLanguagePath(languageToLearn));
 }
 
-export async function submitItemEdit(
+export async function submitItemCreateOrEdit(
+  item: ItemWithPopulatedTranslations,
   slug: string,
-  item: ItemWithPopulatedTranslations
+  addToThisList?: ListAndUnitData
 ) {
-  const response = await fetch(`${server}/items/editBySlug/${slug}`, {
+  const response = await fetch(`${server}/items/editOrCreateBySlug/${slug}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(item),
@@ -208,6 +210,17 @@ export async function submitItemEdit(
     throw new Error(responseData?.error);
   }
   const updatedItem = await response.json();
+
+  let redirectPath = "";
+  if (addToThisList) {
+    redirectPath = paths.unitDetailsPath(
+      addToThisList.listNumber,
+      addToThisList.unitNumber,
+      addToThisList.languageWithFlag.name
+    );
+    addItemToList(addToThisList, updatedItem, true);
+  }
+
   revalidatePath(paths.editDictionaryItemPath(item.language, item.slug));
   revalidatePath(paths.editDictionaryItemPath(item.language, item.slug));
   revalidatePath(
@@ -216,7 +229,12 @@ export async function submitItemEdit(
   revalidatePath(
     paths.dictionaryItemPath(updatedItem.language, updatedItem.slug)
   );
-  redirect(paths.dictionaryItemPath(updatedItem.language, updatedItem.slug));
+  redirect(
+    redirectPath
+      ? paths.dictionaryItemPath(updatedItem.language, updatedItem.slug) +
+          `?comingFrom=${redirectPath}`
+      : paths.dictionaryItemPath(updatedItem.language, updatedItem.slug)
+  );
 }
 
 export async function updateRecentDictionarySearches(slug: string) {
@@ -233,14 +251,31 @@ export async function updateRecentDictionarySearches(slug: string) {
   }
 }
 
-export async function getRecentDictionarySearches() {
-  const [sessionUser] = await Promise.all([getUserOnServer()]);
-  const response = await fetch(
-    `${server}/users/getRecentDictionarySearches/${sessionUser.id}`
+export async function addItemToList(
+  listData: ListAndUnitData,
+  clickeditem: ItemWithPopulatedTranslations,
+  noRedirect?: boolean
+) {
+  await fetch(
+    `${server}/lists/addItemToList/${listData.listNumber}/${listData.unitName}/${clickeditem._id}`,
+    {
+      method: "POST",
+    }
   );
-  if (!response.ok) {
-    const responseData = await response.json();
-    throw new Error(responseData?.error);
+  revalidatePath(
+    paths.unitDetailsPath(
+      listData.listNumber,
+      listData.unitNumber,
+      listData.languageWithFlag.name
+    )
+  );
+  if (!noRedirect) {
+    redirect(
+      paths.unitDetailsPath(
+        listData.listNumber,
+        listData.unitNumber,
+        listData.languageWithFlag.name
+      )
+    );
   }
-  return response.json();
 }

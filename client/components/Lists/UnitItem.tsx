@@ -1,8 +1,8 @@
+import paths from "@/lib/paths";
+import Link from "next/link";
 import { useState } from "react";
 import UnitItemText from "./UnitItemText";
 import { ItemPlusLearningInfo } from "./UnitItems";
-import Link from "next/link";
-import paths from "@/lib/paths";
 
 interface UnitItemProps {
   item: ItemPlusLearningInfo;

@@ -1,28 +1,31 @@
 "use client";
 
-import { Combobox, ComboboxInput } from "@headlessui/react";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useDebounce } from "use-debounce";
-import { DictionarySearchResult, LanguageWithFlag } from "@/lib/types";
 import paths from "@/lib/paths";
+import { DictionarySearchResult, LanguageWithFlag } from "@/lib/types";
+import { Combobox, ComboboxInput } from "@headlessui/react";
+import { useRouter } from "next/navigation";
+import { Dispatch, SetStateAction, useEffect } from "react";
 
 interface SearchBoxProps {
+  query: string;
+  debouncedQuery: string;
+  setQuery: Dispatch<SetStateAction<string>>;
   findItems: Function;
   searchResults: DictionarySearchResult[];
   searchLanguagesWithFlags: LanguageWithFlag[];
   setSearchResults: Function;
-  getFlag: Function;
+  getFlagCode: Function;
 }
 export default function SearchBox({
+  query,
+  debouncedQuery,
+  setQuery,
   findItems,
   searchResults,
   setSearchResults,
   searchLanguagesWithFlags,
 }: SearchBoxProps) {
   const router = useRouter();
-  const [query, setQuery] = useState<string>("");
-  const [debouncedQuery] = useDebounce(query, 300);
 
   useEffect(() => {
     const searchLanguages = searchLanguagesWithFlags.map((item) => item.name);

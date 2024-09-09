@@ -22,7 +22,11 @@ import {
   SupportedLanguage,
   Tag,
 } from "./types.js";
-import { normalizeString, slugifyString } from "./helperFunctions.js";
+import {
+  getFlagForLanguage,
+  normalizeString,
+  slugifyString,
+} from "./helperFunctions.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -88,6 +92,7 @@ export async function parseCSV({
     listNumber: await getNextListNumber(),
     private: false,
     language: language,
+    flag: await getFlagForLanguage(language),
     authors: author.split(" "),
     unitOrder: [],
     units: [],
@@ -145,7 +150,7 @@ export async function parseCSV({
 
           // Harvest and upload all possible lemmas from each parsed item
           const lemmas = convertItemToLemmas(formattedData);
-          await UploadLemmas(lemmas);
+          await uploadLemmas(lemmas);
 
           // Harvest all possible items from each parsed item
           const harvestedItems: ItemInPrep[] =
@@ -217,7 +222,7 @@ function convertItemToLemmas(item: FormattedParsedData): LemmaItem[] {
   return onlyLemmasArray;
 }
 
-async function UploadLemmas(lemmaArray: LemmaItem[]): Promise<void> {
+async function uploadLemmas(lemmaArray: LemmaItem[]): Promise<void> {
   const lemmaUpload = lemmaArray.map(async (lemma) => {
     try {
       await Lemmas.findOneAndUpdate(
@@ -429,11 +434,9 @@ async function cleanUpTranslationProperty(
   // Delete non-existent translations
   const supportedLanguages = await getSupportedLanguages();
   if (!supportedLanguages) throw new Error("Failed to get supported languages");
+
   supportedLanguages.forEach((lang) => {
-    if (
-      formattedData.translations[lang]
-      // formattedData.translations[lang]![0].length < 1
-    ) {
+    if (!formattedData.translations[lang]) {
       delete formattedData.translations[lang];
     }
   });

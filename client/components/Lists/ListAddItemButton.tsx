@@ -1,13 +1,26 @@
 "use client";
 
+import { ListAndUnitData, UserLanguagesWithFlags } from "@/lib/types";
+import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
+import AddItemDialog from "../Dictionary/AddItemDialog";
 
-export default function ListAddItemButton() {
+interface ListAddItemButtonProps {
+  userLanguagesWithFlags: UserLanguagesWithFlags;
+  addToThisList: ListAndUnitData;
+}
+
+export default function ListAddItemButton({
+  userLanguagesWithFlags,
+  addToThisList,
+}: ListAddItemButtonProps) {
+  const [showAddNewItemDialog, setShowAddNewItemDialog] = useState(false);
+
   return (
     <button
       className="flex w-full flex-col items-center justify-center rounded-md bg-slate-100 p-1"
       onClick={() => {
-        console.log("BEEP");
+        setShowAddNewItemDialog(true);
       }}
     >
       <div
@@ -15,6 +28,15 @@ export default function ListAddItemButton() {
       >
         <FaPlus className="text-2xl font-semibold text-white" />
       </div>
+      {showAddNewItemDialog && (
+        <AddItemDialog
+          isOpen={showAddNewItemDialog}
+          setIsOpen={setShowAddNewItemDialog}
+          seperatedUserLanguagesWithFlags={userLanguagesWithFlags}
+          mode="addToList"
+          addToThisList={addToThisList}
+        />
+      )}
     </button>
   );
 }

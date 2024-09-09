@@ -1,43 +1,60 @@
 "use client";
 
-import { submitItemEdit } from "@/lib/actions";
+import { submitItemCreateOrEdit } from "@/lib/actions";
 import paths from "@/lib/paths";
 import {
-  DictionarySearchResult,
   Item,
   ItemWithPopulatedTranslations,
   LanguageFeatures,
+  ListAndUnitData,
   SupportedLanguage,
   UserLanguagesWithFlags,
 } from "@/lib/types";
 import { itemSchemaWithPopulatedTranslations } from "@/lib/validations";
 import { Input } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Types } from "mongoose";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { FaRegSave } from "react-icons/fa";
 import { IoArrowBack } from "react-icons/io5";
+import BottomRightButton from "../BottomRightButton";
 import Spinner from "../Spinner";
 import ComboBoxWrapper from "./ComboBoxWrapper";
+import EditOrCreatePageContainer from "./EditOrCreatePageContainer";
+import LanguagePicker from "./EditOrCreatePageLanguagePicker";
 import EnterMultiple from "./EnterMultiple";
-import ItemPageContainer from "./ItemPageContainer";
 import ManageTranslations from "./ManageTranslations";
 import PickMultiple from "./PickMultiple";
 
-interface EditItemProps {
-  item: ItemWithPopulatedTranslations;
-  languageFeatures: LanguageFeatures;
+interface EditOrCreateItemProps {
   userLanguagesWithFlags: UserLanguagesWithFlags;
-  recentSearches: DictionarySearchResult[];
+  item?: ItemWithPopulatedTranslations;
+  languageFeaturesForUserLanguages: LanguageFeatures[];
+  addToThisList?: ListAndUnitData;
 }
 
-export default function EditItem({
-  item,
-  languageFeatures,
+export default function EditOrCreateItem({
   userLanguagesWithFlags,
-  recentSearches,
-}: EditItemProps) {
-  const { partsOfSpeech, hasGender, hasCases } = languageFeatures;
+  addToThisList,
+  item = {
+    name: "",
+    normalizedName: "",
+    _id: new Types.ObjectId(),
+    language:
+      addToThisList?.languageWithFlag.name ||
+      userLanguagesWithFlags.isLearning[0].name,
+    partOfSpeech: "noun",
+    slug: "new-item",
+    translations: {},
+  },
+  languageFeaturesForUserLanguages,
+}: EditOrCreateItemProps) {
+  const initialName = useSearchParams().get("initialName");
+  if (item.name === "" && initialName) item.name = initialName;
   const {
     name: itemName,
     partOfSpeech,
@@ -53,6 +70,20 @@ export default function EditItem({
     tags,
   } = item;
 
+  const mode = item.slug !== "new-item" ? "Edit" : "Create";
+
+  const [itemLanguage, setItemLanguage] = useState(language);
+
+  const {
+    partsOfSpeech,
+    hasGender,
+    hasCases,
+    tags: langTags,
+    ipa,
+  } = languageFeaturesForUserLanguages.find(
+    (lang) => lang.langCode === itemLanguage
+  )!;
+
   const {
     control,
     handleSubmit,
@@ -66,7 +97,7 @@ export default function EditItem({
       gender,
       partOfSpeech,
       slug,
-      language,
+      language: itemLanguage,
       case: Case,
       pluralForm,
       IPA,
@@ -78,7 +109,7 @@ export default function EditItem({
   });
 
   const onSubmit = async (data: ItemWithPopulatedTranslations) => {
-    toast.promise(submitItemEdit(slug, data), {
+    toast.promise(submitItemCreateOrEdit(data, slug, addToThisList), {
       loading: "Updating...",
       success: () => "Item updated! 🎉",
       error: (err) => err.toString(),
@@ -86,29 +117,46 @@ export default function EditItem({
   };
 
   return (
-    <ItemPageContainer>
+    <EditOrCreatePageContainer>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-x-4 gap-y-2"
       >
-        <div className="flex w-full items-center justify-stretch gap-x-2">
-          <div>
-            <Link
-              href={paths.dictionaryItemPath(language, slug)}
-              className="flex h-10 w-10 items-center justify-center rounded-md border-2 border-black"
-            >
-              <IoArrowBack className="h-7 w-7 rounded-md" />
-            </Link>
-          </div>
-          <div className="flex h-full flex-1 items-center justify-center rounded-md bg-red-400 uppercase">
-            Edit mode
+        <div className="flex w-full justify-stretch gap-x-2">
+          {slug !== "new-item" && (
+            <div>
+              <Link
+                href={paths.dictionaryItemPath(language, slug)}
+                className="flex h-12 w-12 items-center justify-center rounded-md border-2 border-black"
+              >
+                <IoArrowBack className="h-8 w-8 rounded-md" />
+              </Link>
+            </div>
+          )}
+          <div className="flex h-12 flex-1 items-center justify-center rounded-md bg-red-400 uppercase">
+            {mode} mode
           </div>
           <button
-            className="flex h-full w-40 items-center justify-center rounded-md bg-green-400 px-3 hover:bg-green-500 disabled:bg-gray-300 disabled:hover:bg-gray-300 sm:px-6"
+            className="hidden w-0 items-center justify-center rounded-md bg-green-400 px-3 hover:bg-green-500 disabled:bg-gray-300 disabled:hover:bg-gray-300 sm:flex sm:h-full sm:w-40 sm:px-6"
             disabled={isSubmitting || !isDirty || !isValid}
           >
-            {isSubmitting ? <Spinner size="mini" /> : <span>Save Changes</span>}
+            {isSubmitting ? (
+              <Spinner size="mini" />
+            ) : (
+              <span className="hidden sm:block">Save Changes</span>
+            )}
           </button>
+          <BottomRightButton
+            styles="sm:hidden"
+            disabled={isSubmitting || !isDirty || !isValid}
+            icon={
+              isSubmitting ? (
+                <Spinner size="mini" />
+              ) : (
+                <FaRegSave className="h-8 w-8 text-white" />
+              )
+            }
+          ></BottomRightButton>
         </div>
         <Controller
           name="name"
@@ -119,13 +167,25 @@ export default function EditItem({
               onBlur={onBlur}
               defaultValue={itemName}
               placeholder="Item name"
-              className="text-xl font-bold focus:px-2"
+              className="text-3xl font-bold focus:px-2"
+              autoFocus
             />
           )}
         />
         {errors.name && (
           <p className="text-sm text-red-500">{`${errors.name.message}`}</p>
         )}
+
+        <LanguagePicker
+          userLanguagesWithFlags={userLanguagesWithFlags}
+          setValue={setValue}
+          itemLanguage={itemLanguage}
+          isNewItem={item.slug === "new-item"}
+          setItemLanguage={setItemLanguage}
+          errors={errors && errors?.language}
+          staticFlag={addToThisList?.languageWithFlag.flag}
+        />
+
         <div className="ml-4 flex flex-col justify-center gap-3">
           <PickMultiple
             setValue={setValue}
@@ -133,8 +193,8 @@ export default function EditItem({
             initialValue={watch().tags}
             label={{ singular: "Tag", plural: "Tags" }}
             errors={errors && errors?.tags}
-            options={languageFeatures.tags.forAll
-              .concat(languageFeatures.tags[watch().partOfSpeech])
+            options={langTags.forAll
+              .concat(langTags[watch().partOfSpeech])
               .filter((item) => item !== undefined)}
           />
           <div className="text-sm font-semibold">Part of Speech</div>
@@ -203,7 +263,7 @@ export default function EditItem({
             label={{ singular: "IPA", plural: "IPA" }}
             errors={errors && errors?.IPA}
             mode="IPA"
-            IPA={languageFeatures.ipa}
+            IPA={ipa}
           />
           <EnterMultiple
             setValue={setValue}
@@ -215,16 +275,18 @@ export default function EditItem({
           />
           <ManageTranslations
             item={item}
+            itemLanguage={watch().language}
             setValue={setValue}
-            visibleTranslations={getTranslationsForUserLanguages()}
-            allTranslations={watch().translations}
             errors={errors && errors?.translations}
+            allTranslations={watch().translations}
+            visibleTranslations={getTranslationsForUserLanguages()}
             userLanguagesWithFlags={userLanguagesWithFlags}
-            recentSearches={recentSearches}
           />
         </div>
+        {/* Below div is there just so that the bottom right button does not obstruct elements at the bottom on mobile: */}
+        <div className="h-20 sm:hidden"></div>
       </form>
-    </ItemPageContainer>
+    </EditOrCreatePageContainer>
   );
 
   function getTranslationsForUserLanguages() {

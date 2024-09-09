@@ -11,6 +11,8 @@ import {
 import { getAllUserLanguages } from "@/lib/helperFunctions";
 import paths from "@/lib/paths";
 import { SlugLanguageObject, SupportedLanguage } from "@/lib/types";
+import { Button } from "@headlessui/react";
+import Link from "next/link";
 
 export const metadata = { title: "Dictionary" };
 
@@ -52,9 +54,19 @@ export default async function ItemPage({
     slug,
     userLanguages
   );
-  if (!item) return <div>No item found</div>;
-
-  console.log(comingFrom);
+  if (!item)
+    return (
+      <div className="grid h-96 place-items-center">
+        <div>
+          <div className="text-center">No item found</div>
+          <Link href={paths.dictionaryPath()}>
+            <Button className={"rounded-md bg-green-400 px-4 py-2"}>
+              Back to dictionary
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
 
   return (
     <ItemPageContainer>
@@ -73,7 +85,10 @@ export default async function ItemPage({
         translations={item.translations}
       />
       <ItemPageBottomRightButton
-        path={paths.editDictionaryItemPath(item.language, item.slug)}
+        path={
+          paths.editDictionaryItemPath(item.language, item.slug) +
+          `?comingFrom=${comingFrom}`
+        }
       />
     </ItemPageContainer>
   );

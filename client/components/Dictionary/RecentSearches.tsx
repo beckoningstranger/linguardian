@@ -3,20 +3,20 @@ import SearchResults from "./SearchResults";
 
 interface RecentSearchesProps {
   recentSearches: DictionarySearchResult[];
-  getFlag: Function;
+  getFlagCode: Function;
 }
 
 export default function RecentSearches({
   recentSearches,
-  getFlag,
+  getFlagCode,
 }: RecentSearchesProps) {
   return (
     <div className="mx-1">
       <div className="font-semibold">Your recent items:</div>
       <SearchResults
         results={recentSearches}
-        getFlag={getFlag}
-        mode="returnLinkToItem"
+        getFlagCode={getFlagCode}
+        mode="searchResultIsLinkToItemPage"
       />
     </div>
   );

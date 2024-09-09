@@ -91,6 +91,7 @@ export interface List {
   description?: string;
   image?: string;
   language: SupportedLanguage;
+  flag: string;
   difficulty?: Difficulty;
   authors: string[];
   private: Boolean;
@@ -261,4 +262,12 @@ export type UserLanguages = {
 export type UserLanguagesWithFlags = {
   native: LanguageWithFlag;
   isLearning: LanguageWithFlag[];
+};
+
+export type ListAndUnitData = {
+  languageWithFlag: LanguageWithFlag;
+  listNumber: number;
+  listName: string;
+  unitNumber: number;
+  unitName: string;
 };

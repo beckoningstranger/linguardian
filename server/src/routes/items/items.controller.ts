@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { SupportedLanguage } from "../../lib/types.js";
 import { itemSchemaWithPopulatedTranslations } from "../../lib/validations.js";
 import {
-  editBySlug,
+  editOrCreateBySlug,
   findItemsByName,
   getAllSlugsForLanguage,
   getFullyPopulatedItemBySlug,
@@ -72,15 +72,15 @@ export async function httpFindItemsByName(req: Request, res: Response) {
   });
 }
 
-export async function httpEditItem(req: Request, res: Response) {
+export async function httpEditOrCreateItem(req: Request, res: Response) {
   const item = req.body as unknown;
-  const passedSlug = req.params.slug as string;
-
+  const slug = req.params.slug as string;
   const {
     data: validatedItem,
     success,
     error,
   } = itemSchemaWithPopulatedTranslations.safeParse(item);
+
   if (!success) {
     let errorMessage = "";
     error.issues.forEach(
@@ -88,7 +88,7 @@ export async function httpEditItem(req: Request, res: Response) {
     );
     return res.status(400).json({ error: errorMessage });
   }
-  const response = await editBySlug(passedSlug, validatedItem);
+  const response = await editOrCreateBySlug(validatedItem, slug);
   if (response) return res.status(201).json(response);
   return res.status(500).json({ error: "Problem in database" });
 }

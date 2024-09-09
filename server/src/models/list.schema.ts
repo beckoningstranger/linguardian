@@ -22,6 +22,7 @@ const listSchema = new Schema<List>({
     type: String,
     required: true,
   },
+  flag: { type: String, required: true },
   difficulty: {
     type: String,
   },

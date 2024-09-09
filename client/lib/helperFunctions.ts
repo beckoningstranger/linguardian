@@ -1,5 +1,9 @@
 import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
-import { SessionUser, SupportedLanguage } from "@/lib/types";
+import {
+  SessionUser,
+  SupportedLanguage,
+  UserLanguagesWithFlags,
+} from "@/lib/types";
 import { getServerSession } from "next-auth";
 import { getSupportedLanguages } from "./fetchData";
 
@@ -24,7 +28,7 @@ export async function getSeperatedUserLanguagesWithFlags() {
   return {
     native: sessionUser.native,
     isLearning: sessionUser.isLearning,
-  };
+  } as UserLanguagesWithFlags;
 }
 
 export async function getAllUserLanguages() {
@@ -40,9 +44,9 @@ export async function getAllUserLanguages() {
 export async function getSeperatedUserLanguages() {
   const sessionUser = await getUserOnServer();
   return {
-    native: sessionUser.native.name,
-    isLearning: sessionUser.isLearning.map((lang) => lang.name),
-  };
+    native: sessionUser.native,
+    isLearning: sessionUser.isLearning.map((lang) => lang),
+  } as UserLanguagesWithFlags;
 }
 
 export function slugify(title: string): string {

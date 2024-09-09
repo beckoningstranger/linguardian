@@ -2,6 +2,7 @@ import express from "express";
 import multer from "multer";
 import path from "path";
 import {
+  httpAddItemToList,
   httpGetAllListsForLanguage,
   httpGetAmountOfUnits,
   httpGetFullyPopulatedListByListNumber,
@@ -54,3 +55,8 @@ listsRouter.get(
 listsRouter.get("/nextListNumber", httpGetNextListNumber);
 
 listsRouter.get("/amountOfUnits/:listNumber", httpGetAmountOfUnits);
+
+listsRouter.post(
+  "/addItemToList/:listNumber/:unitName/:itemId",
+  httpAddItemToList
+);

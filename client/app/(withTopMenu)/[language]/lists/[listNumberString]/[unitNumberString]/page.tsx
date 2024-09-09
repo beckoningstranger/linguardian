@@ -18,12 +18,14 @@ import {
   getLearnedLanguageData,
   getListDataForMetadata,
 } from "@/lib/fetchData";
-import getUserOnServer from "@/lib/helperFunctions";
+import getUserOnServer, {
+  getSeperatedUserLanguages,
+} from "@/lib/helperFunctions";
 import paths from "@/lib/paths";
-import { LearningMode, SupportedLanguage } from "@/lib/types";
+import { LearningMode, ListAndUnitData, SupportedLanguage } from "@/lib/types";
 import { notFound } from "next/navigation";
 
-export async function generateMetadata({ params }: UnitDetailsProps) {
+export async function generateMetadata({ params }: UnitDetailPageProps) {
   const listNumber = parseInt(params.listNumberString);
   const unitNumber = parseInt(params.unitNumberString);
 
@@ -65,7 +67,7 @@ export async function generateMetadata({ params }: UnitDetailsProps) {
 //   return possibilities;
 // }
 
-interface UnitDetailsProps {
+interface UnitDetailPageProps {
   params: {
     language: SupportedLanguage;
     listNumberString: string;
@@ -75,7 +77,7 @@ interface UnitDetailsProps {
 
 export default async function UnitDetailPage({
   params: { listNumberString, unitNumberString, language },
-}: UnitDetailsProps) {
+}: UnitDetailPageProps) {
   const listNumber = parseInt(listNumberString);
   const unitNumber = parseInt(unitNumberString);
   const {
@@ -83,11 +85,15 @@ export default async function UnitDetailPage({
     native: { name: userNative },
   } = await getUserOnServer();
 
-  const [listData, allListsUserData] = await Promise.all([
-    getFullyPopulatedListByListNumber(userNative, listNumber),
-    getLearnedLanguageData(userId, language),
-  ]);
-  if (!listData || !allListsUserData) throw new Error("Could not get data");
+  const [listData, allListsUserData, seperateUserLanguages] = await Promise.all(
+    [
+      getFullyPopulatedListByListNumber(userNative, listNumber),
+      getLearnedLanguageData(userId, language),
+      getSeperatedUserLanguages(),
+    ]
+  );
+  if (!listData || !allListsUserData || !seperateUserLanguages)
+    throw new Error("Could not get data");
 
   const unitName = listData.unitOrder[unitNumber - 1];
   if (!unitName) notFound();
@@ -105,6 +111,14 @@ export default async function UnitDetailPage({
 
   const unlockedModes: LearningMode[] =
     listData.unlockedReviewModes[userNative];
+
+  const listAndUnitData: ListAndUnitData = {
+    languageWithFlag: { name: listData.language, flag: listData.flag },
+    listNumber: listNumber,
+    listName: listData.name,
+    unitName: unitName,
+    unitNumber: unitNumber,
+  };
 
   return (
     <ListContainer>
@@ -148,6 +162,8 @@ export default async function UnitDetailPage({
         userNative={userNative}
         userIsAuthor={listData.authors.includes(userId)}
         pathToUnit={paths.unitDetailsPath(listNumber, unitNumber, language)}
+        userLanguagesWithFlags={seperateUserLanguages}
+        listAndUnitData={listAndUnitData}
       />
       {userHasAddedThisList && (
         <AllLearningButtonsMobileContainer>

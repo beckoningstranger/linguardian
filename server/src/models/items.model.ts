@@ -77,11 +77,13 @@ export async function findItemBySlug(slug: string) {
   );
 }
 
-export async function editBySlug(
-  slug: string,
-  item: ItemWithPopulatedTranslations
+export async function editOrCreateBySlug(
+  item: ItemWithPopulatedTranslations,
+  slug: string
 ) {
-  const update: any = {
+  const isNewItem = item.slug === "new-item" ? true : false;
+
+  const update: ItemWithPopulatedTranslations = {
     ...item,
     tags: await filterOutInvalidTags(
       item.tags,
@@ -100,10 +102,19 @@ export async function editBySlug(
         : undefined,
   };
 
-  // When doing the above update, MongoDB will save undefined values as null, which collides with zod validation
-  // and causes problems. Below code fixes this by instead unsetting the keys who have undefined values.
-  const conflictFreeUpdate: any = { $set: {}, $unset: {} };
+  const conflictFreeUpdate: ItemWithPopulatedTranslations =
+    resolveConflictsInUpdate(update);
 
+  return await Items.findOneAndUpdate({ slug: slug }, conflictFreeUpdate, {
+    new: true,
+    upsert: isNewItem,
+  });
+}
+
+function resolveConflictsInUpdate(update: ItemWithPopulatedTranslations) {
+  // When doing the given update, MongoDB will save undefined values as null, which collides with zod validation
+  // and causes problems. Below code fixes this by instead unsetting the keys that have undefined values.
+  const conflictFreeUpdate: any = { $set: {}, $unset: {} };
   const propertiesToSet = Object.entries(update).filter(
     (entry) => entry[1] !== undefined
   );
@@ -113,16 +124,17 @@ export async function editBySlug(
 
   const propertiesToUnset: any = {};
   const propertiesWithValueUndefined = Object.keys(update).filter(
-    (key) => update[key] === undefined
+    (key) => update[key as keyof ItemWithPopulatedTranslations] === undefined
   );
   propertiesWithValueUndefined.forEach(
     (property) => (propertiesToUnset[property] = 1)
   );
   conflictFreeUpdate.$unset = propertiesToUnset;
+  return conflictFreeUpdate;
+}
 
-  return await Items.findOneAndUpdate({ slug: slug }, conflictFreeUpdate, {
-    new: true,
-  });
+async function deleteItem(slug: string) {
+  return await Items.deleteOne({ slug: slug });
 }
 
 async function filterOutInvalidTags(
@@ -137,6 +149,6 @@ async function filterOutInvalidTags(
     .filter((item) => item !== undefined);
 
   if (validTags)
-    return tagArray.filter((tag) => validTags.includes(tag as Tag));
-  return [];
+    return tagArray.filter((tag) => validTags.includes(tag as Tag)) as Tag[];
+  return [] as Tag[];
 }

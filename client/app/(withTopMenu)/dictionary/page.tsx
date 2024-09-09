@@ -1,7 +1,10 @@
-import DictionaryBottomRightButton from "@/components/Dictionary/DictionaryBottomRightButton";
 import Search from "@/components/Dictionary/Search";
-import { getRecentDictionarySearches } from "@/lib/actions";
+import {
+  getLanguageFeaturesForLanguage,
+  getRecentDictionarySearches,
+} from "@/lib/fetchData";
 import { getAllUserLanguagesWithFlags } from "@/lib/helperFunctions";
+import { LanguageFeatures } from "@/lib/types";
 
 export const metadata = { title: "Dictionary" };
 
@@ -11,14 +14,21 @@ export default async function DictionaryPage() {
     getRecentDictionarySearches(),
   ]);
 
+  const languageFeaturesForUserLanguagesPromises = userLanguagesWithFlags
+    .map((lwf) => lwf.name)
+    .map((lang) => getLanguageFeaturesForLanguage(lang));
+
+  const languageFeaturesForUserLanguages = (
+    await Promise.all(languageFeaturesForUserLanguagesPromises)
+  ).filter((features): features is LanguageFeatures => features !== undefined);
+
   return (
     <div className="md:mx-12">
       <Search
         searchLanguagesWithFlags={userLanguagesWithFlags}
-        mode="returnLinkToItem"
+        mode="searchResultIsLinkToItemPage"
         recentSearches={recentSearches}
       />
-      <DictionaryBottomRightButton />
     </div>
   );
 }

@@ -1,7 +1,6 @@
 import Link from "next/link";
-import BottomRightButton from "../BottomRightButton";
 import { MdEdit } from "react-icons/md";
-import paths from "@/lib/paths";
+import BottomRightButton from "../BottomRightButton";
 
 interface ItemPageBottomRightButtonProps {
   path: string;

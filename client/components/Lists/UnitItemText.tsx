@@ -18,7 +18,7 @@ export default function UnitItemText({
             ? "text-sm"
             : "text-md"
           : "text-lg"
-      } font-semibold text-pretty pointer-events-none`}
+      } font-semibold text-pretty pointer-events-none text-center`}
     >
       {text}
     </div>

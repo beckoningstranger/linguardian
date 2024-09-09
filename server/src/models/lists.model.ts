@@ -145,3 +145,22 @@ export async function getAmountOfUnits(listNumber: number) {
     await Lists.findOne({ listNumber: listNumber }, { _id: 0, unitOrder: 1 })
   )?.unitOrder.length;
 }
+
+export async function addItemToList(
+  listNumber: number,
+  unitName: string,
+  itemId: string
+) {
+  return await Lists.findOneAndUpdate(
+    { listNumber: listNumber },
+    {
+      $addToSet: {
+        units: { unitName: unitName, item: itemId },
+      },
+    },
+    {
+      new: true,
+      upsert: true,
+    }
+  );
+}

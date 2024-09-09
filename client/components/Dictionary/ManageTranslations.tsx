@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  DictionarySearchResult,
   Item,
   ItemWithPopulatedTranslations,
   SupportedLanguage,
@@ -13,27 +12,27 @@ import { Types } from "mongoose";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FieldError, Merge } from "react-hook-form";
 import Flag from "react-world-flags";
-import AddTranslationDialog from "./AddTranslationDialog";
+import AddItemDialog from "./AddItemDialog";
 import FormErrors from "./FormErrors";
 
 interface ManageTranslationsProps {
   item: ItemWithPopulatedTranslations;
+  itemLanguage: SupportedLanguage;
   setValue: Function;
   errors: Merge<FieldError, (FieldError | undefined)[]> | undefined;
   allTranslations: Partial<Record<SupportedLanguage, Item[]>> | undefined;
   visibleTranslations: Partial<Record<SupportedLanguage, Item[]>> | undefined;
   userLanguagesWithFlags: UserLanguagesWithFlags;
-  recentSearches: DictionarySearchResult[];
 }
 
 export default function ManageTranslations({
   item,
+  itemLanguage,
   setValue,
   errors,
   allTranslations,
   visibleTranslations,
   userLanguagesWithFlags,
-  recentSearches,
 }: ManageTranslationsProps) {
   const label = { singular: "Translation", plural: "Translations" };
   const [translations, setTranslations] = useState(visibleTranslations || {});
@@ -108,13 +107,15 @@ export default function ManageTranslations({
         <div className="flex flex-wrap gap-2">{renderedTranslations}</div>
       </div>
       <FormErrors errors={errors} />
-      <AddTranslationDialog
+      <AddItemDialog
         item={item}
+        itemLanguage={itemLanguage}
         isOpen={showAddTranslationDialog}
         setIsOpen={setShowAddTranslationDialog}
-        userLanguagesWithFlags={userLanguagesWithFlags}
+        seperatedUserLanguagesWithFlags={userLanguagesWithFlags}
         translations={translations}
         setTranslations={setTranslations}
+        mode="addAsTranslation"
       />
     </>
   );

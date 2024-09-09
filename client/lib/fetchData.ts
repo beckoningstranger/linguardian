@@ -12,6 +12,7 @@ import {
 } from "@/lib/types";
 import { Types } from "mongoose";
 import { notFound } from "next/navigation";
+import getUserOnServer from "./helperFunctions";
 import { itemSchemaWithPopulatedTranslations } from "./validations";
 
 const server = process.env.SERVER_URL;
@@ -326,4 +327,16 @@ export async function getAllLearnedListsForUser(userId: string) {
     );
     return [];
   }
+}
+
+export async function getRecentDictionarySearches() {
+  const [sessionUser] = await Promise.all([getUserOnServer()]);
+  const response = await fetch(
+    `${server}/users/getRecentDictionarySearches/${sessionUser.id}`
+  );
+  if (!response.ok) {
+    const responseData = await response.json();
+    throw new Error(responseData?.error);
+  }
+  return response.json();
 }

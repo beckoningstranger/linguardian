@@ -3,7 +3,10 @@ import fs from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
+import { parseCSV } from "../../lib/parsecsv.js";
+import { FullyPopulatedList, SupportedLanguage } from "../../lib/types.js";
 import {
+  addItemToList,
   getAllListsForLanguage,
   getAmountOfUnits,
   getChapterNameByNumber,
@@ -15,8 +18,6 @@ import {
   updateUnlockedReviewModes,
 } from "../../models/lists.model.js";
 import { getLanguageFeaturesForLanguage } from "../../models/settings.model.js";
-import { parseCSV } from "../../lib/parsecsv.js";
-import { FullyPopulatedList, SupportedLanguage } from "../../lib/types.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -137,4 +138,14 @@ export async function httpGetAmountOfUnits(req: Request, res: Response) {
   const response = await getAmountOfUnits(listNumber);
   if (!response) res.status(404).json();
   return res.status(200).json(response);
+}
+
+export async function httpAddItemToList(req: Request, res: Response) {
+  const listNumber = parseInt(req.params.listNumber);
+  const unitName = req.params.unitName;
+  const itemId = req.params.itemId;
+
+  const response = await addItemToList(listNumber, unitName, itemId);
+  if (!response) res.status(404).json();
+  return res.status(201).json(response);
 }
