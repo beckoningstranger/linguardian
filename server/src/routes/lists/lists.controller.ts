@@ -145,7 +145,15 @@ export async function httpAddItemToList(req: Request, res: Response) {
   const unitName = req.params.unitName;
   const itemId = req.params.itemId;
 
-  const response = await addItemToList(listNumber, unitName, itemId);
-  if (!response) res.status(404).json();
-  return res.status(201).json(response);
+  try {
+    const response = await addItemToList(listNumber, unitName, itemId);
+    if (!response) {
+      return res.status(409).json({
+        message: "Duplicate item",
+      });
+    }
+    return res.status(201).json(response);
+  } catch (error) {
+    return res.status(500).json({ error: "Error adding item to list" });
+  }
 }

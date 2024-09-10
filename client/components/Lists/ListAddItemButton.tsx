@@ -34,7 +34,7 @@ export default function ListAddItemButton({
           setIsOpen={setShowAddNewItemDialog}
           seperatedUserLanguagesWithFlags={userLanguagesWithFlags}
           mode="addToList"
-          addToThisList={addToThisList}
+          listAndUnitData={addToThisList}
         />
       )}
     </button>

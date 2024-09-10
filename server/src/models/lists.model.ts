@@ -151,16 +151,27 @@ export async function addItemToList(
   unitName: string,
   itemId: string
 ) {
-  return await Lists.findOneAndUpdate(
-    { listNumber: listNumber },
-    {
-      $addToSet: {
-        units: { unitName: unitName, item: itemId },
+  try {
+    return await Lists.findOneAndUpdate(
+      {
+        listNumber: listNumber,
+        "units.item": { $ne: itemId },
       },
-    },
-    {
-      new: true,
-      upsert: true,
+      {
+        $addToSet: {
+          units: { unitName: unitName, item: itemId },
+        },
+      },
+      {
+        new: true,
+        upsert: true,
+      }
+    );
+  } catch (error: unknown) {
+    const mongoError = error as { code?: number };
+    if (mongoError.code === 11000) {
+      return null; // Return null to signal duplicate
     }
-  );
+    throw error;
+  }
 }

@@ -31,7 +31,6 @@ export default function Search({
   recentSearches = [],
   listData,
 }: SearchProps) {
-  console.log("SEARCH MODE", mode);
   const [query, setQuery] = useState<string>("");
   const [debouncedQuery] = useDebounce(query, 500);
   const [searchResults, setSearchResults] = useState<DictionarySearchResult[]>(

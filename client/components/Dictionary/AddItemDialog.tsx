@@ -13,6 +13,9 @@ import { Button, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { Dispatch, SetStateAction } from "react";
 import Search from "./Search";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import paths from "@/lib/paths";
 
 interface AddItemDialogProps {
   mode: "addAsTranslation" | "addToList";
@@ -25,7 +28,7 @@ interface AddItemDialogProps {
   setTranslations?: Dispatch<
     SetStateAction<Partial<Record<SupportedLanguage, Item[]>>>
   >;
-  addToThisList?: ListAndUnitData;
+  listAndUnitData?: ListAndUnitData;
 }
 
 export default function AddItemDialog({
@@ -37,16 +40,16 @@ export default function AddItemDialog({
   translations,
   setTranslations,
   mode,
-  addToThisList,
+  listAndUnitData,
 }: AddItemDialogProps) {
-  console.log("ADdItemDialog MODE", mode);
+  const router = useRouter();
   const allUserLanguagesWithFlags = Object.values(
     seperatedUserLanguagesWithFlags
   ).flat();
 
   const searchLanguagesWithFlags =
-    addToThisList && mode === "addToList"
-      ? [addToThisList.languageWithFlag]
+    listAndUnitData && mode === "addToList"
+      ? [listAndUnitData.languageWithFlag]
       : [...allUserLanguagesWithFlags];
 
   if (item && mode === "addAsTranslation")
@@ -56,10 +59,6 @@ export default function AddItemDialog({
       ),
       1
     );
-
-  let addItemToThisList: any;
-  if (addToThisList)
-    addItemToThisList = addItemToList.bind(null, addToThisList);
 
   return (
     <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
@@ -71,7 +70,7 @@ export default function AddItemDialog({
           <DialogTitle className="text-2xl font-bold">
             {mode === "addAsTranslation"
               ? "Add translations"
-              : `Add a new item to "${addToThisList?.listName}"`}
+              : `Add a new item to "${listAndUnitData?.listName}"`}
           </DialogTitle>
           <div className="grid gap-2 text-lg">
             <div>
@@ -90,7 +89,7 @@ export default function AddItemDialog({
                   ? addItemAsTranslation
                   : addItemToThisList
               }
-              listData={addToThisList}
+              listData={listAndUnitData}
             />
           </div>
         </DialogPanel>
@@ -98,12 +97,49 @@ export default function AddItemDialog({
     </Dialog>
   );
 
+  async function addItemToThisList(item: ItemWithPopulatedTranslations) {
+    if (!listAndUnitData)
+      throw new Error("Cannot add item, list data is missing...");
+    toast.promise(
+      addItemToList(listAndUnitData, item), // Your fetch function
+      {
+        loading: "Adding item to this list...",
+        success: (result) => {
+          setIsOpen(false);
+          if (result?.message === "Duplicate item") {
+            return "Item is already in the list! ⚠️";
+          }
+          return `Item added! 🎉`;
+        },
+        error: (err) => {
+          return `Failed to add item: ${err.message}`;
+        },
+      }
+    );
+  }
+
   function addItemAsTranslation(item: DictionarySearchResult) {
     if (translations && setTranslations) {
       if (!translations[item.language]) translations[item.language] = [];
-      translations[item.language]?.push(item);
-      setTranslations(JSON.parse(JSON.stringify(translations)));
+      const isAddingDuplicate = translations[item.language]?.some(
+        (it) => it.slug === item.slug
+      );
+      if (!isAddingDuplicate) {
+        translations[item.language]?.push(item);
+        setTranslations(JSON.parse(JSON.stringify(translations)));
+        toast.success("Translation added");
+      } else {
+        toast.error("Item already is a translation");
+      }
       setIsOpen(false);
+      if (listAndUnitData)
+        router.push(
+          paths.unitDetailsPath(
+            listAndUnitData.listNumber,
+            listAndUnitData.unitNumber,
+            listAndUnitData.languageWithFlag.name
+          )
+        );
     }
   }
 }

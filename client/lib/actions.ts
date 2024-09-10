@@ -218,7 +218,7 @@ export async function submitItemCreateOrEdit(
       addToThisList.unitNumber,
       addToThisList.languageWithFlag.name
     );
-    addItemToList(addToThisList, updatedItem, true);
+    await addItemToList(addToThisList, updatedItem);
   }
 
   revalidatePath(paths.editDictionaryItemPath(item.language, item.slug));
@@ -253,29 +253,27 @@ export async function updateRecentDictionarySearches(slug: string) {
 
 export async function addItemToList(
   listData: ListAndUnitData,
-  clickeditem: ItemWithPopulatedTranslations,
-  noRedirect?: boolean
+  clickeditem: ItemWithPopulatedTranslations
 ) {
-  await fetch(
+  const response = await fetch(
     `${server}/lists/addItemToList/${listData.listNumber}/${listData.unitName}/${clickeditem._id}`,
     {
       method: "POST",
     }
   );
-  revalidatePath(
-    paths.unitDetailsPath(
-      listData.listNumber,
-      listData.unitNumber,
-      listData.languageWithFlag.name
-    )
-  );
-  if (!noRedirect) {
-    redirect(
+  if (response.ok) {
+    revalidatePath(
       paths.unitDetailsPath(
         listData.listNumber,
         listData.unitNumber,
         listData.languageWithFlag.name
       )
     );
+    return await response.json();
   }
+
+  if (response.status === 409) {
+    return await response.json();
+  }
+  throw new Error("An error occurred while adding the item to the list.");
 }
