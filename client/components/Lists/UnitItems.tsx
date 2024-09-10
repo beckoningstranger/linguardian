@@ -2,7 +2,6 @@
 
 import {
   ItemWithPopulatedTranslations,
-  LanguageFeatures,
   LearnedItem,
   ListAndUnitData,
   SupportedLanguage,
@@ -66,6 +65,8 @@ export default function UnitItems({
         showTranslations={showTranslations}
         key={index}
         pathToUnit={pathToUnit}
+        listAndUnitData={listAndUnitData}
+        userIsAuthor={userIsAuthor}
       />
     );
     item.learned

@@ -9,9 +9,10 @@ import {
   ListAndUnitData,
   SupportedLanguage,
 } from "@/lib/types";
+import { Types } from "mongoose";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getSupportedLanguages } from "./fetchData";
+import { getList, getSupportedLanguages } from "./fetchData";
 import getUserOnServer from "./helperFunctions";
 
 const server = process.env.SERVER_URL;
@@ -276,4 +277,31 @@ export async function addItemToList(
     return await response.json();
   }
   throw new Error("An error occurred while adding the item to the list.");
+}
+
+export async function removeItemFromList(
+  listData: ListAndUnitData,
+  itemId: Types.ObjectId
+) {
+  const list = await getList(listData.listNumber);
+  const [sessionUser] = await Promise.all([getUserOnServer()]);
+  if (!list?.authors.includes(sessionUser.id))
+    throw new Error("Only list authors can delete items from their lists");
+  const response = await fetch(
+    `${server}/lists/removeItemFromList/${listData.listNumber}/${itemId}`,
+    {
+      method: "POST",
+    }
+  );
+  if (response.ok) {
+    revalidatePath(
+      paths.unitDetailsPath(
+        listData.listNumber,
+        listData.unitNumber,
+        listData.languageWithFlag.name
+      )
+    );
+    return await response.json();
+  }
+  throw new Error("An error occurred while removing the item from the list.");
 }

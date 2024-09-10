@@ -12,6 +12,7 @@ import {
   httpGetNextListNumber,
   httpGetPopulatedListByListNumber,
   httpPostCSV,
+  httpRemoveItemFromList,
 } from "./lists.controller.js";
 
 const storage = multer.diskStorage({
@@ -59,4 +60,9 @@ listsRouter.get("/amountOfUnits/:listNumber", httpGetAmountOfUnits);
 listsRouter.post(
   "/addItemToList/:listNumber/:unitName/:itemId",
   httpAddItemToList
+);
+
+listsRouter.post(
+  "/removeItemFromList/:listNumber/:itemId",
+  httpRemoveItemFromList
 );

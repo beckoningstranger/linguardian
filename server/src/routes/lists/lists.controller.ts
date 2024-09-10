@@ -15,6 +15,7 @@ import {
   getListNameAndUnitOrder,
   getNextListNumber,
   getPopulatedListByListNumber,
+  removeItemFromList,
   updateUnlockedReviewModes,
 } from "../../models/lists.model.js";
 import { getLanguageFeaturesForLanguage } from "../../models/settings.model.js";
@@ -156,4 +157,12 @@ export async function httpAddItemToList(req: Request, res: Response) {
   } catch (error) {
     return res.status(500).json({ error: "Error adding item to list" });
   }
+}
+
+export async function httpRemoveItemFromList(req: Request, res: Response) {
+  const listNumber = parseInt(req.params.listNumber);
+  const itemId = req.params.itemId;
+  const response = await removeItemFromList(listNumber, itemId);
+  if (!response) res.status(404).json();
+  return res.status(200).json(response);
 }

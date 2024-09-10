@@ -175,3 +175,11 @@ export async function addItemToList(
     throw error;
   }
 }
+
+export async function removeItemFromList(listNumber: number, itemId: string) {
+  return await Lists.findOneAndUpdate(
+    { listNumber: listNumber },
+    { $pull: { units: { item: itemId } } },
+    { new: true }
+  );
+}
