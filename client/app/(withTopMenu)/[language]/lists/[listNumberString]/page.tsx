@@ -2,6 +2,7 @@ import {
   fetchAuthors,
   getListDataForMetadata,
   getPopulatedList,
+  getUserById,
 } from "@/lib/fetchData";
 
 import ListContainer from "@/components/Lists/ListContainer";
@@ -12,6 +13,7 @@ import Spinner from "@/components/Spinner";
 import { SupportedLanguage } from "@/lib/types";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import getUserOnServer from "@/lib/helperFunctions";
 
 export async function generateMetadata({ params }: ListDetailProps) {
   const listNumber = parseInt(params.listNumberString);
@@ -38,13 +40,22 @@ export default async function ListDetailPage({
 }: ListDetailProps) {
   const listNumber = parseInt(listNumberString);
 
-  const [listData] = await Promise.all([getPopulatedList(listNumber)]);
+  const [listData, sessionUser] = await Promise.all([
+    getPopulatedList(listNumber),
+    getUserOnServer(),
+  ]);
+
+  const fullUser = await getUserById(sessionUser.id);
 
   if (listData?.name) {
     const { name, description, authors, unitOrder, units, listNumber } =
       listData;
 
     const [authorData] = await Promise.all([fetchAuthors(authors)]);
+
+    const learnedItemsForListLanguage = fullUser?.languages.find(
+      (lang) => lang.code === listData.language
+    )?.learnedItems;
 
     return (
       <ListContainer>
@@ -69,6 +80,8 @@ export default async function ListDetailPage({
           units={units}
           listNumber={listNumber}
           language={language}
+          userIsAuthor={listData.authors.includes(sessionUser.id)}
+          learnedItemsForListLanguage={learnedItemsForListLanguage}
         />
       </ListContainer>
     );
