@@ -9,6 +9,7 @@ import { SessionUser, SupportedLanguage, User } from "@/lib/types";
 import useMobileMenuContext from "@/hooks/useMobileMenuContext";
 import { moreLanguagesToLearn } from "./LanguageSelector";
 import { useSession } from "next-auth/react";
+import { calculateNewPath } from "./LanguageSelectorLink";
 
 interface MobileLanguageSelectorProps {
   setCurrentlyActiveLanguage: Function;
@@ -34,7 +35,7 @@ export default function MobileLanguageSelector({
           return (
             <Link
               key={lang.flag}
-              href={`/${lang.name}/${currentPath.split("/")[2]}`}
+              href={calculateNewPath(lang.name, currentPath)}
               onClick={() => {
                 toggleMobileMenu();
                 setCurrentlyActiveLanguage(lang.name);

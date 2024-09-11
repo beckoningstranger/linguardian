@@ -21,7 +21,7 @@ export default function LanguageSelectorLink({
 }: LanguageSelectorLinkProps) {
   return (
     <Link
-      href={`/${language}/${currentPath.split("/")[2]}`}
+      href={calculateNewPath(language, currentPath)}
       onClick={() => {
         setShowAllLanguageOptions(
           (showAllLanguageOptions: boolean) => !showAllLanguageOptions
@@ -39,4 +39,8 @@ export default function LanguageSelectorLink({
       />
     </Link>
   );
+}
+
+export function calculateNewPath(language: SupportedLanguage, oldPath: string) {
+  return "/" + language + "/" + oldPath.split("/").slice(2).join("/");
 }

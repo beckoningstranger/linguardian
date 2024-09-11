@@ -28,7 +28,7 @@ export default function LanguageSelectorAndUserMenu({
   const showLanguageSelectorOnlyOn: string[] = [];
 
   allSupportedLanguages.forEach((lang) => {
-    ["dashboard", "dictionary", "lists"].forEach((entry) =>
+    ["dashboard", "dictionary", "lists", "lists/new"].forEach((entry) =>
       showLanguageSelectorOnlyOn.push("/" + lang + "/" + entry)
     );
   });
