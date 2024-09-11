@@ -4,24 +4,26 @@ import { usePathname } from "next/navigation";
 import { MouseEventHandler } from "react";
 import Flag from "react-world-flags";
 
-import MobileMenu from "../MobileMenu/MobileMenu";
-import LanguageSelector from "./LanguageSelector/LanguageSelector";
-import UserMenu from "./UserMenu";
-import MobileLanguageSelector from "./LanguageSelector/MobileLanguageSelector";
 import useMobileMenuContext from "@/hooks/useMobileMenuContext";
-import { SupportedLanguage } from "@/lib/types";
+import { SessionUser, SupportedLanguage } from "@/lib/types";
+import MobileMenu from "../MobileMenu/MobileMenu";
 import { MobileMenuContextProvider } from "../MobileMenu/MobileMenuContext";
+import LanguageSelector from "./LanguageSelector/LanguageSelector";
+import MobileLanguageSelector from "./LanguageSelector/MobileLanguageSelector";
+import UserMenu from "./UserMenu";
 
 interface LanguageSelectorAndUserMenuProps {
   activeLanguageData: { name: SupportedLanguage; flag: string };
   setCurrentlyActiveLanguage: Function;
   allSupportedLanguages: SupportedLanguage[];
+  user: SessionUser;
 }
 
 export default function LanguageSelectorAndUserMenu({
   activeLanguageData,
   setCurrentlyActiveLanguage,
   allSupportedLanguages,
+  user,
 }: LanguageSelectorAndUserMenuProps) {
   const { toggleMobileMenu } = useMobileMenuContext();
   const currentBaseUrl = usePathname();
@@ -64,6 +66,7 @@ export default function LanguageSelectorAndUserMenu({
             setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
             activeLanguageData={activeLanguageData}
             allSupportedLanguages={allSupportedLanguages}
+            user={user}
           />
         </div>
         <MobileMenuContextProvider>

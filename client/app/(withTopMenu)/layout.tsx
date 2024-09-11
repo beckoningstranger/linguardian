@@ -31,6 +31,7 @@ export default async function LayoutWithTopMenu({ children }: RootLayoutProps) {
         <TopMenu
           allSupportedLanguages={allSupportedLanguages}
           allLanguageFeatures={allLanguageFeatures}
+          user={sessionUser}
         />
       </ActiveLanguageProvider>
       <DashboardContainer>
