@@ -12,7 +12,10 @@ export default function LogoWithCloseButton({
     <div className="relative md:hidden">
       <div
         className="absolute left-0 grid h-20 w-20 place-items-center border-r border-black"
-        onClick={() => toggleFunction()}
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleFunction();
+        }}
       >
         <ArrowUpLeftIcon className="h-10" />
       </div>

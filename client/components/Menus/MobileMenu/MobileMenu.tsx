@@ -24,12 +24,21 @@ export default function MobileMenu({
 
   useEffect(() => {
     ref.current = document.querySelector<HTMLElement>("#PortalOutlet");
+
+    if (showMobileMenu) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [showMobileMenu]);
 
   if (showMobileMenu && toggleMobileMenu && ref.current) {
     return createPortal(
       <div
-        className={`absolute w-full overflow-hidden backdrop-blur-md ${fromDirection} ${
+        className={`fixed w-full z-50 overflow-hidden backdrop-blur-xl ${fromDirection} ${
           mode === "keyboard"
             ? "bottom-0 h-1/3 border-t border-t-black"
             : "top-0 h-full"

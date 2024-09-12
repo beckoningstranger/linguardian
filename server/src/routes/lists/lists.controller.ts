@@ -17,6 +17,7 @@ import {
   getNextListNumber,
   getPopulatedListByListNumber,
   removeItemFromList,
+  removeUnitFromList,
   updateUnlockedReviewModes,
 } from "../../models/lists.model.js";
 import { getLanguageFeaturesForLanguage } from "../../models/settings.model.js";
@@ -177,5 +178,17 @@ export async function httpAddUnitToList(req: Request, res: Response) {
     return res.status(201).json(response);
   } catch (error) {
     return res.status(500).json({ error: "Error adding unit to list" });
+  }
+}
+
+export async function httpRemoveUnitFromList(req: Request, res: Response) {
+  const listNumber = parseInt(req.params.listNumber);
+  const unitName = req.params.unitName;
+
+  try {
+    const response = await removeUnitFromList(listNumber, unitName);
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({ error: "Error removing unit from list" });
   }
 }

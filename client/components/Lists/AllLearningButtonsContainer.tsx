@@ -16,7 +16,7 @@ export function AllLearningButtonsMobileContainer({
   children: React.ReactNode;
 }) {
   return (
-    <div className="fixed bottom-0 h-24 w-full bg-slate-200 py-4 md:hidden">
+    <div className="fixed bottom-0 z-40 h-24 w-full bg-slate-200 py-4 md:hidden">
       {children}
     </div>
   );

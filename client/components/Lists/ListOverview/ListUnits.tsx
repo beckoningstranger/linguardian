@@ -3,6 +3,7 @@ import { Item, LearnedItem, SupportedLanguage } from "@/lib/types";
 import Link from "next/link";
 import UnitButton from "./UnitButton";
 import NewUnitButton from "./NewUnitButton";
+import { MobileMenuContextProvider } from "@/components/Menus/MobileMenu/MobileMenuContext";
 
 interface ListUnitsProps {
   unitOrder: string[];
@@ -45,14 +46,19 @@ export default function ListUnits({
         href={paths.unitDetailsPath(listNumber, index + 1, language)}
         className="flex w-full justify-center"
       >
-        <UnitButton
-          label={unitName}
-          percentage={
-            noOfItemsInUnit === 0
-              ? 0
-              : (100 / noOfItemsInUnit) * noOfLearnedItemsInUnit
-          }
-        />
+        <MobileMenuContextProvider>
+          <UnitButton
+            percentage={
+              noOfItemsInUnit === 0
+                ? 0
+                : (100 / noOfItemsInUnit) * noOfLearnedItemsInUnit
+            }
+            userIsAuthor={userIsAuthor}
+            unitName={unitName}
+            listNumber={listNumber}
+            noOfItemsInUnit={noOfItemsInUnit}
+          />
+        </MobileMenuContextProvider>
       </Link>
     );
   });

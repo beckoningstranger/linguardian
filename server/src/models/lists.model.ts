@@ -200,3 +200,17 @@ export async function addUnitToList(listNumber: number, unitName: string) {
     }
   );
 }
+
+export async function removeUnitFromList(listNumber: number, unitName: string) {
+  const removeFromUnitOrder = await Lists.findOneAndUpdate(
+    { listNumber: listNumber },
+    { $pull: { unitOrder: unitName } },
+    { new: true }
+  );
+  const removeUnitItems = await Lists.updateOne(
+    { listNumber: listNumber },
+    { $pull: { units: { unitName: unitName } } },
+    { new: true }
+  );
+  if (removeFromUnitOrder && removeUnitItems) return removeUnitItems;
+}
