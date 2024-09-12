@@ -305,3 +305,22 @@ export async function removeItemFromList(
   }
   throw new Error("An error occurred while removing the item from the list.");
 }
+
+export async function addUnitToList(unitName: string, listNumber: number) {
+  const list = await getList(listNumber);
+  const [sessionUser] = await Promise.all([getUserOnServer()]);
+  if (!list?.authors.includes(sessionUser.id))
+    throw new Error("Only list authors can add new units");
+
+  const response = await fetch(
+    `${server}/lists/addUnitToList/${listNumber}/${unitName}`,
+    {
+      method: "POST",
+    }
+  );
+  if (response.ok) {
+    revalidatePath(paths.listDetailsPath(listNumber, list.language));
+    return await response.json();
+  }
+  throw new Error("An error occurred while adding the new unit.");
+}

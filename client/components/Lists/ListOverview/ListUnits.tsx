@@ -1,6 +1,8 @@
 import paths from "@/lib/paths";
 import { Item, LearnedItem, SupportedLanguage } from "@/lib/types";
 import Link from "next/link";
+import UnitButton from "./UnitButton";
+import NewUnitButton from "./NewUnitButton";
 
 interface ListUnitsProps {
   unitOrder: string[];
@@ -20,6 +22,10 @@ export default function ListUnits({
   learnedItemsForListLanguage,
 }: ListUnitsProps) {
   const learnedIds = learnedItemsForListLanguage?.map((item) => item.id);
+  const unitNames = units.reduce((a, curr) => {
+    if (!a.includes(curr.unitName)) a.push(curr.unitName);
+    return a;
+  }, [] as string[]);
 
   const renderedUnits = unitOrder?.map((unitName, index) => {
     const noOfItemsInUnit = units.reduce((a, itemInUnit) => {
@@ -41,7 +47,11 @@ export default function ListUnits({
       >
         <UnitButton
           label={unitName}
-          percentage={(100 / noOfItemsInUnit) * noOfLearnedItemsInUnit}
+          percentage={
+            noOfItemsInUnit === 0
+              ? 0
+              : (100 / noOfItemsInUnit) * noOfLearnedItemsInUnit
+          }
         />
       </Link>
     );
@@ -51,31 +61,9 @@ export default function ListUnits({
     <div id="units" className="my-2 flex flex-col items-center gap-y-2">
       {renderedUnits}
 
-      {userIsAuthor && <UnitButton label="Add a new unit" percentage={0} />}
-    </div>
-  );
-}
-
-interface UnitButtonProps {
-  label: string;
-  percentage: number;
-}
-
-function UnitButton({ label, percentage }: UnitButtonProps) {
-  const clampedPercentage = Math.max(0, Math.min(100, percentage));
-  const fillWidth = `${clampedPercentage}%`;
-
-  return (
-    <div
-      className={`relative flex w-11/12 items-center justify-center rounded-lg border border-slate-800 py-2 text-center shadow-lg hover:shadow-2xl`}
-    >
-      <div
-        className={`absolute inset-0 z-0 rounded-lg bg-green-300`}
-        style={{
-          width: fillWidth,
-        }}
-      />
-      <button className={`relative z-10 rounded-lg px-4 py-2`}>{label}</button>
+      {userIsAuthor && (
+        <NewUnitButton listNumber={listNumber} unitNames={unitNames} />
+      )}
     </div>
   );
 }

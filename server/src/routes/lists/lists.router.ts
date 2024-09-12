@@ -3,6 +3,7 @@ import multer from "multer";
 import path from "path";
 import {
   httpAddItemToList,
+  httpAddUnitToList,
   httpGetAllListsForLanguage,
   httpGetAmountOfUnits,
   httpGetFullyPopulatedListByListNumber,
@@ -66,3 +67,5 @@ listsRouter.post(
   "/removeItemFromList/:listNumber/:itemId",
   httpRemoveItemFromList
 );
+
+listsRouter.post("/addUnitToList/:listNumber/:unitName", httpAddUnitToList);

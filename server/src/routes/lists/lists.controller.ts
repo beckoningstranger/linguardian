@@ -7,6 +7,7 @@ import { parseCSV } from "../../lib/parsecsv.js";
 import { FullyPopulatedList, SupportedLanguage } from "../../lib/types.js";
 import {
   addItemToList,
+  addUnitToList,
   getAllListsForLanguage,
   getAmountOfUnits,
   getChapterNameByNumber,
@@ -165,4 +166,16 @@ export async function httpRemoveItemFromList(req: Request, res: Response) {
   const response = await removeItemFromList(listNumber, itemId);
   if (!response) res.status(404).json();
   return res.status(200).json(response);
+}
+
+export async function httpAddUnitToList(req: Request, res: Response) {
+  const listNumber = parseInt(req.params.listNumber);
+  const unitName = req.params.unitName;
+
+  try {
+    const response = await addUnitToList(listNumber, unitName);
+    return res.status(201).json(response);
+  } catch (error) {
+    return res.status(500).json({ error: "Error adding unit to list" });
+  }
 }

@@ -183,3 +183,20 @@ export async function removeItemFromList(listNumber: number, itemId: string) {
     { new: true }
   );
 }
+
+export async function addUnitToList(listNumber: number, unitName: string) {
+  return await Lists.findOneAndUpdate(
+    {
+      listNumber: listNumber,
+    },
+    {
+      $addToSet: {
+        unitOrder: unitName,
+      },
+    },
+    {
+      new: true,
+      upsert: true,
+    }
+  );
+}

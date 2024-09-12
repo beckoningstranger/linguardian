@@ -10,10 +10,10 @@ import ListFlexibleContent from "@/components/Lists/ListOverview/ListFlexibleCon
 import ListHeader from "@/components/Lists/ListOverview/ListHeader";
 import ListUnits from "@/components/Lists/ListOverview/ListUnits";
 import Spinner from "@/components/Spinner";
+import getUserOnServer from "@/lib/helperFunctions";
 import { SupportedLanguage } from "@/lib/types";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import getUserOnServer from "@/lib/helperFunctions";
 
 export async function generateMetadata({ params }: ListDetailProps) {
   const listNumber = parseInt(params.listNumberString);
@@ -44,47 +44,44 @@ export default async function ListDetailPage({
     getPopulatedList(listNumber),
     getUserOnServer(),
   ]);
+  if (!listData) notFound();
 
   const fullUser = await getUserById(sessionUser.id);
 
-  if (listData?.name) {
-    const { name, description, authors, unitOrder, units, listNumber } =
-      listData;
+  const { name, description, authors, unitOrder, units } = listData;
 
-    const [authorData] = await Promise.all([fetchAuthors(authors)]);
+  const [authorData] = await Promise.all([fetchAuthors(authors)]);
 
-    const learnedItemsForListLanguage = fullUser?.languages.find(
-      (lang) => lang.code === listData.language
-    )?.learnedItems;
+  const learnedItemsForListLanguage = fullUser?.languages.find(
+    (lang) => lang.code === listData.language
+  )?.learnedItems;
 
-    return (
-      <ListContainer>
-        <ListHeader
-          name={name}
-          description={description}
-          authorData={authorData}
-          numberOfItems={listData.units.length}
-          image={listData.image}
-        />
-        <Suspense
-          fallback={
-            <div className="grid w-full place-items-center">
-              <Spinner />
-            </div>
-          }
-        >
-          <ListFlexibleContent language={language} listNumber={listNumber} />
-        </Suspense>
-        <ListUnits
-          unitOrder={unitOrder}
-          units={units}
-          listNumber={listNumber}
-          language={language}
-          userIsAuthor={listData.authors.includes(sessionUser.id)}
-          learnedItemsForListLanguage={learnedItemsForListLanguage}
-        />
-      </ListContainer>
-    );
-  }
-  if (!listData) notFound();
+  return (
+    <ListContainer>
+      <ListHeader
+        name={name}
+        description={description}
+        authorData={authorData}
+        numberOfItems={listData.units.length}
+        image={listData.image}
+      />
+      <Suspense
+        fallback={
+          <div className="grid w-full place-items-center">
+            <Spinner />
+          </div>
+        }
+      >
+        <ListFlexibleContent language={language} listNumber={listNumber} />
+      </Suspense>
+      <ListUnits
+        unitOrder={unitOrder}
+        units={units}
+        listNumber={listNumber}
+        language={language}
+        userIsAuthor={listData.authors.includes(sessionUser.id)}
+        learnedItemsForListLanguage={learnedItemsForListLanguage}
+      />
+    </ListContainer>
+  );
 }
