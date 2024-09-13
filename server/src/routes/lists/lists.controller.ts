@@ -17,6 +17,7 @@ import {
   getNextListNumber,
   getPopulatedListByListNumber,
   removeItemFromList,
+  removeList,
   removeUnitFromList,
   updateUnlockedReviewModes,
 } from "../../models/lists.model.js";
@@ -187,6 +188,17 @@ export async function httpRemoveUnitFromList(req: Request, res: Response) {
 
   try {
     const response = await removeUnitFromList(listNumber, unitName);
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({ error: "Error removing unit from list" });
+  }
+}
+
+export async function httpRemoveList(req: Request, res: Response) {
+  const listNumber = parseInt(req.params.listNumber);
+
+  try {
+    const response = await removeList(listNumber);
     return res.status(200).json(response);
   } catch (error) {
     return res.status(500).json({ error: "Error removing unit from list" });

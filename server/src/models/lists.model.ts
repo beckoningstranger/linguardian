@@ -214,3 +214,7 @@ export async function removeUnitFromList(listNumber: number, unitName: string) {
   );
   if (removeFromUnitOrder && removeUnitItems) return removeUnitItems;
 }
+
+export async function removeList(listNumber: number) {
+  return await Lists.deleteOne({ listNumber: listNumber });
+}

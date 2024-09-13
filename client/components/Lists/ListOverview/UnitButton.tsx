@@ -1,7 +1,7 @@
 "use client";
 
+import ConfirmCancelMobileMenu from "@/components/ConfirmCancelMobileMenu";
 import ConfirmCancelModal from "@/components/ConfirmCancelModal";
-import MobileMenu from "@/components/Menus/MobileMenu/MobileMenu";
 import useMobileMenuContext from "@/hooks/useMobileMenuContext";
 import { removeUnitFromList } from "@/lib/actions";
 import { Button } from "@headlessui/react";
@@ -30,7 +30,7 @@ export default function UnitButton({
   const [showConfirmDeleteModal, setShowConfirmDeleteModel] = useState(false);
   const { toggleMobileMenu } = useMobileMenuContext();
 
-  const doOnConfirm = () =>
+  const removeUnitFromListAction = () =>
     toast.promise(removeUnitFromList(unitName, listNumber), {
       loading: "Removing this unit...",
       success: () => "Unit removed! ✅",
@@ -62,43 +62,20 @@ export default function UnitButton({
               if (noOfItemsInUnit > 0) {
                 if (toggleMobileMenu) toggleMobileMenu();
               } else {
-                doOnConfirm();
+                removeUnitFromListAction();
               }
             }}
             className="absolute right-0 top-1/2 -translate-y-1/2 transform p-4 md:hidden"
           >
             <FaTrashCan className="text-red-500" />
           </Button>
-          <MobileMenu mode="fullscreen" fromDirection="animate-from-top">
-            <div className="relative mx-12 rounded-md text-center text-3xl font-bold">
-              <div>
-                This unit contains {noOfItemsInUnit}{" "}
-                {noOfItemsInUnit === 1 ? "item" : "items"}!
-              </div>
-              <div className="mt-8">Are you sure you want to delete it?</div>
+          <ConfirmCancelMobileMenu doOnConfirm={removeUnitFromListAction}>
+            <div>
+              This unit contains {noOfItemsInUnit}{" "}
+              {noOfItemsInUnit === 1 ? "item" : "items"}!
             </div>
-            <div className="absolute bottom-24 mx-12 mt-32 flex w-full justify-evenly">
-              <button
-                className="rounded-md bg-red-500 px-6 py-3 text-xl text-white"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (toggleMobileMenu) toggleMobileMenu();
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                className="rounded-md bg-green-400 px-6 py-3 text-xl text-white"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  doOnConfirm();
-                  if (toggleMobileMenu) toggleMobileMenu();
-                }}
-              >
-                Confirm
-              </button>
-            </div>
-          </MobileMenu>
+            <div className="mt-8">Are you sure you want to delete it?</div>
+          </ConfirmCancelMobileMenu>
 
           {/* Bigger screens */}
           <Button
@@ -107,7 +84,7 @@ export default function UnitButton({
               if (noOfItemsInUnit > 0) {
                 setShowConfirmDeleteModel(true);
               } else {
-                doOnConfirm();
+                removeUnitFromListAction();
               }
             }}
             className="absolute right-0 top-1/2 hidden -translate-y-1/2 transform p-4 md:right-4 md:block"
@@ -116,20 +93,17 @@ export default function UnitButton({
           </Button>
           <ConfirmCancelModal
             title="Confirm unit deletion"
-            prompt={
-              <div className="relative mx-12 rounded-md text-center text-xl font-semibold">
-                <div>
-                  This unit contains {noOfItemsInUnit}{" "}
-                  {noOfItemsInUnit === 1 ? "item" : "items"}!
-                </div>
-                <div className="mt-2">Are you sure you want to delete it?</div>
-              </div>
-            }
             isOpen={showConfirmDeleteModal}
             setIsOpen={setShowConfirmDeleteModel}
             closeButton={false}
-            doOnConfirm={doOnConfirm}
-          />
+            doOnConfirm={removeUnitFromListAction}
+          >
+            <div>
+              This unit contains {noOfItemsInUnit}{" "}
+              {noOfItemsInUnit === 1 ? "item" : "items"}!
+            </div>
+            <div className="mt-2">Are you sure you want to delete it?</div>
+          </ConfirmCancelModal>
         </>
       )}
     </div>

@@ -3,7 +3,7 @@ import { XMarkIcon } from "@heroicons/react/20/solid";
 import { Dispatch, SetStateAction } from "react";
 
 interface ConfirmCancelModalProps {
-  prompt: JSX.Element;
+  children: React.ReactNode;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   closeButton?: boolean;
@@ -16,7 +16,7 @@ export default function ConfirmCancelModal({
   setIsOpen,
   closeButton = false,
   doOnConfirm,
-  prompt,
+  children,
   title,
 }: ConfirmCancelModalProps) {
   return (
@@ -31,7 +31,11 @@ export default function ConfirmCancelModal({
           <DialogTitle className="mb-4 text-center text-2xl font-bold">
             {title}
           </DialogTitle>
-          <div className="grid gap-2 text-lg">{prompt}</div>
+          <div className="grid gap-2 text-lg">
+            <div className="relative mx-12 rounded-md text-center text-xl font-semibold">
+              {children}
+            </div>
+          </div>
           <div className="absolute bottom-6 flex w-full max-w-[calc(100%-2rem)] justify-evenly">
             <button
               className="rounded-md bg-red-500 px-8 py-3 text-lg text-white"

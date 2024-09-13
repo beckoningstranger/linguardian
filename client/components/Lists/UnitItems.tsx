@@ -76,12 +76,14 @@ export default function UnitItems({
 
   return (
     <div className="relative grid grid-cols-1 justify-items-center gap-2 p-2 md:grid-cols-2">
-      <div
-        className="grid w-full select-none place-items-center rounded-md bg-slate-100 p-4 hover:bg-slate-200 md:hidden"
-        onClick={() => setShowTranslations(!showTranslations)}
-      >
-        {showTranslations ? "Tap to show items" : "Tap to show translations"}
-      </div>
+      {unitItems.length > 0 && (
+        <button
+          className="grid w-full select-none place-items-center rounded-md bg-slate-100 p-4 hover:bg-slate-200 md:hidden"
+          onClick={() => setShowTranslations(!showTranslations)}
+        >
+          {showTranslations ? "Tap to show items" : "Tap to show translations"}
+        </button>
+      )}
       {learnedItems} {unlearnedItems}
       {userIsAuthor && (
         <ListAddItemButton

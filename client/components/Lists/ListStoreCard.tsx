@@ -21,7 +21,7 @@ export default function ListStoreCard({
   description = "No description entered yet...",
   image = "https:/picsum.photos/150?grayscale",
   numberOfItems,
-  numberOfUnits = 1,
+  numberOfUnits,
   difficulty = "Unknown",
   listNumber,
   language,

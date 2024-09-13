@@ -14,6 +14,7 @@ import {
   httpGetPopulatedListByListNumber,
   httpPostCSV,
   httpRemoveItemFromList,
+  httpRemoveList,
   httpRemoveUnitFromList,
 } from "./lists.controller.js";
 
@@ -75,3 +76,5 @@ listsRouter.post(
   "/removeUnitFromList/:listNumber/:unitName",
   httpRemoveUnitFromList
 );
+
+listsRouter.post("/removeList/:listNumber", httpRemoveList);

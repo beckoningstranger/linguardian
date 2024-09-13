@@ -6,9 +6,11 @@ import {
 } from "@/lib/fetchData";
 
 import ListContainer from "@/components/Lists/ListContainer";
+import DeleteListButton from "@/components/Lists/ListOverview/DeleteListButton";
 import ListFlexibleContent from "@/components/Lists/ListOverview/ListFlexibleContent";
 import ListHeader from "@/components/Lists/ListOverview/ListHeader";
 import ListUnits from "@/components/Lists/ListOverview/ListUnits";
+import { MobileMenuContextProvider } from "@/components/Menus/MobileMenu/MobileMenuContext";
 import Spinner from "@/components/Spinner";
 import getUserOnServer from "@/lib/helperFunctions";
 import { SupportedLanguage } from "@/lib/types";
@@ -46,18 +48,27 @@ export default async function ListDetailPage({
   ]);
   if (!listData) notFound();
 
-  const fullUser = await getUserById(sessionUser.id);
-
   const { name, description, authors, unitOrder, units } = listData;
 
-  const [authorData] = await Promise.all([fetchAuthors(authors)]);
+  const [authorData, fullUser] = await Promise.all([
+    fetchAuthors(authors),
+    getUserById(sessionUser.id),
+  ]);
 
+  const userIsAuthor = listData.authors.includes(sessionUser.id);
   const learnedItemsForListLanguage = fullUser?.languages.find(
     (lang) => lang.code === listData.language
   )?.learnedItems;
 
   return (
     <ListContainer>
+      <MobileMenuContextProvider>
+        <DeleteListButton
+          listNumber={listNumber}
+          listLanguage={language}
+          listName={name}
+        />
+      </MobileMenuContextProvider>
       <ListHeader
         name={name}
         description={description}
@@ -79,7 +90,7 @@ export default async function ListDetailPage({
         units={units}
         listNumber={listNumber}
         language={language}
-        userIsAuthor={listData.authors.includes(sessionUser.id)}
+        userIsAuthor={userIsAuthor}
         learnedItemsForListLanguage={learnedItemsForListLanguage}
       />
     </ListContainer>
