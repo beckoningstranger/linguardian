@@ -19,7 +19,10 @@ export default function CreateNewListForm({
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    watch,
   } = useForm();
+
+  console.log(watch().csvfile);
 
   const onSubmit = async (data: FieldValues) => {
     const formData = new FormData();
@@ -62,7 +65,6 @@ export default function CreateNewListForm({
           },
         })}
         type="text"
-        id="listName"
         placeholder="Enter a list name"
         className="px-4 py-2 text-center text-xl font-semibold"
       />
@@ -70,7 +72,6 @@ export default function CreateNewListForm({
         <p className="text-sm text-red-500">{`${errors.listName.message}`}</p>
       )}
       <Textarea
-        id="listDescription"
         {...register("listDescription", {
           maxLength: {
             value: 500,
@@ -80,8 +81,8 @@ export default function CreateNewListForm({
         placeholder="Enter a short description for your list"
         className="text-md px-4 py-2 font-semibold"
       />
-      {errors.listName && (
-        <p className="text-sm text-red-500">{`${errors.listName.message}`}</p>
+      {errors.listDescription && (
+        <p className="text-sm text-red-500">{`${errors.listDescription.message}`}</p>
       )}
       <label
         htmlFor="csvfile"
@@ -90,13 +91,14 @@ export default function CreateNewListForm({
         <Input
           {...register("csvfile")}
           type="file"
-          name="csvfile"
           id="csvfile"
           accept=".csv"
           className="sr-only"
           aria-label="Upload a CSV File"
         />
-        {"Upload a CSV file (optional)"}
+        {watch().csvfile && watch().csvfile.length > 0
+          ? `Your file: ${watch().csvfile[0].name}`
+          : "Upload a CSV file (optional)"}
       </label>
       {errors.csvfile && (
         <p className="text-sm text-red-500">{`${errors.csvfile.message}`}</p>
