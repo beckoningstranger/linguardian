@@ -12,7 +12,7 @@ import {
   httpGetListName,
   httpGetNextListNumber,
   httpGetPopulatedListByListNumber,
-  httpPostCSV,
+  httpPostCreateNewList,
   httpRemoveItemFromList,
   httpRemoveList,
   httpRemoveUnitFromList,
@@ -34,7 +34,11 @@ const upload = multer({ storage: storage });
 
 export const listsRouter = express.Router();
 
-listsRouter.post("/uploadCSV", upload.single("csvfile"), httpPostCSV);
+listsRouter.post(
+  "/createNewList",
+  upload.single("csvfile"),
+  httpPostCreateNewList
+);
 
 listsRouter.get("/getAllLists/:language", httpGetAllListsForLanguage);
 

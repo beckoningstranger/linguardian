@@ -218,3 +218,13 @@ export async function removeUnitFromList(listNumber: number, unitName: string) {
 export async function removeList(listNumber: number) {
   return await Lists.deleteOne({ listNumber: listNumber });
 }
+
+export async function createList(newList: List) {
+  return await Lists.findOneAndUpdate(
+    {
+      listNumber: newList.listNumber,
+    },
+    newList,
+    { upsert: true, new: true }
+  );
+}

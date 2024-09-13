@@ -8,10 +8,11 @@ import Items from "../models/item.schema.js";
 import Lemmas from "../models/lemma.schema.js";
 import Lists from "../models/list.schema.js";
 import {
-  getNextListNumber,
+  createList,
   getPopulatedListByObjectId,
 } from "../models/lists.model.js";
 import { getSupportedLanguages } from "../models/settings.model.js";
+import { normalizeString, slugifyString } from "./helperFunctions.js";
 import {
   Case,
   Gender,
@@ -22,11 +23,6 @@ import {
   SupportedLanguage,
   Tag,
 } from "./types.js";
-import {
-  getFlagForLanguage,
-  normalizeString,
-  slugifyString,
-} from "./helperFunctions.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -73,114 +69,78 @@ interface ItemInPrep {
   unit?: string;
 }
 
-interface parseCSVProps {
-  filename: string;
-  listName: string;
-  language: SupportedLanguage;
-  author: string;
-}
-
-export async function parseCSV({
-  filename,
-  listName,
-  language,
-  author,
-}: parseCSVProps) {
+export async function parseCSV(filename: string, newList: List) {
   console.log("Parsing CSV File...");
-  const newList: List = {
-    name: listName,
-    listNumber: await getNextListNumber(),
-    private: false,
-    language: language,
-    flag: await getFlagForLanguage(language),
-    authors: author.split(" "),
-    unitOrder: [],
-    units: [],
-    unlockedReviewModes: {},
-  };
-
-  const newUploadedList = await Lists.findOneAndUpdate(
-    {
-      listNumber: newList.listNumber,
-    },
-    newList,
-    { upsert: true, new: true }
-  );
+  const newUploadedList = await createList(newList);
   const newListsId = newUploadedList?._id;
-  // Check if new list was created
   if (!newListsId) throw new Error("Error creating new list");
 
-  return new Promise<{ newListId: Types.ObjectId; newListNumber: number }>(
-    (resolve, reject) => {
-      // Parse csv file and create all needed lemmas in MongoDB
-      fs.createReadStream(
-        join(__dirname + `../../../data/csvUploads/${filename}`)
-      )
-        .pipe(parse({ columns: true, comment: "#" }))
-        .on("data", async (data: ParsedData) => {
-          let formattedData: FormattedParsedData = {
-            name: data.name,
-            normalizedName: normalizeString(data.name),
-            language: language,
-            partOfSpeech: data.partOfSpeech,
-            case:
-              data.case && data.case.length > 0
-                ? (data.case as Case)
-                : undefined,
-            gender:
-              data.gender && data.gender.length > 0
-                ? (data.gender as Gender)
-                : undefined,
-            pluralForm:
-              data.pluralForm && data.pluralForm.length > 0
-                ? data.pluralForm?.split(", ")
-                : undefined,
-            tags: data.tags?.split(", ") as Tag[],
-            translations: {
-              DE: data.tDE?.split(", "),
-              FR: data.tFR?.split(", "),
-              EN: data.tEN?.split(", "),
-              CN: data.tCN?.split(", "),
-            },
-            unit: data.unit,
-          };
+  return new Promise<{ newListId: Types.ObjectId }>((resolve, reject) => {
+    // Parse csv file and create all needed lemmas in MongoDB
+    fs.createReadStream(
+      join(__dirname + `../../../data/csvUploads/${filename}`)
+    )
+      .pipe(parse({ columns: true, comment: "#" }))
+      .on("data", async (data: ParsedData) => {
+        let formattedData: FormattedParsedData = {
+          name: data.name,
+          normalizedName: normalizeString(data.name),
+          language: newList.language,
+          partOfSpeech: data.partOfSpeech,
+          case:
+            data.case && data.case.length > 0 ? (data.case as Case) : undefined,
+          gender:
+            data.gender && data.gender.length > 0
+              ? (data.gender as Gender)
+              : undefined,
+          pluralForm:
+            data.pluralForm && data.pluralForm.length > 0
+              ? data.pluralForm?.split(", ")
+              : undefined,
+          tags: data.tags?.split(", ") as Tag[],
+          translations: {
+            DE: data.tDE?.split(", "),
+            FR: data.tFR?.split(", "),
+            EN: data.tEN?.split(", "),
+            CN: data.tCN?.split(", "),
+          },
+          unit: data.unit,
+        };
 
-          // Remove translations that are just empty strings
-          formattedData = await cleanUpTranslationProperty(formattedData);
+        // Remove translations that are just empty strings
+        formattedData = await cleanUpTranslationProperty(formattedData);
 
-          // Harvest and upload all possible lemmas from each parsed item
-          const lemmas = convertItemToLemmas(formattedData);
-          await uploadLemmas(lemmas);
+        // Harvest and upload all possible lemmas from each parsed item
+        const lemmas = convertItemToLemmas(formattedData);
+        await uploadLemmas(lemmas);
 
-          // Harvest all possible items from each parsed item
-          const harvestedItems: ItemInPrep[] =
-            await harvestAndUploadItemsWithoutTranslations(formattedData);
+        // Harvest all possible items from each parsed item
+        const harvestedItems: ItemInPrep[] =
+          await harvestAndUploadItemsWithoutTranslations(formattedData);
 
-          // Link items to all of their lemmas
-          await linkItemsToLemmas(harvestedItems);
+        // Link items to all of their lemmas
+        await linkItemsToLemmas(harvestedItems);
 
-          // Upload all harvested items with all the information supplied
-          await addTranslationsToItems(harvestedItems);
+        // Upload all harvested items with all the information supplied
+        await addTranslationsToItems(harvestedItems);
 
-          // Add all relevant harvested items to the new list
-          await addItemsToList(harvestedItems, newListsId, language);
-        })
-        .on("error", (err) => {
-          console.error("Error while parsing csv file", err);
-        })
-        .on("end", () => {
-          // Wait 30 seconds for parsing and uploading to finish
-          setTimeout(async () => {
-            // Define a tentative unit order
-            await defineUnitOrder(newListsId);
-            resolve({
-              newListId: newListsId,
-              newListNumber: newUploadedList.listNumber,
-            });
-          }, 50000);
-        });
-    }
-  );
+        // Add all relevant harvested items to the new list
+        await addItemsToList(harvestedItems, newListsId, newList.language);
+      })
+      .on("error", (err) => {
+        console.error("Error while parsing csv file", err);
+      })
+      .on("end", () => {
+        // Wait 30 seconds for parsing and uploading to finish
+        setTimeout(async () => {
+          // Define a tentative unit order
+          await defineUnitOrder(newListsId);
+          resolve({
+            newListId: newListsId,
+          });
+        }, 50000);
+      });
+  });
 }
 
 interface LemmaItem {

@@ -36,14 +36,11 @@ export async function setNativeLanguage({
   redirect(paths.signInPath());
 }
 
-export async function uploadCSV(
-  formState: { message: string },
-  formData: FormData
-) {
+export async function createList(formData: FormData) {
   let newListNumber = 0;
   let newListLanguage;
   try {
-    const response = await fetch(`${server}/lists/uploadCSV`, {
+    const response = await fetch(`${server}/lists/createNewList`, {
       method: "POST",
       body: formData,
     });

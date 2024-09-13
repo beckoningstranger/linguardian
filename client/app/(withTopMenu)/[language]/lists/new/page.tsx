@@ -1,4 +1,4 @@
-import ParseCSVForm from "@/components/parseCSVForm";
+import CreateNewListForm from "@/components/createNewListForm";
 import { getLanguageFeaturesForLanguage } from "@/lib/fetchData";
 import getUserOnServer from "@/lib/helperFunctions";
 import { SupportedLanguage } from "@/lib/types";
@@ -22,11 +22,10 @@ export default async function CreateList({
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <h1 className="m-4 max-w-80 text-center text-2xl font-bold">
-        Upload a File to create a new {languageFeaturesForLanguage?.langName}{" "}
-        list
+      <h1 className="max-w-88 m-4 text-center text-2xl font-bold">
+        Create a new {languageFeaturesForLanguage?.langName} list
       </h1>
-      <ParseCSVForm userId={sessionUser.id} listLanguage={language} />
+      <CreateNewListForm userId={sessionUser.id} listLanguage={language} />
     </div>
   );
 }

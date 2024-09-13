@@ -3,11 +3,17 @@ import fs from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
+import { getFlagForLanguage } from "../../lib/helperFunctions.js";
 import { parseCSV } from "../../lib/parsecsv.js";
-import { FullyPopulatedList, SupportedLanguage } from "../../lib/types.js";
+import {
+  FullyPopulatedList,
+  List,
+  SupportedLanguage,
+} from "../../lib/types.js";
 import {
   addItemToList,
   addUnitToList,
+  createList,
   getAllListsForLanguage,
   getAmountOfUnits,
   getChapterNameByNumber,
@@ -26,27 +32,43 @@ import { getLanguageFeaturesForLanguage } from "../../models/settings.model.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export async function httpPostCSV(req: Request, res: Response) {
+export async function httpPostCreateNewList(req: Request, res: Response) {
+  // Needs proper validation
   try {
-    // Needs proper validation
-    if (req.file) {
-      const { newListId, newListNumber } = await parseCSV({
-        filename: req.file.filename,
-        author: req.body.author,
-        language: req.body.language,
-        listName: req.body.listName,
-      });
+    const newList: List = {
+      authors: [req.body.author],
+      language: req.body.language,
+      name: req.body.listName,
+      description: req.body.listDescription,
+      private: false,
+      listNumber: await getNextListNumber(),
+      flag: await getFlagForLanguage(req.body.language),
+      units: [],
+      unitOrder: [],
+      unlockedReviewModes: {},
+    };
+
+    const responseObject = {
+      message: {
+        listNumber: newList.listNumber,
+        listLanguage: req.body.language,
+      },
+    };
+
+    if (req.file && req.file.size > 0) {
+      const response = await parseCSV(req.file.filename, newList);
 
       // Now check whether we can unlock review modes
-      await updateUnlockedReviewModes(newListId);
-      return res.status(200).json({
-        message: { listNumber: newListNumber, listLanguage: req.body.language },
-      });
+      await updateUnlockedReviewModes(response.newListId);
+      if (response) return res.status(201).json(responseObject);
+      throw new Error("Error creating list");
+    } else {
+      const response = await createList(newList);
+      if (response) return res.status(201).json(responseObject);
+      throw new Error("Error creating list");
     }
-  } catch (err) {
-    return res.status(400).json({
-      message: `Unable to parse CSV! ${err}`,
-    });
+  } catch (error) {
+    return res.status(500).json({ error: "Error creating new list" });
   } finally {
     // Remove uploaded file so things don't clog up
     if (req.file)
