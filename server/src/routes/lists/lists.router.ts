@@ -4,6 +4,7 @@ import path from "path";
 import {
   httpAddItemToList,
   httpAddUnitToList,
+  httpEditListDetails,
   httpGetAllListsForLanguage,
   httpGetAmountOfUnits,
   httpGetFullyPopulatedListByListNumber,
@@ -82,3 +83,5 @@ listsRouter.post(
 );
 
 listsRouter.post("/removeList/:listNumber", httpRemoveList);
+
+listsRouter.post("/editListDetails/:listDetails", httpEditListDetails);

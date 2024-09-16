@@ -4,6 +4,7 @@ import {
   ItemWithPopulatedTranslations,
   LearningMode,
   List,
+  ListDetails,
   PopulatedList,
   SupportedLanguage,
 } from "../lib/types.js";
@@ -227,4 +228,39 @@ export async function createList(newList: List) {
     newList,
     { upsert: true, new: true }
   );
+}
+
+export async function editDetails(listDetails: ListDetails) {
+  if (listDetails.listName !== undefined) {
+    return await Lists.findOneAndUpdate(
+      { listNumber: listDetails.listNumber },
+      { name: listDetails.listName },
+      { new: true }
+    );
+  }
+  if (listDetails.unitOrder !== undefined) {
+    const list = await getList(listDetails.listNumber);
+    if (!list) throw new Error("Error getting list");
+
+    let editedUnitName = "";
+    let newUnitName = "";
+
+    listDetails.unitOrder.forEach((unitName) => {
+      if (!list.unitOrder.includes(unitName)) newUnitName = unitName;
+    });
+
+    list.unitOrder.forEach((unitName) => {
+      if (!listDetails.unitOrder?.includes(unitName)) editedUnitName = unitName;
+    });
+
+    const units = list.units.map((item) => ({
+      unitName: item.unitName === editedUnitName ? newUnitName : item.unitName,
+      item: item.item,
+    }));
+    return await Lists.findOneAndUpdate(
+      { listNumber: listDetails.listNumber },
+      { units: units, unitOrder: listDetails.unitOrder },
+      { new: true }
+    );
+  }
 }

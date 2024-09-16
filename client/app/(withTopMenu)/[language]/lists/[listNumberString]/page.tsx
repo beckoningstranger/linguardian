@@ -75,6 +75,8 @@ export default async function ListDetailPage({
         authorData={authorData}
         numberOfItems={listData.units.length}
         image={listData.image}
+        listNumber={listNumber}
+        userIsAuthor={userIsAuthor}
       />
       <Suspense
         fallback={

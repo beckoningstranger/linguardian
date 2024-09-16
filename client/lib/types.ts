@@ -271,3 +271,9 @@ export type ListAndUnitData = {
   unitNumber: number;
   unitName: string;
 };
+
+export type ListDetails = {
+  listNumber: number;
+  listName?: string;
+  unitOrder?: string[];
+};

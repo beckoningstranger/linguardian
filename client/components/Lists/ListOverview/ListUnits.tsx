@@ -57,6 +57,7 @@ export default function ListUnits({
             unitName={unitName}
             listNumber={listNumber}
             noOfItemsInUnit={noOfItemsInUnit}
+            unitOrder={unitNames}
           />
         </MobileMenuContextProvider>
       </Link>

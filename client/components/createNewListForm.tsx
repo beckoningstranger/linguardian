@@ -22,8 +22,6 @@ export default function CreateNewListForm({
     watch,
   } = useForm();
 
-  console.log(watch().csvfile);
-
   const onSubmit = async (data: FieldValues) => {
     const formData = new FormData();
     Object.keys(data).forEach((key) => {

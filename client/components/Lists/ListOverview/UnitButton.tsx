@@ -3,9 +3,10 @@
 import ConfirmCancelMobileMenu from "@/components/ConfirmCancelMobileMenu";
 import ConfirmCancelModal from "@/components/ConfirmCancelModal";
 import useMobileMenuContext from "@/hooks/useMobileMenuContext";
-import { removeUnitFromList } from "@/lib/actions";
+import { useOutsideClick } from "@/hooks/useOutsideClick";
+import { changeListDetails, removeUnitFromList } from "@/lib/actions";
 import { Button } from "@headlessui/react";
-import { useState } from "react";
+import { FormEvent, RefObject, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FaTrashCan } from "react-icons/fa6";
 
@@ -15,6 +16,7 @@ interface UnitButtonProps {
   unitName: string;
   listNumber: number;
   noOfItemsInUnit: number;
+  unitOrder: string[];
 }
 
 export default function UnitButton({
@@ -23,7 +25,26 @@ export default function UnitButton({
   unitName,
   listNumber,
   noOfItemsInUnit,
+  unitOrder,
 }: UnitButtonProps) {
+  const [editMode, setEditMode] = useState(false);
+  const [updatedUnitName, setUpdatedUnitName] = useState(unitName);
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    setEditMode(false);
+    editUnitNameAction();
+  };
+
+  const inputRef = useOutsideClick(() => {
+    setEditMode(false);
+    if (updatedUnitName !== unitName) editUnitNameAction();
+  });
+
+  useEffect(() => {
+    if (editMode && inputRef) inputRef.current?.focus();
+  }, [inputRef, editMode]);
+
   const clampedPercentage = Math.max(0, Math.min(100, percentage));
   const fillWidth = `${clampedPercentage}%`;
 
@@ -37,6 +58,27 @@ export default function UnitButton({
       error: (err) => err.toString(),
     });
 
+  const editUnitNameAction = () => {
+    let newUnitOrder = unitOrder.reduce((a, curr) => {
+      if (curr === unitName) {
+        a.push(updatedUnitName);
+      } else {
+        a.push(curr);
+      }
+      return a;
+    }, [] as string[]);
+
+    if (newUnitOrder !== unitOrder && userIsAuthor)
+      toast.promise(
+        changeListDetails({ listNumber: listNumber, unitOrder: newUnitOrder }),
+        {
+          loading: "Changing unit name...",
+          success: () => "Unit name updated! ✅",
+          error: (err) => err.toString(),
+        }
+      );
+  };
+
   return (
     <div
       className={`relative flex h-14 w-11/12 items-center justify-center rounded-lg border border-slate-800 py-2 text-center shadow-lg hover:shadow-2xl`}
@@ -48,10 +90,33 @@ export default function UnitButton({
         }}
       />
       <div className={`relative z-10 flex items-baseline rounded-lg px-4 py-2`}>
-        <span className="text-md">{unitName}</span>
-        <span className="ml-2 text-xs">
-          ({noOfItemsInUnit} {noOfItemsInUnit === 1 ? "item" : "items"})
+        <span
+          className="text-md py-2 pl-4 pr-0"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (userIsAuthor) setEditMode(true);
+          }}
+        >
+          {!editMode && <span>{unitName}</span>}
+          {editMode && (
+            <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                value={updatedUnitName}
+                ref={inputRef as RefObject<HTMLInputElement>}
+                onChange={(e) => {
+                  setUpdatedUnitName(e.target.value);
+                }}
+              />
+            </form>
+          )}
         </span>
+        {!editMode && (
+          <span className="ml-2 text-xs">
+            ({noOfItemsInUnit} {noOfItemsInUnit === 1 ? "item" : "items"})
+          </span>
+        )}
       </div>
       {userIsAuthor && (
         <>

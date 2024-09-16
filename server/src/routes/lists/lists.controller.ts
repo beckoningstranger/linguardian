@@ -8,12 +8,14 @@ import { parseCSV } from "../../lib/parsecsv.js";
 import {
   FullyPopulatedList,
   List,
+  ListDetails,
   SupportedLanguage,
 } from "../../lib/types.js";
 import {
   addItemToList,
   addUnitToList,
   createList,
+  editDetails,
   getAllListsForLanguage,
   getAmountOfUnits,
   getChapterNameByNumber,
@@ -221,6 +223,17 @@ export async function httpRemoveList(req: Request, res: Response) {
 
   try {
     const response = await removeList(listNumber);
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({ error: "Error removing unit from list" });
+  }
+}
+
+export async function httpEditListDetails(req: Request, res: Response) {
+  const listDetails = JSON.parse(req.params.listDetails) as ListDetails;
+
+  try {
+    const response = await editDetails(listDetails);
     return res.status(200).json(response);
   } catch (error) {
     return res.status(500).json({ error: "Error removing unit from list" });
