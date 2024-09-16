@@ -42,10 +42,10 @@ export default function LearnAndReview({
   const [itemsToLearn, setItemsToLearn] = useState<ItemToLearn[]>(items);
   const [activeItem, setActiveItem] = useState<ItemToLearn>(items[0]);
   const [learnedItems, setLearnedItems] = useState<ItemToLearn[]>([]);
-  const [itemPresentation, setItemPresentation] = useState<Boolean>(
+  const [itemPresentation, setItemPresentation] = useState<boolean>(
     mode === "learn" ? true : false
   );
-  const [sessionEnd, setSessionEnd] = useState<Boolean>(false);
+  const [sessionEnd, setSessionEnd] = useState<boolean>(false);
   const [wrongAnswer, setWrongAnswer] = useState<string>("");
   const [_, startTransition] = useTransition();
 

@@ -92,7 +92,7 @@ export default function LanguageSelector({
 export function moreLanguagesToLearn(
   amountOfLanguagesUserLearns: number,
   amountOfSupportedLanguages: number
-): Boolean {
+): boolean {
   const amountOfLanguagesThatCanBeLearned = amountOfSupportedLanguages - 1; // native language has to be deducted
   if (amountOfLanguagesUserLearns >= amountOfLanguagesThatCanBeLearned)
     return false;

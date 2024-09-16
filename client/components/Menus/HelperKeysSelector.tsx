@@ -5,7 +5,7 @@ interface HelperKeysSelectorProps {
   handleHelperKeyClick: Function;
   target: SupportedLanguage;
   toggleMobileMenu?: Function;
-  mobile: Boolean;
+  mobile: boolean;
 }
 
 export default function HelperKeysSelector({

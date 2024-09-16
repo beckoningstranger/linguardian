@@ -99,7 +99,7 @@ export async function updateUnlockedReviewModes(listId: Types.ObjectId) {
   const supportedLanguages = await getSupportedLanguages();
   if (response?.units && supportedLanguages) {
     // This part checks for translation mode
-    const allTranslationsExist: Partial<Record<SupportedLanguage, Boolean>> =
+    const allTranslationsExist: Partial<Record<SupportedLanguage, boolean>> =
       {};
     supportedLanguages.forEach((language) => {
       // Let's assume it can be unlocked

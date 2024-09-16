@@ -11,19 +11,23 @@ import { SessionUser } from "@/lib/types";
 import MobileMenu from "../MobileMenu/MobileMenu";
 import SidebarItem from "./Sidebar/SideNavItem";
 import UserMenuItem from "./UserMenuItem";
+import { useOutsideClick } from "@/hooks/useOutsideClick";
 
 interface UserMenuProps {}
 
 export default function UserMenu({}: UserMenuProps) {
   const { toggleMobileMenu } = useMobileMenuContext();
-  const [showUserMenu, setShowUserMenu] = useState<Boolean>(false);
+  const [showUserMenu, setShowUserMenu] = useState<boolean>(false);
   const sessionUser = useSession().data?.user as SessionUser;
+
+  const ref = useOutsideClick(() => setShowUserMenu(false));
 
   return (
     <>
       {/* Visible on desktop */}
       <div
         className="m-4 hidden h-[60px] w-[60px] select-none rounded-full bg-slate-200 transition-all hover:scale-125 md:block md:h-[50px] md:w-[50px]"
+        ref={ref}
         onClick={() => {
           setShowUserMenu((x) => !x);
         }}

@@ -13,7 +13,7 @@ import SideNavItem from "./SideNavItem";
 
 interface SideBarNavigationProps {
   toggleSidebar: MouseEventHandler;
-  showSidebar: Boolean;
+  showSidebar: boolean;
   currentlyActiveLanguage: SupportedLanguage;
 }
 

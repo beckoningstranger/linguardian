@@ -58,11 +58,11 @@ export type ItemWithPopulatedTranslations = z.infer<
 
 export type ItemToLearn = ItemWithPopulatedTranslations & {
   learningStep: number;
-  firstPresentation: Boolean;
-  increaseLevel: Boolean;
+  firstPresentation: boolean;
+  increaseLevel: boolean;
 };
 
-export type ItemForServer = { id: Types.ObjectId; increaseLevel: Boolean };
+export type ItemForServer = { id: Types.ObjectId; increaseLevel: boolean };
 
 export interface Lemma {
   language: SupportedLanguage;
@@ -94,7 +94,7 @@ export interface List {
   flag: string;
   difficulty?: Difficulty;
   authors: string[];
-  private: Boolean;
+  private: boolean;
   units: { unitName: string; item: Types.ObjectId }[];
   unitOrder: string[];
   unlockedReviewModes:
@@ -154,8 +154,8 @@ export interface LanguageFeatures {
   requiresHelperKeys: string[];
   hasGender: Gender[];
   hasCases: Case[];
-  hasRomanization: Boolean;
-  hasTones: Boolean;
+  hasRomanization: boolean;
+  hasTones: boolean;
   ipa: IPA;
   partsOfSpeech: PartOfSpeech[];
   tags: sortedTags;

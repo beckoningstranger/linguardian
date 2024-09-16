@@ -2,7 +2,7 @@
 import { PropsWithChildren, createContext, useState } from "react";
 
 type MobileMenuContextType = {
-  showMobileMenu: Boolean;
+  showMobileMenu: boolean;
   toggleMobileMenu?: Function;
 };
 

@@ -2,7 +2,7 @@ import { useOutsideClick } from "@/hooks/useOutsideClick";
 import { MouseEventHandler, ReactNode } from "react";
 
 interface ContextMenuProps {
-  show: Boolean;
+  show: boolean;
   toggleContextMenu: MouseEventHandler;
   children: ReactNode;
   moreClasses: string;
