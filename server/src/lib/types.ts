@@ -276,4 +276,5 @@ export type ListDetails = {
   listNumber: number;
   listName?: string;
   unitOrder?: string[];
+  listDescription?: string;
 };

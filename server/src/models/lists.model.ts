@@ -238,6 +238,15 @@ export async function editDetails(listDetails: ListDetails) {
       { new: true }
     );
   }
+
+  if (listDetails.listDescription !== undefined) {
+    return await Lists.findOneAndUpdate(
+      { listNumber: listDetails.listNumber },
+      { description: listDetails.listDescription },
+      { new: true }
+    );
+  }
+
   if (listDetails.unitOrder !== undefined) {
     const list = await getList(listDetails.listNumber);
     if (!list) throw new Error("Error getting list");

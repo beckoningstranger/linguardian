@@ -364,20 +364,22 @@ export async function changeListDetails(listDetails: ListDetails) {
   const { listNumber } = listDetails;
   const list = await getList(listNumber);
   const [sessionUser] = await Promise.all([getUserOnServer()]);
+
   if (!list?.authors.includes(sessionUser.id))
     throw new Error("Only list authors can remove lists");
 
-  const response = await fetch(
-    `${server}/lists/editListDetails/${JSON.stringify(listDetails)}`,
-    {
-      method: "POST",
-    }
-  );
+  const response = await fetch(`${server}/lists/editListDetails`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(listDetails),
+  });
   if (response.ok) {
     revalidatePath(paths.listDetailsPath(listNumber, list.language));
     revalidatePath(paths.listsLanguagePath(list.language));
     revalidatePath(paths.dashboardLanguagePath(list.language));
     redirect(paths.listDetailsPath(listNumber, list.language));
   }
-  throw new Error("An error occurred while editing the list.");
+  throw new Error(await response.json());
 }

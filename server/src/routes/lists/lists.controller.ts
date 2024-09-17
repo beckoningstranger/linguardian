@@ -230,12 +230,13 @@ export async function httpRemoveList(req: Request, res: Response) {
 }
 
 export async function httpEditListDetails(req: Request, res: Response) {
-  const listDetails = JSON.parse(req.params.listDetails) as ListDetails;
-
+  const listDetails = req.body;
   try {
     const response = await editDetails(listDetails);
     return res.status(200).json(response);
   } catch (error) {
-    return res.status(500).json({ error: "Error removing unit from list" });
+    return res
+      .status(500)
+      .json({ error: `Error editing list details: ${error}` });
   }
 }

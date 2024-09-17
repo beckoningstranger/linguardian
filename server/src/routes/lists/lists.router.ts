@@ -84,4 +84,4 @@ listsRouter.post(
 
 listsRouter.post("/removeList/:listNumber", httpRemoveList);
 
-listsRouter.post("/editListDetails/:listDetails", httpEditListDetails);
+listsRouter.post("/editListDetails", httpEditListDetails);
