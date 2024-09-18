@@ -89,7 +89,11 @@ export default function UnitButton({
           width: fillWidth,
         }}
       />
-      <div className={`relative z-10 flex items-baseline rounded-lg px-4 py-2`}>
+      <div
+        className={`relative z-10 flex items-baseline rounded-lg px-4 py-2 ${
+          userIsAuthor ? " cursor-grab active:cursor-grabbing" : ""
+        }`}
+      >
         <span
           className="text-md py-2 pl-4 pr-0"
           onClick={(e) => {
@@ -98,7 +102,7 @@ export default function UnitButton({
             if (userIsAuthor) setEditMode(true);
           }}
         >
-          {!editMode && <span>{unitName}</span>}
+          {!editMode && <span className="cursor-pointer">{unitName}</span>}
           {editMode && (
             <form onSubmit={handleSubmit}>
               <input
