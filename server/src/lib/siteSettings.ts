@@ -1,6 +1,7 @@
 import {
   PartOfSpeech,
   sortedTags,
+  Tag,
   type GlobalSettings,
   type LanguageFeatures,
   type LearningMode,
@@ -9,8 +10,21 @@ import {
 } from "./types.js";
 
 export const allTags: sortedTags = {
-  forAll: ["archaic", "obsolete", "vulgar", "slang", "humorous", "literary"],
+  forAll: [
+    "archaic",
+    "colloquial",
+    "obsolete",
+    "vulgar",
+    "slang",
+    "humorous",
+    "literary",
+  ],
   verb: ["transitive", "intransitive"],
+};
+
+const frenchTags = {
+  ...allTags,
+  forAll: [...allTags.forAll, "Belgian French" as Tag],
 };
 
 const allPartsOfSpeech: PartOfSpeech[] = [
@@ -183,7 +197,7 @@ const languageFeatures: LanguageFeatures[] = [
     hasRomanization: false,
     hasTones: false,
     partsOfSpeech: allPartsOfSpeech,
-    tags: allTags,
+    tags: frenchTags,
   } as const,
   {
     langName: "English",

@@ -37,6 +37,7 @@ export type Case =
   | "accusative & dative";
 
 export type Tag =
+  | "colloquial"
   | "archaic"
   | "obsolete"
   | "vulgar"
@@ -44,7 +45,8 @@ export type Tag =
   | "humorous"
   | "literary"
   | "transitive"
-  | "intransitive";
+  | "intransitive"
+  | "Belgian French";
 
 export interface sortedTags {
   forAll: Tag[];
