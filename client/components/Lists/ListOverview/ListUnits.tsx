@@ -59,8 +59,10 @@ export default function ListUnits({
     const [movedUnit] = newUnitOrder.splice(source.index, 1);
     newUnitOrder.splice(destination.index, 0, movedUnit);
 
-    setUnitOrder(newUnitOrder);
-    hasOrderChanged.current = true;
+    if (JSON.stringify(newUnitOrder) !== JSON.stringify(unitOrder)) {
+      hasOrderChanged.current = true;
+      setUnitOrder(newUnitOrder);
+    }
   };
 
   return (
@@ -144,13 +146,8 @@ function getUnitInformation(
     learnedIds?.includes(item.item._id)
   ).length;
 
-  const response: {
-    noOfItemsInUnit: number;
-    noOfLearnedItemsInUnit: number;
-  } = {
+  return {
     noOfItemsInUnit,
     noOfLearnedItemsInUnit,
   };
-
-  return response;
 }
