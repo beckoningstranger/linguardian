@@ -41,6 +41,7 @@ export default function CreateNewListForm({
     });
     reset();
   };
+  const filePicked: boolean = watch().csvfile && watch().csvfile.length > 0;
 
   return (
     <form
@@ -94,7 +95,7 @@ export default function CreateNewListForm({
           className="sr-only"
           aria-label="Upload a CSV File"
         />
-        {watch().csvfile && watch().csvfile.length > 0
+        {filePicked
           ? `Your file: ${watch().csvfile[0].name}`
           : "Upload a CSV file (optional)"}
       </label>
@@ -108,7 +109,7 @@ export default function CreateNewListForm({
         disabled={isSubmitting}
         className="m-2 rounded border-2 border-black p-3 transition-all hover:scale-105 hover:border-green-500 hover:bg-green-500 hover:text-white"
       >
-        Start upload & Create a new list
+        {filePicked ? "Start upload & Create a new list" : "Create a new list"}
       </button>
     </form>
   );
