@@ -61,3 +61,28 @@ export function useOutsideInputAndKeyboardClick(callback: Function) {
 
   return ref;
 }
+
+export function useOutsideClickForUserMenu(callback: Function) {
+  const ref = useRef<HTMLDivElement | HTMLInputElement | HTMLTextAreaElement>(
+    null
+  );
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const eventTarget = event.target as HTMLElement;
+      const isLink = eventTarget.closest("#user-menu-link");
+      if (isLink || eventTarget.innerHTML === "Logout") return;
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        callback();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [callback]);
+
+  return ref;
+}

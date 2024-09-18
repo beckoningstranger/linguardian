@@ -1,17 +1,17 @@
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
-import { MouseEventHandler, useState } from "react";
+import { MouseEventHandler, RefObject, useState } from "react";
 import { FaUserAlt } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
 import { RiLogoutBoxLine } from "react-icons/ri";
 
 import useMobileMenuContext from "@/hooks/useMobileMenuContext";
+import { useOutsideClickForUserMenu } from "@/hooks/useOutsideClick";
 import paths from "@/lib/paths";
 import { SessionUser } from "@/lib/types";
 import MobileMenu from "../MobileMenu/MobileMenu";
 import SidebarItem from "./Sidebar/SideNavItem";
 import UserMenuItem from "./UserMenuItem";
-import { useOutsideClick } from "@/hooks/useOutsideClick";
 
 interface UserMenuProps {}
 
@@ -20,14 +20,14 @@ export default function UserMenu({}: UserMenuProps) {
   const [showUserMenu, setShowUserMenu] = useState<boolean>(false);
   const sessionUser = useSession().data?.user as SessionUser;
 
-  const ref = useOutsideClick(() => setShowUserMenu(false));
+  const ref = useOutsideClickForUserMenu(() => setShowUserMenu(false));
 
   return (
     <>
       {/* Visible on desktop */}
       <div
         className="m-4 hidden h-[60px] w-[60px] select-none rounded-full bg-slate-200 transition-all hover:scale-125 md:block md:h-[50px] md:w-[50px]"
-        ref={ref}
+        ref={ref as RefObject<HTMLDivElement>}
         onClick={() => {
           setShowUserMenu((x) => !x);
         }}
@@ -98,13 +98,13 @@ export default function UserMenu({}: UserMenuProps) {
               icon={<FaUserAlt />}
               label="Profile"
               href={paths.profilePath(sessionUser?.usernameSlug)}
-              toggleSidebar={toggleMobileMenu as MouseEventHandler}
+              toggleSidebar={toggleMobileMenu}
             />
             <SidebarItem
               icon={<IoSettings />}
               label="Settings"
               href={paths.settingsPath()}
-              toggleSidebar={toggleMobileMenu as MouseEventHandler}
+              toggleSidebar={toggleMobileMenu}
             />
             <li
               className={`my-4 flex select-none justify-center transition-all md:my-0 md:h-14 md:justify-start md:border-none md:p-10 md:hover:scale-100 md:hover:bg-slate-300`}
