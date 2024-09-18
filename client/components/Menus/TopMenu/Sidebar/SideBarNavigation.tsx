@@ -3,7 +3,7 @@
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import paths from "@/lib/paths";
 import { SupportedLanguage } from "@/lib/types";
-import { MouseEventHandler } from "react";
+import { MouseEventHandler, RefObject } from "react";
 import { FaBookReader, FaRegQuestionCircle } from "react-icons/fa";
 import { FaPeopleRoof } from "react-icons/fa6";
 import { RiFileList3Fill } from "react-icons/ri";
@@ -31,7 +31,7 @@ export default function SideBarNavigation({
           showSidebar ? "w-full md:w-auto z-50" : "-translate-x-[300px]"
         }
         `}
-        ref={ref}
+        ref={ref as RefObject<HTMLDivElement>}
       >
         <LogoWithCloseButton toggleFunction={toggleSidebar} />
         <nav className="grid h-full place-items-center last:mb-0 md:place-items-start">

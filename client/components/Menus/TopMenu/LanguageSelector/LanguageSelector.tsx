@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { RefObject, useState } from "react";
 import Flag from "react-world-flags";
 
 import { useOutsideClick } from "@/hooks/useOutsideClick";
@@ -50,7 +50,10 @@ export default function LanguageSelector({
   );
 
   return (
-    <div ref={ref} className="z-50 hidden md:block">
+    <div
+      ref={ref as RefObject<HTMLDivElement>}
+      className="z-50 hidden md:block"
+    >
       <div>
         <Flag
           code={activeLanguageData.flag}
