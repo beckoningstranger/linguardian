@@ -18,7 +18,7 @@ import {
 } from "../../models/users.model.js";
 
 import { LearningMode, SupportedLanguage } from "../../lib/types.js";
-import { findItemBySlug } from "../../models/items.model.js";
+import { getItemBySlug } from "../../models/items.model.js";
 import { getSupportedLanguages } from "../../models/settings.model.js";
 
 export async function httpGetUserById(req: Request, res: Response) {
@@ -190,7 +190,7 @@ export async function httpGetRecentDictionarySearches(
   const itemSlugsToGet = user.recentDictionarySearches.map(
     (item) => item.itemSlug
   );
-  const itemPromises = itemSlugsToGet.map(async (slug) => findItemBySlug(slug));
+  const itemPromises = itemSlugsToGet.map(async (slug) => getItemBySlug(slug));
   const items = await Promise.all(itemPromises);
   return res.status(200).json(items);
 }

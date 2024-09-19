@@ -1,5 +1,8 @@
 import EditOrCreateItem from "@/components/Dictionary/EditOrCreateItem";
-import { getItemBySlug, getLanguageFeaturesForLanguage } from "@/lib/fetchData";
+import {
+  getLanguageFeaturesForLanguage,
+  getPopulatedItemBySlug,
+} from "@/lib/fetchData";
 import {
   getAllUserLanguages,
   getSeperatedUserLanguagesWithFlags,
@@ -17,9 +20,11 @@ interface EditPageProps {
 
 export async function generateMetadata({
   params: { slug, language },
-  searchParams: { comingFrom },
 }: EditPageProps) {
-  const item = await getItemBySlug(language as SupportedLanguage, slug);
+  const item = await getPopulatedItemBySlug(
+    language as SupportedLanguage,
+    slug
+  );
   return { title: `Edit ${item?.name}` };
 }
 
@@ -39,7 +44,11 @@ export default async function EditPage({
   ).filter((features): features is LanguageFeatures => features !== undefined);
 
   const [item, languageFeatures] = await Promise.all([
-    getItemBySlug(language as SupportedLanguage, slug, allUserLanguages),
+    getPopulatedItemBySlug(
+      language as SupportedLanguage,
+      slug,
+      allUserLanguages
+    ),
     getLanguageFeaturesForLanguage(language as SupportedLanguage),
   ]);
   if (!item || !languageFeatures)

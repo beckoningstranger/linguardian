@@ -1,5 +1,7 @@
+import { Types } from "mongoose";
 import { normalizeString, slugifyString } from "../lib/helperFunctions.js";
 import {
+  Item,
   ItemWithPopulatedTranslations,
   PartOfSpeech,
   SupportedLanguage,
@@ -24,9 +26,19 @@ export async function getFullyPopulatedItemBySlug(
       select: `name language slug`,
     })
   );
-  return await Items.findOne({ language: queryItemLanguage, slug: slug })
+  const item = (await Items.findOne({ language: queryItemLanguage, slug })
     .populate(paths)
-    .exec();
+    .exec()) as Omit<Item, "translations"> & {
+    translations: {
+      [key in SupportedLanguage]?: {
+        _id: Types.ObjectId;
+        name: string;
+        language: string;
+        slug: string;
+      }[];
+    };
+  };
+  return item;
 }
 
 export async function getAllSlugsForLanguage(language: SupportedLanguage) {
@@ -45,24 +57,6 @@ export async function findItemsByName(
     {
       normalizedName: { $regex: normalizedLowerCaseQuery },
       language: { $in: languages },
-    },
-    {
-      _id: 1,
-      normalizedName: 1,
-      name: 1,
-      slug: 1,
-      partOfSpeech: 1,
-      IPA: 1,
-      definition: 1,
-      language: 1,
-    }
-  );
-}
-
-export async function findItemBySlug(slug: string) {
-  return await Items.findOne(
-    {
-      slug: slug,
     },
     {
       _id: 1,
@@ -133,10 +127,6 @@ function resolveConflictsInUpdate(update: ItemWithPopulatedTranslations) {
   return conflictFreeUpdate;
 }
 
-async function deleteItem(slug: string) {
-  return await Items.deleteOne({ slug: slug });
-}
-
 async function filterOutInvalidTags(
   tagArray: string[] | undefined,
   partOfSpeech: PartOfSpeech,
@@ -151,4 +141,27 @@ async function filterOutInvalidTags(
   if (validTags)
     return tagArray.filter((tag) => validTags.includes(tag as Tag)) as Tag[];
   return [] as Tag[];
+}
+
+export async function removeTranslationBySlug(
+  translationToRemove: Types.ObjectId,
+  slug: string
+) {
+  const language = (await Items.findOne({ _id: translationToRemove }))
+    ?.language;
+  return await Items.updateOne(
+    { slug },
+    { $pull: { [`translations.${language}`]: translationToRemove } }
+  );
+}
+
+export async function addTranslationBySlug(
+  translationToAdd: Types.ObjectId,
+  slug: string
+) {
+  const language = (await Items.findOne({ slug }))?.language;
+  return await Items.updateOne(
+    { slug },
+    { $addToSet: { [`translations.${language}`]: translationToAdd } }
+  );
 }

@@ -1,13 +1,19 @@
 import { Request, Response } from "express";
-import { SupportedLanguage } from "../../lib/types.js";
+import {
+  ItemWithPopulatedTranslations,
+  SupportedLanguage,
+} from "../../lib/types.js";
 import { itemSchemaWithPopulatedTranslations } from "../../lib/validations.js";
 import {
+  addTranslationBySlug,
   editOrCreateBySlug,
   findItemsByName,
   getAllSlugsForLanguage,
   getFullyPopulatedItemBySlug,
   getItemBySlug,
+  removeTranslationBySlug,
 } from "../../models/items.model.js";
+import { getSupportedLanguages } from "../../models/settings.model.js";
 
 export async function httpGetItemBySlug(req: Request, res: Response) {
   const slug = req.params.slug;
@@ -89,7 +95,67 @@ export async function httpEditOrCreateItem(req: Request, res: Response) {
     return res.status(400).json({ error: errorMessage });
   }
 
+  const updateReponses = await updateRelatedItems(validatedItem);
+
   const response = await editOrCreateBySlug(validatedItem, slug);
-  if (response) return res.status(201).json(response);
+  if (updateReponses && response) return res.status(201).json(response);
   return res.status(500).json({ error: "Problem in database" });
+}
+
+async function updateRelatedItems(item: ItemWithPopulatedTranslations) {
+  const allSupportedLanguages = await getSupportedLanguages();
+  if (!allSupportedLanguages)
+    throw new Error("Failed to get all supported languages");
+  const oldItem = await getFullyPopulatedItemBySlug(
+    item.language,
+    item.slug,
+    allSupportedLanguages
+  );
+
+  const { added, removed, areEqual } = translationObjectsDiff(oldItem, item);
+  const promises: Promise<any>[] = [];
+  if (areEqual) return true;
+  if (added)
+    added.forEach((slug) =>
+      promises.push(addTranslationBySlug(oldItem._id, slug))
+    );
+  if (removed)
+    removed.forEach((slug) =>
+      promises.push(removeTranslationBySlug(oldItem._id, slug))
+    );
+  return await Promise.all(promises);
+}
+
+function translationObjectsDiff(
+  oldItem: {
+    translations: { [key: string]: { slug: string }[] };
+  },
+  newItem: {
+    translations: { [key: string]: { slug: string }[] };
+  }
+): { added: string[]; removed: string[]; areEqual: boolean } {
+  const allLanguages = new Set([
+    ...Object.keys(oldItem.translations),
+    ...Object.keys(newItem.translations),
+  ]);
+  const added: string[] = [];
+  const removed: string[] = [];
+
+  allLanguages.forEach((lang) => {
+    const slugs1 = oldItem.translations[lang]?.map((item) => item.slug) || [];
+    const slugs2 = newItem.translations[lang]?.map((item) => item.slug) || [];
+
+    // Find added slugs
+    const addedInLang = slugs2.filter((slug) => !slugs1.includes(slug));
+    added.push(...addedInLang);
+
+    // Find removed slugs
+    const removedInLang = slugs1.filter((slug) => !slugs2.includes(slug));
+    removed.push(...removedInLang);
+  });
+
+  // Determine if both objects are equal
+  const areEqual = added.length === 0 && removed.length === 0;
+
+  return { added, removed, areEqual };
 }
