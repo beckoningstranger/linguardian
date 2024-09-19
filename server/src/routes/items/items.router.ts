@@ -2,21 +2,24 @@ import express from "express";
 import {
   httpEditOrCreateItem,
   httpFindItemsByName,
-  httpGetAllSlugForLanguage,
+  httpGetAllSlugsForLanguage,
   httpGetFullyPopulatedItemBySlug,
-  httpGetOneItemById,
+  httpGetItemBySlug,
 } from "./items.controller.js";
 
 export const itemsRouter = express.Router();
 
-itemsRouter.get("/getById/:id", httpGetOneItemById);
+itemsRouter.get("/getItemBySlug/:slug", httpGetItemBySlug);
 
 itemsRouter.get(
-  "/getBySlug/:queryItemLanguage/:slug/:userLanguages",
+  "/getPopulatedItemBySlug/:queryItemLanguage/:slug/:userLanguages",
   httpGetFullyPopulatedItemBySlug
 );
 
-itemsRouter.get("/getAllSlugsForLanguage/:language", httpGetAllSlugForLanguage);
+itemsRouter.get(
+  "/getAllSlugsForLanguage/:language",
+  httpGetAllSlugsForLanguage
+);
 
 itemsRouter.get("/findItems/:languages/:query", httpFindItemsByName);
 

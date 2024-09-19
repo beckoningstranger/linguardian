@@ -5,7 +5,7 @@ import ItemPageMain from "@/components/Dictionary/ItemPageMain";
 import ItemBackButton from "@/components/Lists/ItemBackButton";
 import {
   getAllSlugsForLanguage,
-  getItemBySlug,
+  getPopulatedItemBySlug,
   getSupportedLanguages,
 } from "@/lib/fetchData";
 import { getAllUserLanguages } from "@/lib/helperFunctions";
@@ -49,7 +49,7 @@ export default async function ItemPage({
 }: ItemPageProps) {
   const userLanguages = await getAllUserLanguages();
 
-  const item = await getItemBySlug(
+  const item = await getPopulatedItemBySlug(
     language as SupportedLanguage,
     slug,
     userLanguages

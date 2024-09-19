@@ -6,17 +6,17 @@ import {
   findItemsByName,
   getAllSlugsForLanguage,
   getFullyPopulatedItemBySlug,
-  getOneItemById,
+  getItemBySlug,
 } from "../../models/items.model.js";
 
-export async function httpGetOneItemById(req: Request, res: Response) {
-  const id = req.params.id;
+export async function httpGetItemBySlug(req: Request, res: Response) {
+  const slug = req.params.slug;
 
-  const response = await getOneItemById(id);
+  const response = await getItemBySlug(slug);
   if (response) return res.status(200).json(response);
   return res
     .status(404)
-    .json({ message: `Error getting item with id ${id}: Item not found` });
+    .json({ message: `Error getting item with slug ${slug}: Item not found` });
 }
 
 export async function httpGetFullyPopulatedItemBySlug(
@@ -43,7 +43,7 @@ export async function httpGetFullyPopulatedItemBySlug(
   return res.status(200).json(response);
 }
 
-export async function httpGetAllSlugForLanguage(req: Request, res: Response) {
+export async function httpGetAllSlugsForLanguage(req: Request, res: Response) {
   const language = req.params.language as SupportedLanguage;
 
   const response = await getAllSlugsForLanguage(language);
@@ -88,6 +88,7 @@ export async function httpEditOrCreateItem(req: Request, res: Response) {
     );
     return res.status(400).json({ error: errorMessage });
   }
+
   const response = await editOrCreateBySlug(validatedItem, slug);
   if (response) return res.status(201).json(response);
   return res.status(500).json({ error: "Problem in database" });

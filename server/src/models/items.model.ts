@@ -8,8 +8,8 @@ import {
 import Items from "./item.schema.js";
 import { getLanguageFeaturesForLanguage } from "./settings.model.js";
 
-export async function getOneItemById(id: string) {
-  return await Items.findOne({ _id: id });
+export async function getItemBySlug(slug: string) {
+  return await Items.findOne({ slug });
 }
 
 export async function getFullyPopulatedItemBySlug(
