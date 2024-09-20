@@ -78,6 +78,8 @@ const itemSchemaWithoutTranslations = z.object({
       "literary",
       "transitive",
       "intransitive",
+      "colloquial",
+      "Belgian French",
     ])
     .array()
     .max(5, "Items can receive a maximum of 5 tags")

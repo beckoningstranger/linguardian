@@ -1,12 +1,10 @@
 import paths from "@/lib/paths";
+import { ListAndUnitData } from "@/lib/types";
 import Link from "next/link";
 import { useState } from "react";
+import DeleteItemButton from "./DeleteItemButton";
 import UnitItemText from "./UnitItemText";
 import { ItemPlusLearningInfo } from "./UnitItems";
-import { FaTrashCan } from "react-icons/fa6";
-import { removeItemFromList } from "@/lib/actions";
-import { ListAndUnitData } from "@/lib/types";
-import toast from "react-hot-toast";
 
 interface UnitItemProps {
   item: ItemPlusLearningInfo;
@@ -43,19 +41,7 @@ export default function UnitItem({
       onMouseOut={() => setShowItemTranslation(!showItemTranslation)}
     >
       {userIsAuthor && (
-        <button
-          className="absolute right-3 top-1/2 -translate-y-1/2 transform p-3 text-2xl hover:text-red-500"
-          onClick={async (e) => {
-            e.preventDefault();
-            toast.promise(removeItemFromList(listAndUnitData, item._id), {
-              loading: "Deleting the item...",
-              success: () => "Item deleted! 🎉",
-              error: (err) => err.toString(),
-            });
-          }}
-        >
-          <FaTrashCan />
-        </button>
+        <DeleteItemButton listAndUnitData={listAndUnitData} itemId={item._id} />
       )}
       <UnitItemText
         translations={translations}
