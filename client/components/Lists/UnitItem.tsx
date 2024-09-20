@@ -6,6 +6,7 @@ import DeleteItemButton from "./DeleteItemButton";
 import UnitItemText from "./UnitItemText";
 import { ItemPlusLearningInfo } from "./UnitItems";
 import { updateRecentDictionarySearches } from "@/lib/actions";
+import { MobileMenuContextProvider } from "../Menus/MobileMenu/MobileMenuContext";
 
 interface UnitItemProps {
   item: ItemPlusLearningInfo;
@@ -43,7 +44,14 @@ export default function UnitItem({
       onClick={() => updateRecentDictionarySearches(item.slug)}
     >
       {userIsAuthor && (
-        <DeleteItemButton listAndUnitData={listAndUnitData} itemId={item._id} />
+        <MobileMenuContextProvider>
+          <DeleteItemButton
+            listAndUnitData={listAndUnitData}
+            itemId={item._id}
+            itemName={item.name}
+            listName={listAndUnitData.listName}
+          />
+        </MobileMenuContextProvider>
       )}
       <UnitItemText
         translations={translations}

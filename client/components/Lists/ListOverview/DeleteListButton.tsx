@@ -37,9 +37,10 @@ export default function DeleteListButton({
   const [showConfirmDeleteModal, setShowConfirmDeleteModel] = useState(false);
   return (
     <>
+      {/* Mobile */}
       <div
         className="md:hidden"
-        onClick={(e) => {
+        onClick={() => {
           toggleMobileMenu();
         }}
       >
@@ -49,6 +50,7 @@ export default function DeleteListButton({
           </span>
         </div>
       </div>
+      {/* Desktop */}
       <div
         className="absolute top-24 hidden md:left-0 md:block lg:left-12"
         onClick={(e) => {
@@ -60,8 +62,10 @@ export default function DeleteListButton({
         </div>
       </div>
       <ConfirmCancelMobileMenu doOnConfirm={removeListAction}>
-        <div>Careful! This will delete the entire list!</div>
-        <div className="mt-8">Are you sure you want to delete it?</div>
+        <div className="text-2xl">
+          Careful! This will delete the entire list!
+        </div>
+        <div className="mt-8 text-xl">Are you sure you want to delete it?</div>
       </ConfirmCancelMobileMenu>
       <ConfirmCancelModal
         title="Careful! This will delete the entire list"
