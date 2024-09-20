@@ -5,6 +5,7 @@ import { useState } from "react";
 import DeleteItemButton from "./DeleteItemButton";
 import UnitItemText from "./UnitItemText";
 import { ItemPlusLearningInfo } from "./UnitItems";
+import { updateRecentDictionarySearches } from "@/lib/actions";
 
 interface UnitItemProps {
   item: ItemPlusLearningInfo;
@@ -39,6 +40,7 @@ export default function UnitItem({
       )}`}
       onMouseOver={() => setShowItemTranslation(!showItemTranslation)}
       onMouseOut={() => setShowItemTranslation(!showItemTranslation)}
+      onClick={() => updateRecentDictionarySearches(item.slug)}
     >
       {userIsAuthor && (
         <DeleteItemButton listAndUnitData={listAndUnitData} itemId={item._id} />

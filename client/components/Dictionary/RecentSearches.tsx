@@ -12,7 +12,7 @@ export default function RecentSearches({
 }: RecentSearchesProps) {
   return (
     <div className="mx-1">
-      <div className="font-semibold">Your recent items:</div>
+      <div className="font-semibold">Your most recently looked up items:</div>
       <SearchResults
         results={recentSearches}
         getFlagCode={getFlagCode}
