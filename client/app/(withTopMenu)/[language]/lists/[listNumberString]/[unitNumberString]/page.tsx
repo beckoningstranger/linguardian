@@ -18,8 +18,9 @@ import {
   getLearnedLanguageData,
   getListDataForMetadata,
 } from "@/lib/fetchData";
-import getUserOnServer, {
+import {
   getSeperatedUserLanguages,
+  getUserOnServer,
 } from "@/lib/helperFunctions";
 import paths from "@/lib/paths";
 import { LearningMode, ListAndUnitData, SupportedLanguage } from "@/lib/types";

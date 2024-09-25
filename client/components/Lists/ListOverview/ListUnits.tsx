@@ -111,6 +111,7 @@ export default function ListUnits({
                             listNumber={listNumber}
                             noOfItemsInUnit={noOfItemsInUnit}
                             unitOrder={unitNames}
+                            setUnitOrder={setUnitOrder}
                           />
                         </MobileMenuContextProvider>
                       </Link>
@@ -123,7 +124,12 @@ export default function ListUnits({
           )}
         </Droppable>
         {userIsAuthor && (
-          <NewUnitButton listNumber={listNumber} unitNames={unitNames} />
+          <NewUnitButton
+            listNumber={listNumber}
+            unitNames={unitNames}
+            unitOrder={unitOrder}
+            setUnitOrder={setUnitOrder}
+          />
         )}
       </div>
     </DragDropContext>

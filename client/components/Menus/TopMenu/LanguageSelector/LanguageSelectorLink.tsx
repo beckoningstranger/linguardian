@@ -23,9 +23,7 @@ export default function LanguageSelectorLink({
     <Link
       href={calculateNewPath(language, currentPath)}
       onClick={() => {
-        setShowAllLanguageOptions(
-          (showAllLanguageOptions: boolean) => !showAllLanguageOptions
-        );
+        setShowAllLanguageOptions(false);
         setCurrentlyActiveLanguage(language);
       }}
     >

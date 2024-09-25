@@ -4,7 +4,8 @@ import { ReactNode } from "react";
 
 import DashboardContainer from "@/components/Dashboard/DashboardContainer";
 import TopMenu from "@/components/Menus/TopMenu/TopMenu";
-import getUserOnServer from "@/lib/helperFunctions";
+import { getUserOnServer } from "@/lib/helperFunctions";
+import { SupportedLanguage } from "@/lib/types";
 
 interface RootLayoutProps {
   children: ReactNode;
@@ -22,16 +23,18 @@ export default async function LayoutWithTopMenu({ children }: RootLayoutProps) {
     throw new Error(
       "Connection lost, could not get supported languages and/or language features"
     );
+  if (!sessionUser) throw new Error("Failed to get session user");
+
+  const initialActiveLanguage = sessionUser.isLearning
+    ? sessionUser.isLearning[0].name
+    : ("DE" as SupportedLanguage);
 
   return (
     <>
-      <ActiveLanguageProvider
-        initialActiveLanguage={sessionUser.isLearning[0].name}
-      >
+      <ActiveLanguageProvider initialActiveLanguage={initialActiveLanguage}>
         <TopMenu
           allSupportedLanguages={allSupportedLanguages}
           allLanguageFeatures={allLanguageFeatures}
-          user={sessionUser}
         />
       </ActiveLanguageProvider>
       <DashboardContainer>

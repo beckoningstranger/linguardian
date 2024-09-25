@@ -1,4 +1,4 @@
-import getUserOnServer from "@/lib/helperFunctions";
+import { getUserOnServer } from "@/lib/helperFunctions";
 import paths from "@/lib/paths";
 import { redirect } from "next/navigation";
 

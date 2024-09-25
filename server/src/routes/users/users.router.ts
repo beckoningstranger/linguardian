@@ -5,7 +5,7 @@ import {
   httpAddNewRecentDictionarySearches,
   httpGetAllLearnedListsForUser,
   httpGetAllUserIds,
-  httpGetLearnedLanguageData,
+  httpGetLearnedLanguageDataForLanguage,
   httpGetLearnedList,
   httpGetNativeLanguageById,
   httpGetNextUserId,
@@ -14,6 +14,7 @@ import {
   httpGetUserByUsernameSlug,
   httpRemoveListFromDashboard,
   httpSetNativeLanguage,
+  httpStopLearningLanguage,
   httpUpdateLearnedItems,
 } from "./users.controller.js";
 
@@ -24,8 +25,8 @@ usersRouter.get("/get/:id", httpGetUserById);
 usersRouter.get("/getByUsernameSlug/:usernameSlug", httpGetUserByUsernameSlug);
 
 usersRouter.get(
-  "/getLearnedLanguageData/:language/:userId",
-  httpGetLearnedLanguageData
+  "/getLearnedLanguageDataForLanguage/:language/:userId",
+  httpGetLearnedLanguageDataForLanguage
 );
 
 usersRouter.get(
@@ -68,4 +69,9 @@ usersRouter.post(
 usersRouter.get(
   "/getRecentDictionarySearches/:userId",
   httpGetRecentDictionarySearches
+);
+
+usersRouter.post(
+  "/stopLearningLanguage/:userId/:language",
+  httpStopLearningLanguage
 );

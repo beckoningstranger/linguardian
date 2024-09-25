@@ -1,3 +1,4 @@
+import NoMoreLanguagesToLearn from "@/components/NoMoreLanguagesToLearn";
 import PickNewLanguage from "@/components/PickNewLanguage";
 import { getAllLanguageFeatures } from "@/lib/fetchData";
 import { getAllUserLanguages } from "@/lib/helperFunctions";
@@ -27,9 +28,19 @@ export default async function AddNewLanguageToLearn() {
   );
 
   const renderedFlags = languagesAndFlags.map((langAndFlag) => (
-    <PickNewLanguage key={langAndFlag.name} languagesAndFlag={langAndFlag} />
+    <PickNewLanguage
+      key={langAndFlag.name}
+      languageAndFlag={langAndFlag}
+      languageName={
+        allAvailableLanguageFeatures.find(
+          (features) => features.langCode === langAndFlag.name
+        )?.langName
+      }
+    />
   ));
 
+  if (allAvailableLanguageFeatures.length === 0)
+    return <NoMoreLanguagesToLearn />;
   return (
     <div className="flex h-screen flex-col items-center">
       <div className="mx-auto text-2xl font-semibold">

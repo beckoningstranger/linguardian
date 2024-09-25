@@ -78,9 +78,9 @@ export default function RegisterForm() {
   if (registeringUser)
     return (
       <div className="grid h-screen place-items-center">
-        <div>
+        <div className="grid place-items-center">
           <p className="text-2xl font-bold text-green-700">
-            Welcome to Linguardian! Your account is being created...
+            Welcome to Linguardian! We will set you up shortly...
           </p>
           <Spinner size="big" />
         </div>

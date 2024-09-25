@@ -1,6 +1,6 @@
 import Onboarding from "@/components/Onboarding/Onboarding";
 import { getAllLanguageFeatures, getSupportedLanguages } from "@/lib/fetchData";
-import getUserOnServer from "@/lib/helperFunctions";
+import { getUserOnServer } from "@/lib/helperFunctions";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 

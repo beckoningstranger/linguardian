@@ -2,17 +2,21 @@
 
 import { addUnitToList } from "@/lib/actions";
 import { Input } from "@headlessui/react";
-import { useRef, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import toast from "react-hot-toast";
 
 interface NewUnitButtonProps {
   listNumber: number;
   unitNames: string[];
+  unitOrder: string[];
+  setUnitOrder: Dispatch<SetStateAction<string[]>>;
 }
 
 export default function NewUnitButton({
   listNumber,
   unitNames,
+  unitOrder,
+  setUnitOrder,
 }: NewUnitButtonProps) {
   const [isActive, setIsActive] = useState(false);
   const [unitName, setUnitName] = useState("");
@@ -37,7 +41,11 @@ export default function NewUnitButton({
     if (!isDuplicate && unitName.trim().length > 0)
       toast.promise(addUnitToList(unitName, listNumber), {
         loading: "Adding new unit...",
-        success: "Unit added! 🎉",
+        success: () => {
+          const newUnitOrder = [...unitOrder, unitName];
+          setUnitOrder(newUnitOrder);
+          return "Unit added! 🎉";
+        },
         error: (err) => {
           return `Failed to add item: ${err.message}`;
         },

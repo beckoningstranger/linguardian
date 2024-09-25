@@ -10,7 +10,7 @@ import {
   getSupportedLanguages,
   getUserById,
 } from "@/lib/fetchData";
-import getUserOnServer from "@/lib/helperFunctions";
+import { getUserOnServer } from "@/lib/helperFunctions";
 import {
   FullyPopulatedList,
   ItemToLearn,

@@ -8,20 +8,20 @@ import { useOutsideClick } from "@/hooks/useOutsideClick";
 import { SessionUser, SupportedLanguage } from "@/lib/types";
 import AddNewLanguageOption from "./AddNewLanguageOption";
 import LanguageSelectorLink from "./LanguageSelectorLink";
+import { useSession } from "next-auth/react";
 
 interface LanguageSelectorProps {
   setCurrentlyActiveLanguage: Function;
   activeLanguageData: { name: SupportedLanguage; flag: string };
   allSupportedLanguages: SupportedLanguage[];
-  user: SessionUser;
 }
 
 export default function LanguageSelector({
   setCurrentlyActiveLanguage,
   activeLanguageData,
   allSupportedLanguages,
-  user,
 }: LanguageSelectorProps) {
+  const sessionUser = useSession().data?.user as SessionUser;
   const [showAllLanguageOptions, setShowAllLanguageOptions] = useState(false);
   const MAX_NUMBER_OF_LANGUAGES_ALLOWED = 6;
   const currentPath = usePathname();
@@ -30,7 +30,7 @@ export default function LanguageSelector({
   const allLanguagesAndFlagsUserIsLearning: {
     name: SupportedLanguage;
     flag: string;
-  }[] = user.isLearning;
+  }[] = sessionUser?.isLearning || [];
 
   const amountOfLanguagesUserLearns = Object.keys(
     allLanguagesAndFlagsUserIsLearning

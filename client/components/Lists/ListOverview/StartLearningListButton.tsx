@@ -1,64 +1,95 @@
-import { addListForNewLanguage, addListToDashboard } from "@/lib/actions";
-import { getLanguageFeaturesForLanguage } from "@/lib/fetchData";
-import getUserOnServer from "@/lib/helperFunctions";
-import { SupportedLanguage } from "@/lib/types";
-import AddListSubmitButton from "./AddListSubmitButton";
+"use client";
+import CenteredSpinner from "@/components/CenteredSpinner";
+import { useActiveLanguage } from "@/context/ActiveLanguageContext";
+import { addListToDashboard, addNewLanguageToLearn } from "@/lib/actions";
+import { PopulatedList, SessionUser } from "@/lib/types";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 interface StartLearningListButtonProps {
-  language: SupportedLanguage;
-  listNumber: number;
+  languageName: string | undefined;
+  list: PopulatedList;
 }
 
-export default async function StartLearningListButton({
-  language,
-  listNumber,
+export default function StartLearningListButton({
+  list,
+  languageName,
 }: StartLearningListButtonProps) {
-  const sessionUser = await getUserOnServer();
-  const languageFeatures = await getLanguageFeaturesForLanguage(language);
-  if (!languageFeatures || !sessionUser)
-    throw new Error("Failed to fetch language features or session");
-
+  const [updating, setUpdating] = useState(false);
+  const { language, flag, listNumber, name } = list;
+  const { data, status, update } = useSession();
+  const sessionUser = data?.user as SessionUser;
+  const { setActiveLanguage } = useActiveLanguage();
   let userIsLearningThisLanguage = false;
-  sessionUser.isLearning.forEach((lang) => {
-    if (lang.name === language) userIsLearningThisLanguage = true;
-  });
 
-  const { langName } = languageFeatures;
-  const addListToDashboardAction = addListToDashboard.bind(
-    null,
-    listNumber,
-    language,
-    sessionUser.id
-  );
+  if (sessionUser)
+    sessionUser.isLearning.forEach((lang) => {
+      if (lang.name === language) userIsLearningThisLanguage = true;
+    });
 
-  const addListForNewLanguageAction = addListForNewLanguage.bind(
-    null,
-    sessionUser.id,
-    language,
-    listNumber
-  );
+  const addListToDashboardAction = async () => {
+    setUpdating(true);
+    await toast.promise(
+      addListToDashboard(listNumber, language, sessionUser.id),
+      {
+        loading: `Adding "${name}" to your lists...`,
+        success: `"${name}" has been added to your lists! 🎉`,
+        error: (err) => err.toString(),
+      }
+    );
+
+    const updatedLearnedLists = { ...sessionUser.learnedLists };
+    if (updatedLearnedLists[language]?.length) {
+      updatedLearnedLists[language]?.push(listNumber);
+    } else {
+      updatedLearnedLists[language] = [listNumber];
+    }
+    update({ ...data, user: { learnedLists: updatedLearnedLists } });
+    setUpdating(false);
+  };
+
+  const startLearningLanguageAndList = async () => {
+    await toast.promise(addNewLanguageToLearn(sessionUser.id, language), {
+      loading: `Adding ${languageName} to your languages...`,
+      success: `You are now learning ${languageName}! 🎉`,
+      error: (err) => err.toString(),
+    });
+
+    const updatedIsLearning = [
+      ...sessionUser.isLearning,
+      {
+        flag,
+        name: language,
+      },
+    ];
+
+    update({ ...data, user: { ...sessionUser, updatedIsLearning } });
+    setActiveLanguage(language);
+    await addListToDashboardAction();
+  };
+
+  if (status === "loading") return <CenteredSpinner />;
 
   return (
     <>
       {!userIsLearningThisLanguage && (
-        <form
-          action={addListForNewLanguageAction}
+        <button
+          onClick={startLearningLanguageAndList}
+          disabled={updating}
           className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
         >
-          <AddListSubmitButton language={language} listNumber={listNumber}>
-            Start learning {langName} with this list!
-          </AddListSubmitButton>
-        </form>
+          Start learning {languageName} with this list!
+        </button>
       )}
       {userIsLearningThisLanguage && (
-        <form
-          action={addListToDashboardAction}
+        <button
+          onClick={addListToDashboardAction}
+          disabled={updating}
           className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
         >
-          <AddListSubmitButton language={language} listNumber={listNumber}>
-            Start learning this list
-          </AddListSubmitButton>
-        </form>
+          Start learning this list
+        </button>
       )}
     </>
   );

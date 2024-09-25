@@ -2,17 +2,17 @@
 import { useState } from "react";
 import { RxDotsVertical } from "react-icons/rx";
 
-import ContextMenu from "../Menus/ContextMenu";
 import ListBarChart from "@/components/Charts/ListBarChart";
-import ListPieChart from "../Charts/ListPieChart";
-import { LearnedItem, LearningMode, List } from "@/lib/types";
-import Link from "next/link";
-import paths from "@/lib/paths";
 import { removeListFromDashboard } from "@/lib/actions";
-import FlexibleLearningButtons from "../Lists/FlexibleLearningButtons";
+import paths from "@/lib/paths";
+import { LearnedItem, LearningMode, List } from "@/lib/types";
 import { Types } from "mongoose";
+import Link from "next/link";
+import ListPieChart from "../Charts/ListPieChart";
+import FlexibleLearningButtons from "../Lists/FlexibleLearningButtons";
 import { calculateListStats, determineListStatus } from "../Lists/ListHelpers";
-import RemoveListSubmitButton from "./RemoveListSubmitButton";
+import ContextMenu from "../Menus/ContextMenu";
+import RemoveListButton from "./RemoveListButton";
 
 interface ListDashboardCardProps {
   list: List;
@@ -30,7 +30,6 @@ export default function ListDashboardCard({
   unlockedModes,
 }: ListDashboardCardProps) {
   const [showContextMenu, setShowContextMenu] = useState(false);
-
   const stats = calculateListStats(
     list,
     allLearnedItemsForLanguage,
@@ -53,12 +52,12 @@ export default function ListDashboardCard({
         moreClasses="absolute top-0 left-0 h-full"
       >
         <div className="m-4 flex flex-col">
-          <form action={removeListFromDashboardAction}>
-            <RemoveListSubmitButton
-              language={list.language}
-              listNumber={list.listNumber}
-            />
-          </form>
+          <RemoveListButton
+            listLanguage={list.language}
+            listName={list.name}
+            listNumber={list.listNumber}
+            userId={userId}
+          />
         </div>
       </ContextMenu>
       <div className="m-3 flex items-center justify-between">

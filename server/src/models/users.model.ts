@@ -266,11 +266,12 @@ export async function getAllUserIds() {
   return await Users.find<User>({}, { username: 1, _id: 0 });
 }
 
-export async function getAllLearnedLists(userId: string) {
-  return await Users.findOne<UserWithPopulatedLearnedLists>(
+export async function getLearnedLanguageDataWithPopulatedLists(userId: string) {
+  const user = await Users.findOne<UserWithPopulatedLearnedLists>(
     { id: userId },
     { languages: 1, _id: 0 }
   ).populate("languages.learnedLists");
+  return user?.languages;
 }
 
 export async function addRecentDictionarySearches(
@@ -312,5 +313,16 @@ export async function getRecentDictionarySearches(userId: string) {
   return await Users.findOne<User>(
     { id: userId },
     { recentDictionarySearches: 1, _id: 0 }
+  );
+}
+
+export async function stopLearningLanguage(
+  userId: string,
+  language: SupportedLanguage
+) {
+  return await Users.findOneAndUpdate(
+    { id: userId },
+    { $pull: { languages: { code: language } } },
+    { new: true }
   );
 }

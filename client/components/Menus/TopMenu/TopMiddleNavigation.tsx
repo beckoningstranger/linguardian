@@ -1,19 +1,19 @@
+"use client";
+
 import Link from "next/link";
 
-import { SupportedLanguage } from "@/lib/types";
+import { useActiveLanguage } from "@/context/ActiveLanguageContext";
 import paths from "@/lib/paths";
 
-interface TopMiddleNavigationProps {
-  language: SupportedLanguage;
-}
+interface TopMiddleNavigationProps {}
 
-export default function TopMiddleNavigation({
-  language,
-}: TopMiddleNavigationProps) {
+export default function TopMiddleNavigation({}: TopMiddleNavigationProps) {
+  const { activeLanguage } = useActiveLanguage();
+  console.log("TOP Middle nav", activeLanguage);
   return (
     <div className="absolute left-1/2 hidden -translate-x-1/2 md:flex">
       <Link
-        href={paths.listsLanguagePath(language)}
+        href={paths.listsLanguagePath(activeLanguage)}
         className="flex h-20 items-center px-4 hover:bg-slate-300"
       >
         Lists

@@ -1,6 +1,6 @@
 import CreateNewListForm from "@/components/createNewListForm";
 import { getLanguageFeaturesForLanguage } from "@/lib/fetchData";
-import getUserOnServer from "@/lib/helperFunctions";
+import { getUserOnServer } from "@/lib/helperFunctions";
 import { SupportedLanguage } from "@/lib/types";
 import { Metadata } from "next";
 

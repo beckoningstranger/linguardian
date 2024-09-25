@@ -5,9 +5,9 @@ import {
   UserLanguagesWithFlags,
 } from "@/lib/types";
 import { getServerSession } from "next-auth";
-import { getSupportedLanguages } from "./fetchData";
+import { getList, getSupportedLanguages } from "./fetchData";
 
-export default async function getUserOnServer() {
+export async function getUserOnServer() {
   const session = await getServerSession(authOptions);
   return session?.user as SessionUser;
 }
@@ -68,4 +68,20 @@ export async function checkPassedLanguageAsync(
     return null;
   }
   return passedLanguage as SupportedLanguage;
+}
+
+export async function getUserAndVerifyUserIsLoggedIn(errorMessage: string) {
+  const [sessionUser] = await Promise.all([getUserOnServer()]);
+  if (!sessionUser) throw new Error(errorMessage);
+  return sessionUser;
+}
+
+export async function verifyUserIsAuthorAndGetList(
+  listNumber: number,
+  errorMessage: string
+) {
+  const list = await getList(listNumber);
+  const [sessionUser] = await Promise.all([getUserOnServer()]);
+  if (!list?.authors.includes(sessionUser.id)) throw new Error(errorMessage);
+  return list;
 }

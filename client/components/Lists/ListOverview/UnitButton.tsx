@@ -6,7 +6,14 @@ import useMobileMenuContext from "@/hooks/useMobileMenuContext";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import { changeListDetails, removeUnitFromList } from "@/lib/actions";
 import { Button } from "@headlessui/react";
-import { FormEvent, RefObject, useEffect, useState } from "react";
+import {
+  Dispatch,
+  FormEvent,
+  RefObject,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import toast from "react-hot-toast";
 import { FaTrashCan } from "react-icons/fa6";
 
@@ -17,6 +24,7 @@ interface UnitButtonProps {
   listNumber: number;
   noOfItemsInUnit: number;
   unitOrder: string[];
+  setUnitOrder: Dispatch<SetStateAction<string[]>>;
 }
 
 export default function UnitButton({
@@ -26,6 +34,7 @@ export default function UnitButton({
   listNumber,
   noOfItemsInUnit,
   unitOrder,
+  setUnitOrder,
 }: UnitButtonProps) {
   const [editMode, setEditMode] = useState(false);
   const [updatedUnitName, setUpdatedUnitName] = useState(unitName);
@@ -54,7 +63,12 @@ export default function UnitButton({
   const removeUnitFromListAction = () =>
     toast.promise(removeUnitFromList(unitName, listNumber), {
       loading: "Removing this unit...",
-      success: () => "Unit removed! ✅",
+      success: () => {
+        setUnitOrder((prevUnitOrder) =>
+          prevUnitOrder.filter((name) => name !== unitName)
+        );
+        return "Unit removed! ✅";
+      },
       error: (err) => err.toString(),
     });
 

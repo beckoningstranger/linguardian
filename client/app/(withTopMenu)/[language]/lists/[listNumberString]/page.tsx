@@ -12,7 +12,7 @@ import ListHeader from "@/components/Lists/ListOverview/ListHeader";
 import ListUnits from "@/components/Lists/ListOverview/ListUnits";
 import { MobileMenuContextProvider } from "@/components/Menus/MobileMenu/MobileMenuContext";
 import Spinner from "@/components/Spinner";
-import getUserOnServer from "@/lib/helperFunctions";
+import { getUserOnServer } from "@/lib/helperFunctions";
 import { SupportedLanguage } from "@/lib/types";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -85,7 +85,7 @@ export default async function ListDetailPage({
           </div>
         }
       >
-        <ListFlexibleContent language={language} listNumber={listNumber} />
+        <ListFlexibleContent language={language} list={listData} />
       </Suspense>
       <ListUnits
         unitOrder={unitOrder}

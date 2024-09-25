@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 import { useActiveLanguage } from "@/context/ActiveLanguageContext";
-import { LanguageFeatures, SessionUser, SupportedLanguage } from "@/lib/types";
+import { LanguageFeatures, SupportedLanguage } from "@/lib/types";
 import { MobileMenuContextProvider } from "../MobileMenu/MobileMenuContext";
 import HamburgerMenu from "./HamburgerMenu";
 import LanguageSelectorAndUserMenu from "./LanguageSelectorAndUserMenu";
@@ -13,13 +13,11 @@ import TopMiddleNavigation from "./TopMiddleNavigation";
 interface TopMenuProps {
   allSupportedLanguages: SupportedLanguage[];
   allLanguageFeatures: LanguageFeatures[];
-  user: SessionUser;
 }
 
 export default function TopMenu({
   allSupportedLanguages,
   allLanguageFeatures,
-  user,
 }: TopMenuProps) {
   const { activeLanguage, setActiveLanguage } = useActiveLanguage();
   if (!activeLanguage) throw new Error("ActiveLanguage is not set");
@@ -46,13 +44,12 @@ export default function TopMenu({
             <HamburgerMenu toggleSidebar={toggleSidebar} />
             <TopMenuLogo language={activeLanguage} />
           </div>
-          <TopMiddleNavigation language={activeLanguage} />
+          <TopMiddleNavigation />
           <MobileMenuContextProvider>
             <LanguageSelectorAndUserMenu
               activeLanguageData={activeLanguageData}
               setCurrentlyActiveLanguage={setActiveLanguage}
               allSupportedLanguages={allSupportedLanguages}
-              user={user}
             />
           </MobileMenuContextProvider>
         </div>

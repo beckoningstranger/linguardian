@@ -1,4 +1,5 @@
 import {
+  DictionarySearchResult,
   FullyPopulatedList,
   LanguageFeatures,
   LearnedItem,
@@ -12,7 +13,7 @@ import {
 } from "@/lib/types";
 import { Types } from "mongoose";
 import { notFound } from "next/navigation";
-import getUserOnServer from "./helperFunctions";
+import { getUserOnServer } from "./helperFunctions";
 import { itemSchemaWithPopulatedTranslations } from "./validations";
 
 const server = process.env.SERVER_URL;
@@ -162,7 +163,7 @@ export async function getLearnedLanguageData(
 ) {
   try {
     const response = await fetch(
-      `${server}/users/getLearnedLanguageData/${language}/${userId}`
+      `${server}/users/getLearnedLanguageDataForLanguage/${language}/${userId}`
     );
     if (!response.ok) throw new Error(response.statusText);
     const learnedLanguageData: LearnedLanguageWithPopulatedLists =
@@ -331,6 +332,7 @@ export async function getAllLearnedListsForUser(userId: string) {
 
 export async function getRecentDictionarySearches() {
   const [sessionUser] = await Promise.all([getUserOnServer()]);
+
   const response = await fetch(
     `${server}/users/getRecentDictionarySearches/${sessionUser.id}`
   );
@@ -338,5 +340,5 @@ export async function getRecentDictionarySearches() {
     const responseData = await response.json();
     throw new Error(responseData?.error);
   }
-  return response.json();
+  return (await response.json()) as DictionarySearchResult[];
 }

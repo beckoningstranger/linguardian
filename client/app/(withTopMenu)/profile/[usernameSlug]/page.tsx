@@ -1,4 +1,5 @@
-import { getAllUserIds, getUserByUsernameSlug } from "@/lib/fetchData";
+import StopLearningLanguageButton from "@/components/StopLearningLanguageButton";
+import { getUserByUsernameSlug } from "@/lib/fetchData";
 
 interface ProfilePageProps {
   params: { usernameSlug: string };
@@ -27,6 +28,16 @@ export default async function ProfilePage({
       <div>
         {user?.username} is learning{" "}
         {user?.languages.map((lang) => lang.name).join(" and ")}.
+      </div>
+
+      <div className="flex flex-col gap-2">
+        {user?.languages.map((lang) => (
+          <StopLearningLanguageButton
+            langCode={lang.code}
+            langName={lang.name}
+            key={lang.code}
+          />
+        ))}
       </div>
     </>
   );
