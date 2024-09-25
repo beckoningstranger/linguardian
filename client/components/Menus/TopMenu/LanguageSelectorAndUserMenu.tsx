@@ -4,29 +4,35 @@ import { usePathname } from "next/navigation";
 import { MouseEventHandler } from "react";
 import Flag from "react-world-flags";
 
-import useMobileMenuContext from "@/hooks/useMobileMenuContext";
-import { SupportedLanguage } from "@/lib/types";
+import { useActiveLanguage } from "@/context/ActiveLanguageContext";
+import { LanguageFeatures, SupportedLanguage } from "@/lib/types";
+import {
+  MobileMenuContextProvider,
+  useMobileMenu,
+} from "../../../context/MobileMenuContext";
 import MobileMenu from "../MobileMenu/MobileMenu";
-import { MobileMenuContextProvider } from "../MobileMenu/MobileMenuContext";
 import LanguageSelector from "./LanguageSelector/LanguageSelector";
 import MobileLanguageSelector from "./LanguageSelector/MobileLanguageSelector";
 import UserMenu from "./UserMenu";
 
 interface LanguageSelectorAndUserMenuProps {
-  activeLanguageData: { name: SupportedLanguage; flag: string };
-  setCurrentlyActiveLanguage: Function;
   allSupportedLanguages: SupportedLanguage[];
+  allLanguageFeatures: LanguageFeatures[];
 }
 
 export default function LanguageSelectorAndUserMenu({
-  activeLanguageData,
-  setCurrentlyActiveLanguage,
   allSupportedLanguages,
+  allLanguageFeatures,
 }: LanguageSelectorAndUserMenuProps) {
-  const { toggleMobileMenu } = useMobileMenuContext();
+  const { toggleMobileMenu } = useMobileMenu();
   const currentBaseUrl = usePathname();
-  const showLanguageSelectorOnlyOn: string[] = [];
+  const { activeLanguage } = useActiveLanguage();
+  const activeLanguageData = getLanguageAndFlag(
+    activeLanguage,
+    allLanguageFeatures
+  );
 
+  const showLanguageSelectorOnlyOn: string[] = [];
   allSupportedLanguages.forEach((lang) => {
     ["dashboard", "dictionary", "lists", "lists/new"].forEach((entry) =>
       showLanguageSelectorOnlyOn.push("/" + lang + "/" + entry)
@@ -49,7 +55,6 @@ export default function LanguageSelectorAndUserMenu({
         />
         <MobileMenu fromDirection="animate-from-top">
           <MobileLanguageSelector
-            setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
             allSupportedLanguages={allSupportedLanguages}
           />
         </MobileMenu>
@@ -61,7 +66,6 @@ export default function LanguageSelectorAndUserMenu({
           } z-50`}
         >
           <LanguageSelector
-            setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
             activeLanguageData={activeLanguageData}
             allSupportedLanguages={allSupportedLanguages}
           />
@@ -72,4 +76,18 @@ export default function LanguageSelectorAndUserMenu({
       </div>
     </>
   );
+}
+
+export function getLanguageAndFlag(
+  language: SupportedLanguage,
+  allLanguageFeatures: LanguageFeatures[]
+) {
+  const [langFeaturesForPassedLanguage] = allLanguageFeatures.filter(
+    (langFeat) => langFeat.langCode === language
+  );
+
+  return {
+    name: langFeaturesForPassedLanguage?.langCode,
+    flag: langFeaturesForPassedLanguage?.flagCode,
+  };
 }

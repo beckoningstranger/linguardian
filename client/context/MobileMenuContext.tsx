@@ -1,5 +1,5 @@
 "use client";
-import { PropsWithChildren, createContext, useState } from "react";
+import { PropsWithChildren, createContext, useContext, useState } from "react";
 
 type MobileMenuContextType = {
   showMobileMenu: boolean;
@@ -31,4 +31,11 @@ export function MobileMenuContextProvider({ children }: PropsWithChildren) {
       {children}
     </MobileMenuContext.Provider>
   );
+}
+
+export function useMobileMenu() {
+  const context = useContext(MobileMenuContext);
+  if (!context)
+    throw new Error("MobileMenuContext was used outside of its provider!");
+  return context;
 }

@@ -6,7 +6,7 @@ import DeleteItemButton from "./DeleteItemButton";
 import UnitItemText from "./UnitItemText";
 import { ItemPlusLearningInfo } from "./UnitItems";
 import { updateRecentDictionarySearches } from "@/lib/actions";
-import { MobileMenuContextProvider } from "../Menus/MobileMenu/MobileMenuContext";
+import { MobileMenuContextProvider } from "../../context/MobileMenuContext";
 
 interface UnitItemProps {
   item: ItemPlusLearningInfo;

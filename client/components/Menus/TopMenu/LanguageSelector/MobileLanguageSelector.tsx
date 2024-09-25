@@ -4,23 +4,23 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Flag from "react-world-flags";
 
-import AddNewLanguageOption from "./AddNewLanguageOption";
-import { SessionUser, SupportedLanguage, User } from "@/lib/types";
-import useMobileMenuContext from "@/hooks/useMobileMenuContext";
-import { moreLanguagesToLearn } from "./LanguageSelector";
+import { useActiveLanguage } from "@/context/ActiveLanguageContext";
+import { SessionUser, SupportedLanguage } from "@/lib/types";
 import { useSession } from "next-auth/react";
+import AddNewLanguageOption from "./AddNewLanguageOption";
+import { moreLanguagesToLearn } from "./LanguageSelector";
 import { calculateNewPath } from "./LanguageSelectorLink";
+import { useMobileMenu } from "@/context/MobileMenuContext";
 
 interface MobileLanguageSelectorProps {
-  setCurrentlyActiveLanguage: Function;
   allSupportedLanguages: SupportedLanguage[];
 }
 
 export default function MobileLanguageSelector({
-  setCurrentlyActiveLanguage,
   allSupportedLanguages,
 }: MobileLanguageSelectorProps) {
-  const { toggleMobileMenu } = useMobileMenuContext();
+  const { setActiveLanguage } = useActiveLanguage();
+  const { toggleMobileMenu } = useMobileMenu();
   const currentPath = usePathname();
   const amountOfSupportedLanguages = allSupportedLanguages.length;
   const sessionUser = useSession().data?.user as SessionUser;
@@ -38,7 +38,7 @@ export default function MobileLanguageSelector({
               href={calculateNewPath(lang.name, currentPath)}
               onClick={() => {
                 toggleMobileMenu();
-                setCurrentlyActiveLanguage(lang.name);
+                setActiveLanguage(lang.name);
               }}
             >
               <Flag

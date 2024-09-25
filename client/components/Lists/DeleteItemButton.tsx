@@ -1,6 +1,6 @@
 "use client";
 
-import useMobileMenuContext from "@/hooks/useMobileMenuContext";
+import { useMobileMenu } from "@/context/MobileMenuContext";
 import { removeItemFromList } from "@/lib/actions";
 import { ListAndUnitData } from "@/lib/types";
 import { Types } from "mongoose";
@@ -23,7 +23,7 @@ export default function DeleteItemButton({
   itemName,
   listName,
 }: DeleteItemButtonProps) {
-  const { toggleMobileMenu } = useMobileMenuContext();
+  const { toggleMobileMenu } = useMobileMenu();
   if (!toggleMobileMenu) throw new Error("Could not use mobile menu");
   const [showConfirmDeleteModal, setShowConfirmDeleteModel] = useState(false);
 

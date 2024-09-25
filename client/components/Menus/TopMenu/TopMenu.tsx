@@ -1,73 +1,39 @@
-"use client";
-import { useState } from "react";
-
-import { useActiveLanguage } from "@/context/ActiveLanguageContext";
-import { LanguageFeatures, SupportedLanguage } from "@/lib/types";
-import { MobileMenuContextProvider } from "../MobileMenu/MobileMenuContext";
+import { getAllLanguageFeatures, getSupportedLanguages } from "@/lib/fetchData";
+import { MobileMenuContextProvider } from "../../../context/MobileMenuContext";
 import HamburgerMenu from "./HamburgerMenu";
 import LanguageSelectorAndUserMenu from "./LanguageSelectorAndUserMenu";
 import SideBarNavigation from "./Sidebar/SideBarNavigation";
 import TopMenuLogo from "./TopMenuLogo";
 import TopMiddleNavigation from "./TopMiddleNavigation";
 
-interface TopMenuProps {
-  allSupportedLanguages: SupportedLanguage[];
-  allLanguageFeatures: LanguageFeatures[];
-}
+interface TopMenuProps {}
 
-export default function TopMenu({
-  allSupportedLanguages,
-  allLanguageFeatures,
-}: TopMenuProps) {
-  const { activeLanguage, setActiveLanguage } = useActiveLanguage();
-  if (!activeLanguage) throw new Error("ActiveLanguage is not set");
-  const activeLanguageData = getLanguageAndFlag(
-    activeLanguage,
-    allLanguageFeatures
-  );
-  const [showSidebar, setShowSidebar] = useState(false);
+export default async function TopMenu({}: TopMenuProps) {
+  const [allSupportedLanguages, allLanguageFeatures] = await Promise.all([
+    getSupportedLanguages(),
+    getAllLanguageFeatures(),
+  ]);
 
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-  };
-
-  return (
+  return allSupportedLanguages && allLanguageFeatures ? (
     <>
       <header>
-        <SideBarNavigation
-          toggleSidebar={toggleSidebar}
-          showSidebar={showSidebar}
-          currentlyActiveLanguage={activeLanguage}
-        />
+        <SideBarNavigation />
         <div className="absolute top-0 flex h-20 w-full select-none items-center justify-between bg-slate-300 bg-opacity-25 text-xl">
           <div className={"flex items-center"}>
-            <HamburgerMenu toggleSidebar={toggleSidebar} />
-            <TopMenuLogo language={activeLanguage} />
+            <HamburgerMenu />
+            <TopMenuLogo />
           </div>
           <TopMiddleNavigation />
           <MobileMenuContextProvider>
             <LanguageSelectorAndUserMenu
-              activeLanguageData={activeLanguageData}
-              setCurrentlyActiveLanguage={setActiveLanguage}
+              allLanguageFeatures={allLanguageFeatures}
               allSupportedLanguages={allSupportedLanguages}
             />
           </MobileMenuContextProvider>
         </div>
       </header>
     </>
+  ) : (
+    <div>Connection lost...</div>
   );
-}
-
-export function getLanguageAndFlag(
-  language: SupportedLanguage,
-  allLanguageFeatures: LanguageFeatures[]
-) {
-  const [langFeaturesForPassedLanguage] = allLanguageFeatures.filter(
-    (langFeat) => langFeat.langCode === language
-  );
-
-  return {
-    name: langFeaturesForPassedLanguage?.langCode,
-    flag: langFeaturesForPassedLanguage?.flagCode,
-  };
 }

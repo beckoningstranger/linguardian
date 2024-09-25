@@ -1,5 +1,5 @@
 "use client";
-import useMobileMenuContext from "@/hooks/useMobileMenuContext";
+import { useMobileMenu } from "@/context/MobileMenuContext";
 import { MouseEventHandler, ReactNode, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import LogoWithCloseButton from "../LogoWithCloseButton";
@@ -20,7 +20,7 @@ export default function MobileMenu({
   mode,
 }: MobileMenuProps) {
   const ref = useRef<Element | null>(null);
-  const { showMobileMenu, toggleMobileMenu } = useMobileMenuContext();
+  const { showMobileMenu, toggleMobileMenu } = useMobileMenu();
 
   useEffect(() => {
     ref.current = document.querySelector<HTMLElement>("#PortalOutlet");

@@ -13,10 +13,6 @@ interface DashboardProps {
 
 export default async function Dashboard({ language }: DashboardProps) {
   const sessionUser = await getUserOnServer();
-  const userIsLearningThisLanguage =
-    sessionUser.isLearning.filter((lang) => lang.name === language).length > 0;
-  if (!userIsLearningThisLanguage)
-    throw new Error("You are not learning this language yet.");
 
   const userLearningDataForActiveLanguage = await getLearnedLanguageData(
     sessionUser.id,

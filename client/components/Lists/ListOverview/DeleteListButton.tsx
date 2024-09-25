@@ -2,7 +2,7 @@
 
 import ConfirmCancelMobileMenu from "@/components/ConfirmCancelMobileMenu";
 import ConfirmCancelModal from "@/components/ConfirmCancelModal";
-import useMobileMenuContext from "@/hooks/useMobileMenuContext";
+import { useMobileMenu } from "@/context/MobileMenuContext";
 import { removeList } from "@/lib/actions";
 import paths from "@/lib/paths";
 import { SupportedLanguage } from "@/lib/types";
@@ -32,7 +32,7 @@ export default function DeleteListButton({
     router.push(paths.dashboardLanguagePath(listLanguage));
   };
 
-  const { toggleMobileMenu } = useMobileMenuContext();
+  const { toggleMobileMenu } = useMobileMenu();
   if (!toggleMobileMenu) throw new Error("Could not use mobile menu");
   const [showConfirmDeleteModal, setShowConfirmDeleteModel] = useState(false);
   return (

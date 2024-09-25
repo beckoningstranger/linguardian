@@ -1,6 +1,6 @@
 "use client";
 
-import useMobileMenuContext from "@/hooks/useMobileMenuContext";
+import { useMobileMenu } from "@/context/MobileMenuContext";
 import { IPA } from "@/lib/types";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { Dispatch, SetStateAction, useEffect } from "react";
@@ -20,7 +20,7 @@ export default function IPAKeyboard({
   setArray,
   activeField,
 }: IPAKeyboardProps) {
-  const { toggleMobileMenu } = useMobileMenuContext();
+  const { toggleMobileMenu } = useMobileMenu();
   if (typeof toggleMobileMenu !== "function")
     throw new Error("Can't toggle mobile menu");
 

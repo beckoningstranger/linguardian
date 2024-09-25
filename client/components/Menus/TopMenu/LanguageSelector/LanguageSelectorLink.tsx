@@ -1,3 +1,6 @@
+"use client";
+
+import { useActiveLanguage } from "@/context/ActiveLanguageContext";
 import { SupportedLanguage } from "@/lib/types";
 import Link from "next/link";
 import Flag from "react-world-flags";
@@ -8,7 +11,6 @@ interface LanguageSelectorLinkProps {
   flag: string;
   language: SupportedLanguage;
   currentPath: string;
-  setCurrentlyActiveLanguage: Function;
 }
 
 export default function LanguageSelectorLink({
@@ -17,14 +19,14 @@ export default function LanguageSelectorLink({
   flag,
   language,
   currentPath,
-  setCurrentlyActiveLanguage,
 }: LanguageSelectorLinkProps) {
+  const { setActiveLanguage } = useActiveLanguage();
   return (
     <Link
       href={calculateNewPath(language, currentPath)}
       onClick={() => {
         setShowAllLanguageOptions(false);
-        setCurrentlyActiveLanguage(language);
+        setActiveLanguage(language);
       }}
     >
       <Flag

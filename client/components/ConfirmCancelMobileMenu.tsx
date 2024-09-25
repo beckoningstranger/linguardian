@@ -1,6 +1,6 @@
-import useMobileMenuContext from "@/hooks/useMobileMenuContext";
 import React from "react";
 import MobileMenu from "./Menus/MobileMenu/MobileMenu";
+import { useMobileMenu } from "@/context/MobileMenuContext";
 
 interface ConfirmCancelMobileMenuProps {
   children: React.ReactNode;
@@ -11,7 +11,7 @@ export default function ConfirmCancelMobileMenu({
   children,
   doOnConfirm,
 }: ConfirmCancelMobileMenuProps) {
-  const { toggleMobileMenu } = useMobileMenuContext();
+  const { toggleMobileMenu } = useMobileMenu();
 
   return (
     <MobileMenu mode="fullscreen" fromDirection="animate-from-top">

@@ -11,13 +11,11 @@ import LanguageSelectorLink from "./LanguageSelectorLink";
 import { useSession } from "next-auth/react";
 
 interface LanguageSelectorProps {
-  setCurrentlyActiveLanguage: Function;
   activeLanguageData: { name: SupportedLanguage; flag: string };
   allSupportedLanguages: SupportedLanguage[];
 }
 
 export default function LanguageSelector({
-  setCurrentlyActiveLanguage,
   activeLanguageData,
   allSupportedLanguages,
 }: LanguageSelectorProps) {
@@ -75,7 +73,6 @@ export default function LanguageSelector({
               flag={lang.flag}
               language={lang.name}
               currentPath={currentPath}
-              setCurrentlyActiveLanguage={setCurrentlyActiveLanguage}
               key={lang.flag}
             />
           );

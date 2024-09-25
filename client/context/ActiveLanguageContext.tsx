@@ -1,6 +1,8 @@
 "use client";
 
-import { SupportedLanguage } from "@/lib/types";
+import CenteredSpinner from "@/components/CenteredSpinner";
+import { SessionUser, SupportedLanguage } from "@/lib/types";
+import { useSession } from "next-auth/react";
 import {
   Dispatch,
   PropsWithChildren,
@@ -17,24 +19,30 @@ interface ActiveLanguageContext {
 
 const ActiveLanguageContext = createContext<ActiveLanguageContext>({
   activeLanguage: "FR",
-  setActiveLanguage: () => "FR",
+  setActiveLanguage: () => {},
 });
 
-export const ActiveLanguageProvider = ({
-  initialActiveLanguage,
-  children,
-}: PropsWithChildren<{ initialActiveLanguage: SupportedLanguage }>) => {
-  const [activeLanguage, setActiveLanguage] = useState(initialActiveLanguage);
+export const ActiveLanguageProvider = ({ children }: PropsWithChildren) => {
+  const { data, status } = useSession();
+  const sessionUser = data?.user as SessionUser;
+  const initialLanguage = sessionUser?.isLearning?.[0]?.name || "FR"; // Fallback to "FR" if isLearning is undefined
+  const [activeLanguage, setActiveLanguage] =
+    useState<SupportedLanguage>(initialLanguage);
 
-  return (
+  return status === "authenticated" ? (
     <ActiveLanguageContext.Provider
       value={{ activeLanguage, setActiveLanguage }}
     >
       {children}
     </ActiveLanguageContext.Provider>
+  ) : (
+    <CenteredSpinner />
   );
 };
 
 export const useActiveLanguage = () => {
-  return useContext(ActiveLanguageContext);
+  const context = useContext(ActiveLanguageContext);
+  if (!context)
+    throw new Error("ActiveLanguageContext was used outside of its provider!");
+  return context;
 };

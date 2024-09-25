@@ -10,7 +10,7 @@ import DeleteListButton from "@/components/Lists/ListOverview/DeleteListButton";
 import ListFlexibleContent from "@/components/Lists/ListOverview/ListFlexibleContent";
 import ListHeader from "@/components/Lists/ListOverview/ListHeader";
 import ListUnits from "@/components/Lists/ListOverview/ListUnits";
-import { MobileMenuContextProvider } from "@/components/Menus/MobileMenu/MobileMenuContext";
+import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import Spinner from "@/components/Spinner";
 import { getUserOnServer } from "@/lib/helperFunctions";
 import { SupportedLanguage } from "@/lib/types";

@@ -2,7 +2,7 @@
 
 import ConfirmCancelMobileMenu from "@/components/ConfirmCancelMobileMenu";
 import ConfirmCancelModal from "@/components/ConfirmCancelModal";
-import useMobileMenuContext from "@/hooks/useMobileMenuContext";
+import { useMobileMenu } from "@/context/MobileMenuContext";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import { changeListDetails, removeUnitFromList } from "@/lib/actions";
 import { Button } from "@headlessui/react";
@@ -58,7 +58,7 @@ export default function UnitButton({
   const fillWidth = `${clampedPercentage}%`;
 
   const [showConfirmDeleteModal, setShowConfirmDeleteModel] = useState(false);
-  const { toggleMobileMenu } = useMobileMenuContext();
+  const { toggleMobileMenu } = useMobileMenu();
 
   const removeUnitFromListAction = () =>
     toast.promise(removeUnitFromList(unitName, listNumber), {

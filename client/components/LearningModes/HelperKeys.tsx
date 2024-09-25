@@ -4,7 +4,7 @@ import { LanguageFeatures } from "@/lib/types";
 import HelperKeysSelector from "../Menus/HelperKeysSelector";
 import MobileMenu from "../Menus/MobileMenu/MobileMenu";
 import { RefObject, useContext, useState } from "react";
-import { MobileMenuContext } from "../Menus/MobileMenu/MobileMenuContext";
+import { MobileMenuContext } from "../../context/MobileMenuContext";
 
 interface HelperKeysProps {
   targetLanguageFeatures: LanguageFeatures;

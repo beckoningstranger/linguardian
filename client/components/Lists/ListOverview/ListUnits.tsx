@@ -1,6 +1,6 @@
 "use client";
 
-import { MobileMenuContextProvider } from "@/components/Menus/MobileMenu/MobileMenuContext";
+import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { changeListDetails } from "@/lib/actions";
 import paths from "@/lib/paths";
 import { Item, LearnedItem, SupportedLanguage } from "@/lib/types";

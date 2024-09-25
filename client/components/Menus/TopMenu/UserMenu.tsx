@@ -5,7 +5,7 @@ import { FaUserAlt } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
 import { RiLogoutBoxLine } from "react-icons/ri";
 
-import useMobileMenuContext from "@/hooks/useMobileMenuContext";
+import { useMobileMenu } from "@/context/MobileMenuContext";
 import { useOutsideClickForUserMenu } from "@/hooks/useOutsideClick";
 import paths from "@/lib/paths";
 import { SessionUser } from "@/lib/types";
@@ -16,7 +16,7 @@ import UserMenuItem from "./UserMenuItem";
 interface UserMenuProps {}
 
 export default function UserMenu({}: UserMenuProps) {
-  const { toggleMobileMenu } = useMobileMenuContext();
+  const { toggleMobileMenu } = useMobileMenu();
   const [showUserMenu, setShowUserMenu] = useState<boolean>(false);
   const sessionUser = useSession().data?.user as SessionUser;
 

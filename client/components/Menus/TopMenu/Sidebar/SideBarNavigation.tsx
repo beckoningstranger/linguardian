@@ -1,9 +1,10 @@
 "use client";
 
+import { useActiveLanguage } from "@/context/ActiveLanguageContext";
+import { useSidebar } from "@/context/SidebarContext";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import paths from "@/lib/paths";
-import { SupportedLanguage } from "@/lib/types";
-import { MouseEventHandler, RefObject } from "react";
+import { RefObject } from "react";
 import { FaBookReader, FaRegQuestionCircle } from "react-icons/fa";
 import { FaPeopleRoof } from "react-icons/fa6";
 import { RiFileList3Fill } from "react-icons/ri";
@@ -11,17 +12,11 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import LogoWithCloseButton from "../../LogoWithCloseButton";
 import SideNavItem from "./SideNavItem";
 
-interface SideBarNavigationProps {
-  toggleSidebar: MouseEventHandler;
-  showSidebar: boolean;
-  currentlyActiveLanguage: SupportedLanguage;
-}
+interface SideBarNavigationProps {}
 
-export default function SideBarNavigation({
-  toggleSidebar,
-  showSidebar,
-  currentlyActiveLanguage,
-}: SideBarNavigationProps) {
+export default function SideBarNavigation({}: SideBarNavigationProps) {
+  const { toggleSidebar, showSidebar } = useSidebar();
+  const { activeLanguage } = useActiveLanguage();
   const ref = useOutsideClick(toggleSidebar, showSidebar);
 
   return (
@@ -39,33 +34,27 @@ export default function SideBarNavigation({
             <SideNavItem
               icon={<RxHamburgerMenu />}
               label="Dashboard"
-              href={paths.dashboardLanguagePath(currentlyActiveLanguage)}
-              toggleSidebar={toggleSidebar as MouseEventHandler}
+              href={paths.dashboardLanguagePath(activeLanguage)}
             />
-
             <SideNavItem
               icon={<RiFileList3Fill />}
               label="Lists"
-              href={paths.listsLanguagePath(currentlyActiveLanguage)}
-              toggleSidebar={toggleSidebar as MouseEventHandler}
+              href={paths.listsLanguagePath(activeLanguage)}
             />
             <SideNavItem
               icon={<FaBookReader />}
               label="Dictionary"
               href={paths.dictionaryPath()}
-              toggleSidebar={toggleSidebar as MouseEventHandler}
             />
             <SideNavItem
               icon={<FaPeopleRoof />}
               label="Social"
               href={paths.socialPath()}
-              toggleSidebar={toggleSidebar as MouseEventHandler}
             />
             <SideNavItem
               icon={<FaRegQuestionCircle />}
               label="About"
               href={paths.aboutPath()}
-              toggleSidebar={toggleSidebar as MouseEventHandler}
             />
           </div>
         </nav>
