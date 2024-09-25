@@ -32,13 +32,12 @@ export async function generateMetadata({ params }: ListDetailProps) {
 
 interface ListDetailProps {
   params: {
-    language: SupportedLanguage;
     listNumberString: string;
   };
 }
 
 export default async function ListDetailPage({
-  params: { listNumberString, language },
+  params: { listNumberString },
 }: ListDetailProps) {
   const listNumber = parseInt(listNumberString);
 
@@ -48,7 +47,7 @@ export default async function ListDetailPage({
   ]);
   if (!listData) notFound();
 
-  const { name, description, authors, unitOrder, units } = listData;
+  const { name, description, authors, unitOrder, units, language } = listData;
 
   const [authorData, fullUser] = await Promise.all([
     fetchAuthors(authors),

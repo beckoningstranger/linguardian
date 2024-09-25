@@ -64,7 +64,7 @@ export default function SearchBox({
     if (!result) return;
     if (result === "showAll") return null;
     if (typeof result === "object")
-      router.push(paths.dictionaryItemPath(result.language, result.slug));
+      router.push(paths.dictionaryItemPath(result.slug));
   };
 
   return (

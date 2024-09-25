@@ -226,13 +226,12 @@ export async function fetchAuthors(authors: string[]) {
 }
 
 export async function getPopulatedItemBySlug(
-  queryItemLanguage: SupportedLanguage,
   slug: string,
   userLanguages?: SupportedLanguage[]
 ) {
   try {
     const response = await fetch(
-      `${server}/items/getPopulatedItemBySlug/${queryItemLanguage}/${slug}/${userLanguages?.join(
+      `${server}/items/getPopulatedItemBySlug/${slug}/${userLanguages?.join(
         ","
       )}`
     );

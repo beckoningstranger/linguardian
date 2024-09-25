@@ -41,10 +41,7 @@ export default async function ItemPageDEFTRCO({
     const itemsForThisLanguage = translationsInThisLanguage.map(
       (translation) => (
         <Link
-          href={paths.dictionaryItemPath(
-            translation.language,
-            translation.slug
-          )}
+          href={paths.dictionaryItemPath(translation.slug)}
           key={translation.slug}
           className="hover:underline"
         >
@@ -60,19 +57,24 @@ export default async function ItemPageDEFTRCO({
       {definition && definition.length > 0 && (
         <ItemPageField type="Definition" content={renderedDefinition} />
       )}
-      {translationItemArrays.map(async (lang, index) => (
-        <ItemPageField
-          key={index}
-          type={
-            `Translation (` +
-            (await getLanguageName(
-              translationItemArrays[index][0].props.href.split("/")[2]
-            )) +
-            ")"
-          }
-          content={lang}
-        />
-      ))}
+      {translationItemArrays.map(async (lang, index) => {
+        return (
+          <ItemPageField
+            key={index}
+            type={
+              `Translation (` +
+              (await getLanguageName(
+                translationItemArrays[index][0].props.href
+                  .split("/")[2]
+                  .slice(0, 2)
+              )) +
+              ")"
+            }
+            // type={lang}
+            content={lang}
+          />
+        );
+      })}
     </div>
   );
 }

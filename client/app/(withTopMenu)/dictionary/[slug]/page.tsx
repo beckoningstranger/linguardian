@@ -18,7 +18,7 @@ export const metadata = { title: "Dictionary" };
 
 export async function generateStaticParams() {
   const supportedLanguages = await getSupportedLanguages();
-  let allSlugs: SlugLanguageObject[] = [];
+  let allSlugs: { slug: string }[] = [];
   const promises = supportedLanguages?.map((lang: SupportedLanguage) =>
     getAllSlugsForLanguage(lang)
   );
@@ -44,16 +44,12 @@ interface ItemPageProps {
 }
 
 export default async function ItemPage({
-  params: { slug, language },
+  params: { slug },
   searchParams: { comingFrom },
 }: ItemPageProps) {
   const userLanguages = await getAllUserLanguages();
 
-  const item = await getPopulatedItemBySlug(
-    language as SupportedLanguage,
-    slug,
-    userLanguages
-  );
+  const item = await getPopulatedItemBySlug(slug, userLanguages);
   if (!item)
     return (
       <div className="grid h-96 place-items-center">
@@ -86,8 +82,7 @@ export default async function ItemPage({
       />
       <ItemPageBottomRightButton
         path={
-          paths.editDictionaryItemPath(item.language, item.slug) +
-          `?comingFrom=${comingFrom}`
+          paths.editDictionaryItemPath(item.slug) + `?comingFrom=${comingFrom}`
         }
       />
     </ItemPageContainer>

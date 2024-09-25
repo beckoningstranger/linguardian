@@ -15,7 +15,6 @@ export async function getItemBySlug(slug: string) {
 }
 
 export async function getFullyPopulatedItemBySlug(
-  queryItemLanguage: SupportedLanguage,
   slug: string,
   userLanguages: SupportedLanguage[]
 ) {
@@ -26,9 +25,10 @@ export async function getFullyPopulatedItemBySlug(
       select: `name language slug`,
     })
   );
-  const item = (await Items.findOne({ language: queryItemLanguage, slug })
-    .populate(paths)
-    .exec()) as Omit<Item, "translations"> & {
+  const item = (await Items.findOne({ slug }).populate(paths).exec()) as Omit<
+    Item,
+    "translations"
+  > & {
     translations: {
       [key in SupportedLanguage]?: {
         _id: Types.ObjectId;

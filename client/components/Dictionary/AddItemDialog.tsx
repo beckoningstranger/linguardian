@@ -136,8 +136,7 @@ export default function AddItemDialog({
         router.push(
           paths.unitDetailsPath(
             listAndUnitData.listNumber,
-            listAndUnitData.unitNumber,
-            listAndUnitData.languageWithFlag.name
+            listAndUnitData.unitNumber
           )
         );
     }

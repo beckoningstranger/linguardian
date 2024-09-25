@@ -63,9 +63,7 @@ export async function createList(formData: FormData) {
     return { message: "Something went wrong" };
   }
   revalidatePath(paths.listsLanguagePath(newListLanguage));
-  redirect(
-    paths.listDetailsPath(newListNumber, newListLanguage as SupportedLanguage)
-  );
+  redirect(paths.listDetailsPath(newListNumber));
 }
 
 export async function updateLearnedItems(
@@ -134,7 +132,7 @@ export async function addListToDashboard(
     );
   }
   revalidatePath(paths.dashboardLanguagePath(language));
-  revalidatePath(paths.listDetailsPath(listNumber, language));
+  revalidatePath(paths.listDetailsPath(listNumber));
 }
 
 export async function findItems(languages: SupportedLanguage[], query: string) {
@@ -147,20 +145,6 @@ export async function findItems(languages: SupportedLanguage[], query: string) {
   } catch (err) {
     console.error(`Error looking up items for query ${query}: ${err}`);
   }
-}
-export async function addNewLanguageToLearn(
-  userId: string,
-  language: SupportedLanguage
-) {
-  const sessionUser = await getUserAndVerifyUserIsLoggedIn(
-    "You need to be logged in to add a new language!"
-  );
-  const response = await fetch(
-    `${server}/users/addNewLanguage/${userId}/${language}`,
-    { method: "POST" }
-  );
-  revalidatePath(paths.profilePath(sessionUser.usernameSlug));
-  if (!response.ok) throw new Error(response.statusText);
 }
 
 export async function finishOnboarding(
@@ -216,25 +200,20 @@ export async function submitItemCreateOrEdit(
   if (addToThisList) {
     redirectPath = paths.unitDetailsPath(
       addToThisList.listNumber,
-      addToThisList.unitNumber,
-      addToThisList.languageWithFlag.name
+      addToThisList.unitNumber
     );
     await addItemToList(addToThisList, updatedItem);
   }
 
-  revalidatePath(paths.editDictionaryItemPath(item.language, item.slug));
-  revalidatePath(paths.editDictionaryItemPath(item.language, item.slug));
-  revalidatePath(
-    paths.dictionaryItemPath(updatedItem.language, updatedItem.slug)
-  );
-  revalidatePath(
-    paths.dictionaryItemPath(updatedItem.language, updatedItem.slug)
-  );
+  revalidatePath(paths.editDictionaryItemPath(item.slug));
+  revalidatePath(paths.editDictionaryItemPath(item.slug));
+  revalidatePath(paths.dictionaryItemPath(updatedItem.slug));
+  revalidatePath(paths.dictionaryItemPath(updatedItem.slug));
   redirect(
     redirectPath
-      ? paths.dictionaryItemPath(updatedItem.language, updatedItem.slug) +
+      ? paths.dictionaryItemPath(updatedItem.slug) +
           `?comingFrom=${redirectPath}`
-      : paths.dictionaryItemPath(updatedItem.language, updatedItem.slug)
+      : paths.dictionaryItemPath(updatedItem.slug)
   );
 }
 
@@ -269,11 +248,7 @@ export async function addItemToList(
   );
   if (response.ok) {
     revalidatePath(
-      paths.unitDetailsPath(
-        listData.listNumber,
-        listData.unitNumber,
-        listData.languageWithFlag.name
-      )
+      paths.unitDetailsPath(listData.listNumber, listData.unitNumber)
     );
     return await response.json();
   }
@@ -300,11 +275,7 @@ export async function removeItemFromList(
   );
   if (response.ok) {
     revalidatePath(
-      paths.unitDetailsPath(
-        listData.listNumber,
-        listData.unitNumber,
-        listData.languageWithFlag.name
-      )
+      paths.unitDetailsPath(listData.listNumber, listData.unitNumber)
     );
     return await response.json();
   }
@@ -324,7 +295,7 @@ export async function addUnitToList(unitName: string, listNumber: number) {
     }
   );
   if (response.ok) {
-    revalidatePath(paths.listDetailsPath(listNumber, list.language));
+    revalidatePath(paths.listDetailsPath(listNumber));
     return await response.json();
   }
   throw new Error("An error occurred while adding the new unit.");
@@ -342,7 +313,7 @@ export async function removeUnitFromList(unitName: string, listNumber: number) {
     }
   );
   if (response.ok) {
-    revalidatePath(paths.listDetailsPath(listNumber, list.language));
+    revalidatePath(paths.listDetailsPath(listNumber));
     return await response.json();
   }
   throw new Error("An error occurred while removing the new unit.");
@@ -357,7 +328,7 @@ export async function removeList(listNumber: number) {
     method: "POST",
   });
   if (response.ok) {
-    revalidatePath(paths.listDetailsPath(listNumber, list.language));
+    revalidatePath(paths.listDetailsPath(listNumber));
     revalidatePath(paths.listsLanguagePath(list.language));
     revalidatePath(paths.dashboardLanguagePath(list.language));
     return await response.json();
@@ -383,24 +354,22 @@ export async function changeListDetails(listDetails: ListDetails) {
         revalidatePath(
           paths.unitDetailsPath(
             listDetails.listNumber,
-            list.unitOrder.indexOf(unitName),
-            list.language
+            list.unitOrder.indexOf(unitName)
           )
         )
       );
-    revalidatePath(
-      paths.listDetailsPath(listDetails.listNumber, list.language)
-    );
+    revalidatePath(paths.listDetailsPath(listDetails.listNumber));
     revalidatePath(paths.listsLanguagePath(list.language));
     revalidatePath(paths.dashboardLanguagePath(list.language));
-    redirect(paths.listDetailsPath(listDetails.listNumber, list.language));
+    redirect(paths.listDetailsPath(listDetails.listNumber));
   }
   throw new Error(await response.json());
 }
 
 export async function stopLearningLanguage(language: SupportedLanguage) {
-  const [sessionUser] = await Promise.all([getUserOnServer()]);
-  if (!sessionUser) throw new Error("You must be logged in to do this!");
+  const sessionUser = await getUserAndVerifyUserIsLoggedIn(
+    "You need to be logged in to stop learning a language!"
+  );
   if (!sessionUser.isLearning.map((lwf) => lwf.name).includes(language))
     throw new Error("You are not learning this language");
 
@@ -421,4 +390,28 @@ export async function stopLearningLanguage(language: SupportedLanguage) {
     return await response.json();
   }
   throw new Error(await response.json());
+}
+
+export async function addNewLanguageToLearn(
+  userId: string,
+  language: SupportedLanguage
+) {
+  const sessionUser = await getUserAndVerifyUserIsLoggedIn(
+    "You need to be logged in to add a new language!"
+  );
+  const response = await fetch(
+    `${server}/users/addNewLanguage/${userId}/${language}`,
+    { method: "POST" }
+  );
+  const responseData = await response.json();
+  if (response.ok) {
+    revalidatePath(paths.listsLanguagePath(language));
+    revalidatePath(paths.dictionaryPath());
+    sessionUser.isLearning.forEach((lwf) =>
+      revalidatePath(paths.dashboardLanguagePath(lwf.name))
+    );
+    revalidatePath(paths.profilePath(sessionUser.usernameSlug));
+    return responseData;
+  }
+  throw new Error(responseData);
 }

@@ -68,7 +68,7 @@ export default function ListDashboardCard({
           <RxDotsVertical />
         </div>
         <Link
-          href={paths.listDetailsPath(list.listNumber, list.language)}
+          href={paths.listDetailsPath(list.listNumber)}
           className="w-full pl-2"
         >
           <h2 className="text-lg font-semibold">{list.name}</h2>

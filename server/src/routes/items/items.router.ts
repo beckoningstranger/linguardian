@@ -12,7 +12,7 @@ export const itemsRouter = express.Router();
 itemsRouter.get("/getItemBySlug/:slug", httpGetItemBySlug);
 
 itemsRouter.get(
-  "/getPopulatedItemBySlug/:queryItemLanguage/:slug/:userLanguages",
+  "/getPopulatedItemBySlug/:slug/:userLanguages",
   httpGetFullyPopulatedItemBySlug
 );
 

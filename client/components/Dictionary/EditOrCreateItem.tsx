@@ -126,7 +126,7 @@ export default function EditOrCreateItem({
           {slug !== "new-item" && (
             <div>
               <Link
-                href={paths.dictionaryItemPath(language, slug)}
+                href={paths.dictionaryItemPath(slug)}
                 className="flex h-12 w-12 items-center justify-center rounded-md border-2 border-black"
               >
                 <IoArrowBack className="h-8 w-8 rounded-md" />

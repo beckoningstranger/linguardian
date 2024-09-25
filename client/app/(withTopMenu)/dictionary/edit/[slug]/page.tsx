@@ -7,30 +7,19 @@ import {
   getAllUserLanguages,
   getSeperatedUserLanguagesWithFlags,
 } from "@/lib/helperFunctions";
-import {
-  LanguageFeatures,
-  SlugLanguageObject,
-  SupportedLanguage,
-} from "@/lib/types";
+import { LanguageFeatures } from "@/lib/types";
 
 interface EditPageProps {
-  params: SlugLanguageObject;
+  params: { slug: string };
   searchParams: { comingFrom: string };
 }
 
-export async function generateMetadata({
-  params: { slug, language },
-}: EditPageProps) {
-  const item = await getPopulatedItemBySlug(
-    language as SupportedLanguage,
-    slug
-  );
+export async function generateMetadata({ params: { slug } }: EditPageProps) {
+  const item = await getPopulatedItemBySlug(slug);
   return { title: `Edit ${item?.name}` };
 }
 
-export default async function EditPage({
-  params: { slug, language },
-}: EditPageProps) {
+export default async function EditPage({ params: { slug } }: EditPageProps) {
   const [allUserLanguages, seperatedUserLanguagesWithFlags] = await Promise.all(
     [getAllUserLanguages(), getSeperatedUserLanguagesWithFlags()]
   );
@@ -43,16 +32,11 @@ export default async function EditPage({
     await Promise.all(languageFeaturesForUserLanguagesPromises)
   ).filter((features): features is LanguageFeatures => features !== undefined);
 
-  const [item, languageFeatures] = await Promise.all([
-    getPopulatedItemBySlug(
-      language as SupportedLanguage,
-      slug,
-      allUserLanguages
-    ),
-    getLanguageFeaturesForLanguage(language as SupportedLanguage),
+  const [item] = await Promise.all([
+    getPopulatedItemBySlug(slug, allUserLanguages),
   ]);
-  if (!item || !languageFeatures)
-    throw new Error("Could not get data from server");
+
+  if (!item) throw new Error("Could not get data from server");
 
   return (
     <EditOrCreateItem

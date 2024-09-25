@@ -89,11 +89,7 @@ export default function ListUnits({
                       <Link
                         ref={provided.innerRef}
                         key={index}
-                        href={paths.unitDetailsPath(
-                          listNumber,
-                          index + 1,
-                          language
-                        )}
+                        href={paths.unitDetailsPath(listNumber, index + 1)}
                         className="flex w-full justify-center"
                         {...provided.dragHandleProps}
                         {...provided.draggableProps}

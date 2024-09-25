@@ -77,7 +77,7 @@ export async function httpAddNewLanguage(req: Request, res: Response) {
   const language = req.params.language as SupportedLanguage;
 
   const response = await addNewLanguage(userId, language);
-  if (response) return res.status(200).json();
+  if (response) return res.status(200).json(response);
   return res.status(400).json();
 }
 

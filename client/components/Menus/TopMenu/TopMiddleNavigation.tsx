@@ -9,7 +9,6 @@ interface TopMiddleNavigationProps {}
 
 export default function TopMiddleNavigation({}: TopMiddleNavigationProps) {
   const { activeLanguage } = useActiveLanguage();
-  console.log("TOP Middle nav", activeLanguage);
   return (
     <div className="absolute left-1/2 hidden -translate-x-1/2 md:flex">
       <Link

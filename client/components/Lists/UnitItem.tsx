@@ -30,10 +30,7 @@ export default function UnitItem({
 
   return (
     <Link
-      href={
-        paths.dictionaryItemPath(item.language, item.slug) +
-        `?comingFrom=${pathToUnit}`
-      }
+      href={paths.dictionaryItemPath(item.slug) + `?comingFrom=${pathToUnit}`}
       key={item.name + item.language}
       className={`relative p-3 rounded-md w-full flex flex-col items-center justify-center ${bgColor(
         item.nextReview,

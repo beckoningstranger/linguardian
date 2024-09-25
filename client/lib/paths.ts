@@ -13,11 +13,11 @@ const paths = {
   dictionaryPath() {
     return `/dictionary`;
   },
-  dictionaryItemPath(language: SupportedLanguage, slug: string) {
-    return `/dictionary/${language}/${slug}`;
+  dictionaryItemPath(slug: string) {
+    return `/dictionary/${slug}`;
   },
-  editDictionaryItemPath(language: SupportedLanguage, slug: string) {
-    return `/dictionary/${language}/edit/${slug}`;
+  editDictionaryItemPath(slug: string) {
+    return `/dictionary/edit/${slug}`;
   },
   learnPath(
     language: SupportedLanguage,
@@ -29,18 +29,14 @@ const paths = {
   listsLanguagePath(language: SupportedLanguage) {
     return `/${language}/lists`;
   },
-  listDetailsPath(listNumber: number, listLanguage: SupportedLanguage) {
-    return `/${listLanguage}/lists/${listNumber}`;
+  listDetailsPath(listNumber: number) {
+    return `/lists/${listNumber}`;
   },
   newListPath(language: SupportedLanguage) {
     return `/${language}/lists/new`;
   },
-  unitDetailsPath(
-    listNumber: number,
-    unitNumber: number,
-    language: SupportedLanguage
-  ) {
-    return `/${language}/lists/${listNumber}/${unitNumber}`;
+  unitDetailsPath(listNumber: number, unitNumber: number) {
+    return `/lists/${listNumber}/${unitNumber}`;
   },
   uploadListPath() {
     return "/lists/new";

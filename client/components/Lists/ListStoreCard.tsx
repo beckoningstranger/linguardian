@@ -27,7 +27,7 @@ export default function ListStoreCard({
   language,
 }: ListStoreCardProps) {
   return (
-    <Link href={paths.listDetailsPath(listNumber, language)}>
+    <Link href={paths.listDetailsPath(listNumber)}>
       <article className="flex w-[340px] flex-col justify-between rounded-md bg-slate-100 shadow-md transition-all hover:shadow-xl xl:w-[350px]">
         <div
           id="title"

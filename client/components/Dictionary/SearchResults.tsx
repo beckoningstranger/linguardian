@@ -27,7 +27,7 @@ export default function SearchResults({
       {results.map((result) => {
         return result && mode === "searchResultIsLinkToItemPage" ? (
           <Link
-            href={paths.dictionaryItemPath(result.language, result.slug)}
+            href={paths.dictionaryItemPath(result.slug)}
             key={result.slug}
             onClick={async () =>
               await updateRecentDictionarySearches(result.slug)

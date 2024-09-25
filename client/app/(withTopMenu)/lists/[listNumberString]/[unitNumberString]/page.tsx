@@ -77,7 +77,7 @@ interface UnitDetailPageProps {
 }
 
 export default async function UnitDetailPage({
-  params: { listNumberString, unitNumberString, language },
+  params: { listNumberString, unitNumberString },
 }: UnitDetailPageProps) {
   const listNumber = parseInt(listNumberString);
   const unitNumber = parseInt(unitNumberString);
@@ -86,13 +86,18 @@ export default async function UnitDetailPage({
     native: { name: userNative },
   } = await getUserOnServer();
 
-  const [listData, allListsUserData, seperateUserLanguages] = await Promise.all(
-    [
-      getFullyPopulatedListByListNumber(userNative, listNumber),
-      getLearnedLanguageData(userId, language),
-      getSeperatedUserLanguages(),
-    ]
+  const listData = await getFullyPopulatedListByListNumber(
+    userNative,
+    listNumber
   );
+  if (!listData) throw new Error("List not found");
+
+  const { language: listLanguage } = listData;
+
+  const [allListsUserData, seperateUserLanguages] = await Promise.all([
+    getLearnedLanguageData(userId, listLanguage),
+    getSeperatedUserLanguages(),
+  ]);
   if (!listData || !allListsUserData || !seperateUserLanguages)
     throw new Error("Could not get data");
 
@@ -123,7 +128,7 @@ export default async function UnitDetailPage({
 
   return (
     <ListContainer>
-      <ItemBackButton path={paths.listDetailsPath(listNumber, language)} />
+      <ItemBackButton path={paths.listDetailsPath(listNumber)} />
       <UnitHeader
         unitNumber={unitNumber}
         unitName={unitName}
@@ -148,7 +153,7 @@ export default async function UnitDetailPage({
             </div>
             <AllLearningButtonsDesktopContainer>
               <AllLearningButtons
-                listLanguage={language}
+                listLanguage={listLanguage}
                 listNumber={listNumber}
                 listStats={stats}
                 unlockedReviewModes={unlockedModes}
@@ -162,14 +167,14 @@ export default async function UnitDetailPage({
         unitItems={unitItems}
         userNative={userNative}
         userIsAuthor={listData.authors.includes(userId)}
-        pathToUnit={paths.unitDetailsPath(listNumber, unitNumber, language)}
+        pathToUnit={paths.unitDetailsPath(listNumber, unitNumber)}
         userLanguagesWithFlags={seperateUserLanguages}
         listAndUnitData={listAndUnitData}
       />
       {userHasAddedThisList && (
         <AllLearningButtonsMobileContainer>
           <FlexibleLearningButtons
-            listLanguage={language}
+            listLanguage={listLanguage}
             stats={stats}
             status={determineListStatus(stats)}
             listNumber={listNumber}

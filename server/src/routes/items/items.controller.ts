@@ -30,18 +30,13 @@ export async function httpGetFullyPopulatedItemBySlug(
   res: Response
 ) {
   const slug = req.params.slug;
-  const queryItemLanguage = req.params.queryItemLanguage as SupportedLanguage;
   let userLanguages = req.params.userLanguages.split(
     ","
   ) as SupportedLanguage[];
   if (req.params.userLanguages === "undefined")
     userLanguages = [] as SupportedLanguage[];
 
-  const response = await getFullyPopulatedItemBySlug(
-    queryItemLanguage,
-    slug,
-    userLanguages
-  );
+  const response = await getFullyPopulatedItemBySlug(slug, userLanguages);
   if (!response)
     return res
       .status(404)
@@ -95,7 +90,18 @@ export async function httpEditOrCreateItem(req: Request, res: Response) {
     return res.status(400).json({ error: errorMessage });
   }
 
-  const updateReponses = await updateRelatedItems(validatedItem);
+  const allSupportedLanguages = await getSupportedLanguages();
+  const otherAffectedItems: any[] = [];
+  allSupportedLanguages?.map((lang) =>
+    validatedItem.translations[lang]?.forEach((item) =>
+      otherAffectedItems.push(item)
+    )
+  );
+
+  const updateReponses =
+    otherAffectedItems.length > 0
+      ? await updateRelatedItems(validatedItem)
+      : true;
 
   const response = await editOrCreateBySlug(validatedItem, slug);
   if (updateReponses && response) return res.status(201).json(response);
@@ -107,7 +113,6 @@ async function updateRelatedItems(item: ItemWithPopulatedTranslations) {
   if (!allSupportedLanguages)
     throw new Error("Failed to get all supported languages");
   const oldItem = await getFullyPopulatedItemBySlug(
-    item.language,
     item.slug,
     allSupportedLanguages
   );
