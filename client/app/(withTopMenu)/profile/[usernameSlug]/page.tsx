@@ -1,4 +1,8 @@
-import { getAllLanguageFeatures, getUserByUsernameSlug } from "@/lib/fetchData";
+import {
+  getAllLanguageFeatures,
+  getAllUserIds,
+  getUserByUsernameSlug,
+} from "@/lib/fetchData";
 
 interface ProfilePageProps {
   params: { usernameSlug: string };
@@ -11,26 +15,38 @@ export async function generateMetadata({
   return { title: `${user?.username}'s Profile` };
 }
 
-// export async function generateStaticParams() {
-//   const allUserIds = await getAllUserIds();
-//   return allUserIds;
-// }
+export async function generateStaticParams() {
+  const allUserIds = await getAllUserIds();
+  return allUserIds;
+}
 
 export default async function ProfilePage({
   params: { usernameSlug },
 }: ProfilePageProps) {
-  const [user] = await Promise.all([getUserByUsernameSlug(usernameSlug)]);
+  const [user, allLanguageFeatures] = await Promise.all([
+    getUserByUsernameSlug(usernameSlug),
+    getAllLanguageFeatures(),
+  ]);
 
-  const allLanguageFeatures = await getAllLanguageFeatures();
-  if (!allLanguageFeatures) throw new Error("Failed to get language features");
+  const usersNativeLanguageName = allLanguageFeatures?.find(
+    (langFeatures) => langFeatures.langCode === user?.native
+  )?.langName;
 
   return (
     <>
-      <div>{user?.username}&apos;s profile</div>
-      <div>
-        {user?.username}, a native {user?.native} speaker is learning{" "}
-        {user?.languages.map((lang) => lang.name).join(" and ")}.
-      </div>
+      <h1>
+        {`${
+          user?.username
+        }, a native ${usersNativeLanguageName} speaker is learning ${thisCommaThisAndThat(
+          user?.languages.map((lang) => lang.name)!
+        )}.`}
+      </h1>
     </>
   );
+}
+
+function thisCommaThisAndThat(arr: string[]) {
+  const allButLastItem = arr.slice(0, -1);
+  const lastItem = arr.slice(-1);
+  return `${allButLastItem.join(", ")} and ${lastItem[0]}`;
 }

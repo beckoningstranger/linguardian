@@ -12,6 +12,7 @@ import { slugify } from "@/lib/helperFunctions";
 import { connectMongoDB } from "@/lib/mongodb";
 import {
   LanguageWithFlag,
+  LanguageWithFlagAndName,
   LearnedLanguage,
   SupportedLanguage,
   User as UserType,
@@ -142,8 +143,8 @@ interface Token {
   sub: string;
   image: string;
   id: string;
-  native: LanguageWithFlag | undefined;
-  isLearning: LanguageWithFlag[];
+  native: LanguageWithFlagAndName | undefined;
+  isLearning: LanguageWithFlagAndName[];
   usernameSlug: string | undefined;
   learnedLists: Record<SupportedLanguage, number[]> | never[];
   activeLanguageAndFlag: LanguageWithFlag;
@@ -162,6 +163,7 @@ async function addUserDataToToken(token: Token) {
     token.native = {
       name: userData.native,
       flag: languageFeatures?.flagCode,
+      langName: languageFeatures.langName,
     };
   }
   if (
@@ -169,10 +171,11 @@ async function addUserDataToToken(token: Token) {
     userData?.languages &&
     userData.languages.length > 0
   ) {
-    const userIsLearning: LanguageWithFlag[] = userData.languages.map(
+    const userIsLearning: LanguageWithFlagAndName[] = userData.languages.map(
       (lang: LearnedLanguage) => ({
         name: lang.code,
         flag: lang.flag,
+        langName: lang.name,
       })
     );
     token.isLearning = userIsLearning;
