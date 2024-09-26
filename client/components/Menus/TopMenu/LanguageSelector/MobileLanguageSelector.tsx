@@ -5,12 +5,12 @@ import { usePathname } from "next/navigation";
 import Flag from "react-world-flags";
 
 import { useActiveLanguage } from "@/context/ActiveLanguageContext";
+import { useMobileMenu } from "@/context/MobileMenuContext";
 import { SessionUser, SupportedLanguage } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import AddNewLanguageOption from "./AddNewLanguageOption";
 import { moreLanguagesToLearn } from "./LanguageSelector";
 import { calculateNewPath } from "./LanguageSelectorLink";
-import { useMobileMenu } from "@/context/MobileMenuContext";
 
 interface MobileLanguageSelectorProps {
   allSupportedLanguages: SupportedLanguage[];
@@ -23,11 +23,11 @@ export default function MobileLanguageSelector({
   const { toggleMobileMenu } = useMobileMenu();
   const currentPath = usePathname();
   const amountOfSupportedLanguages = allSupportedLanguages.length;
-  const sessionUser = useSession().data?.user as SessionUser;
+  const { data, update } = useSession();
+  const sessionUser = data?.user as SessionUser;
   const languagesAndFlags: { name: SupportedLanguage; flag: string }[] =
     sessionUser.isLearning;
   const amountOfLanguagesUserLearns = Object.keys(languagesAndFlags).length;
-
   if (toggleMobileMenu)
     return (
       <div className="grid grid-cols-2 grid-rows-3 gap-8">
@@ -38,7 +38,14 @@ export default function MobileLanguageSelector({
               href={calculateNewPath(lang.name, currentPath)}
               onClick={() => {
                 toggleMobileMenu();
-                setActiveLanguage({ name: lang.name, flag: lang.flag });
+                setActiveLanguage(lang);
+                update({
+                  ...data,
+                  user: {
+                    ...sessionUser,
+                    activeLanguageAndFlag: lang,
+                  },
+                });
               }}
             >
               <Flag

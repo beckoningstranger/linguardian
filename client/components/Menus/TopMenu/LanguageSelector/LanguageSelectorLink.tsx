@@ -1,7 +1,8 @@
 "use client";
 
 import { useActiveLanguage } from "@/context/ActiveLanguageContext";
-import { SupportedLanguage } from "@/lib/types";
+import { SessionUser, SupportedLanguage } from "@/lib/types";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Flag from "react-world-flags";
 
@@ -21,12 +22,22 @@ export default function LanguageSelectorLink({
   currentPath,
 }: LanguageSelectorLinkProps) {
   const { setActiveLanguage } = useActiveLanguage();
+  const { data, update } = useSession();
+  const sessionUser = data?.user as SessionUser;
+
   return (
     <Link
       href={calculateNewPath(language, currentPath)}
       onClick={() => {
         setShowAllLanguageOptions(false);
         setActiveLanguage({ name: language, flag });
+        update({
+          ...data,
+          user: {
+            ...sessionUser,
+            activeLanguageAndFlag: { name: language, flag },
+          },
+        });
       }}
     >
       <Flag
