@@ -3,7 +3,6 @@ import { useState } from "react";
 import { RxDotsVertical } from "react-icons/rx";
 
 import ListBarChart from "@/components/Charts/ListBarChart";
-import { removeListFromDashboard } from "@/lib/actions";
 import paths from "@/lib/paths";
 import { LearnedItem, LearningMode, List } from "@/lib/types";
 import { Types } from "mongoose";
@@ -36,13 +35,6 @@ export default function ListDashboardCard({
     allIgnoredItemsForLanguage
   );
   const status = determineListStatus(stats);
-
-  const removeListFromDashboardAction = removeListFromDashboard.bind(
-    null,
-    list.listNumber,
-    list.language,
-    userId
-  );
 
   return (
     <div className="relative mx-6 rounded-md bg-slate-200 lg:mx-3 xl:mx-6">

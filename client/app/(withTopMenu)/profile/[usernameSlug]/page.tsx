@@ -1,5 +1,4 @@
-import StopLearningLanguageButton from "@/components/StopLearningLanguageButton";
-import { getUserByUsernameSlug } from "@/lib/fetchData";
+import { getAllLanguageFeatures, getUserByUsernameSlug } from "@/lib/fetchData";
 
 interface ProfilePageProps {
   params: { usernameSlug: string };
@@ -22,22 +21,15 @@ export default async function ProfilePage({
 }: ProfilePageProps) {
   const [user] = await Promise.all([getUserByUsernameSlug(usernameSlug)]);
 
+  const allLanguageFeatures = await getAllLanguageFeatures();
+  if (!allLanguageFeatures) throw new Error("Failed to get language features");
+
   return (
     <>
       <div>{user?.username}&apos;s profile</div>
       <div>
-        {user?.username} is learning{" "}
+        {user?.username}, a native {user?.native} speaker is learning{" "}
         {user?.languages.map((lang) => lang.name).join(" and ")}.
-      </div>
-
-      <div className="flex flex-col gap-2">
-        {user?.languages.map((lang) => (
-          <StopLearningLanguageButton
-            langCode={lang.code}
-            langName={lang.name}
-            key={lang.code}
-          />
-        ))}
       </div>
     </>
   );

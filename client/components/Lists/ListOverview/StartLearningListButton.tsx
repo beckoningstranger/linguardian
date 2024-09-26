@@ -64,8 +64,15 @@ export default function StartLearningListButton({
       },
     ];
 
-    update({ ...data, user: { ...sessionUser, updatedIsLearning } });
-    setActiveLanguage(language);
+    update({
+      ...data,
+      user: {
+        ...sessionUser,
+        updatedIsLearning,
+        activeLanguageAndFlag: { name: language, flag },
+      },
+    });
+    setActiveLanguage({ name: language, flag });
     await addListToDashboardAction();
   };
 

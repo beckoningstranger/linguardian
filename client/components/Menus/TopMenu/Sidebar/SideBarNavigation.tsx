@@ -31,16 +31,20 @@ export default function SideBarNavigation({}: SideBarNavigationProps) {
         <LogoWithCloseButton toggleFunction={toggleSidebar} />
         <nav className="grid h-full place-items-center last:mb-0 md:place-items-start">
           <div className="grid">
-            <SideNavItem
-              icon={<RxHamburgerMenu />}
-              label="Dashboard"
-              href={paths.dashboardLanguagePath(activeLanguage)}
-            />
-            <SideNavItem
-              icon={<RiFileList3Fill />}
-              label="Lists"
-              href={paths.listsLanguagePath(activeLanguage)}
-            />
+            {activeLanguage && (
+              <>
+                <SideNavItem
+                  icon={<RxHamburgerMenu />}
+                  label="Dashboard"
+                  href={paths.dashboardLanguagePath(activeLanguage.name)}
+                />
+                <SideNavItem
+                  icon={<RiFileList3Fill />}
+                  label="Lists"
+                  href={paths.listsLanguagePath(activeLanguage.name)}
+                />
+              </>
+            )}
             <SideNavItem
               icon={<FaBookReader />}
               label="Dictionary"

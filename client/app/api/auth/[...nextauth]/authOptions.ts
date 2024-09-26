@@ -10,13 +10,13 @@ import {
 } from "@/lib/fetchData";
 import { slugify } from "@/lib/helperFunctions";
 import { connectMongoDB } from "@/lib/mongodb";
-import User from "@/models/users.model";
 import {
   LanguageWithFlag,
   LearnedLanguage,
   SupportedLanguage,
   User as UserType,
 } from "@/lib/types";
+import User from "@/models/users.model";
 
 const GOOGLE_ID = process.env.GOOGLE_ID;
 const GOOGLE_SECRET = process.env.GOOGLE_SECRET;
@@ -88,6 +88,8 @@ const authOptions: NextAuthOptions = {
       session.user.isLearning = token.isLearning;
       session.user.usernameSlug = token.usernameSlug;
       session.user.learnedLists = token.learnedLists;
+      if (!session.user.activeLanguage)
+        session.user.activeLanguageAndFlag = token.activeLanguageAndFlag;
       return session;
     },
     async signIn({
@@ -144,6 +146,7 @@ interface Token {
   isLearning: LanguageWithFlag[];
   usernameSlug: string | undefined;
   learnedLists: Record<SupportedLanguage, number[]> | never[];
+  activeLanguageAndFlag: LanguageWithFlag;
 }
 
 async function addUserDataToToken(token: Token) {
@@ -176,5 +179,6 @@ async function addUserDataToToken(token: Token) {
   }
   token.learnedLists = await getAllLearnedListsForUser(token.id);
   token.usernameSlug = userData?.usernameSlug;
+  token.activeLanguageAndFlag = token.isLearning[0];
   return token;
 }

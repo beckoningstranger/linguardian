@@ -26,7 +26,7 @@ export default function LanguageSelectorLink({
       href={calculateNewPath(language, currentPath)}
       onClick={() => {
         setShowAllLanguageOptions(false);
-        setActiveLanguage(language);
+        setActiveLanguage({ name: language, flag });
       }}
     >
       <Flag

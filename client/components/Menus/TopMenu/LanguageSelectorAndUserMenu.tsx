@@ -5,7 +5,7 @@ import { MouseEventHandler } from "react";
 import Flag from "react-world-flags";
 
 import { useActiveLanguage } from "@/context/ActiveLanguageContext";
-import { LanguageFeatures, SupportedLanguage } from "@/lib/types";
+import { SupportedLanguage } from "@/lib/types";
 import {
   MobileMenuContextProvider,
   useMobileMenu,
@@ -17,20 +17,14 @@ import UserMenu from "./UserMenu";
 
 interface LanguageSelectorAndUserMenuProps {
   allSupportedLanguages: SupportedLanguage[];
-  allLanguageFeatures: LanguageFeatures[];
 }
 
 export default function LanguageSelectorAndUserMenu({
   allSupportedLanguages,
-  allLanguageFeatures,
 }: LanguageSelectorAndUserMenuProps) {
   const { toggleMobileMenu } = useMobileMenu();
   const currentBaseUrl = usePathname();
   const { activeLanguage } = useActiveLanguage();
-  const activeLanguageData = getLanguageAndFlag(
-    activeLanguage,
-    allLanguageFeatures
-  );
 
   const showLanguageSelectorOnlyOn: string[] = [];
   allSupportedLanguages.forEach((lang) => {
@@ -39,55 +33,42 @@ export default function LanguageSelectorAndUserMenu({
     );
   });
 
-  return (
-    <>
-      <div
-        className={
-          !showLanguageSelectorOnlyOn.includes(currentBaseUrl)
-            ? "hidden"
-            : undefined
-        }
-      >
-        <Flag
-          code={activeLanguageData.flag}
-          className={`m-0 h-16 w-16 rounded-full border-2 border-slate-300 object-cover md:hidden`}
-          onClick={toggleMobileMenu as MouseEventHandler}
-        />
-        <MobileMenu fromDirection="animate-from-top">
-          <MobileLanguageSelector
-            allSupportedLanguages={allSupportedLanguages}
-          />
-        </MobileMenu>
-      </div>
-      <div className="flex h-20 items-center justify-evenly">
+  if (activeLanguage)
+    return (
+      <>
         <div
-          className={`${
-            !showLanguageSelectorOnlyOn.includes(currentBaseUrl) && "hidden"
-          } z-50`}
+          className={
+            !showLanguageSelectorOnlyOn.includes(currentBaseUrl)
+              ? "hidden"
+              : undefined
+          }
         >
-          <LanguageSelector
-            activeLanguageData={activeLanguageData}
-            allSupportedLanguages={allSupportedLanguages}
+          <Flag
+            code={activeLanguage.flag}
+            className={`m-0 h-16 w-16 rounded-full border-2 border-slate-300 object-cover md:hidden`}
+            onClick={toggleMobileMenu as MouseEventHandler}
           />
+          <MobileMenu fromDirection="animate-from-top">
+            <MobileLanguageSelector
+              allSupportedLanguages={allSupportedLanguages}
+            />
+          </MobileMenu>
         </div>
-        <MobileMenuContextProvider>
-          <UserMenu />
-        </MobileMenuContextProvider>
-      </div>
-    </>
-  );
-}
-
-export function getLanguageAndFlag(
-  language: SupportedLanguage,
-  allLanguageFeatures: LanguageFeatures[]
-) {
-  const [langFeaturesForPassedLanguage] = allLanguageFeatures.filter(
-    (langFeat) => langFeat.langCode === language
-  );
-
-  return {
-    name: langFeaturesForPassedLanguage?.langCode,
-    flag: langFeaturesForPassedLanguage?.flagCode,
-  };
+        <div className="flex h-20 items-center justify-evenly">
+          <div
+            className={`${
+              !showLanguageSelectorOnlyOn.includes(currentBaseUrl) && "hidden"
+            } z-50`}
+          >
+            <LanguageSelector
+              activeLanguage={activeLanguage}
+              allSupportedLanguages={allSupportedLanguages}
+            />
+          </div>
+          <MobileMenuContextProvider>
+            <UserMenu />
+          </MobileMenuContextProvider>
+        </div>
+      </>
+    );
 }

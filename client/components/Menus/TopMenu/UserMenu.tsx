@@ -17,6 +17,7 @@ interface UserMenuProps {}
 
 export default function UserMenu({}: UserMenuProps) {
   const { toggleMobileMenu } = useMobileMenu();
+  if (!toggleMobileMenu) throw new Error("Could not use mobile menu");
   const [showUserMenu, setShowUserMenu] = useState<boolean>(false);
   const sessionUser = useSession().data?.user as SessionUser;
 
@@ -94,17 +95,18 @@ export default function UserMenu({}: UserMenuProps) {
                 className="mb-16 rounded-full"
               />
             )}
+
             <SidebarItem
               icon={<FaUserAlt />}
               label="Profile"
               href={paths.profilePath(sessionUser?.usernameSlug)}
-              toggleSidebar={toggleMobileMenu}
+              onClick={() => toggleMobileMenu()}
             />
             <SidebarItem
               icon={<IoSettings />}
               label="Settings"
               href={paths.settingsPath()}
-              toggleSidebar={toggleMobileMenu}
+              onClick={() => toggleMobileMenu()}
             />
             <li
               className={`my-4 flex select-none justify-center transition-all md:my-0 md:h-14 md:justify-start md:border-none md:p-10 md:hover:scale-100 md:hover:bg-slate-300`}

@@ -1,8 +1,10 @@
 "use client";
 
 import { stopLearningLanguage } from "@/lib/actions";
+import paths from "@/lib/paths";
 import { SessionUser, SupportedLanguage } from "@/lib/types";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import CenteredSpinner from "./CenteredSpinner";
@@ -19,6 +21,7 @@ export default function StopLearningLanguageButton({
   const [updating, setUpdating] = useState(false);
   const { data, status, update } = useSession();
   const sessionUser = data?.user as SessionUser;
+  const router = useRouter();
 
   const handleStopLearningLanguage = async () => {
     setUpdating(true);
@@ -37,8 +40,14 @@ export default function StopLearningLanguageButton({
       );
       await update({
         ...data,
-        user: { ...sessionUser, isLearning: updatedIsLearning },
+        user: {
+          ...sessionUser,
+          isLearning: updatedIsLearning,
+          activeLanguageAndFlag: updatedIsLearning[0],
+        },
       });
+
+      router.push(paths.profilePath(sessionUser.usernameSlug));
     } catch (err) {
       console.error(err);
     } finally {

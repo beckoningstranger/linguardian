@@ -38,7 +38,7 @@ export default function MobileLanguageSelector({
               href={calculateNewPath(lang.name, currentPath)}
               onClick={() => {
                 toggleMobileMenu();
-                setActiveLanguage(lang.name);
+                setActiveLanguage({ name: lang.name, flag: lang.flag });
               }}
             >
               <Flag

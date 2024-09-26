@@ -379,6 +379,7 @@ export async function stopLearningLanguage(language: SupportedLanguage) {
       method: "POST",
     }
   );
+  const responseData = await response.json();
 
   if (response.ok) {
     revalidatePath(paths.listsLanguagePath(language));
@@ -387,9 +388,9 @@ export async function stopLearningLanguage(language: SupportedLanguage) {
       revalidatePath(paths.dashboardLanguagePath(lwf.name))
     );
     revalidatePath(paths.profilePath(sessionUser.usernameSlug));
-    return await response.json();
+    return responseData;
   }
-  throw new Error(await response.json());
+  throw new Error(responseData);
 }
 
 export async function addNewLanguageToLearn(

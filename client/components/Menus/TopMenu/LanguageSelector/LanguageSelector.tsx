@@ -5,23 +5,23 @@ import { RefObject, useState } from "react";
 import Flag from "react-world-flags";
 
 import { useOutsideClick } from "@/hooks/useOutsideClick";
-import { SessionUser, SupportedLanguage } from "@/lib/types";
+import { MAX_NUMBER_OF_LANGUAGES_ALLOWED } from "@/lib/constants";
+import { LanguageWithFlag, SessionUser, SupportedLanguage } from "@/lib/types";
+import { useSession } from "next-auth/react";
 import AddNewLanguageOption from "./AddNewLanguageOption";
 import LanguageSelectorLink from "./LanguageSelectorLink";
-import { useSession } from "next-auth/react";
 
 interface LanguageSelectorProps {
-  activeLanguageData: { name: SupportedLanguage; flag: string };
+  activeLanguage: LanguageWithFlag;
   allSupportedLanguages: SupportedLanguage[];
 }
 
 export default function LanguageSelector({
-  activeLanguageData,
+  activeLanguage,
   allSupportedLanguages,
 }: LanguageSelectorProps) {
   const sessionUser = useSession().data?.user as SessionUser;
   const [showAllLanguageOptions, setShowAllLanguageOptions] = useState(false);
-  const MAX_NUMBER_OF_LANGUAGES_ALLOWED = 6;
   const currentPath = usePathname();
   const amountOfSupportedLanguages = allSupportedLanguages.length;
 
@@ -36,7 +36,7 @@ export default function LanguageSelector({
 
   const allLanguageAndFlagExceptActive =
     allLanguagesAndFlagsUserIsLearning.filter(
-      (lang) => lang.name !== activeLanguageData.name
+      (lang) => lang.name !== activeLanguage.name
     );
 
   const ref = useOutsideClick(
@@ -54,7 +54,7 @@ export default function LanguageSelector({
     >
       <div>
         <Flag
-          code={activeLanguageData.flag}
+          code={activeLanguage.flag}
           onClick={() =>
             setShowAllLanguageOptions(
               (showAllLanguageOptions) => !showAllLanguageOptions

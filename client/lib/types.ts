@@ -245,6 +245,7 @@ export interface SessionUser {
   native: LanguageWithFlag;
   isLearning: LanguageWithFlag[];
   learnedLists: Partial<Record<SupportedLanguage, number[]>>;
+  activeLanguageAndFlag: LanguageWithFlag;
 }
 
 export interface SlugLanguageObject {

@@ -9,12 +9,12 @@ import TopMiddleNavigation from "./TopMiddleNavigation";
 interface TopMenuProps {}
 
 export default async function TopMenu({}: TopMenuProps) {
-  const [allSupportedLanguages, allLanguageFeatures] = await Promise.all([
+  const [allSupportedLanguages] = await Promise.all([
     getSupportedLanguages(),
     getAllLanguageFeatures(),
   ]);
 
-  return allSupportedLanguages && allLanguageFeatures ? (
+  return allSupportedLanguages ? (
     <>
       <header>
         <SideBarNavigation />
@@ -26,7 +26,6 @@ export default async function TopMenu({}: TopMenuProps) {
           <TopMiddleNavigation />
           <MobileMenuContextProvider>
             <LanguageSelectorAndUserMenu
-              allLanguageFeatures={allLanguageFeatures}
               allSupportedLanguages={allSupportedLanguages}
             />
           </MobileMenuContextProvider>

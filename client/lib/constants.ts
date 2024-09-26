@@ -1,0 +1,1 @@
+export const MAX_NUMBER_OF_LANGUAGES_ALLOWED = 6;

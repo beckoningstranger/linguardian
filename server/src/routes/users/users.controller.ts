@@ -49,9 +49,7 @@ export async function httpGetLearnedLanguageDataForLanguage(
     (lang) => lang.code === language
   );
 
-  if (responseFilteredForLanguage)
-    return res.status(200).json(responseFilteredForLanguage);
-  return res.status(500).json();
+  return res.status(200).json(responseFilteredForLanguage || {});
 }
 
 export async function httpAddListToDashboard(req: Request, res: Response) {

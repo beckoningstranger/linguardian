@@ -1,13 +1,14 @@
 "use client";
 
 import { addNewLanguageToLearn } from "@/lib/actions";
+import paths from "@/lib/paths";
 import { LanguageWithFlag, SessionUser } from "@/lib/types";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import Flag from "react-world-flags";
 import CenteredSpinner from "./CenteredSpinner";
-import { useActiveLanguage } from "@/context/ActiveLanguageContext";
 
 interface PickNewLanguageProps {
   languageAndFlag: LanguageWithFlag;
@@ -21,7 +22,7 @@ export default function PickNewLanguage({
   const { data, status, update } = useSession();
   const sessionUser = data?.user as SessionUser;
   const [updating, setUpdating] = useState(false);
-  const { setActiveLanguage } = useActiveLanguage();
+  const router = useRouter();
 
   const handleLanguageSelection = async () => {
     setUpdating(true);
@@ -40,8 +41,13 @@ export default function PickNewLanguage({
       const updatedIsLearning = [...sessionUser.isLearning, languageAndFlag];
       await update({
         ...data,
-        user: { ...sessionUser, isLearning: updatedIsLearning },
+        user: {
+          ...sessionUser,
+          isLearning: updatedIsLearning,
+          activeLanguageAndFlag: languageAndFlag,
+        },
       });
+      router.push(paths.dashboardLanguagePath(languageAndFlag.name));
     } catch (err) {
       console.error(err);
     } finally {
