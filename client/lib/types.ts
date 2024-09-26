@@ -206,7 +206,7 @@ export interface User {
 }
 
 export interface RecentDictionarySearches {
-  itemSlug: string;
+  itemId: Types.ObjectId;
   dateSearched: Date;
 }
 

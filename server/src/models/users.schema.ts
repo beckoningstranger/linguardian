@@ -62,7 +62,7 @@ const userSchema = new Schema<User>(
     ],
     recentDictionarySearches: [
       {
-        itemSlug: { type: String },
+        itemId: { type: Schema.Types.ObjectId, ref: "Item" },
         dateSearched: { type: Date },
       },
     ],

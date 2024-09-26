@@ -14,6 +14,10 @@ export async function getItemBySlug(slug: string) {
   return await Items.findOne({ slug });
 }
 
+export async function getItemById(_id: Types.ObjectId) {
+  return await Items.findOne({ _id });
+}
+
 export async function getFullyPopulatedItemBySlug(
   slug: string,
   userLanguages: SupportedLanguage[]

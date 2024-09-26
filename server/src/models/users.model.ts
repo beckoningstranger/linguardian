@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import {
   ItemForServer,
   RecentDictionarySearches,
@@ -5,6 +6,7 @@ import {
   User,
   UserWithPopulatedLearnedLists,
 } from "../lib/types.js";
+import Items from "./item.schema.js";
 import { getList } from "./lists.model.js";
 import {
   getAllSettings,
@@ -285,13 +287,13 @@ export async function addRecentDictionarySearches(
   let recentSearches = user?.recentDictionarySearches;
   if (!recentSearches) recentSearches = [];
 
-  recentSearches.push({ itemSlug: slug, dateSearched: new Date() });
+  const itemId = (await Items.findOne({ slug }, { _id: 1 })) as Types.ObjectId;
+
+  recentSearches.push({ itemId, dateSearched: new Date() });
   const tenSortedUniqueSearches = recentSearches
     .reduce((acc, curr) => {
       if (
-        !acc.some(
-          (obj: RecentDictionarySearches) => obj.itemSlug === curr.itemSlug
-        )
+        !acc.some((obj: RecentDictionarySearches) => obj.itemId === curr.itemId)
       ) {
         acc.push(curr);
       }
