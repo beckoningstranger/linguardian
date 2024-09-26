@@ -5,15 +5,14 @@ import {
   getUserById,
 } from "@/lib/fetchData";
 
+import CenteredSpinner from "@/components/CenteredSpinner";
 import ListContainer from "@/components/Lists/ListContainer";
 import DeleteListButton from "@/components/Lists/ListOverview/DeleteListButton";
 import ListFlexibleContent from "@/components/Lists/ListOverview/ListFlexibleContent";
 import ListHeader from "@/components/Lists/ListOverview/ListHeader";
 import ListUnits from "@/components/Lists/ListOverview/ListUnits";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
-import Spinner from "@/components/Spinner";
 import { getUserOnServer } from "@/lib/helperFunctions";
-import { SupportedLanguage } from "@/lib/types";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
@@ -61,13 +60,15 @@ export default async function ListDetailPage({
 
   return (
     <ListContainer>
-      <MobileMenuContextProvider>
-        <DeleteListButton
-          listNumber={listNumber}
-          listLanguage={language}
-          listName={name}
-        />
-      </MobileMenuContextProvider>
+      {userIsAuthor && (
+        <MobileMenuContextProvider>
+          <DeleteListButton
+            listNumber={listNumber}
+            listLanguage={language}
+            listName={name}
+          />
+        </MobileMenuContextProvider>
+      )}
       <ListHeader
         name={name}
         description={description}
@@ -77,13 +78,7 @@ export default async function ListDetailPage({
         listNumber={listNumber}
         userIsAuthor={userIsAuthor}
       />
-      <Suspense
-        fallback={
-          <div className="grid w-full place-items-center">
-            <Spinner />
-          </div>
-        }
-      >
+      <Suspense fallback={<CenteredSpinner />}>
         <ListFlexibleContent language={language} list={listData} />
       </Suspense>
       <ListUnits
