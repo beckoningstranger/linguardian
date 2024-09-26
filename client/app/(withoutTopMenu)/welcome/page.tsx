@@ -1,5 +1,5 @@
 import Onboarding from "@/components/Onboarding/Onboarding";
-import { getAllLanguageFeatures, getSupportedLanguages } from "@/lib/fetchData";
+import { getAllLanguageFeatures } from "@/lib/fetchData";
 import { getUserOnServer } from "@/lib/helperFunctions";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
@@ -9,14 +9,12 @@ export const metadata: Metadata = {
 };
 
 export default async function Welcome() {
-  const [sessionUser, supportedLanguages, allLanguageFeatures] =
-    await Promise.all([
-      getUserOnServer(),
-      getSupportedLanguages(),
-      getAllLanguageFeatures(),
-    ]);
+  const [sessionUser, allLanguageFeatures] = await Promise.all([
+    getUserOnServer(),
+    getAllLanguageFeatures(),
+  ]);
 
-  if (!sessionUser || !supportedLanguages || !allLanguageFeatures)
+  if (!sessionUser || !allLanguageFeatures)
     throw new Error("Error fetching data");
 
   if (sessionUser.native && sessionUser.isLearning?.length > 0) redirect("/");
