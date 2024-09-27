@@ -384,9 +384,10 @@ export async function stopLearningLanguage(language: SupportedLanguage) {
   if (response.ok) {
     revalidatePath(paths.listsLanguagePath(language));
     revalidatePath(paths.dictionaryPath());
-    sessionUser.isLearning.forEach((lwf) =>
-      revalidatePath(paths.dashboardLanguagePath(lwf.name))
-    );
+    if (sessionUser.isLearning)
+      sessionUser.isLearning.forEach((lwf) =>
+        revalidatePath(paths.dashboardLanguagePath(lwf.name))
+      );
     revalidatePath(paths.profilePath(sessionUser.usernameSlug));
     return responseData;
   }
@@ -408,9 +409,10 @@ export async function addNewLanguageToLearn(
   if (response.ok) {
     revalidatePath(paths.listsLanguagePath(language));
     revalidatePath(paths.dictionaryPath());
-    sessionUser.isLearning.forEach((lwf) =>
-      revalidatePath(paths.dashboardLanguagePath(lwf.name))
-    );
+    if (sessionUser.isLearning)
+      sessionUser.isLearning.forEach((lwf) =>
+        revalidatePath(paths.dashboardLanguagePath(lwf.name))
+      );
     revalidatePath(paths.profilePath(sessionUser.usernameSlug));
     return responseData;
   }

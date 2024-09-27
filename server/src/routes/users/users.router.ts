@@ -3,6 +3,7 @@ import {
   httpAddListToDashboard,
   httpAddNewLanguage,
   httpAddNewRecentDictionarySearches,
+  httpCreateUser,
   httpGetAllLearnedListsForUser,
   httpGetAllUserIds,
   httpGetLearnedLanguageDataForLanguage,
@@ -10,8 +11,10 @@ import {
   httpGetNativeLanguageById,
   httpGetNextUserId,
   httpGetRecentDictionarySearches,
+  httpGetUserByEmail,
   httpGetUserById,
   httpGetUserByUsernameSlug,
+  httpIsEmailTaken,
   httpRemoveListFromDashboard,
   httpSetNativeLanguage,
   httpStopLearningLanguage,
@@ -21,6 +24,8 @@ import {
 export const usersRouter = express.Router();
 
 usersRouter.get("/get/:id", httpGetUserById);
+
+usersRouter.get("/getByEmail/:email", httpGetUserByEmail);
 
 usersRouter.get("/getByUsernameSlug/:usernameSlug", httpGetUserByUsernameSlug);
 
@@ -75,3 +80,7 @@ usersRouter.post(
   "/stopLearningLanguage/:userId/:language",
   httpStopLearningLanguage
 );
+
+usersRouter.post("/createUser", httpCreateUser);
+
+usersRouter.get("/isEmailTaken/:email", httpIsEmailTaken);

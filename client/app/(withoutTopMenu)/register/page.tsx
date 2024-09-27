@@ -11,9 +11,10 @@ export default async function RegisterPage() {
   const sessionUser = await getUserOnServer();
   if (!sessionUser) return <RegisterForm />;
 
-  if (!sessionUser.native) redirect(paths.welcomePath());
-  if (!sessionUser.isLearning) redirect(paths.welcomePath());
-
-  if (sessionUser.native && sessionUser.isLearning)
+  if (!sessionUser.native || !sessionUser.isLearning) {
+    redirect(paths.welcomePath());
+  } else {
+    sessionUser.native && sessionUser.isLearning;
     redirect(paths.dashboardLanguagePath(sessionUser.isLearning[0].name));
+  }
 }

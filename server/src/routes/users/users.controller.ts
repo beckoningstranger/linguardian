@@ -5,11 +5,13 @@ import {
   addNewLanguage,
   addNewlyLearnedItems,
   addRecentDictionarySearches,
+  createUser,
   getAllUserIds,
   getLearnedLanguageDataWithPopulatedLists,
   getNativeLanguageById,
   getNextUserId,
   getRecentDictionarySearches,
+  getUserByEmail,
   getUserById,
   getUserByUsernameSlug,
   removeListFromDashboard,
@@ -18,12 +20,24 @@ import {
   updateReviewedItems,
 } from "../../models/users.model.js";
 
-import { LearningMode, SupportedLanguage } from "../../lib/types.js";
+import {
+  LearningMode,
+  SupportedLanguage,
+  UserCreationData,
+} from "../../lib/types.js";
 import { getItemById } from "../../models/items.model.js";
 import { getSupportedLanguages } from "../../models/settings.model.js";
+import { slugifyString } from "../../lib/helperFunctions.js";
 
 export async function httpGetUserById(req: Request, res: Response) {
   const response = await getUserById(req.params.id);
+  if (response) return res.status(200).json(response);
+  return res.status(404).json();
+}
+
+export async function httpGetUserByEmail(req: Request, res: Response) {
+  const email = req.params.email;
+  const response = await getUserByEmail(email);
   if (response) return res.status(200).json(response);
   return res.status(404).json();
 }
@@ -102,7 +116,7 @@ export async function httpSetNativeLanguage(req: Request, res: Response) {
 
   const response = await setNativeLanguage(userId, language);
   if (response.modifiedCount === 1) return res.status(201).json();
-  return res.status(500);
+  return res.status(500).json();
 }
 
 export async function httpGetNativeLanguageById(req: Request, res: Response) {
@@ -205,4 +219,27 @@ export async function httpStopLearningLanguage(req: Request, res: Response) {
   const response = await stopLearningLanguage(userId, language);
   if (!response) return res.status(500).json();
   return res.status(200).json(response);
+}
+
+export async function httpCreateUser(req: Request, res: Response) {
+  const userData: UserCreationData = req.body;
+  const { id, username, email, hashedPassword } = userData;
+
+  const response = await createUser({
+    id: id === "credentials" ? id + (await getNextUserId()) : id,
+    email,
+    username,
+    usernameSlug: slugifyString(username),
+    password: hashedPassword,
+  });
+
+  if (response) return res.status(200).json();
+  return res.status(500).json();
+}
+
+export async function httpIsEmailTaken(req: Request, res: Response) {
+  const userEmail = req.params.email;
+  const response = await getUserByEmail(userEmail);
+  if (response) return res.status(200).json(true);
+  return res.status(200).json(false);
 }

@@ -16,7 +16,8 @@ export default function OnboardingSubmitButton({
   userNative,
   languageToLearn,
 }: OnboardingSubmitButtonProps) {
-  const { data: session, status, update } = useSession();
+  const { data, status, update } = useSession();
+  const sessionUser: SessionUser = data?.user;
   const [updating, setUpdating] = useState<boolean>(false);
 
   if (status === "loading") return <CenteredSpinner />;
@@ -24,33 +25,47 @@ export default function OnboardingSubmitButton({
     <button
       type="submit"
       className="flex h-16 w-full items-center px-6 py-3 text-center disabled:cursor-not-allowed"
-      onClick={() => {
-        toast
-          .promise(finishOnboarding(userNative.name, languageToLearn.name), {
-            loading: "Your account is being created...",
-            success: () => {
-              updateSession();
-              return "Account created! 🎉";
-            },
-            error: (err) => {
-              return err.toString();
-            },
-          })
-          .then(() =>
-            toast.promise(
-              addNewLanguageToLearn(session?.user.id, languageToLearn.name),
-              {
-                loading: "Updating your learning settings...",
-                success: () => {
-                  updateSession();
-                  return `You are now learning ${languageToLearn.langName}! 🎉`;
-                },
-                error: (err) => {
-                  return err.toString();
-                },
-              }
-            )
+      onClick={async () => {
+        setUpdating(true);
+        try {
+          await toast.promise(
+            finishOnboarding(userNative.name, languageToLearn.name),
+            {
+              loading: "Your account is being created...",
+              success: () => {
+                return "Account created! 🎉";
+              },
+              error: (err) => {
+                return err.toString();
+              },
+            }
           );
+
+          await toast.promise(
+            addNewLanguageToLearn(sessionUser.id, languageToLearn.name),
+            {
+              loading: "Updating your learning settings...",
+              success: `You are now learning ${languageToLearn.langName}! 🎉`,
+              error: (err) => {
+                return err.toString();
+              },
+            }
+          );
+
+          await update({
+            ...data,
+            user: {
+              ...sessionUser,
+              native: userNative,
+              isLearning: [languageToLearn],
+              activeLanguageAndFlag: languageToLearn,
+            },
+          });
+        } catch (err) {
+          console.error("There was an error during registration: ", err);
+        } finally {
+          setUpdating(false);
+        }
       }}
       disabled={updating}
     >
@@ -65,20 +80,4 @@ export default function OnboardingSubmitButton({
       )}
     </button>
   );
-
-  function updateSession() {
-    setUpdating(true);
-    const sessionUser: SessionUser = session?.user;
-    sessionUser.native = {
-      name: userNative?.name,
-      flag: userNative?.flag,
-    };
-    sessionUser.isLearning = [
-      {
-        name: languageToLearn?.name,
-        flag: languageToLearn?.flag,
-      },
-    ];
-    update(session);
-  }
 }

@@ -46,6 +46,7 @@ export default async function ProfilePage({
 }
 
 function thisCommaThisAndThat(arr: string[]) {
+  if (arr.length === 1) return arr[0];
   const allButLastItem = arr.slice(0, -1);
   const lastItem = arr.slice(-1);
   return `${allButLastItem.join(", ")} and ${lastItem[0]}`;

@@ -49,13 +49,6 @@ export async function getSeperatedUserLanguages() {
   } as UserLanguagesWithFlags;
 }
 
-export function slugify(title: string): string {
-  return title
-    .replace(/[^äöüàáâéèêíìîóòôûúùýỳŷãõũỹa-zA-Z!()': }]/gi, "")
-    .replace(/\s+/g, "-")
-    .toLowerCase();
-}
-
 export async function checkPassedLanguageAsync(
   passedLanguage: string | undefined
 ) {

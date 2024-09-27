@@ -7,17 +7,15 @@ import GoogleProvider from "next-auth/providers/google";
 import {
   getAllLearnedListsForUser,
   getLanguageFeaturesForLanguage,
+  getUserByEmail,
+  getUserById,
 } from "@/lib/fetchData";
-import { slugify } from "@/lib/helperFunctions";
-import { connectMongoDB } from "@/lib/mongodb";
 import {
   LanguageWithFlag,
   LanguageWithFlagAndName,
   LearnedLanguage,
   SupportedLanguage,
-  User as UserType,
 } from "@/lib/types";
-import User from "@/models/users.model";
 
 const GOOGLE_ID = process.env.GOOGLE_ID;
 const GOOGLE_SECRET = process.env.GOOGLE_SECRET;
@@ -37,8 +35,7 @@ const authOptions: NextAuthOptions = {
         const { email, password } = credentials;
 
         try {
-          await connectMongoDB();
-          const user = await User.findOne({ email });
+          const user = await getUserByEmail(email);
           if (!user) return null;
 
           const passwordsMatch = await bcrypt.compare(password, user.password);
@@ -102,18 +99,21 @@ const authOptions: NextAuthOptions = {
     }) {
       try {
         if (account && account.provider !== "credentials") {
-          await connectMongoDB();
-          const idExists = await User.findOne({
-            id: account?.provider + account?.providerAccountId,
-          });
+          const id = account.provider + account.providerAccountId;
+          const idExists = await getUserById(id);
+
           if (!idExists) {
-            if (!account) throw new Error("account is undefined");
-            await User.create({
-              id: account?.provider + account?.providerAccountId,
-              username: profile?.name,
-              usernameSlug: slugify(profile?.name as string),
-              email: profile?.email,
-              image: profile?.picture,
+            if (!account) throw new Error("No account found");
+
+            await fetch(`${process.env.NEXTAUTH_URL}/api/register`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                id,
+                username: profile?.name,
+                email: profile?.email,
+                image: profile?.picture,
+              }),
             });
           }
         }
@@ -151,10 +151,8 @@ interface Token {
 }
 
 async function addUserDataToToken(token: Token) {
-  const userData = await User.findOne<UserType>(
-    { id: token.id },
-    { native: 1, languages: 1, usernameSlug: 1, _id: 0 }
-  );
+  const userData = await getUserById(token.id);
+
   if (!token.native && userData?.native) {
     const languageFeatures = await getLanguageFeaturesForLanguage(
       userData.native

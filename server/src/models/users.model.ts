@@ -37,14 +37,6 @@ export async function getUserByUsernameSlug(usernameSlug: string) {
   }
 }
 
-export async function createUser(user: User) {
-  try {
-    await Users.findOneAndUpdate<User>({ id: user.id }, user, { upsert: true });
-  } catch (err) {
-    console.error(`Error creating user. ${err}`);
-  }
-}
-
 export async function addListToDashboard(userId: string, listNumber: number) {
   try {
     const list = await getList(listNumber);
@@ -327,4 +319,18 @@ export async function stopLearningLanguage(
     { $pull: { languages: { code: language } } },
     { new: true }
   );
+}
+
+export async function createUser(userDataToSave: {
+  id: string;
+  email: string;
+  username: string;
+  usernameSlug: string;
+  password: string;
+}) {
+  return await Users.create(userDataToSave);
+}
+
+export async function getUserByEmail(email: string) {
+  return await Users.findOne({ email });
 }

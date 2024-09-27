@@ -281,3 +281,10 @@ export type ListDetails = {
   unitOrder?: string[];
   listDescription?: string;
 };
+
+export type UserCreationData = {
+  id: string;
+  username: string;
+  email: string;
+  hashedPassword: string;
+};

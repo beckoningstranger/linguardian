@@ -3,9 +3,9 @@ import { SupportedLanguage } from "./types.js";
 
 export function slugifyString(
   string: string,
-  language: SupportedLanguage
+  language?: SupportedLanguage
 ): string {
-  return `${language}-${string
+  return `${language ? language + "-" : ""}${string
     .replace(/[^äöüàáâéèêíìîóòôûúùýỳŷãõũỹa-zA-Z!()': }]/gi, "")
     .replace(/\s+/g, "-")
     .toLowerCase()}`;

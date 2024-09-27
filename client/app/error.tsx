@@ -1,6 +1,7 @@
 "use client";
 
 import NavigateBackButton from "@/components/NavigateBackButton";
+import { signOut } from "next-auth/react";
 import { useEffect } from "react";
 
 interface ErrorProps {
@@ -28,9 +29,19 @@ export default function Error({ error, reset }: ErrorProps) {
         >
           Try again
         </button> */}
-        <NavigateBackButton className="w-52 mt-4 bg-slate-200 px-4 py-2 rounded-md">
+        <NavigateBackButton className="mt-4 w-52 rounded-md bg-slate-200 px-4 py-2">
           Navigate Back
         </NavigateBackButton>
+        <div>
+          <button
+            className="mt-4 w-52 rounded-md bg-slate-200 px-4 py-2"
+            onClick={() => {
+              signOut({ callbackUrl: "/" });
+            }}
+          >
+            Log out
+          </button>
+        </div>
       </div>
     </div>
   );

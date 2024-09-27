@@ -1,24 +1,28 @@
-import { getNextUserId } from "@/lib/fetchData";
-import { slugify } from "@/lib/helperFunctions";
-import { connectMongoDB } from "@/lib/mongodb";
-import User from "@/models/users.model";
 import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
+const server = process.env.SERVER_URL;
+
 export async function POST(req: NextRequest) {
   try {
-    const { username, email, password } = await req.json();
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const id = await getNextUserId();
-    await connectMongoDB();
-    await User.create({
-      id: "credentials" + id,
+    const { id, username, email, password, image } = await req.json();
+    const hashedPassword = password
+      ? await bcrypt.hash(password, 10)
+      : undefined;
+    const userToCreate = {
+      id: id ? id : "credentials",
       username,
-      usernameSlug: slugify(username),
       email,
-      password: hashedPassword,
+      hashedPassword,
+      image,
+    };
+    const response = await fetch(`${server}/users/createUser`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userToCreate),
     });
-    return NextResponse.json({ message: "User registered" }, { status: 201 });
+    if (response.ok)
+      return NextResponse.json({ message: "User registered" }, { status: 201 });
   } catch (err) {
     return NextResponse.json(
       { message: "An error occured while registering the user." },
