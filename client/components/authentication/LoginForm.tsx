@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import paths from "@/lib/paths";
-import Spinner from "../Spinner";
+import { signIn } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import WelcomeMessage from "./WelcomeMessage";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -40,16 +40,7 @@ export default function LoginForm() {
     }
   };
 
-  if (loggingIn)
-    return (
-      <div className="grid h-screen place-items-center">
-        <div className="flex flex-col items-center justify-center text-2xl font-bold text-green-700">
-          <div>Welcome to Linguardian! We are logging you in...</div>
-          <Spinner size="big" />
-        </div>
-      </div>
-    );
-
+  if (loggingIn) return <WelcomeMessage mode="login" />;
   return (
     <div className="grid h-screen place-items-center">
       <div className="rounded-lg border-t-4 border-green-400 p-5 shadow-lg">

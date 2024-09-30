@@ -82,7 +82,7 @@ const itemSchemaWithoutTranslations = z.object({
       "Belgian French",
     ])
     .array()
-    .max(5, "Items can receive a maximum of 5 tags")
+    .max(5, "Each item can receive a maximum of 5 tags")
     .optional(),
   relevance: z.custom<Types.ObjectId>().optional(),
   collocations: z.custom<Types.ObjectId>().optional(),

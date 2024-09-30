@@ -342,7 +342,7 @@ export async function getRecentDictionarySearches() {
   return (await response.json()) as DictionarySearchResult[];
 }
 
-export async function isEmailTaken(email: string) {
+export async function isEmailTaken(email: string): Promise<boolean> {
   const response = await fetch(`${server}/users/isEmailTaken/${email}`);
   const responseData = await response.json();
   if (response.ok) return responseData;
