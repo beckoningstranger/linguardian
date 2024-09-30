@@ -418,3 +418,17 @@ export async function addNewLanguageToLearn(
   }
   throw new Error(responseData);
 }
+
+export async function isEmailTaken(email: string): Promise<boolean> {
+  const response = await fetch(`${server}/users/isEmailTaken/${email}`);
+  const responseData = await response.json();
+  if (response.ok) return responseData;
+  throw new Error("Could not verify whether user email is taken.");
+}
+
+export async function isUsernameTaken(username: string): Promise<boolean> {
+  const response = await fetch(`${server}/users/isUsernameTaken/${username}`);
+  const responseData = await response.json();
+  if (response.ok) return responseData;
+  throw new Error("Could not verify whether username is taken.");
+}

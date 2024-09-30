@@ -180,6 +180,6 @@ async function addUserDataToToken(token: Token) {
   }
   token.learnedLists = await getAllLearnedListsForUser(token.id);
   token.usernameSlug = userData?.usernameSlug;
-  token.activeLanguageAndFlag = token.isLearning[0];
+  if (token.isLearning) token.activeLanguageAndFlag = token.isLearning[0];
   return token;
 }

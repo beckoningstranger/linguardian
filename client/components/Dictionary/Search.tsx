@@ -1,6 +1,5 @@
 "use client";
 
-import { findItems } from "@/lib/actions";
 import {
   DictionarySearchResult,
   LanguageWithFlag,
@@ -51,7 +50,6 @@ export default function Search({
         query={query}
         debouncedQuery={debouncedQuery}
         setQuery={setQuery}
-        findItems={findItems}
         searchResults={searchResults}
         setSearchResults={setSearchResults}
         searchLanguagesWithFlags={searchLanguagesWithFlags}

@@ -15,6 +15,7 @@ import {
   httpGetUserById,
   httpGetUserByUsernameSlug,
   httpIsEmailTaken,
+  httpIsUsernameTaken,
   httpRemoveListFromDashboard,
   httpSetNativeLanguage,
   httpStopLearningLanguage,
@@ -84,3 +85,5 @@ usersRouter.post(
 usersRouter.post("/createUser", httpCreateUser);
 
 usersRouter.get("/isEmailTaken/:email", httpIsEmailTaken);
+
+usersRouter.get("/isUsernameTaken/:username", httpIsUsernameTaken);

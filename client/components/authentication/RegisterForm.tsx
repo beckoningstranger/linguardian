@@ -5,22 +5,24 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { FieldErrors, FieldValues, useForm } from "react-hook-form";
 import Spinner from "../Spinner";
+import InputWithCheck from "./InputWithCheck";
 
 export default function RegisterForm() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
     reset,
     getValues,
+    setValue,
     watch,
   } = useForm();
 
   const inputStyling =
     "w-[400px] border border-gray-200 py-2 px-6 bg-zinc-100/40";
 
-  const onSubmit = async (data: FieldValues) => {
-    const { username, email, password } = watch();
+  const onSubmit = async ({ username, email, password }: FieldValues) => {
     const res = await fetch("api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -47,46 +49,22 @@ export default function RegisterForm() {
     <div className="grid h-screen place-items-center">
       <div className="rounded-lg border-t-4 border-green-400 p-5 shadow-lg">
         <h1 className="my-4 text-xl font-bold">Create a Linguardian account</h1>
-        <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
-          <Input
-            {...register("username", {
-              required: "Choosing a username is required",
-              minLength: {
-                value: 4,
-                message: "Your username must be between 4 and 24 characters",
-              },
-              maxLength: {
-                value: 24,
-                message: "Your username must be between 4 and 24 characters",
-              },
-            })}
-            type="text"
-            placeholder="Your username"
-            className={inputStyling}
+        <form className="flex flex-col gap-1" onSubmit={handleSubmit(onSubmit)}>
+          <InputWithCheck
+            setValue={setValue}
+            checkMode="username"
+            setError={setError}
+            register={register}
+            watch={watch}
           />
           <FormErrors errors={errors} field="username" />
 
-          <Input
-            {...register("email", {
-              required: "You need to enter your email address",
-              validate: async (value) => {
-                const response = await fetch("/api/isEmailTaken", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({ email: value }),
-                });
-                const emailIsTaken: boolean = await response.json();
-                return (
-                  !emailIsTaken ||
-                  "There already is an account with this email address"
-                );
-              },
-            })}
-            type="email"
-            placeholder="Email"
-            className={inputStyling}
+          <InputWithCheck
+            setValue={setValue}
+            checkMode="email"
+            setError={setError}
+            register={register}
+            watch={watch}
           />
           <FormErrors errors={errors} field="email" />
 
@@ -106,8 +84,7 @@ export default function RegisterForm() {
 
           <Input
             {...register("confirmPassword", {
-              required:
-                "Entering your password twice makes sure there's no accidental typo",
+              required: "Please enter your password again to check for typos",
               validate: (value) =>
                 value === getValues("password") || "Passwords must match",
             })}

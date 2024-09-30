@@ -1,5 +1,6 @@
 "use client";
 
+import { findItems } from "@/lib/actions";
 import paths from "@/lib/paths";
 import { DictionarySearchResult, LanguageWithFlag } from "@/lib/types";
 import { Combobox, ComboboxInput } from "@headlessui/react";
@@ -10,7 +11,6 @@ interface SearchBoxProps {
   query: string;
   debouncedQuery: string;
   setQuery: Dispatch<SetStateAction<string>>;
-  findItems: Function;
   searchResults: DictionarySearchResult[];
   searchLanguagesWithFlags: LanguageWithFlag[];
   setSearchResults: Function;
@@ -20,7 +20,6 @@ export default function SearchBox({
   query,
   debouncedQuery,
   setQuery,
-  findItems,
   searchResults,
   setSearchResults,
   searchLanguagesWithFlags,
@@ -34,31 +33,24 @@ export default function SearchBox({
     if (debouncedQuery.length > 1) {
       const controller = new AbortController();
       (async () => {
-        const response: DictionarySearchResult[] = await findItems(
-          searchLanguages,
-          debouncedQuery
-        );
-        response.sort((a, b) => {
-          if (
-            a.name.slice(0, query.length) === query &&
-            b.name.slice(0, query.length) !== query
-          )
-            return -1;
-          return 1;
-        });
-        setSearchResults(response);
+        const response = await findItems(searchLanguages, debouncedQuery);
+        if (response) {
+          response.sort((a, b) => {
+            if (
+              a.name.slice(0, query.length) === query &&
+              b.name.slice(0, query.length) !== query
+            )
+              return -1;
+            return 1;
+          });
+          setSearchResults(response);
+        }
       })();
       return () => controller.abort();
     } else {
       setSearchResults([]);
     }
-  }, [
-    debouncedQuery,
-    findItems,
-    query,
-    setSearchResults,
-    searchLanguagesWithFlags,
-  ]);
+  }, [debouncedQuery, query, setSearchResults, searchLanguagesWithFlags]);
 
   const handleChange = (result: DictionarySearchResult | "showAll") => {
     if (!result) return;

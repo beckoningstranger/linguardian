@@ -342,13 +342,6 @@ export async function getRecentDictionarySearches() {
   return (await response.json()) as DictionarySearchResult[];
 }
 
-export async function isEmailTaken(email: string): Promise<boolean> {
-  const response = await fetch(`${server}/users/isEmailTaken/${email}`);
-  const responseData = await response.json();
-  if (response.ok) return responseData;
-  throw new Error("Could not verify whether user email is taken.");
-}
-
 export async function getUserByEmail(email: string) {
   const response = await fetch(`${server}/users/getByEmail/${email}`);
   const responseData = await response.json();

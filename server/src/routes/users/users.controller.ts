@@ -5,6 +5,7 @@ import {
   addNewLanguage,
   addNewlyLearnedItems,
   addRecentDictionarySearches,
+  checkUsernameAvailability,
   createUser,
   getAllUserIds,
   getLearnedLanguageDataWithPopulatedLists,
@@ -240,6 +241,13 @@ export async function httpCreateUser(req: Request, res: Response) {
 export async function httpIsEmailTaken(req: Request, res: Response) {
   const userEmail = req.params.email;
   const response = await getUserByEmail(userEmail);
+  if (response) return res.status(200).json(true);
+  return res.status(200).json(false);
+}
+
+export async function httpIsUsernameTaken(req: Request, res: Response) {
+  const username = req.params.username;
+  const response = await checkUsernameAvailability(username);
   if (response) return res.status(200).json(true);
   return res.status(200).json(false);
 }

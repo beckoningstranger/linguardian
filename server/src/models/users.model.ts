@@ -334,3 +334,7 @@ export async function createUser(userDataToSave: {
 export async function getUserByEmail(email: string) {
   return await Users.findOne({ email });
 }
+
+export async function checkUsernameAvailability(username: string) {
+  return await Users.findOne({ username });
+}
