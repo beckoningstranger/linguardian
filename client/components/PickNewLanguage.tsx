@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import Flag from "react-world-flags";
-import CenteredSpinner from "./CenteredSpinner";
+import Spinner from "./Spinner";
 
 interface PickNewLanguageProps {
   languageAndFlag: LanguageWithFlag;
@@ -55,7 +55,7 @@ export default function PickNewLanguage({
     }
   };
 
-  if (status === "loading") return <CenteredSpinner />;
+  if (status === "loading") return <Spinner centered />;
 
   return (
     <button

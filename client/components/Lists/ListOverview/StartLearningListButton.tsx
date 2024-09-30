@@ -1,5 +1,5 @@
 "use client";
-import CenteredSpinner from "@/components/CenteredSpinner";
+import Spinner from "@/components/Spinner";
 import { useActiveLanguage } from "@/context/ActiveLanguageContext";
 import { addListToDashboard, addNewLanguageToLearn } from "@/lib/actions";
 import { PopulatedList, SessionUser } from "@/lib/types";
@@ -76,7 +76,7 @@ export default function StartLearningListButton({
     await addListToDashboardAction();
   };
 
-  if (status === "loading") return <CenteredSpinner />;
+  if (status === "loading") return <Spinner centered />;
 
   return (
     <>

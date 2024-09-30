@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import CenteredSpinner from "./CenteredSpinner";
+import Spinner from "./Spinner";
 
 interface StopLearningLanguageButtonProps {
   langName: string;
@@ -55,7 +55,7 @@ export default function StopLearningLanguageButton({
     }
   };
 
-  if (status === "loading") return <CenteredSpinner />;
+  if (status === "loading") return <Spinner centered />;
 
   return (
     <button

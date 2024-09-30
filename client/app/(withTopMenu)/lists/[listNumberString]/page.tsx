@@ -5,12 +5,12 @@ import {
   getUserById,
 } from "@/lib/fetchData";
 
-import CenteredSpinner from "@/components/CenteredSpinner";
 import ListContainer from "@/components/Lists/ListContainer";
 import DeleteListButton from "@/components/Lists/ListOverview/DeleteListButton";
 import ListFlexibleContent from "@/components/Lists/ListOverview/ListFlexibleContent";
 import ListHeader from "@/components/Lists/ListOverview/ListHeader";
 import ListUnits from "@/components/Lists/ListOverview/ListUnits";
+import Spinner from "@/components/Spinner";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { getUserOnServer } from "@/lib/helperFunctions";
 import { notFound } from "next/navigation";
@@ -78,7 +78,7 @@ export default async function ListDetailPage({
         listNumber={listNumber}
         userIsAuthor={userIsAuthor}
       />
-      <Suspense fallback={<CenteredSpinner />}>
+      <Suspense fallback={<Spinner centered />}>
         <ListFlexibleContent language={language} list={listData} />
       </Suspense>
       <ListUnits

@@ -1,11 +1,10 @@
 "use client";
+import { addNewLanguageToLearn, finishOnboarding } from "@/lib/actions";
 import { LanguageWithFlagAndName, SessionUser } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import Spinner from "../Spinner";
-import { addNewLanguageToLearn, finishOnboarding } from "@/lib/actions";
 import toast from "react-hot-toast";
-import CenteredSpinner from "../CenteredSpinner";
+import Spinner from "../Spinner";
 
 interface OnboardingSubmitButtonProps {
   userNative: LanguageWithFlagAndName;
@@ -20,7 +19,7 @@ export default function OnboardingSubmitButton({
   const sessionUser: SessionUser = data?.user;
   const [updating, setUpdating] = useState<boolean>(false);
 
-  if (status === "loading") return <CenteredSpinner />;
+  if (status === "loading") return <Spinner centered />;
   return (
     <button
       type="submit"

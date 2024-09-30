@@ -6,7 +6,6 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import Spinner from "../Spinner";
-import CenteredSpinner from "../CenteredSpinner";
 
 interface RemoveListButtonProps {
   listLanguage: SupportedLanguage;
@@ -49,7 +48,7 @@ export default function RemoveListButton({
     setUpdating(false);
   };
 
-  if (status === "loading") return <CenteredSpinner />;
+  if (status === "loading") return <Spinner centered />;
 
   return (
     <button onClick={handleRemoveList} disabled={updating}>
