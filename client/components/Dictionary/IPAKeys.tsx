@@ -19,7 +19,7 @@ export default function IPAKeys({
         {keys.map((key) => (
           <button
             key={key}
-            id={"IPAKeys-" + key} // This is used in useOutsideInputAndKeyboardClick
+            id={"IPAKeys-" + key} // This is used in useOutsideInputAndKeyboardClick in hooks.ts
             onClick={() => {
               array[arrayIndex] = array[arrayIndex] + key;
               setArray(array.slice());

@@ -1,4 +1,4 @@
-import { useOutsideClick } from "@/hooks/useOutsideClick";
+import { useOutsideClick } from "@/lib/hooks";
 import { MouseEventHandler, ReactNode, RefObject } from "react";
 
 interface ContextMenuProps {

@@ -2,7 +2,7 @@
 
 import { useActiveLanguage } from "@/context/ActiveLanguageContext";
 import { useSidebar } from "@/context/SidebarContext";
-import { useOutsideClick } from "@/hooks/useOutsideClick";
+import { useOutsideClick } from "@/lib/hooks";
 import paths from "@/lib/paths";
 import { RefObject } from "react";
 import { FaBookReader, FaRegQuestionCircle } from "react-icons/fa";

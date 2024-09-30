@@ -6,7 +6,8 @@ import { IoSettings } from "react-icons/io5";
 import { RiLogoutBoxLine } from "react-icons/ri";
 
 import { useMobileMenu } from "@/context/MobileMenuContext";
-import { useOutsideClickForUserMenu } from "@/hooks/useOutsideClick";
+
+import { useOutsideClickForUserMenu } from "@/lib/hooks";
 import paths from "@/lib/paths";
 import { SessionUser } from "@/lib/types";
 import MobileMenu from "../MobileMenu/MobileMenu";

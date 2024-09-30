@@ -3,7 +3,7 @@
 import ConfirmCancelMobileMenu from "@/components/ConfirmCancelMobileMenu";
 import ConfirmCancelModal from "@/components/ConfirmCancelModal";
 import { useMobileMenu } from "@/context/MobileMenuContext";
-import { useOutsideClick } from "@/hooks/useOutsideClick";
+import { useOutsideClick } from "@/lib/hooks";
 import { changeListDetails, removeUnitFromList } from "@/lib/actions";
 import { Button } from "@headlessui/react";
 import {

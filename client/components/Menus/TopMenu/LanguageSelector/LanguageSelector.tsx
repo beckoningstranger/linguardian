@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { RefObject, useState } from "react";
 import Flag from "react-world-flags";
 
-import { useOutsideClick } from "@/hooks/useOutsideClick";
+import { useOutsideClick } from "@/lib/hooks";
 import { MAX_NUMBER_OF_LANGUAGES_ALLOWED } from "@/lib/constants";
 import { LanguageWithFlag, SessionUser, SupportedLanguage } from "@/lib/types";
 import { useSession } from "next-auth/react";

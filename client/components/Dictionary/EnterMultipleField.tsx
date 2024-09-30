@@ -1,6 +1,6 @@
 "use client";
 
-import { useOutsideInputAndKeyboardClick } from "@/hooks/useOutsideClick";
+import { useOutsideInputAndKeyboardClick } from "@/lib/hooks";
 import { MinusCircleIcon } from "@heroicons/react/20/solid";
 import { RefObject, useEffect, useState } from "react";
 

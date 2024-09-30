@@ -1,6 +1,6 @@
 "use client";
 
-import { useOutsideClick } from "@/hooks/useOutsideClick";
+import { useOutsideClick } from "@/lib/hooks";
 import { changeListDetails } from "@/lib/actions";
 import Image from "next/image";
 import { useEffect, useState } from "react";
