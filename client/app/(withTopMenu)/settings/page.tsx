@@ -1,6 +1,6 @@
 import StopLearningLanguageButton from "@/components/StopLearningLanguageButton";
 import { getUserByUsernameSlug } from "@/lib/fetchData";
-import { getUserOnServer } from "@/lib/helperFunctions";
+import { getUserOnServer } from "@/lib/helperFunctionsServer";
 
 export default async function SettingsPage() {
   const [sessionUser] = await Promise.all([getUserOnServer()]);

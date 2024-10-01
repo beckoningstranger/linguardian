@@ -1,5 +1,6 @@
 "use client";
 import { createUser } from "@/lib/actions";
+import { setErrorsFromBackend } from "@/lib/helperFunctionsClient";
 import paths from "@/lib/paths";
 import { RegisterSchema } from "@/lib/types";
 import { registerSchema } from "@/lib/validations";
@@ -8,7 +9,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { FieldErrors, FieldValues, useForm } from "react-hook-form";
-import { ZodFormattedError } from "zod";
 import Spinner from "../Spinner";
 import InputWithCheck from "./InputWithCheck";
 
@@ -44,12 +44,7 @@ export default function RegisterForm() {
     });
 
     if (!response.success) {
-      const errors = response.errors as ZodFormattedError<
-        RegisterSchema,
-        string
-      >;
-
-      setFormErrors(setError, errors);
+      setErrorsFromBackend(response.errors, setError);
     } else {
       reset();
       await signIn("credentials", {
@@ -125,36 +120,4 @@ function FormErrors({ errors, field }: FormErrorsProps) {
   const message =
     typeof error?.message === "string" ? error.message : undefined;
   return <div className="ml-2 text-sm text-red-500">{message}</div>;
-}
-
-// All credits go to ChatGPT4
-function setFormErrors(
-  setError: Function,
-  errors: ZodFormattedError<RegisterSchema, string>
-) {
-  // Type guard to check if value is an object with _errors
-  const hasErrors = (value: any): value is { _errors: string[] } => {
-    return typeof value === "object" && value !== null && "_errors" in value;
-  };
-
-  // Iterate over each key-value pair in the errors object
-  Object.entries(errors).forEach(([key, value]) => {
-    if (hasErrors(value)) {
-      // If value has _errors, iterate over each error message
-      value._errors.forEach((message) => {
-        setError(key, {
-          type: "manual",
-          message,
-        });
-      });
-    } else if (Array.isArray(value)) {
-      // If value is just an array of strings, handle those too
-      value.forEach((message) => {
-        setError(key, {
-          type: "manual",
-          message,
-        });
-      });
-    }
-  });
 }

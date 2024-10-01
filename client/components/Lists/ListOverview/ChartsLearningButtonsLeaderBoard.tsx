@@ -1,6 +1,6 @@
 import ListBarChart from "@/components/Charts/ListBarChart";
 import ListPieChart from "@/components/Charts/ListPieChart";
-import { getUserOnServer } from "@/lib/helperFunctions";
+import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import { LearnedItem, List } from "@/lib/types";
 import { Types } from "mongoose";
 import {

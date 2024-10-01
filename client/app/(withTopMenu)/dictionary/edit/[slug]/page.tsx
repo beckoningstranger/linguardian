@@ -6,7 +6,7 @@ import {
 import {
   getAllUserLanguages,
   getSeperatedUserLanguagesWithFlags,
-} from "@/lib/helperFunctions";
+} from "@/lib/helperFunctionsServer";
 import { LanguageFeatures } from "@/lib/types";
 
 interface EditPageProps {

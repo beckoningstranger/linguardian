@@ -1,7 +1,7 @@
 import NoMoreLanguagesToLearn from "@/components/NoMoreLanguagesToLearn";
 import PickNewLanguage from "@/components/PickNewLanguage";
 import { getAllLanguageFeatures } from "@/lib/fetchData";
-import { getAllUserLanguages } from "@/lib/helperFunctions";
+import { getAllUserLanguages } from "@/lib/helperFunctionsServer";
 import { LanguageWithFlag } from "@/lib/types";
 import { Metadata } from "next";
 

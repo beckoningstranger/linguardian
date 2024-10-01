@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { getLearnedLanguageData } from "@/lib/fetchData";
-import { getUserOnServer } from "@/lib/helperFunctions";
+import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
 import { LearningMode, SupportedLanguage } from "@/lib/types";
 import BottomRightButton from "../BottomRightButton";

@@ -1,5 +1,5 @@
 import { getLanguageFeaturesForLanguage } from "@/lib/fetchData";
-import { getAllUserLanguages } from "@/lib/helperFunctions";
+import { getAllUserLanguages } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
 import { Item, SupportedLanguage } from "@/lib/types";
 import Link from "next/link";

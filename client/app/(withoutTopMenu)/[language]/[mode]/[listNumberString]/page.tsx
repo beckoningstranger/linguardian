@@ -10,7 +10,7 @@ import {
   getSupportedLanguages,
   getUserById,
 } from "@/lib/fetchData";
-import { getUserOnServer } from "@/lib/helperFunctions";
+import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import {
   FullyPopulatedList,
   ItemToLearn,
@@ -83,9 +83,7 @@ export default async function LearnAndReviewPage({
         </div>
       </div>
     );
-  // throw new Error(
-  //   `No valid learning mode selected. Mode '${mode}' either does not exist or has not been unlocked for this list.`
-  // );
+
   const sessionUser = await getUserOnServer();
 
   const [user, populatedListData, targetLanguageFeatures, learnedLanguageData] =

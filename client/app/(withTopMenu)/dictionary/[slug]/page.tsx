@@ -8,7 +8,7 @@ import {
   getPopulatedItemBySlug,
   getSupportedLanguages,
 } from "@/lib/fetchData";
-import { getAllUserLanguages } from "@/lib/helperFunctions";
+import { getAllUserLanguages } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
 import { SlugLanguageObject, SupportedLanguage } from "@/lib/types";
 import { Button } from "@headlessui/react";

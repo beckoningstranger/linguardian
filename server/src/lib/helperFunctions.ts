@@ -1,3 +1,4 @@
+import { ZodFormattedError } from "zod";
 import { getLanguageFeaturesForLanguage } from "../models/settings.model.js";
 import { SupportedLanguage } from "./types.js";
 
@@ -22,4 +23,25 @@ export async function getFlagForLanguage(language: SupportedLanguage) {
   const languageFeatures = await getLanguageFeaturesForLanguage(language);
   if (!languageFeatures?.flagCode) throw new Error("Invalid language");
   return languageFeatures?.flagCode;
+}
+
+type FlattenedError = {
+  [key: string]: string[];
+};
+
+export function formatZodErrors(
+  errors: ZodFormattedError<any, string>
+): FlattenedError {
+  const formattedErrors: FlattenedError = {};
+
+  for (const [field, error] of Object.entries(errors)) {
+    if (typeof error === "object" && error !== null && "_errors" in error) {
+      const errorObj = error as { _errors: string[] };
+      if (Array.isArray(errorObj._errors) && errorObj._errors.length > 0) {
+        formattedErrors[field] = errorObj._errors;
+      }
+    }
+  }
+
+  return formattedErrors;
 }

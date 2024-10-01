@@ -13,7 +13,7 @@ import {
 } from "@/lib/types";
 import { Types } from "mongoose";
 import { notFound } from "next/navigation";
-import { getUserOnServer } from "./helperFunctions";
+import { getUserOnServer } from "./helperFunctionsServer";
 import { itemSchemaWithPopulatedTranslations } from "./validations";
 
 const server = process.env.SERVER_URL;

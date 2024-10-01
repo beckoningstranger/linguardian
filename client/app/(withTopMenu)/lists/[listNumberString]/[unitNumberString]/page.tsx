@@ -21,7 +21,7 @@ import {
 import {
   getSeperatedUserLanguages,
   getUserOnServer,
-} from "@/lib/helperFunctions";
+} from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
 import { LearningMode, ListAndUnitData, SupportedLanguage } from "@/lib/types";
 import { notFound } from "next/navigation";

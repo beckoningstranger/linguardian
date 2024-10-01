@@ -1,6 +1,6 @@
 import Dashboard from "@/components/Dashboard/Dashboard";
 import { getSupportedLanguages } from "@/lib/fetchData";
-import { getUserOnServer } from "@/lib/helperFunctions";
+import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
 import { SupportedLanguage } from "@/lib/types";
 import { redirect } from "next/navigation";

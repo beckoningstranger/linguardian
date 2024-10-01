@@ -3,7 +3,7 @@ import { getLanguageFeaturesForLanguage, getList } from "@/lib/fetchData";
 import {
   getAllUserLanguages,
   getSeperatedUserLanguagesWithFlags,
-} from "@/lib/helperFunctions";
+} from "@/lib/helperFunctionsServer";
 import { LanguageFeatures, ListAndUnitData } from "@/lib/types";
 
 interface NewItemPageProps {

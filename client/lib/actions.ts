@@ -19,7 +19,7 @@ import {
   getUserAndVerifyUserIsLoggedIn,
   getUserOnServer,
   verifyUserIsAuthorAndGetList,
-} from "./helperFunctions";
+} from "./helperFunctionsServer";
 
 const server = process.env.SERVER_URL;
 

@@ -1,6 +1,6 @@
 import EditOrCreateItem from "@/components/Dictionary/EditOrCreateItem";
 import { getLanguageFeaturesForLanguage } from "@/lib/fetchData";
-import { getSeperatedUserLanguagesWithFlags } from "@/lib/helperFunctions";
+import { getSeperatedUserLanguagesWithFlags } from "@/lib/helperFunctionsServer";
 import { LanguageFeatures } from "@/lib/types";
 
 export default async function NewItemPage() {

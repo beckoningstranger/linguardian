@@ -12,7 +12,7 @@ import ListHeader from "@/components/Lists/ListOverview/ListHeader";
 import ListUnits from "@/components/Lists/ListOverview/ListUnits";
 import Spinner from "@/components/Spinner";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
-import { getUserOnServer } from "@/lib/helperFunctions";
+import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 

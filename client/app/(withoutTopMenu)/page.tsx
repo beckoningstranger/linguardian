@@ -1,5 +1,5 @@
 import LoginForm from "@/components/authentication/LoginForm";
-import { getUserOnServer } from "@/lib/helperFunctions";
+import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";

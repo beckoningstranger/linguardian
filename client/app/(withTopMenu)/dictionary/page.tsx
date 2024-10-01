@@ -1,6 +1,6 @@
 import Search from "@/components/Dictionary/Search";
 import { getRecentDictionarySearches } from "@/lib/fetchData";
-import { getAllUserLanguagesWithFlags } from "@/lib/helperFunctions";
+import { getAllUserLanguagesWithFlags } from "@/lib/helperFunctionsServer";
 
 export const metadata = { title: "Dictionary" };
 

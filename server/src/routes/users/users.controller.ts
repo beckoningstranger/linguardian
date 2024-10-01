@@ -21,6 +21,7 @@ import {
   updateReviewedItems,
 } from "../../models/users.model.js";
 
+import { formatZodErrors } from "../../lib/helperFunctions.js";
 import { LearningMode, SupportedLanguage } from "../../lib/types.js";
 import { registerSchema } from "../../lib/validations.js";
 import { getItemById } from "../../models/items.model.js";
@@ -226,7 +227,10 @@ export async function httpCreateUser(req: Request, res: Response) {
     error,
   } = registerSchema.safeParse(userData);
 
-  if (!success) return res.status(400).json({ errors: error.format() });
+  if (!success) {
+    const formattedErrors = formatZodErrors(error.format());
+    return res.status(400).json({ errors: formattedErrors });
+  }
 
   const response = await createUser(validatedUserData);
   if (response) return res.status(201).json(response);
