@@ -24,6 +24,7 @@ export default function RegisterForm() {
   } = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
     defaultValues: { id: "credentials" },
+    mode: "onBlur",
   });
 
   const inputStyling =

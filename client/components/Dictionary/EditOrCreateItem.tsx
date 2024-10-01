@@ -1,6 +1,7 @@
 "use client";
 
 import { submitItemCreateOrEdit } from "@/lib/actions";
+import { setErrorsFromBackend } from "@/lib/helperFunctionsClient";
 import paths from "@/lib/paths";
 import {
   Item,
@@ -29,6 +30,7 @@ import LanguagePicker from "./EditOrCreatePageLanguagePicker";
 import EnterMultiple from "./EnterMultiple";
 import ManageTranslations from "./ManageTranslations";
 import PickMultiple from "./PickMultiple";
+import { FormErrors } from "./FormErrors";
 
 interface EditOrCreateItemProps {
   userLanguagesWithFlags: UserLanguagesWithFlags;
@@ -83,10 +85,10 @@ export default function EditOrCreateItem({
   } = languageFeaturesForUserLanguages.find(
     (lang) => lang.langCode === itemLanguage
   )!;
-
   const {
     control,
     handleSubmit,
+    setError,
     setValue,
     formState: { errors, isDirty, isSubmitting, isValid },
     watch,
@@ -106,13 +108,22 @@ export default function EditOrCreateItem({
       tags,
       translations,
     },
+    mode: "onChange",
   });
 
   const onSubmit = async (data: ItemWithPopulatedTranslations) => {
     toast.promise(submitItemCreateOrEdit(data, slug, addToThisList), {
       loading: "Updating...",
-      success: () => "Item updated! 🎉",
-      error: (err) => err.toString(),
+      success: (result) => {
+        if (result && result.errors) {
+          setErrorsFromBackend(result.errors, setError);
+          throw new Error("The server could not validate this data");
+        }
+        return "Item updated! 🎉";
+      },
+      error: (err) => {
+        return err.toString();
+      },
     });
   };
 
@@ -120,7 +131,7 @@ export default function EditOrCreateItem({
     <EditOrCreatePageContainer>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-x-4 gap-y-2"
+        className="mb-20 flex flex-col gap-x-4 gap-y-2"
       >
         <div className="flex w-full justify-stretch gap-x-2">
           {slug !== "new-item" && (
@@ -156,7 +167,7 @@ export default function EditOrCreateItem({
                 <FaRegSave className="h-8 w-8 text-white" />
               )
             }
-          ></BottomRightButton>
+          />
         </div>
         <Controller
           name="name"
@@ -172,9 +183,7 @@ export default function EditOrCreateItem({
             />
           )}
         />
-        {errors.name && (
-          <p className="text-sm text-red-500">{`${errors.name.message}`}</p>
-        )}
+        <FormErrors field="name" errors={errors} />
 
         <LanguagePicker
           userLanguagesWithFlags={userLanguagesWithFlags}
@@ -182,7 +191,7 @@ export default function EditOrCreateItem({
           itemLanguage={itemLanguage}
           isNewItem={item.slug === "new-item"}
           setItemLanguage={setItemLanguage}
-          errors={errors && errors?.language}
+          errors={errors}
           staticFlag={addToThisList?.languageWithFlag.flag}
         />
 
@@ -192,7 +201,7 @@ export default function EditOrCreateItem({
             formField="tags"
             initialValue={watch().tags}
             label={{ singular: "Tag", plural: "Tags" }}
-            errors={errors && errors?.tags}
+            errors={errors}
             options={langTags.forAll
               .concat(langTags[watch().partOfSpeech])
               .filter((item) => item !== undefined)}
@@ -208,9 +217,10 @@ export default function EditOrCreateItem({
                     placeholder="Noun gender"
                     value={value ? value : ""}
                     onChange={onChange}
+                    formField="gender"
                     onBlur={onBlur}
                     options={hasGender}
-                    errors={errors && errors?.gender}
+                    errors={errors}
                   />
                 )}
               />
@@ -221,11 +231,12 @@ export default function EditOrCreateItem({
               render={({ field: { onChange, value, onBlur } }) => (
                 <ComboBoxWrapper
                   placeholder="Part of Speech"
+                  formField="partOfSpeech"
                   value={value}
                   onChange={onChange}
                   onBlur={onBlur}
                   options={partsOfSpeech}
-                  errors={errors && errors?.partOfSpeech}
+                  errors={errors}
                 />
               )}
             />
@@ -237,10 +248,11 @@ export default function EditOrCreateItem({
                   <ComboBoxWrapper
                     placeholder="Case after preposition"
                     value={value ? value : ""}
+                    formField="case"
                     onChange={onChange}
                     onBlur={onBlur}
                     options={hasCases}
-                    errors={errors && errors?.case}
+                    errors={errors}
                   />
                 )}
               />
@@ -252,7 +264,7 @@ export default function EditOrCreateItem({
               formField="pluralForm"
               initialValue={watch().pluralForm}
               label={{ singular: "Plural Form", plural: "Plural Forms" }}
-              errors={errors && errors?.pluralForm}
+              errors={errors}
               mode="strings"
             />
           )}
@@ -261,7 +273,7 @@ export default function EditOrCreateItem({
             formField="IPA"
             initialValue={watch().IPA}
             label={{ singular: "IPA", plural: "IPA" }}
-            errors={errors && errors?.IPA}
+            errors={errors}
             mode="IPA"
             IPA={ipa}
           />
@@ -270,21 +282,19 @@ export default function EditOrCreateItem({
             formField="definition"
             initialValue={watch().definition}
             label={{ singular: "Definition", plural: "Definitions" }}
-            errors={errors && errors?.definition}
+            errors={errors}
             mode="longstrings"
           />
           <ManageTranslations
             item={item}
             itemLanguage={watch().language}
             setValue={setValue}
-            errors={errors && errors?.translations}
+            errors={errors}
             allTranslations={watch().translations}
             visibleTranslations={getTranslationsForUserLanguages()}
             userLanguagesWithFlags={userLanguagesWithFlags}
           />
         </div>
-        {/* Below div is there just so that the bottom right button does not obstruct elements at the bottom on mobile: */}
-        <div className="h-20 sm:hidden"></div>
       </form>
     </EditOrCreatePageContainer>
   );

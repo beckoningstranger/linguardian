@@ -4,18 +4,18 @@ import { IPA, Label } from "@/lib/types";
 import { Button } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/16/solid";
 import { useEffect, useState } from "react";
-import { FieldError, Merge } from "react-hook-form";
+import { FieldErrors, FieldValues } from "react-hook-form";
 import { MobileMenuContextProvider } from "../../context/MobileMenuContext";
 import EnterMultipleField from "./EnterMultipleField";
-import FormErrors from "./FormErrors";
 import IPAKeyboard from "./IPAKeyboard";
+import { FormErrors } from "./FormErrors";
 
 interface EnterMultipleProps {
   setValue: Function;
   formField: string;
   initialValue: string[] | undefined;
   label: Label;
-  errors: Merge<FieldError, (FieldError | undefined)[]> | undefined;
+  errors: FieldErrors<FieldValues>;
   mode: "IPA" | "strings" | "longstrings";
   IPA?: IPA;
 }
@@ -79,7 +79,7 @@ export default function EnterMultiple({
               />
             ))}
           </div>
-          <FormErrors errors={errors} />
+          <FormErrors field={formField} errors={errors} />
         </>
         {mode === "IPA" && IPA && (
           <MobileMenuContextProvider>

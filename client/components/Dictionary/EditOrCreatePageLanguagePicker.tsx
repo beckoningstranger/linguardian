@@ -2,10 +2,10 @@
 
 import { SupportedLanguage, UserLanguagesWithFlags } from "@/lib/types";
 import { useEffect, useState } from "react";
-import { FieldError, Merge } from "react-hook-form";
+import { FieldErrors, FieldValues } from "react-hook-form";
 import Flag from "react-world-flags";
 import ConfirmLanguageChange from "./ConfirmLanguageChange";
-import FormErrors from "./FormErrors";
+import { FormErrors } from "./FormErrors";
 
 interface LanguagePickerProps {
   userLanguagesWithFlags: UserLanguagesWithFlags;
@@ -13,7 +13,7 @@ interface LanguagePickerProps {
   itemLanguage: SupportedLanguage;
   isNewItem: boolean;
   setItemLanguage: Function;
-  errors: Merge<FieldError, (FieldError | undefined)[]> | undefined;
+  errors: FieldErrors<FieldValues>;
   staticFlag?: string;
 }
 
@@ -82,7 +82,7 @@ export default function LanguagePicker({
             closeFunction={() => setShowConfirmLanguageChange(false)}
           />
         )}
-      <FormErrors errors={errors} />
+      <FormErrors field="language" errors={errors} />
     </div>
   );
 }

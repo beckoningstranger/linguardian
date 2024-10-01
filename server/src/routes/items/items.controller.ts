@@ -14,6 +14,7 @@ import {
   removeTranslationBySlug,
 } from "../../models/items.model.js";
 import { getSupportedLanguages } from "../../models/settings.model.js";
+import { formatZodErrors } from "../../lib/helperFunctions.js";
 
 export async function httpGetItemBySlug(req: Request, res: Response) {
   const slug = req.params.slug;
@@ -83,11 +84,8 @@ export async function httpEditOrCreateItem(req: Request, res: Response) {
   } = itemSchemaWithPopulatedTranslations.safeParse(item);
 
   if (!success) {
-    let errorMessage = "";
-    error.issues.forEach(
-      (issue) => (errorMessage += `${issue.path[0]}: ${issue.message}. `)
-    );
-    return res.status(400).json({ error: errorMessage });
+    const formattedErrors = formatZodErrors(error.format());
+    return res.status(400).json({ errors: formattedErrors });
   }
 
   const allSupportedLanguages = await getSupportedLanguages();

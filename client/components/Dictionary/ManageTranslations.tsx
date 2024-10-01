@@ -10,16 +10,16 @@ import { Button } from "@headlessui/react";
 import { MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/20/solid";
 import { Types } from "mongoose";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { FieldError, Merge } from "react-hook-form";
+import { FieldErrors, FieldValues } from "react-hook-form";
 import Flag from "react-world-flags";
 import AddItemDialog from "./AddItemDialog";
-import FormErrors from "./FormErrors";
+import { FormErrors } from "./FormErrors";
 
 interface ManageTranslationsProps {
   item: ItemWithPopulatedTranslations;
   itemLanguage: SupportedLanguage;
   setValue: Function;
-  errors: Merge<FieldError, (FieldError | undefined)[]> | undefined;
+  errors: FieldErrors<FieldValues>;
   allTranslations: Partial<Record<SupportedLanguage, Item[]>> | undefined;
   visibleTranslations: Partial<Record<SupportedLanguage, Item[]>> | undefined;
   userLanguagesWithFlags: UserLanguagesWithFlags;
@@ -106,7 +106,7 @@ export default function ManageTranslations({
         </Button>
         <div className="flex flex-wrap gap-2">{renderedTranslations}</div>
       </div>
-      <FormErrors errors={errors} />
+      <FormErrors field="translations" errors={errors} />
       <AddItemDialog
         item={item}
         itemLanguage={itemLanguage}

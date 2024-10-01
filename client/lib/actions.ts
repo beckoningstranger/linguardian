@@ -191,11 +191,14 @@ export async function submitItemCreateOrEdit(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(item),
   });
+  const responseData = await response.json();
+
   if (!response.ok) {
-    const responseData = await response.json();
-    throw new Error(responseData?.error);
+    return {
+      success: false,
+      errors: responseData.errors || "Failed to edit/create item",
+    };
   }
-  const updatedItem = await response.json();
 
   let redirectPath = "";
   if (addToThisList) {
@@ -203,18 +206,18 @@ export async function submitItemCreateOrEdit(
       addToThisList.listNumber,
       addToThisList.unitNumber
     );
-    await addItemToList(addToThisList, updatedItem);
+    await addItemToList(addToThisList, responseData);
   }
 
   revalidatePath(paths.editDictionaryItemPath(item.slug));
-  revalidatePath(paths.editDictionaryItemPath(updatedItem.slug));
+  revalidatePath(paths.editDictionaryItemPath(responseData.slug));
   revalidatePath(paths.dictionaryItemPath(item.slug));
-  revalidatePath(paths.dictionaryItemPath(updatedItem.slug));
+  revalidatePath(paths.dictionaryItemPath(responseData.slug));
   redirect(
     redirectPath
-      ? paths.dictionaryItemPath(updatedItem.slug) +
+      ? paths.dictionaryItemPath(responseData.slug) +
           `?comingFrom=${redirectPath}`
-      : paths.dictionaryItemPath(updatedItem.slug)
+      : paths.dictionaryItemPath(responseData.slug)
   );
 }
 

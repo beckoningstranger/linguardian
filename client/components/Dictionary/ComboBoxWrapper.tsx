@@ -1,4 +1,3 @@
-import { Fragment, useState } from "react";
 import {
   Combobox,
   ComboboxButton,
@@ -8,18 +7,20 @@ import {
   Transition,
 } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { FieldError, Merge } from "react-hook-form";
-import FormErrors from "./FormErrors";
+import { Fragment, useState } from "react";
+import { FieldErrors, FieldValues } from "react-hook-form";
+import { FormErrors } from "./FormErrors";
 
 export type ValueType = string | undefined;
 
 interface ComboBoxWrapperProps {
   placeholder: string;
+  formField: string;
   value: ValueType;
   onChange: any;
   onBlur: any;
   options: string[];
-  errors: Merge<FieldError, (FieldError | undefined)[]> | undefined;
+  errors: FieldErrors<FieldValues>;
 }
 
 export default function ComboBoxWrapper({
@@ -29,6 +30,7 @@ export default function ComboBoxWrapper({
   onBlur,
   options,
   errors,
+  formField,
 }: ComboBoxWrapperProps) {
   const [query, setQuery] = useState("");
 
@@ -111,7 +113,7 @@ export default function ComboBoxWrapper({
           </Transition>
         </div>
       </Combobox>
-      <FormErrors errors={errors} />
+      <FormErrors field={formField} errors={errors} />
     </>
   );
 }

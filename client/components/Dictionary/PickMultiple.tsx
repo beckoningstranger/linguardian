@@ -4,16 +4,16 @@ import { Label, StringOrPickOne } from "@/lib/types";
 import { Button } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/20/solid";
 import { useEffect, useState } from "react";
-import { FieldError, Merge } from "react-hook-form";
-import FormErrors from "./FormErrors";
+import { FieldErrors, FieldValues } from "react-hook-form";
 import PickMultipleOptions from "./PickMultipleOptions";
+import { FormErrors } from "./FormErrors";
 
 interface PickMultipleProps {
   setValue: Function;
   formField: string;
   initialValue: string[] | undefined;
   label: Label;
-  errors: Merge<FieldError, (FieldError | undefined)[]> | undefined;
+  errors: FieldErrors<FieldValues>;
   options: string[];
 }
 
@@ -77,7 +77,7 @@ export default function PickMultiple({
           </div>
         </>
       </div>
-      <FormErrors errors={errors} />
+      <FormErrors field={formField} errors={errors} />
     </>
   );
 }
