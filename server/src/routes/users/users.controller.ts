@@ -21,14 +21,10 @@ import {
   updateReviewedItems,
 } from "../../models/users.model.js";
 
-import {
-  LearningMode,
-  SupportedLanguage,
-  UserCreationData,
-} from "../../lib/types.js";
+import { LearningMode, SupportedLanguage } from "../../lib/types.js";
+import { registerSchema } from "../../lib/validations.js";
 import { getItemById } from "../../models/items.model.js";
 import { getSupportedLanguages } from "../../models/settings.model.js";
-import { slugifyString } from "../../lib/helperFunctions.js";
 
 export async function httpGetUserById(req: Request, res: Response) {
   const response = await getUserById(req.params.id);
@@ -223,19 +219,20 @@ export async function httpStopLearningLanguage(req: Request, res: Response) {
 }
 
 export async function httpCreateUser(req: Request, res: Response) {
-  const userData: UserCreationData = req.body;
-  const { id, username, email, hashedPassword } = userData;
+  const userData: unknown = req.body;
+  const {
+    data: validatedUserData,
+    success,
+    error,
+  } = registerSchema.safeParse(userData);
 
-  const response = await createUser({
-    id: id === "credentials" ? id + (await getNextUserId()) : id,
-    email,
-    username,
-    usernameSlug: slugifyString(username),
-    password: hashedPassword,
-  });
+  if (!success) return res.status(400).json({ errors: error.format() });
 
-  if (response) return res.status(200).json();
-  return res.status(500).json();
+  const response = await createUser(validatedUserData);
+  if (response) return res.status(201).json(response);
+  return res
+    .status(500)
+    .json({ error: "Internal server error, could not create user" });
 }
 
 export async function httpIsEmailTaken(req: Request, res: Response) {

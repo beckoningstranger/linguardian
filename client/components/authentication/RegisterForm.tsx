@@ -1,9 +1,14 @@
 "use client";
+import { createUser } from "@/lib/actions";
 import paths from "@/lib/paths";
+import { RegisterSchema } from "@/lib/types";
+import { registerSchema } from "@/lib/validations";
 import { Input } from "@headlessui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { FieldErrors, FieldValues, useForm } from "react-hook-form";
+import { ZodFormattedError } from "zod";
 import Spinner from "../Spinner";
 import InputWithCheck from "./InputWithCheck";
 
@@ -12,36 +17,46 @@ export default function RegisterForm() {
     register,
     handleSubmit,
     setError,
-    formState: { errors, isSubmitting },
     reset,
-    getValues,
+    formState: { errors, isSubmitting },
     setValue,
     watch,
-  } = useForm();
+  } = useForm<RegisterSchema>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { id: "credentials" },
+  });
 
   const inputStyling =
     "w-[400px] border border-gray-200 py-2 px-6 bg-zinc-100/40";
 
-  const onSubmit = async ({ username, email, password }: FieldValues) => {
-    const res = await fetch("api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username,
-        email,
-        password,
-      }),
+  const onSubmit = async ({
+    username,
+    email,
+    password,
+    confirmPassword,
+  }: RegisterSchema) => {
+    const response = await createUser({
+      id: "credentials",
+      username,
+      email,
+      password,
+      confirmPassword,
     });
 
-    if (res.ok) {
+    if (!response.success) {
+      const errors = response.errors as ZodFormattedError<
+        RegisterSchema,
+        string
+      >;
+
+      setFormErrors(setError, errors);
+    } else {
       reset();
       await signIn("credentials", {
         email,
         password,
         callbackUrl: paths.welcomePath(),
       });
-    } else {
-      console.error("User registration failed");
     }
   };
 
@@ -69,13 +84,7 @@ export default function RegisterForm() {
           <FormErrors errors={errors} field="email" />
 
           <Input
-            {...register("password", {
-              required: "Please pick a password to go with your email",
-              minLength: {
-                value: 8,
-                message: "Your password should have at least 8 characters.",
-              },
-            })}
+            {...register("password")}
             type="password"
             placeholder="Password"
             className={inputStyling}
@@ -83,16 +92,13 @@ export default function RegisterForm() {
           <FormErrors errors={errors} field="password" />
 
           <Input
-            {...register("confirmPassword", {
-              required: "Please enter your password again to check for typos",
-              validate: (value) =>
-                value === getValues("password") || "Passwords must match",
-            })}
+            {...register("confirmPassword")}
             type="password"
             placeholder="Please type your password again"
             className={inputStyling}
           />
           <FormErrors errors={errors} field="confirmPassword" />
+          <FormErrors errors={errors} field="root" />
 
           <button
             className="cursor-pointer bg-green-600 px-6 py-2 font-bold text-white"
@@ -118,5 +124,37 @@ function FormErrors({ errors, field }: FormErrorsProps) {
   const error = errors[field];
   const message =
     typeof error?.message === "string" ? error.message : undefined;
-  return <div className="text-red-500">{message}</div>;
+  return <div className="ml-2 text-sm text-red-500">{message}</div>;
+}
+
+// All credits go to ChatGPT4
+function setFormErrors(
+  setError: Function,
+  errors: ZodFormattedError<RegisterSchema, string>
+) {
+  // Type guard to check if value is an object with _errors
+  const hasErrors = (value: any): value is { _errors: string[] } => {
+    return typeof value === "object" && value !== null && "_errors" in value;
+  };
+
+  // Iterate over each key-value pair in the errors object
+  Object.entries(errors).forEach(([key, value]) => {
+    if (hasErrors(value)) {
+      // If value has _errors, iterate over each error message
+      value._errors.forEach((message) => {
+        setError(key, {
+          type: "manual",
+          message,
+        });
+      });
+    } else if (Array.isArray(value)) {
+      // If value is just an array of strings, handle those too
+      value.forEach((message) => {
+        setError(key, {
+          type: "manual",
+          message,
+        });
+      });
+    }
+  });
 }

@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   itemSchemaWithPopulatedTranslations,
   itemSchemaWithTranslations,
+  registerSchema,
 } from "./validations.js";
 
 export type PartOfSpeech =
@@ -282,9 +283,4 @@ export type ListDetails = {
   listDescription?: string;
 };
 
-export type UserCreationData = {
-  id: string;
-  username: string;
-  email: string;
-  hashedPassword: string;
-};
+export type RegisterSchema = z.infer<typeof registerSchema>;

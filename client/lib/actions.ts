@@ -8,6 +8,7 @@ import {
   LearningMode,
   ListAndUnitData,
   ListDetails,
+  RegisterSchema,
   SupportedLanguage,
 } from "@/lib/types";
 import { Types } from "mongoose";
@@ -15,8 +16,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getList, getSupportedLanguages } from "./fetchData";
 import {
-  getUserOnServer,
   getUserAndVerifyUserIsLoggedIn,
+  getUserOnServer,
   verifyUserIsAuthorAndGetList,
 } from "./helperFunctions";
 
@@ -206,8 +207,8 @@ export async function submitItemCreateOrEdit(
   }
 
   revalidatePath(paths.editDictionaryItemPath(item.slug));
-  revalidatePath(paths.editDictionaryItemPath(item.slug));
-  revalidatePath(paths.dictionaryItemPath(updatedItem.slug));
+  revalidatePath(paths.editDictionaryItemPath(updatedItem.slug));
+  revalidatePath(paths.dictionaryItemPath(item.slug));
   revalidatePath(paths.dictionaryItemPath(updatedItem.slug));
   redirect(
     redirectPath
@@ -431,4 +432,22 @@ export async function isUsernameTaken(username: string): Promise<boolean> {
   const responseData = await response.json();
   if (response.ok) return responseData;
   throw new Error("Could not verify whether username is taken.");
+}
+
+export async function createUser(userData: RegisterSchema) {
+  const response = await fetch(`${server}/users/createUser/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(userData),
+  });
+  const responseData = await response.json();
+
+  if (response.ok) {
+    return { success: true };
+  } else {
+    return {
+      success: false,
+      errors: responseData.errors || "Failed to create user",
+    };
+  }
 }

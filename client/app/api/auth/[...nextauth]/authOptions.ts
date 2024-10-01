@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import FaceBookProvider from "next-auth/providers/facebook";
 import GoogleProvider from "next-auth/providers/google";
 
+import { createUser } from "@/lib/actions";
 import {
   getAllLearnedListsForUser,
   getLanguageFeaturesForLanguage,
@@ -105,16 +106,13 @@ const authOptions: NextAuthOptions = {
           if (!idExists) {
             if (!account) throw new Error("No account found");
 
-            await fetch(`${process.env.NEXTAUTH_URL}/api/register`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
+            if (profile && profile.name && profile.email && profile.picture)
+              await createUser({
                 id,
-                username: profile?.name,
+                username: profile.name,
                 email: profile?.email,
                 image: profile?.picture,
-              }),
-            });
+              });
           }
         }
         return true;

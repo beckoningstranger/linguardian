@@ -30,30 +30,8 @@ export default function InputWithCheck({
     checked: false,
   });
 
-  const MINIMUM_USERNAME_LENGTH = 4;
-  const MINIMUM_EMAIL_LENGHT = 7;
-
-  const usernameValidation = {
-    required: "Choosing a username is required",
-    minLength: {
-      value: MINIMUM_USERNAME_LENGTH,
-      message: "Your username must be between 4 and 24 characters",
-    },
-    maxLength: {
-      value: 24,
-      message: "Your username must be between 4 and 24 characters",
-    },
-  };
-
-  const emailValidation = {
-    required: "You must enter a valid email address",
-  };
-
   useEffect(() => {
-    if (
-      debouncedValue.length >
-      (checkMode === "email" ? MINIMUM_EMAIL_LENGHT : MINIMUM_USERNAME_LENGTH)
-    ) {
+    if (debouncedValue.length > 4) {
       if (checkMode === "email" && !isValidEmail(debouncedValue)) {
         setFormError("email", {
           type: "manual",
@@ -89,10 +67,7 @@ export default function InputWithCheck({
         type={checkMode === "email" ? "email" : "text"}
         placeholder={checkMode === "email" ? "Your Email" : "Your username"}
         className={`w-[400px] border bg-zinc-100/40 px-6 py-2 pr-10`}
-        {...register(
-          checkMode,
-          checkMode === "email" ? emailValidation : usernameValidation
-        )}
+        {...register(checkMode)}
       />
       {status.checked && !status.checking && (
         <div

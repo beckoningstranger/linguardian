@@ -1,7 +1,10 @@
+import bcrypt from "bcryptjs";
 import { Types } from "mongoose";
+import { slugifyString } from "../lib/helperFunctions.js";
 import {
   ItemForServer,
   RecentDictionarySearches,
+  RegisterSchema,
   SupportedLanguage,
   User,
   UserWithPopulatedLearnedLists,
@@ -321,14 +324,22 @@ export async function stopLearningLanguage(
   );
 }
 
-export async function createUser(userDataToSave: {
-  id: string;
-  email: string;
-  username: string;
-  usernameSlug: string;
-  password: string;
-}) {
-  return await Users.create(userDataToSave);
+export async function createUser(registrationData: RegisterSchema) {
+  const userDataPWEncryptedWithUsernameSlug: RegisterSchema & {
+    usernameSlug: string;
+  } = {
+    ...registrationData,
+    usernameSlug: slugifyString(registrationData.username),
+    id:
+      registrationData.id === "credentials"
+        ? "credentials" + (await getNextUserId())
+        : registrationData.id,
+    password: registrationData.password
+      ? await bcrypt.hash(registrationData.password, 10)
+      : undefined,
+  };
+
+  return await Users.create(userDataPWEncryptedWithUsernameSlug);
 }
 
 export async function getUserByEmail(email: string) {

@@ -105,7 +105,9 @@ export async function httpEditOrCreateItem(req: Request, res: Response) {
 
   const response = await editOrCreateBySlug(validatedItem, slug);
   if (updateReponses && response) return res.status(201).json(response);
-  return res.status(500).json({ error: "Problem in database" });
+  return res
+    .status(500)
+    .json({ error: "Internal server error, could not create/edit item" });
 }
 
 async function updateRelatedItems(item: ItemWithPopulatedTranslations) {

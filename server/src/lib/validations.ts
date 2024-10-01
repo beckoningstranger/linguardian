@@ -2,6 +2,40 @@ import { Types } from "mongoose";
 import { z } from "zod";
 import { Item, SupportedLanguage } from "./types.js";
 
+export const registerSchema = z
+  .object({
+    username: z
+      .string()
+      .min(4, "Your username must be between 4 and 24 characters long")
+      .max(24, "Your username must be between 4 and 24 characters long"),
+    email: z.string().email().min(7),
+    password: z
+      .string()
+      .min(8, "Your password should have at least 8 characters")
+      .optional(),
+    confirmPassword: z.string().optional(),
+    id: z.string(),
+    image: z.string().optional(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords must match",
+    path: ["confirmPassword"],
+  })
+  .refine(
+    (data) => {
+      return data.id.slice(0, 4) !== "cred" || data.password !== undefined;
+    },
+    { message: "You must enter a password", path: ["password"] }
+  )
+  .refine(
+    (data) => {
+      return (
+        data.id.slice(0, 4) !== "cred" || data.confirmPassword !== undefined
+      );
+    },
+    { message: "You must enter your password twice", path: ["confirmPassword"] }
+  );
+
 const itemSchemaWithoutTranslations = z.object({
   _id: z.custom<Types.ObjectId>(),
   name: z.string().max(60, "Item names can be no longer than 60 characters"),
