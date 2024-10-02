@@ -152,12 +152,7 @@ export default async function UnitDetailPage({
               </div>
             </div>
             <AllLearningButtonsDesktopContainer>
-              <AllLearningButtons
-                listLanguage={listLanguage}
-                listNumber={listNumber}
-                listStats={stats}
-                unlockedReviewModes={unlockedModes}
-              />
+              <AllLearningButtons />
             </AllLearningButtonsDesktopContainer>
           </div>
         </>

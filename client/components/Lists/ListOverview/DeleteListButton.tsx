@@ -22,7 +22,7 @@ export default function DeleteListButton({}: DeleteListButtonProps) {
   if (!toggleMobileMenu) throw new Error("Could not use mobile menu");
   const [showConfirmDeleteModal, setShowConfirmDeleteModel] = useState(false);
   const router = useRouter();
-  if (userIsAuthor) return null;
+  if (!userIsAuthor) return null;
 
   const removeListAction = async () => {
     toast.promise(removeList(listNumber), {

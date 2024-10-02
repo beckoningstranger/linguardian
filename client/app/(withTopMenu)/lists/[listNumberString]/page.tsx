@@ -1,6 +1,5 @@
 import {
   fetchAuthors,
-  getAllLearnedListsForUser,
   getLanguageFeaturesForLanguage,
   getLearningDataForList,
   getListDataForMetadata,
@@ -8,14 +7,14 @@ import {
   getUserById,
 } from "@/lib/fetchData";
 
-import ListDetailPage from "@/components/Lists/ListOverview/ListDetails";
-import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import notFound from "@/app/not-found";
-import { ListContextProvider } from "@/context/ListContext";
 import {
   calculateListStats,
   determineListStatus,
 } from "@/components/Lists/ListHelpers";
+import ListDetailPage from "@/components/Lists/ListOverview/ListDetails";
+import { ListContextProvider } from "@/context/ListContext";
+import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import { Item, LearnedItem, LearningData } from "@/lib/types";
 import { Types } from "mongoose";
 
@@ -53,13 +52,11 @@ export default async function ListPage({
   const [
     authorData,
     fullUser,
-    allLearnedListsForUser,
     languageFeaturesForListLanguage,
     learningDataForUser,
   ] = await Promise.all([
     fetchAuthors(authors),
     getUserById(sessionUser.id),
-    getAllLearnedListsForUser(sessionUser.id),
     getLanguageFeaturesForLanguage(language),
     getLearningDataForList(
       sessionUser.id,
@@ -67,12 +64,14 @@ export default async function ListPage({
       listData.listNumber
     ),
   ]);
+  const learnedListsForUserAndLanguage = sessionUser.learnedLists[language];
+
   if (!languageFeaturesForListLanguage)
     throw new Error("Could not get language features");
 
   const listLanguageName = languageFeaturesForListLanguage?.langName;
   const userIsLearningThisList: boolean =
-    allLearnedListsForUser[language].includes(listNumber);
+    learnedListsForUserAndLanguage?.includes(listNumber) || false;
 
   const userIsAuthor = authors.includes(sessionUser.id);
   const learnedItemsForListLanguage = fullUser?.languages.find(
