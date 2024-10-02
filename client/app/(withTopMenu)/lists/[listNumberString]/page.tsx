@@ -8,15 +8,22 @@ import {
 } from "@/lib/fetchData";
 
 import notFound from "@/app/not-found";
+import ListContainer from "@/components/Lists/ListContainer";
 import {
   calculateListStats,
   determineListStatus,
 } from "@/components/Lists/ListHelpers";
-import ListDetailPage from "@/components/Lists/ListOverview/ListDetails";
+import ChartsLButtonsLeaderboard from "@/components/Lists/ListOverview/ChartsLearningButtonsLeaderBoard";
+import DeleteListButton from "@/components/Lists/ListOverview/DeleteListButton";
+import ListHeader from "@/components/Lists/ListOverview/ListHeader";
+import ListUnits from "@/components/Lists/ListOverview/ListUnits";
+import Spinner from "@/components/Spinner";
 import { ListContextProvider } from "@/context/ListContext";
+import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import { Item, LearnedItem, LearningData } from "@/lib/types";
 import { Types } from "mongoose";
+import { Suspense } from "react";
 
 export async function generateMetadata({ params }: ListPageProps) {
   const listNumber = parseInt(params.listNumberString);
@@ -98,7 +105,16 @@ export default async function ListPage({
       listStats={listStats}
       listStatus={listStatus}
     >
-      <ListDetailPage />;
+      <ListContainer>
+        <MobileMenuContextProvider>
+          <DeleteListButton />
+        </MobileMenuContextProvider>
+        <ListHeader />
+        <Suspense fallback={<Spinner centered />}>
+          <ChartsLButtonsLeaderboard />
+        </Suspense>
+        <ListUnits />
+      </ListContainer>
     </ListContextProvider>
   );
 }
