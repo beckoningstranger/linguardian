@@ -53,6 +53,7 @@ export async function parseCSV(filename: string, newList: List) {
 
   return new Promise<{ newListId: Types.ObjectId }>((resolve, reject) => {
     const issues: string[] = [];
+    const promises: Promise<void>[] = [];
 
     fs.createReadStream(
       join(__dirname + `../../../data/csvUploads/${filename}`)
@@ -90,12 +91,15 @@ export async function parseCSV(filename: string, newList: List) {
           success,
           error,
         } = parsedItemSchema.safeParse(formattedData);
-        if (!validatedData || !success)
-          error.issues.forEach((issue) =>
-            issues.push(`${data.name}: ${issue.path} - ${issue.message}`)
-          );
+        if (!validatedData || !success) {
+          error.issues.forEach((issue) => {
+            console.error(`${data.name}: ${issue.path} - ${issue.message}`);
+            issues.push(`${data.name}: ${issue.path} - ${issue.message}`);
+          });
+          return;
+        }
 
-        if (success) {
+        const processRow = async () => {
           // Remove translations that are just empty strings
           const cleanedUpData = await cleanUpTranslationProperty(validatedData);
 
@@ -115,21 +119,21 @@ export async function parseCSV(filename: string, newList: List) {
 
           // Add all relevant harvested items to the new list
           await addItemsToList(harvestedItems, newListId, newList.language);
-        }
+        };
+
+        promises.push(processRow());
       })
       .on("error", (err) => {
         console.error("Error while parsing csv file", err);
+        reject(err);
       })
-      .on("end", () => {
-        // Wait 30 seconds for parsing and uploading to finish
-        setTimeout(async () => {
-          // Define a tentative unit order
-          await defineUnitOrder(newListId);
-          console.log("ISSUES", issues);
-          resolve({
-            newListId,
-          });
-        }, 50000);
+      .on("end", async () => {
+        await Promise.allSettled(promises);
+        await defineUnitOrder(newListId);
+        console.log("ISSUES", issues);
+        resolve({
+          newListId,
+        });
       });
   });
 }
