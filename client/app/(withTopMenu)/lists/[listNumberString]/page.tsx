@@ -1,22 +1,25 @@
 import {
   fetchAuthors,
+  getAllLearnedListsForUser,
+  getLanguageFeaturesForLanguage,
+  getLearningDataForList,
   getListDataForMetadata,
   getPopulatedList,
   getUserById,
 } from "@/lib/fetchData";
 
-import ListContainer from "@/components/Lists/ListContainer";
-import DeleteListButton from "@/components/Lists/ListOverview/DeleteListButton";
-import ListFlexibleContent from "@/components/Lists/ListOverview/ListFlexibleContent";
-import ListHeader from "@/components/Lists/ListOverview/ListHeader";
-import ListUnits from "@/components/Lists/ListOverview/ListUnits";
-import Spinner from "@/components/Spinner";
-import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
+import ListDetailPage from "@/components/Lists/ListOverview/ListDetails";
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
-import { notFound } from "next/navigation";
-import { Suspense } from "react";
+import notFound from "@/app/not-found";
+import { ListContextProvider } from "@/context/ListContext";
+import {
+  calculateListStats,
+  determineListStatus,
+} from "@/components/Lists/ListHelpers";
+import { Item, LearnedItem, LearningData } from "@/lib/types";
+import { Types } from "mongoose";
 
-export async function generateMetadata({ params }: ListDetailProps) {
+export async function generateMetadata({ params }: ListPageProps) {
   const listNumber = parseInt(params.listNumberString);
 
   const listData = await getListDataForMetadata(listNumber, 1);
@@ -29,66 +32,96 @@ export async function generateMetadata({ params }: ListDetailProps) {
   };
 }
 
-interface ListDetailProps {
+interface ListPageProps {
   params: {
     listNumberString: string;
   };
 }
 
-export default async function ListDetailPage({
+export default async function ListPage({
   params: { listNumberString },
-}: ListDetailProps) {
+}: ListPageProps) {
   const listNumber = parseInt(listNumberString);
 
   const [listData, sessionUser] = await Promise.all([
     getPopulatedList(listNumber),
     getUserOnServer(),
   ]);
-  if (!listData) notFound();
+  if (!listData) return notFound();
 
-  const { name, description, authors, unitOrder, units, language } = listData;
-
-  const [authorData, fullUser] = await Promise.all([
+  const { language, authors, unlockedReviewModes, units } = listData;
+  const [
+    authorData,
+    fullUser,
+    allLearnedListsForUser,
+    languageFeaturesForListLanguage,
+    learningDataForUser,
+  ] = await Promise.all([
     fetchAuthors(authors),
     getUserById(sessionUser.id),
+    getAllLearnedListsForUser(sessionUser.id),
+    getLanguageFeaturesForLanguage(language),
+    getLearningDataForList(
+      sessionUser.id,
+      listData.language,
+      listData.listNumber
+    ),
   ]);
+  if (!languageFeaturesForListLanguage)
+    throw new Error("Could not get language features");
 
-  const userIsAuthor = listData.authors.includes(sessionUser.id);
+  const listLanguageName = languageFeaturesForListLanguage?.langName;
+  const userIsLearningThisList: boolean =
+    allLearnedListsForUser[language].includes(listNumber);
+
+  const userIsAuthor = authors.includes(sessionUser.id);
   const learnedItemsForListLanguage = fullUser?.languages.find(
-    (lang) => lang.code === listData.language
+    (lang) => lang.code === language
   )?.learnedItems;
 
-  return (
-    <ListContainer>
-      {userIsAuthor && (
-        <MobileMenuContextProvider>
-          <DeleteListButton
-            listNumber={listNumber}
-            listLanguage={language}
-            listName={name}
-          />
-        </MobileMenuContextProvider>
-      )}
-      <ListHeader
-        name={name}
-        description={description}
-        authorData={authorData}
-        numberOfItems={listData.units.length}
-        image={listData.image}
-        listNumber={listNumber}
-        userIsAuthor={userIsAuthor}
-      />
-      <Suspense fallback={<Spinner centered />}>
-        <ListFlexibleContent language={language} list={listData} />
-      </Suspense>
-      <ListUnits
-        unitOrder={unitOrder}
-        units={units}
-        listNumber={listNumber}
-        language={language}
-        userIsAuthor={userIsAuthor}
-        learnedItemsForListLanguage={learnedItemsForListLanguage}
-      />
-    </ListContainer>
+  const unlockedLearningModesForUser =
+    unlockedReviewModes[sessionUser.native.name];
+
+  const { listStats, listStatus } = getListStatsAndStatus(
+    units,
+    learningDataForUser
   );
+  return (
+    <ListContextProvider
+      userIsAuthor={userIsAuthor}
+      learnedItemsForListLanguage={learnedItemsForListLanguage}
+      listData={listData}
+      authorData={authorData}
+      userIsLearningThisList={userIsLearningThisList}
+      listLanguageName={listLanguageName}
+      learningDataForUser={learningDataForUser}
+      unlockedLearningModesForUser={unlockedLearningModesForUser}
+      listStats={listStats}
+      listStatus={listStatus}
+    >
+      <ListDetailPage />;
+    </ListContextProvider>
+  );
+}
+
+function getListStatsAndStatus(
+  units: {
+    unitName: string;
+    item: Item;
+  }[],
+  learningData: LearningData | undefined
+) {
+  let learnedItems: LearnedItem[] = [];
+  let ignoredItems: Types.ObjectId[] = [];
+  if (learningData) {
+    learnedItems = learningData.learnedItems;
+    ignoredItems = learningData.ignoredItems;
+  }
+  const listStats = calculateListStats(
+    units.map((item) => item.item._id),
+    learnedItems,
+    ignoredItems
+  );
+  const listStatus = determineListStatus(listStats);
+  return { listStats, listStatus };
 }

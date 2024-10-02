@@ -1,21 +1,20 @@
-import { LearnedItem, List, ListStats, ListStatus } from "@/lib/types";
+import { LearnedItem, ListStats, ListStatus } from "@/lib/types";
 import { Types } from "mongoose";
 
 export function calculateListStats(
-  list: List,
+  itemObjectIds: Types.ObjectId[],
   learnedItems: LearnedItem[],
   ignoredItems: Types.ObjectId[]
 ): ListStats {
-  const itemIDsInList = list.units.map((unitItem) => unitItem.item);
   const userlearnedItemIDs = learnedItems.map((item) => item.id);
   const learnedItemsInList = userlearnedItemIDs.filter((id) =>
-    itemIDsInList.includes(id)
+    itemObjectIds.includes(id)
   );
 
   return generateStats(
     ignoredItems,
     learnedItems,
-    itemIDsInList,
+    itemObjectIds,
     learnedItemsInList
   );
 }

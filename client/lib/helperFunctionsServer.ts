@@ -53,14 +53,9 @@ export async function checkPassedLanguageAsync(
   passedLanguage: string | undefined
 ) {
   const supportedLanguages = await getSupportedLanguages();
-  if (
-    !passedLanguage ||
-    !supportedLanguages ||
-    !supportedLanguages.includes(passedLanguage as SupportedLanguage)
-  ) {
-    return null;
-  }
-  return passedLanguage as SupportedLanguage;
+  if (!supportedLanguages) throw new Error(`Could not get supported languages`);
+  if (!supportedLanguages.includes(passedLanguage as SupportedLanguage))
+    throw new Error(`${passedLanguage} is not a valid language`);
 }
 
 export async function getUserAndVerifyUserIsLoggedIn(errorMessage: string) {

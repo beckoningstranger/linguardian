@@ -16,26 +16,27 @@ import {
 } from "react";
 import toast from "react-hot-toast";
 import { FaTrashCan } from "react-icons/fa6";
+import { useListContext } from "@/context/ListContext";
 
 interface UnitButtonProps {
-  percentage: number;
-  userIsAuthor: boolean;
+  learnedItemsPercentage: number;
   unitName: string;
-  listNumber: number;
   noOfItemsInUnit: number;
   unitOrder: string[];
   setUnitOrder: Dispatch<SetStateAction<string[]>>;
 }
 
 export default function UnitButton({
-  percentage,
-  userIsAuthor,
+  learnedItemsPercentage,
   unitName,
-  listNumber,
   noOfItemsInUnit,
   unitOrder,
   setUnitOrder,
 }: UnitButtonProps) {
+  const {
+    listData: { listNumber },
+    userIsAuthor,
+  } = useListContext();
   const [editMode, setEditMode] = useState(false);
   const [updatedUnitName, setUpdatedUnitName] = useState(unitName);
 
@@ -54,8 +55,11 @@ export default function UnitButton({
     if (editMode && inputRef) inputRef.current?.focus();
   }, [inputRef, editMode]);
 
-  const clampedPercentage = Math.max(0, Math.min(100, percentage));
-  const fillWidth = `${clampedPercentage}%`;
+  const clampedLearnedItemsPercentage = Math.max(
+    0,
+    Math.min(100, learnedItemsPercentage)
+  );
+  const fillWidth = `${clampedLearnedItemsPercentage}%`;
 
   const [showConfirmDeleteModal, setShowConfirmDeleteModel] = useState(false);
   const { toggleMobileMenu } = useMobileMenu();

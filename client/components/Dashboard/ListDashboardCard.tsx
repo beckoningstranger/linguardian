@@ -30,7 +30,7 @@ export default function ListDashboardCard({
 }: ListDashboardCardProps) {
   const [showContextMenu, setShowContextMenu] = useState(false);
   const stats = calculateListStats(
-    list,
+    list.units.map((unit) => unit.item._id),
     allLearnedItemsForLanguage,
     allIgnoredItemsForLanguage
   );
@@ -77,11 +77,11 @@ export default function ListDashboardCard({
         </div>
 
         <FlexibleLearningButtons
-          listLanguage={list.language}
           stats={stats}
           status={status}
           listNumber={list.listNumber}
           unlockedModes={unlockedModes}
+          listLanguage={list.language}
         />
       </div>
     </div>

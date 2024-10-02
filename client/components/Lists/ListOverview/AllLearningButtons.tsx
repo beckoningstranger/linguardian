@@ -1,62 +1,59 @@
+"use client";
+
 import ReviewButton from "@/components/ReviewButton";
-import { LearningMode, ListStats, SupportedLanguage } from "@/lib/types";
+import { useListContext } from "@/context/ListContext";
 
-interface AllLearningButtonsProps {
-  listNumber: number;
-  listStats: ListStats;
-  unlockedReviewModes: LearningMode[] | undefined;
-  listLanguage: SupportedLanguage;
-}
+interface AllLearningButtonsProps {}
 
-export default function AllLearningButtons({
-  listNumber,
-  listStats,
-  unlockedReviewModes,
-  listLanguage,
-}: AllLearningButtonsProps) {
+export default function AllLearningButtons({}: AllLearningButtonsProps) {
+  const {
+    listData: { listNumber, language },
+    listStats,
+    unlockedLearningModesForUser,
+  } = useListContext();
   return (
     <>
       <ReviewButton
-        listLanguage={listLanguage}
+        listLanguage={language}
         listNumber={listNumber}
         mode="learn"
         stats={listStats}
-        unlockedModes={unlockedReviewModes}
+        unlockedModes={unlockedLearningModesForUser}
       />
       <ReviewButton
-        listLanguage={listLanguage}
+        listLanguage={language}
         listNumber={listNumber}
         mode="translation"
         stats={listStats}
-        unlockedModes={unlockedReviewModes}
+        unlockedModes={unlockedLearningModesForUser}
       />
       <ReviewButton
-        listLanguage={listLanguage}
+        listLanguage={language}
         listNumber={listNumber}
         mode="dictionary"
         stats={listStats}
-        unlockedModes={unlockedReviewModes}
+        unlockedModes={unlockedLearningModesForUser}
       />
       <ReviewButton
-        listLanguage={listLanguage}
+        listLanguage={language}
         listNumber={listNumber}
         mode="context"
         stats={listStats}
-        unlockedModes={unlockedReviewModes}
+        unlockedModes={unlockedLearningModesForUser}
       />
       <ReviewButton
-        listLanguage={listLanguage}
+        listLanguage={language}
         listNumber={listNumber}
         mode="visual"
         stats={listStats}
-        unlockedModes={unlockedReviewModes}
+        unlockedModes={unlockedLearningModesForUser}
       />
       <ReviewButton
-        listLanguage={listLanguage}
+        listLanguage={language}
         listNumber={listNumber}
         mode="spellingBee"
         stats={listStats}
-        unlockedModes={unlockedReviewModes}
+        unlockedModes={unlockedLearningModesForUser}
       />
     </>
   );

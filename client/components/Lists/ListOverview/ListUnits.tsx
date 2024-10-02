@@ -1,9 +1,10 @@
 "use client";
 
+import { useListContext } from "@/context/ListContext";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { changeListDetails } from "@/lib/actions";
 import paths from "@/lib/paths";
-import { Item, LearnedItem, SupportedLanguage } from "@/lib/types";
+import { Item, LearnedItem } from "@/lib/types";
 import {
   DragDropContext,
   Draggable,
@@ -17,30 +18,18 @@ import toast from "react-hot-toast";
 import NewUnitButton from "./NewUnitButton";
 import UnitButton from "./UnitButton";
 
-interface ListUnitsProps {
-  unitOrder: string[];
-  units: { unitName: string; item: Item }[];
-  listNumber: number;
-  language: SupportedLanguage;
-  userIsAuthor: boolean;
-  learnedItemsForListLanguage: LearnedItem[] | undefined;
-}
+export default function ListUnits() {
+  const {
+    listData: { listNumber, units, unitOrder: initialUnitOrder },
+    userIsAuthor,
+    learningDataForUser,
+  } = useListContext();
+  let learnedItems: LearnedItem[] = [];
+  if (learningDataForUser) learnedItems = learningDataForUser.learnedItems;
 
-export default function ListUnits({
-  unitOrder: initialUnitOrder,
-  units,
-  listNumber,
-  language,
-  userIsAuthor,
-  learnedItemsForListLanguage,
-}: ListUnitsProps) {
   const [unitOrder, setUnitOrder] = useState(initialUnitOrder);
   const hasOrderChanged = useRef(false);
-  const learnedIds = learnedItemsForListLanguage?.map((item) => item.id);
-  const unitNames = units.reduce((a, curr) => {
-    if (!a.includes(curr.unitName)) a.push(curr.unitName);
-    return a;
-  }, [] as string[]);
+  const learnedIds = learnedItems?.map((item) => item.id);
 
   useEffect(() => {
     if (hasOrderChanged.current) {
@@ -76,10 +65,10 @@ export default function ListUnits({
               {...provided.droppableProps}
             >
               {unitOrder?.map((unitName, index) => {
-                const { noOfItemsInUnit, noOfLearnedItemsInUnit } =
+                const { noOfItemsInUnit, learnedItemsPercentage } =
                   getUnitInformation(units, unitName, learnedIds);
 
-                return (
+                return userIsAuthor ? (
                   <Draggable
                     draggableId={unitName}
                     index={index}
@@ -96,23 +85,32 @@ export default function ListUnits({
                       >
                         <MobileMenuContextProvider>
                           <UnitButton
-                            percentage={
-                              noOfItemsInUnit === 0
-                                ? 0
-                                : (100 / noOfItemsInUnit) *
-                                  noOfLearnedItemsInUnit
-                            }
-                            userIsAuthor={userIsAuthor}
+                            learnedItemsPercentage={learnedItemsPercentage}
                             unitName={unitName}
-                            listNumber={listNumber}
                             noOfItemsInUnit={noOfItemsInUnit}
-                            unitOrder={unitNames}
+                            unitOrder={unitOrder}
                             setUnitOrder={setUnitOrder}
                           />
                         </MobileMenuContextProvider>
                       </Link>
                     )}
                   </Draggable>
+                ) : (
+                  <Link
+                    key={index}
+                    href={paths.unitDetailsPath(listNumber, index + 1)}
+                    className="flex w-full justify-center"
+                  >
+                    <MobileMenuContextProvider>
+                      <UnitButton
+                        learnedItemsPercentage={learnedItemsPercentage}
+                        unitName={unitName}
+                        noOfItemsInUnit={noOfItemsInUnit}
+                        unitOrder={unitOrder}
+                        setUnitOrder={setUnitOrder}
+                      />
+                    </MobileMenuContextProvider>
+                  </Link>
                 );
               })}
               {provided.placeholder}
@@ -122,7 +120,6 @@ export default function ListUnits({
         {userIsAuthor && (
           <NewUnitButton
             listNumber={listNumber}
-            unitNames={unitNames}
             unitOrder={unitOrder}
             setUnitOrder={setUnitOrder}
           />
@@ -148,8 +145,13 @@ function getUnitInformation(
     learnedIds?.includes(item.item._id)
   ).length;
 
+  const learnedItemsPercentage =
+    noOfItemsInUnit === 0
+      ? 0
+      : (100 / noOfItemsInUnit) * noOfLearnedItemsInUnit;
+
   return {
     noOfItemsInUnit,
-    noOfLearnedItemsInUnit,
+    learnedItemsPercentage,
   };
 }

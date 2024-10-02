@@ -7,14 +7,12 @@ import toast from "react-hot-toast";
 
 interface NewUnitButtonProps {
   listNumber: number;
-  unitNames: string[];
   unitOrder: string[];
   setUnitOrder: Dispatch<SetStateAction<string[]>>;
 }
 
 export default function NewUnitButton({
   listNumber,
-  unitNames,
   unitOrder,
   setUnitOrder,
 }: NewUnitButtonProps) {
@@ -36,7 +34,7 @@ export default function NewUnitButton({
     if (inputRef.current) {
       inputRef.current.blur();
     }
-    const isDuplicate = unitNames.includes(unitName.trim());
+    const isDuplicate = unitOrder.includes(unitName.trim());
     if (isDuplicate) toast.error("This unit name already exists");
     if (!isDuplicate && unitName.trim().length > 0)
       toast.promise(addUnitToList(unitName, listNumber), {

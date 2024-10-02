@@ -2,39 +2,37 @@
 
 import ConfirmCancelMobileMenu from "@/components/ConfirmCancelMobileMenu";
 import ConfirmCancelModal from "@/components/ConfirmCancelModal";
+import { useListContext } from "@/context/ListContext";
 import { useMobileMenu } from "@/context/MobileMenuContext";
 import { removeList } from "@/lib/actions";
 import paths from "@/lib/paths";
-import { SupportedLanguage } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { FaTrashCan } from "react-icons/fa6";
 
-interface DeleteListButtonProps {
-  listNumber: number;
-  listLanguage: SupportedLanguage;
-  listName: string;
-}
+interface DeleteListButtonProps {}
 
-export default function DeleteListButton({
-  listNumber,
-  listLanguage,
-  listName,
-}: DeleteListButtonProps) {
-  const router = useRouter();
-  const removeListAction = async () => {
-    toast.promise(removeList(listNumber), {
-      loading: `Deleting ${listName}...`,
-      success: `${listName} has been deleted`,
-      error: (err) => err.toString(),
-    });
-    router.push(paths.dashboardLanguagePath(listLanguage));
-  };
-
+export default function DeleteListButton({}: DeleteListButtonProps) {
+  const {
+    listData: { listNumber, language, name },
+    userIsAuthor,
+  } = useListContext();
   const { toggleMobileMenu } = useMobileMenu();
   if (!toggleMobileMenu) throw new Error("Could not use mobile menu");
   const [showConfirmDeleteModal, setShowConfirmDeleteModel] = useState(false);
+  const router = useRouter();
+  if (userIsAuthor) return null;
+
+  const removeListAction = async () => {
+    toast.promise(removeList(listNumber), {
+      loading: `Deleting ${name}...`,
+      success: `${name} has been deleted`,
+      error: (err) => err.toString(),
+    });
+    router.push(paths.dashboardLanguagePath(language));
+  };
+
   return (
     <>
       {/* Mobile */}
@@ -75,7 +73,7 @@ export default function DeleteListButton({
         doOnConfirm={removeListAction}
       >
         <div>Are you sure you want to delete</div>
-        <div>&quot;{listName}&quot;?</div>
+        <div>&quot;{name}&quot;?</div>
       </ConfirmCancelModal>
     </>
   );

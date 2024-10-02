@@ -6,29 +6,26 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import CreatedByLine from "./CreatedByLine";
+import { useListContext } from "@/context/ListContext";
 
-interface ListHeaderProps {
-  name: string;
-  listNumber: number;
-  description?: string;
-  authorData: { username: string; usernameSlug: string }[];
-  numberOfItems: number;
-  image?: string;
-  added?: boolean;
-  userIsAuthor: boolean;
-}
+interface ListHeaderProps {}
 
-export default function ListHeader({
-  name,
-  listNumber,
-  description,
-  authorData,
-  numberOfItems,
-  image = "https://picsum.photos/200?grayscale",
-  added,
-  userIsAuthor,
-}: ListHeaderProps) {
+export default function ListHeader({}: ListHeaderProps) {
   const [showDetails, setShowDetails] = useState<boolean>(false);
+  const {
+    listData: {
+      name,
+      listNumber,
+      description,
+      image = "https://picsum.photos/200?grayscale",
+      units,
+    },
+    userIsAuthor,
+    authorData,
+    userIsLearningThisList,
+  } = useListContext();
+
+  const numberOfItems = units.length;
 
   const formattedDescription = description
     ?.split("\n")
@@ -60,7 +57,7 @@ export default function ListHeader({
             ) : (
               <h1 className="text-center text-xl sm:text-2xl">{name}</h1>
             ))}
-          {!added && !showDetails && (
+          {!userIsLearningThisList && !showDetails && (
             <h3 className="text-center text-xs">{numberOfItems} items</h3>
           )}
           {showDetails && (
@@ -116,7 +113,9 @@ export default function ListHeader({
                   {name}
                 </h1>
               )}
-              {!added && <h3 className="text-sm">{numberOfItems} items</h3>}
+              {!userIsLearningThisList && (
+                <h3 className="text-sm">{numberOfItems} items</h3>
+              )}
 
               {userIsAuthor ? (
                 <ChangeListNameOrDescription

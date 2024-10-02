@@ -4,6 +4,7 @@ import {
   LanguageFeatures,
   LearnedItem,
   LearnedLanguageWithPopulatedLists,
+  LearningData,
   LearningMode,
   List,
   PopulatedList,
@@ -186,11 +187,7 @@ export async function getLearningDataForList(
       `${server}/users/getLearnedList/${language}/${userId}/${listNumber}`
     );
     if (!response.ok) throw new Error(response.statusText);
-    return (await response.json()) as {
-      learnedList: List;
-      learnedItems: LearnedItem[];
-      ignoredItems: Types.ObjectId[];
-    };
+    return (await response.json()) as LearningData;
   } catch (err) {
     console.error(
       `Error fetching learned list ${listNumber} for language ${language} for user ${userId}: ${err}`

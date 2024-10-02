@@ -1,36 +1,30 @@
+"use client";
+
 import ListBarChart from "@/components/Charts/ListBarChart";
 import ListPieChart from "@/components/Charts/ListPieChart";
-import { getUserOnServer } from "@/lib/helperFunctionsServer";
-import { LearnedItem, List } from "@/lib/types";
-import { Types } from "mongoose";
+import { useListContext } from "@/context/ListContext";
 import {
   AllLearningButtonsDesktopContainer,
   AllLearningButtonsMobileContainer,
 } from "../AllLearningButtonsContainer";
 import FlexibleLearningButtons from "../FlexibleLearningButtons";
 import Leaderboard from "../Leaderboard";
-import { calculateListStats, determineListStatus } from "../ListHelpers";
 import AllLearningButtons from "./AllLearningButtons";
+import StartLearningListButton from "./StartLearningListButton";
 
-interface ChartsLButtonsLeaderboardProps {
-  list: List;
-  learnedItems: LearnedItem[];
-  ignoredItems: Types.ObjectId[];
-}
+export default function ChartsLButtonsLeaderboard() {
+  const {
+    userIsLearningThisList,
+    listStats,
+    listStatus,
+    listData: { language, listNumber },
+    unlockedLearningModesForUser,
+  } = useListContext();
 
-export default async function ChartsLButtonsLeaderboard({
-  list,
-  learnedItems,
-  ignoredItems,
-}: ChartsLButtonsLeaderboardProps) {
-  const sessionUser = await getUserOnServer();
-  const { unlockedReviewModes, language, listNumber } = list;
-  const unlockedForUser = unlockedReviewModes[sessionUser.native.name];
-  const listStats = calculateListStats(list, learnedItems, ignoredItems);
-  const listStatus = determineListStatus(listStats);
+  if (!userIsLearningThisList) return <StartLearningListButton />;
   return (
     <>
-      <div className="">
+      <>
         <div className="md:hidden">
           <ListBarChart stats={listStats} />
         </div>
@@ -42,25 +36,20 @@ export default async function ChartsLButtonsLeaderboard({
             <Leaderboard />
           </div>
         </div>
-      </div>
+      </>
       <AllLearningButtonsDesktopContainer>
-        <AllLearningButtons
-          listLanguage={language}
-          listNumber={listNumber}
-          listStats={listStats}
-          unlockedReviewModes={unlockedReviewModes[language]}
-        />
+        <AllLearningButtons />
       </AllLearningButtonsDesktopContainer>
       <div className="m-2 rounded-md bg-slate-100 py-4 md:hidden">
         <Leaderboard />
       </div>
       <AllLearningButtonsMobileContainer>
         <FlexibleLearningButtons
-          listLanguage={language}
           stats={listStats}
           status={listStatus}
           listNumber={listNumber}
-          unlockedModes={unlockedForUser}
+          listLanguage={language}
+          unlockedModes={unlockedLearningModesForUser}
         />
       </AllLearningButtonsMobileContainer>
     </>

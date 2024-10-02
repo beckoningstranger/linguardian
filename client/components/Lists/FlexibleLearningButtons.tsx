@@ -84,12 +84,7 @@ export default function FlexibleLearningButtons({
         moreClasses="absolute bottom-0 right-0 w-full border-slate-300 border-t-4 md:border-t-0 md:border-l-4 h-36"
       >
         <div className="grid grid-cols-3 place-items-center md:h-full md:grid-cols-2">
-          <AllLearningButtons
-            listLanguage={listLanguage}
-            listNumber={listNumber}
-            listStats={stats}
-            unlockedReviewModes={unlockedModes}
-          />
+          <AllLearningButtons />
         </div>
       </ContextMenu>
       {renderedButtons}

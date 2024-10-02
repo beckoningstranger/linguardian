@@ -284,3 +284,9 @@ export type ListDetails = {
 };
 
 export type RegisterSchema = z.infer<typeof registerSchema>;
+
+export type LearningData = {
+  learnedList: List;
+  learnedItems: LearnedItem[];
+  ignoredItems: Types.ObjectId[];
+};

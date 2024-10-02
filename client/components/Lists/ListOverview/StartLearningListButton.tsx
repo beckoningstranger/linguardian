@@ -1,23 +1,22 @@
 "use client";
 import Spinner from "@/components/Spinner";
 import { useActiveLanguage } from "@/context/ActiveLanguageContext";
+import { useListContext } from "@/context/ListContext";
 import { addListToDashboard, addNewLanguageToLearn } from "@/lib/actions";
-import { PopulatedList, SessionUser } from "@/lib/types";
+import { SessionUser } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-interface StartLearningListButtonProps {
-  languageName: string | undefined;
-  list: PopulatedList;
-}
+interface StartLearningListButtonProps {}
 
-export default function StartLearningListButton({
-  list,
-  languageName,
-}: StartLearningListButtonProps) {
+export default function StartLearningListButton({}: StartLearningListButtonProps) {
+  const {
+    listData: { language, flag, listNumber, name },
+    listLanguageName,
+  } = useListContext();
+
   const [updating, setUpdating] = useState(false);
-  const { language, flag, listNumber, name } = list;
   const { data, status, update } = useSession();
   const sessionUser = data?.user as SessionUser;
   const { setActiveLanguage } = useActiveLanguage();
@@ -51,8 +50,8 @@ export default function StartLearningListButton({
 
   const startLearningLanguageAndList = async () => {
     await toast.promise(addNewLanguageToLearn(sessionUser.id, language), {
-      loading: `Adding ${languageName} to your languages...`,
-      success: `You are now learning ${languageName}! 🎉`,
+      loading: `Adding ${listLanguageName} to your languages...`,
+      success: `You are now learning ${listLanguageName}! 🎉`,
       error: (err) => err.toString(),
     });
 
@@ -86,7 +85,7 @@ export default function StartLearningListButton({
           disabled={updating}
           className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
         >
-          Start learning {languageName} with this list!
+          Start learning {listLanguageName} with this list!
         </button>
       )}
       {userIsLearningThisLanguage && (
