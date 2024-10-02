@@ -275,20 +275,21 @@ export async function addRecentDictionarySearches(
   userId: string,
   slug: string
 ) {
-  const user = await Users.findOne<User>(
+  const user = await Users.findOne(
     { id: userId },
     { _id: 0, recentDictionarySearches: 1 }
   );
-  let recentSearches = user?.recentDictionarySearches;
-  if (!recentSearches) recentSearches = [];
+  let recentSearches = user?.recentDictionarySearches || [];
+  const item = await Items.findOne({ slug }, { _id: 1 });
+  if (item?._id)
+    recentSearches.push({ itemId: item._id, dateSearched: new Date() });
 
-  const itemId = (await Items.findOne({ slug }, { _id: 1 })) as Types.ObjectId;
-
-  recentSearches.push({ itemId, dateSearched: new Date() });
   const tenSortedUniqueSearches = recentSearches
     .reduce((acc, curr) => {
       if (
-        !acc.some((obj: RecentDictionarySearches) => obj.itemId === curr.itemId)
+        !acc.some((obj: RecentDictionarySearches) =>
+          obj.itemId.equals(curr.itemId)
+        )
       ) {
         acc.push(curr);
       }
