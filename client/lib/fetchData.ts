@@ -233,14 +233,8 @@ export async function getPopulatedItemBySlug(
       )}`
     );
     if (!response.ok) throw new Error(response.statusText);
-    const responseData = (await response.json()) as unknown;
-    const validatedResponseData =
-      itemSchemaWithPopulatedTranslations.safeParse(responseData);
-    if (!validatedResponseData.success) {
-      console.error(validatedResponseData.error);
-      return;
-    }
-    return validatedResponseData.data;
+    const responseData = await response.json();
+    return responseData;
   } catch (err) {
     console.error(`Error looking up item with slug ${slug}: ${err}`);
   }

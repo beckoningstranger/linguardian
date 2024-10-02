@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   itemSchemaWithPopulatedTranslations,
   itemSchemaWithTranslations,
+  parsedItemSchema,
   registerSchema,
 } from "./validations.js";
 
@@ -284,6 +285,7 @@ export type ListDetails = {
 };
 
 export type RegisterSchema = z.infer<typeof registerSchema>;
+export type ValidatedParsedItem = z.infer<typeof parsedItemSchema>;
 
 export type LearningData = {
   learnedList: List;

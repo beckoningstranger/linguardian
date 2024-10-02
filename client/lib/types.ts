@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   itemSchemaWithPopulatedTranslations,
   itemSchemaWithTranslations,
+  parsedItemSchema,
   registerSchema,
 } from "./validations.js";
 
@@ -91,9 +92,9 @@ export type Difficulty =
 export interface List {
   name: string;
   listNumber: number;
+  language: SupportedLanguage;
   description?: string;
   image?: string;
-  language: SupportedLanguage;
   flag: string;
   difficulty?: Difficulty;
   authors: string[];
@@ -284,6 +285,7 @@ export type ListDetails = {
 };
 
 export type RegisterSchema = z.infer<typeof registerSchema>;
+export type ValidatedParsedItem = z.infer<typeof parsedItemSchema>;
 
 export type LearningData = {
   learnedList: List;

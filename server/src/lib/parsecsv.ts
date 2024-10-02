@@ -12,6 +12,7 @@ import {
   getPopulatedListByObjectId,
 } from "../models/lists.model.js";
 import { getSupportedLanguages } from "../models/settings.model.js";
+import { placeholders } from "./constants.js";
 import { normalizeString, slugifyString } from "./helperFunctions.js";
 import {
   Case,
@@ -22,8 +23,9 @@ import {
   PopulatedList,
   SupportedLanguage,
   Tag,
+  ValidatedParsedItem,
 } from "./types.js";
-import { placeholders } from "./constants.js";
+import { parsedItemSchema } from "./validations.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -46,11 +48,12 @@ interface ItemInPrep {
 export async function parseCSV(filename: string, newList: List) {
   console.log("Parsing CSV File...");
   const newUploadedList = await createList(newList);
-  const newListsId = newUploadedList?._id;
-  if (!newListsId) throw new Error("Error creating new list");
+  const newListId = newUploadedList?._id;
+  if (!newListId) throw new Error("Error creating new list");
 
   return new Promise<{ newListId: Types.ObjectId }>((resolve, reject) => {
-    // Parse csv file and create all needed lemmas in MongoDB
+    const issues: string[] = [];
+
     fs.createReadStream(
       join(__dirname + `../../../data/csvUploads/${filename}`)
     )
@@ -82,25 +85,37 @@ export async function parseCSV(filename: string, newList: List) {
           unit: data.unit,
         };
 
-        // Remove translations that are just empty strings
-        formattedData = await cleanUpTranslationProperty(formattedData);
+        const {
+          data: validatedData,
+          success,
+          error,
+        } = parsedItemSchema.safeParse(formattedData);
+        if (!validatedData || !success)
+          error.issues.forEach((issue) =>
+            issues.push(`${data.name}: ${issue.path} - ${issue.message}`)
+          );
 
-        // Harvest and upload all possible lemmas from each parsed item
-        const lemmas = convertItemToLemmas(formattedData);
-        await uploadLemmas(lemmas);
+        if (success) {
+          // Remove translations that are just empty strings
+          const cleanedUpData = await cleanUpTranslationProperty(validatedData);
 
-        // Harvest all possible items from each parsed item
-        const harvestedItems: ItemInPrep[] =
-          await harvestAndUploadItemsWithoutTranslations(formattedData);
+          // Harvest and upload all possible lemmas from each parsed item
+          const lemmas = convertItemToLemmas(cleanedUpData);
+          await uploadLemmas(lemmas);
 
-        // Link items to all of their lemmas
-        await linkItemsToLemmas(harvestedItems);
+          // Harvest all possible items from each parsed item
+          const harvestedItems: ItemInPrep[] =
+            await harvestAndUploadItemsWithoutTranslations(cleanedUpData);
 
-        // Upload all harvested items with all the information supplied
-        await addTranslationsToItems(harvestedItems);
+          // Link items to all of their lemmas
+          await linkItemsToLemmas(harvestedItems);
 
-        // Add all relevant harvested items to the new list
-        await addItemsToList(harvestedItems, newListsId, newList.language);
+          // Upload all harvested items with all the information supplied
+          await addTranslationsToItems(harvestedItems);
+
+          // Add all relevant harvested items to the new list
+          await addItemsToList(harvestedItems, newListId, newList.language);
+        }
       })
       .on("error", (err) => {
         console.error("Error while parsing csv file", err);
@@ -109,9 +124,10 @@ export async function parseCSV(filename: string, newList: List) {
         // Wait 30 seconds for parsing and uploading to finish
         setTimeout(async () => {
           // Define a tentative unit order
-          await defineUnitOrder(newListsId);
+          await defineUnitOrder(newListId);
+          console.log("ISSUES", issues);
           resolve({
-            newListId: newListsId,
+            newListId,
           });
         }, 50000);
       });
@@ -123,7 +139,7 @@ interface LemmaItem {
   language: SupportedLanguage;
 }
 
-function convertItemToLemmas(item: ItemInPrep): LemmaItem[] {
+function convertItemToLemmas(item: ValidatedParsedItem): LemmaItem[] {
   // Function to create lemmas from words that are not placeholders
   const createLemmas = (
     words: string[],
@@ -188,7 +204,7 @@ async function getAllLemmaObjectIdsForItem(
 }
 
 async function harvestAndUploadItemsWithoutTranslations(
-  item: ItemInPrep
+  item: ValidatedParsedItem
 ): Promise<ItemInPrep[]> {
   const harvestedItems: ItemInPrep[] = [];
   // Push item itself to harvestedItems
@@ -355,21 +371,21 @@ async function linkItemsToLemmas(harvestedItems: ItemInPrep[]): Promise<void> {
 }
 
 async function cleanUpTranslationProperty(
-  formattedData: ItemInPrep
-): Promise<ItemInPrep> {
+  data: ValidatedParsedItem
+): Promise<ValidatedParsedItem> {
   // Delete non-existent translations
   const supportedLanguages = await getSupportedLanguages();
   if (!supportedLanguages) throw new Error("Failed to get supported languages");
 
-  if (formattedData.translations) {
+  if (data.translations) {
     supportedLanguages.forEach((lang) => {
-      if (!formattedData.translations?.[lang]) {
-        delete formattedData.translations![lang];
+      if (!data.translations?.[lang]) {
+        delete data.translations![lang];
       }
     });
   }
 
-  return formattedData;
+  return data;
 }
 
 interface FetchedItem extends Item {
@@ -400,19 +416,17 @@ async function addItemsToList(
   });
 }
 
-async function defineUnitOrder(newListsId: Types.ObjectId) {
+async function defineUnitOrder(newListId: Types.ObjectId) {
   const newList = (await getPopulatedListByObjectId(
-    newListsId
+    newListId
   )) as PopulatedList;
   if (newList && newList.units) {
-    const foundUnitNames: string[] = [];
-    newList.units.forEach((item) => {
-      if (!foundUnitNames.includes(item.unitName)) {
-        foundUnitNames.push(item.unitName);
-      }
-    });
-    await Lists.findByIdAndUpdate(newListsId, {
-      $set: { unitOrder: foundUnitNames },
+    const unitNames = Array.from(
+      new Set(newList.units.map((item) => item.unitName))
+    );
+
+    await Lists.findByIdAndUpdate(newListId, {
+      $set: { unitOrder: unitNames },
     });
   }
 }

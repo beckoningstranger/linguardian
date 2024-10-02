@@ -39,7 +39,7 @@ export const registerSchema = z
 const itemSchemaWithoutTranslations = z.object({
   _id: z.custom<Types.ObjectId>(),
   name: z.string().max(60, "Item names can be no longer than 60 characters"),
-  normalizedName: z.string().max(30),
+  normalizedName: z.string().max(60),
   language: z.custom<SupportedLanguage>(),
   partOfSpeech: z.enum([
     "noun",
@@ -65,11 +65,11 @@ const itemSchemaWithoutTranslations = z.object({
     .optional(),
   pluralForm: z
     .string()
-    .max(35, "Plural forms can be no longer than 35 characters")
+    .max(65, "Plural forms can be no longer than 30 characters")
     .array()
     .max(2, "There can be no more than 2 different plural forms")
     .optional(),
-  slug: z.string().max(60),
+  slug: z.string().max(65),
   case: z
     .enum([
       "nominative",
@@ -121,6 +121,17 @@ const itemSchemaWithoutTranslations = z.object({
   relevance: z.custom<Types.ObjectId>().optional(),
   collocations: z.custom<Types.ObjectId>().optional(),
 });
+
+const parsedItemSpecificSchema = z.object({
+  translations: z
+    .custom<Partial<Record<SupportedLanguage, string[]>>>()
+    .optional(),
+  unit: z.string().max(50, "Unit names cannot be longer than 50 characters"),
+});
+
+export const parsedItemSchema = itemSchemaWithoutTranslations.merge(
+  parsedItemSpecificSchema
+);
 
 const translationsSchema = z.object({
   translations: z
