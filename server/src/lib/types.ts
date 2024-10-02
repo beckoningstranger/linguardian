@@ -91,9 +91,9 @@ export type Difficulty =
 export interface List {
   name: string;
   listNumber: number;
+  language: SupportedLanguage;
   description?: string;
   image?: string;
-  language: SupportedLanguage;
   flag: string;
   difficulty?: Difficulty;
   authors: string[];

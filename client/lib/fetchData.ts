@@ -189,8 +189,8 @@ export async function getLearningDataForList(
     if (!response.ok) throw new Error(response.statusText);
     return (await response.json()) as LearningData;
   } catch (err) {
-    console.error(
-      `Error fetching learned list ${listNumber} for language ${language} for user ${userId}: ${err}`
+    console.log(
+      `No learning data for list ${listNumber} for user ${userId}: ${err}`
     );
   }
 }

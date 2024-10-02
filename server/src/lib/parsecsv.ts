@@ -23,49 +23,23 @@ import {
   SupportedLanguage,
   Tag,
 } from "./types.js";
+import { placeholders } from "./constants.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-interface ParsedData {
-  name: string;
-  partOfSpeech: PartOfSpeech;
-  case?: string;
-  gender?: string;
-  pluralForm?: string;
-  tags?: string;
-  tDE?: string;
-  tEN?: string;
-  tCN?: string;
-  tFR?: string;
-  unit: string;
-}
-
-interface FormattedParsedData {
-  name: string;
-  normalizedName: string;
-  language: SupportedLanguage;
-  partOfSpeech: PartOfSpeech;
-  case?: Case;
-  gender?: Gender;
-  pluralForm?: string[];
-  tags?: Tag[];
-  translations: Partial<Record<SupportedLanguage, string[]>>;
-  unit?: string;
-}
-
 interface ItemInPrep {
   name: string;
-  normalizedName: string;
-  slug: string;
   language: SupportedLanguage;
   partOfSpeech: PartOfSpeech;
-  lemmas: Types.ObjectId[];
+  normalizedName: string;
+  slug: string;
   case?: Case;
   gender?: Gender;
   pluralForm?: string[];
   tags?: Tag[];
   translations?: Partial<Record<SupportedLanguage, string[]>>;
+  lemmas?: Types.ObjectId[];
   unit?: string;
 }
 
@@ -81,10 +55,11 @@ export async function parseCSV(filename: string, newList: List) {
       join(__dirname + `../../../data/csvUploads/${filename}`)
     )
       .pipe(parse({ columns: true, comment: "#" }))
-      .on("data", async (data: ParsedData) => {
-        let formattedData: FormattedParsedData = {
+      .on("data", async (data) => {
+        let formattedData: ItemInPrep = {
           name: data.name,
           normalizedName: normalizeString(data.name),
+          slug: slugifyString(data.name, newList.language),
           language: newList.language,
           partOfSpeech: data.partOfSpeech,
           case:
@@ -147,39 +122,31 @@ interface LemmaItem {
   name: string;
   language: SupportedLanguage;
 }
-const placeholders = ["jdm", "jdn", "etw", "sb", "sth", "qn", "qc"];
 
-function convertItemToLemmas(item: FormattedParsedData): LemmaItem[] {
-  const onlyLemmasArray: LemmaItem[] = [];
-  const allWordsArray = item.name.split(" ");
-  // Convert item itself to lemmas
-  allWordsArray.map((word) => {
-    if (!placeholders.includes(word)) {
-      onlyLemmasArray.push({ name: word, language: item.language });
-    }
-  });
+function convertItemToLemmas(item: ItemInPrep): LemmaItem[] {
+  // Function to create lemmas from words that are not placeholders
+  const createLemmas = (
+    words: string[],
+    language: SupportedLanguage
+  ): LemmaItem[] =>
+    words
+      .filter((word) => word.length > 0 && !placeholders.includes(word))
+      .map((word) => ({ name: word, language }));
 
-  // Convert item translations to lemmas
-  // Iterate over all found translations
-  Object.entries(item.translations).map((language) => {
-    // Destructure into language name and translation
-    const [lang, translations] = language;
-    // Iterate over all translations, split them up into words
-    if (translations)
-      translations.map((translation) => {
-        const words = translation.split(" ");
-        words.map((word) => {
-          // Harvest everything that is not a placeholder
-          if (word.length > 0 && !placeholders.includes(word))
-            onlyLemmasArray.push({
-              name: word,
-              language: lang as SupportedLanguage,
-            });
-        });
-      });
-  });
+  // Extract lemmas from the item's name
+  const lemmas: LemmaItem[] = [
+    ...createLemmas(item.name.split(" "), item.language),
+    ...Object.entries(item.translations || {}).flatMap(([lang, translations]) =>
+      translations
+        ? createLemmas(
+            translations.map((translation) => translation.split(" ")).flat(),
+            lang as SupportedLanguage
+          )
+        : []
+    ),
+  ];
 
-  return onlyLemmasArray;
+  return lemmas;
 }
 
 async function uploadLemmas(lemmaArray: LemmaItem[]): Promise<void> {
@@ -221,7 +188,7 @@ async function getAllLemmaObjectIdsForItem(
 }
 
 async function harvestAndUploadItemsWithoutTranslations(
-  item: FormattedParsedData
+  item: ItemInPrep
 ): Promise<ItemInPrep[]> {
   const harvestedItems: ItemInPrep[] = [];
   // Push item itself to harvestedItems
@@ -235,43 +202,42 @@ async function harvestAndUploadItemsWithoutTranslations(
   // Add as harvested item
   harvestedItems.push({
     ...item,
-    slug: slugifyString(item.name, item.language),
     lemmas: allFoundLemmaObjectIds,
   });
 
   // Push item translations as own items to harvestedItems
-  const iterateOverAllTranslations = Object.entries(item.translations).map(
-    async (language) => {
-      // Destructure into language name and translations
-      const [lang, translations] = language;
-      if (translations) {
-        const addLemmaObjectIds = translations.map(async (translation) => {
-          if (translation.length > 0) {
-            // Get all lemma object ids for this translation
-            const allFoundLemmaObjectIds = await getAllLemmaObjectIdsForItem(
-              translation,
-              lang as SupportedLanguage
-            );
+  const iterateOverAllTranslations = Object.entries(
+    item.translations || {}
+  ).map(async (language) => {
+    // Destructure into language name and translations
+    const [lang, translations] = language;
+    if (translations) {
+      const addLemmaObjectIds = translations.map(async (translation) => {
+        if (translation.length > 0) {
+          // Get all lemma object ids for this translation
+          const allFoundLemmaObjectIds = await getAllLemmaObjectIdsForItem(
+            translation,
+            lang as SupportedLanguage
+          );
 
-            // Add as harvested item
-            const itemToPush: ItemInPrep = {
-              name: translation,
-              normalizedName: normalizeString(translation),
-              slug: slugifyString(translation, lang as SupportedLanguage),
-              language: lang as SupportedLanguage,
-              partOfSpeech: item.partOfSpeech,
-              lemmas: allFoundLemmaObjectIds,
-              translations: {
-                [item.language]: [item.name],
-              },
-            };
-            harvestedItems.push(itemToPush);
-          }
-        });
-        await Promise.all(addLemmaObjectIds);
-      }
+          // Add as harvested item
+          const itemToPush: ItemInPrep = {
+            name: translation,
+            normalizedName: normalizeString(translation),
+            slug: slugifyString(translation, lang as SupportedLanguage),
+            language: lang as SupportedLanguage,
+            partOfSpeech: item.partOfSpeech,
+            lemmas: allFoundLemmaObjectIds,
+            translations: {
+              [item.language]: [item.name],
+            },
+          };
+          harvestedItems.push(itemToPush);
+        }
+      });
+      await Promise.all(addLemmaObjectIds);
     }
-  );
+  });
   await Promise.all(iterateOverAllTranslations);
 
   const uploadHarvestedItemsWithoutTranslations = harvestedItems.map(
@@ -283,7 +249,7 @@ async function harvestAndUploadItemsWithoutTranslations(
             $set: {
               name: item.name,
               normalizedName: item.normalizedName,
-              slug: slugifyString(item.name, item.language),
+              slug: item.slug,
               language: item.language,
               partOfSpeech: item.partOfSpeech,
               lemmas: item.lemmas,
@@ -351,7 +317,7 @@ async function addTranslationsToItems(
         }
 
         // This new object can now serve as the new translation property of the item we want to update
-        const response = await Items.findOneAndUpdate(
+        await Items.findOneAndUpdate(
           { name: item.name, language: item.language },
           {
             ...item,
@@ -370,18 +336,18 @@ async function linkItemsToLemmas(harvestedItems: ItemInPrep[]): Promise<void> {
       { name: item.name, language: item.language },
       { _id: 1 }
     );
-    item.lemmas.map(async (lemma) => {
-      // Since we didn't populate, lemma is this lemma's ObjectId
+    item.lemmas?.map(async (lemmaObjectId) => {
+      // Since we didn't populate, item.lemmas is an array of ObjectIds
       try {
         // We push the item's ObjectId to the lemmas items array if it's not in already
-        await Lemmas.findByIdAndUpdate(lemma, {
+        await Lemmas.findByIdAndUpdate(lemmaObjectId, {
           $addToSet: {
             items: thisItemsObjectId,
           },
         });
       } catch (err) {
         console.error(
-          `Error linking item ${item.name} to lemma with ObjectId ${lemma}`
+          `Error linking item ${item.name} to lemma with ObjectId ${lemmaObjectId}`
         );
       }
     });
@@ -389,17 +355,20 @@ async function linkItemsToLemmas(harvestedItems: ItemInPrep[]): Promise<void> {
 }
 
 async function cleanUpTranslationProperty(
-  formattedData: FormattedParsedData
-): Promise<FormattedParsedData> {
+  formattedData: ItemInPrep
+): Promise<ItemInPrep> {
   // Delete non-existent translations
   const supportedLanguages = await getSupportedLanguages();
   if (!supportedLanguages) throw new Error("Failed to get supported languages");
 
-  supportedLanguages.forEach((lang) => {
-    if (!formattedData.translations[lang]) {
-      delete formattedData.translations[lang];
-    }
-  });
+  if (formattedData.translations) {
+    supportedLanguages.forEach((lang) => {
+      if (!formattedData.translations?.[lang]) {
+        delete formattedData.translations![lang];
+      }
+    });
+  }
+
   return formattedData;
 }
 
