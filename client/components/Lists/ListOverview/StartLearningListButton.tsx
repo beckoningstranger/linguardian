@@ -2,7 +2,7 @@
 import Spinner from "@/components/Spinner";
 import { useActiveLanguage } from "@/context/ActiveLanguageContext";
 import { useListContext } from "@/context/ListContext";
-import { addListToDashboard, addNewLanguageToLearn } from "@/lib/actions";
+import { addListToLearnedLists, addNewLanguageToLearn } from "@/lib/actions";
 import { SessionUser } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
@@ -14,6 +14,7 @@ export default function StartLearningListButton({}: StartLearningListButtonProps
   const {
     listData: { language, flag, listNumber, name },
     listLanguageName,
+    setUserIsLearningThisList,
   } = useListContext();
 
   const [updating, setUpdating] = useState(false);
@@ -27,13 +28,16 @@ export default function StartLearningListButton({}: StartLearningListButtonProps
       if (lang.name === language) userIsLearningThisLanguage = true;
     });
 
-  const addListToDashboardAction = async () => {
+  const addListToLearnedListsAction = async () => {
     setUpdating(true);
     await toast.promise(
-      addListToDashboard(listNumber, language, sessionUser.id),
+      addListToLearnedLists(listNumber, language, sessionUser.id),
       {
         loading: `Adding "${name}" to your lists...`,
-        success: `"${name}" has been added to your lists! 🎉`,
+        success: () => {
+          setUserIsLearningThisList(true);
+          return `"${name}" has been added to your lists! 🎉`;
+        },
         error: (err) => err.toString(),
       }
     );
@@ -72,7 +76,7 @@ export default function StartLearningListButton({}: StartLearningListButtonProps
       },
     });
     setActiveLanguage({ name: language, flag });
-    await addListToDashboardAction();
+    await addListToLearnedListsAction();
   };
 
   if (status === "loading") return <Spinner centered />;
@@ -90,7 +94,7 @@ export default function StartLearningListButton({}: StartLearningListButtonProps
       )}
       {userIsLearningThisLanguage && (
         <button
-          onClick={addListToDashboardAction}
+          onClick={addListToLearnedListsAction}
           disabled={updating}
           className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
         >

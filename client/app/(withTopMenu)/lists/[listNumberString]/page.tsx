@@ -4,7 +4,6 @@ import {
   getLearningDataForList,
   getListDataForMetadata,
   getPopulatedList,
-  getUserById,
 } from "@/lib/fetchData";
 
 import notFound from "@/app/not-found";
@@ -56,21 +55,16 @@ export default async function ListPage({
   if (!listData) return notFound();
 
   const { language, authors, unlockedReviewModes, units } = listData;
-  const [
-    authorData,
-    fullUser,
-    languageFeaturesForListLanguage,
-    learningDataForUser,
-  ] = await Promise.all([
-    fetchAuthors(authors),
-    getUserById(sessionUser.id),
-    getLanguageFeaturesForLanguage(language),
-    getLearningDataForList(
-      sessionUser.id,
-      listData.language,
-      listData.listNumber
-    ),
-  ]);
+  const [authorData, languageFeaturesForListLanguage, learningDataForUser] =
+    await Promise.all([
+      fetchAuthors(authors),
+      getLanguageFeaturesForLanguage(language),
+      getLearningDataForList(
+        sessionUser.id,
+        listData.language,
+        listData.listNumber
+      ),
+    ]);
   const learnedListsForUserAndLanguage = sessionUser.learnedLists[language];
 
   if (!languageFeaturesForListLanguage)
@@ -81,9 +75,6 @@ export default async function ListPage({
     learnedListsForUserAndLanguage?.includes(listNumber) || false;
 
   const userIsAuthor = authors.includes(sessionUser.id);
-  const learnedItemsForListLanguage = fullUser?.languages.find(
-    (lang) => lang.code === language
-  )?.learnedItems;
 
   const unlockedLearningModesForUser =
     unlockedReviewModes[sessionUser.native.name];
@@ -95,7 +86,6 @@ export default async function ListPage({
   return (
     <ListContextProvider
       userIsAuthor={userIsAuthor}
-      learnedItemsForListLanguage={learnedItemsForListLanguage}
       listData={listData}
       authorData={authorData}
       userIsLearningThisList={userIsLearningThisList}

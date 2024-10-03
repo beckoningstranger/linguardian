@@ -113,7 +113,7 @@ export async function removeListFromDashboard(
   redirect(paths.dashboardLanguagePath(language));
 }
 
-export async function addListToDashboard(
+export async function addListToLearnedLists(
   listNumber: number,
   language: SupportedLanguage,
   userId: string
@@ -123,7 +123,7 @@ export async function addListToDashboard(
   );
   try {
     const response = await fetch(
-      `${server}/users/addListToDashboard/${userId}/${listNumber}`,
+      `${server}/users/addListToLearnedLists/${userId}/${listNumber}`,
       { method: "POST" }
     );
     if (!response.ok) throw new Error(response.statusText);

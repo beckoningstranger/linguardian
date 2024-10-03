@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
 import {
-  addListToDashboard,
+  addListToLearnedLists,
   addNewLanguage,
   addNewlyLearnedItems,
   addRecentDictionarySearches,
@@ -64,11 +64,11 @@ export async function httpGetLearnedLanguageDataForLanguage(
   return res.status(200).json(responseFilteredForLanguage || {});
 }
 
-export async function httpAddListToDashboard(req: Request, res: Response) {
+export async function httpAddListToLearnedLists(req: Request, res: Response) {
   const userId = req.params.userId;
   const listNumber = parseInt(req.params.listNumber);
 
-  const response = await addListToDashboard(userId, listNumber);
+  const response = await addListToLearnedLists(userId, listNumber);
   if (response) return res.status(200).json();
   return res.status(400).json();
 }

@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  httpAddListToDashboard,
+  httpAddListToLearnedLists,
   httpAddNewLanguage,
   httpAddNewRecentDictionarySearches,
   httpCreateUser,
@@ -41,8 +41,8 @@ usersRouter.get(
 );
 
 usersRouter.post(
-  "/addListToDashboard/:userId/:listNumber",
-  httpAddListToDashboard
+  "/addListToLearnedLists/:userId/:listNumber",
+  httpAddListToLearnedLists
 );
 
 usersRouter.post(

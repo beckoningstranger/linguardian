@@ -40,7 +40,10 @@ export async function getUserByUsernameSlug(usernameSlug: string) {
   }
 }
 
-export async function addListToDashboard(userId: string, listNumber: number) {
+export async function addListToLearnedLists(
+  userId: string,
+  listNumber: number
+) {
   try {
     const list = await getList(listNumber);
     return await Users.updateOne<User>(

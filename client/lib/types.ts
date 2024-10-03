@@ -285,7 +285,7 @@ export type ListDetails = {
 };
 
 export type RegisterSchema = z.infer<typeof registerSchema>;
-export type ValidatedParsedItem = z.infer<typeof parsedItemSchema>;
+export type ParsedItem = z.infer<typeof parsedItemSchema>;
 
 export type LearningData = {
   learnedList: List;
