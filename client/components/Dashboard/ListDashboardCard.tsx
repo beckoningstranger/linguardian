@@ -4,37 +4,34 @@ import { RxDotsVertical } from "react-icons/rx";
 
 import ListBarChart from "@/components/Charts/ListBarChart";
 import paths from "@/lib/paths";
-import { LearnedItem, LearningMode, List } from "@/lib/types";
-import { Types } from "mongoose";
+import { LearningData, LearningMode, PopulatedList } from "@/lib/types";
 import Link from "next/link";
 import ListPieChart from "../Charts/ListPieChart";
 import FlexibleLearningButtons from "../Lists/FlexibleLearningButtons";
-import { calculateListStats, determineListStatus } from "../Lists/ListHelpers";
+import { getListStatsAndStatus } from "../Lists/ListHelpers";
 import ContextMenu from "../Menus/ContextMenu";
 import RemoveListButton from "./RemoveListButton";
 
 interface ListDashboardCardProps {
-  list: List;
-  allLearnedItemsForLanguage: LearnedItem[];
-  allIgnoredItemsForLanguage: Types.ObjectId[];
+  list: PopulatedList;
   userId: string;
   unlockedModes: LearningMode[] | undefined;
+  learningDataForList: LearningData | undefined;
 }
 
 export default function ListDashboardCard({
   list,
-  allIgnoredItemsForLanguage,
-  allLearnedItemsForLanguage,
   userId,
   unlockedModes,
+  learningDataForList,
 }: ListDashboardCardProps) {
   const [showContextMenu, setShowContextMenu] = useState(false);
-  const stats = calculateListStats(
-    list.units.map((unit) => unit.item._id),
-    allLearnedItemsForLanguage,
-    allIgnoredItemsForLanguage
+
+  const itemIdsInUnits = list.units.map((item) => item.item._id);
+  const { listStats, listStatus } = getListStatsAndStatus(
+    itemIdsInUnits,
+    learningDataForList
   );
-  const status = determineListStatus(stats);
 
   return (
     <div className="relative mx-6 rounded-md bg-slate-200 lg:mx-3 xl:mx-6">
@@ -69,16 +66,16 @@ export default function ListDashboardCard({
 
       <div className="my-3 md:flex md:w-full md:flex-row md:justify-evenly md:px-2 xl:px-0">
         <div className="md:hidden">
-          <ListBarChart stats={stats} />
+          <ListBarChart stats={listStats} />
         </div>
         <div className="hidden h-[267px] w-[300px] md:block">
           {/* These numbers are the exact dimensions of the PieChart */}
-          <ListPieChart stats={stats} />
+          <ListPieChart stats={listStats} />
         </div>
 
         <FlexibleLearningButtons
-          stats={stats}
-          status={status}
+          stats={listStats}
+          status={listStatus}
           listNumber={list.listNumber}
           unlockedModes={unlockedModes}
           listLanguage={list.language}

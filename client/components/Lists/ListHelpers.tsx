@@ -1,21 +1,21 @@
-import { LearnedItem, ListStats, ListStatus } from "@/lib/types";
+import { LearnedItem, LearningData, ListStats, ListStatus } from "@/lib/types";
 import { Types } from "mongoose";
 
 export function calculateListStats(
-  itemObjectIds: Types.ObjectId[],
+  allItemObjectIds: Types.ObjectId[],
   learnedItems: LearnedItem[],
-  ignoredItems: Types.ObjectId[]
+  ignoredItemObjectIds: Types.ObjectId[]
 ): ListStats {
-  const userlearnedItemIDs = learnedItems.map((item) => item.id);
-  const learnedItemsInList = userlearnedItemIDs.filter((id) =>
-    itemObjectIds.includes(id)
+  const learnedItemIds = learnedItems.map((item) => item.id);
+  const learnedItemIdsInList = learnedItemIds.filter((id) =>
+    allItemObjectIds.includes(id)
   );
 
   return generateStats(
-    ignoredItems,
+    ignoredItemObjectIds,
     learnedItems,
-    itemObjectIds,
-    learnedItemsInList
+    allItemObjectIds,
+    learnedItemIdsInList
   );
 }
 
@@ -26,43 +26,62 @@ export function determineListStatus(stats: ListStats): ListStatus {
 }
 
 export function generateStats(
-  allIgnoredItems: Types.ObjectId[],
-  allLearnedItems: LearnedItem[],
-  itemIDs: Types.ObjectId[],
+  ignoredItemIds: Types.ObjectId[],
+  learnedItems: LearnedItem[],
+  allItemIDs: Types.ObjectId[],
   selectedlearnedItems: Types.ObjectId[]
 ) {
-  const ignoredItemsInList = allIgnoredItems.filter((id) =>
-    itemIDs.includes(id)
+  const ignoredItemsInList = ignoredItemIds.filter((id) =>
+    allItemIDs.includes(id)
   );
 
-  const readyToReview = allLearnedItems.filter(
+  const readyToReview = learnedItems.filter(
     (item) =>
-      itemIDs.includes(item.id) &&
+      allItemIDs.includes(item.id) &&
       !ignoredItemsInList.includes(item.id) &&
       item.nextReview < Date.now()
   );
 
-  const learned = allLearnedItems.filter(
+  const learned = learnedItems.filter(
     (item) =>
-      itemIDs.includes(item.id) &&
+      allItemIDs.includes(item.id) &&
       !ignoredItemsInList.includes(item.id) &&
       !readyToReview.includes(item) &&
       item.level > 8
   );
 
-  const learning = allLearnedItems.filter(
+  const learning = learnedItems.filter(
     (item) =>
-      itemIDs.includes(item.id) &&
+      allItemIDs.includes(item.id) &&
       !ignoredItemsInList.includes(item.id) &&
       !readyToReview.includes(item) &&
       item.level < 8
   );
 
   return {
-    unlearned: itemIDs.length - selectedlearnedItems.length,
+    unlearned: allItemIDs.length - selectedlearnedItems.length,
     readyToReview: readyToReview.length,
     learned: learned.length,
     learning: learning.length,
     ignored: ignoredItemsInList.length,
   };
+}
+
+export function getListStatsAndStatus(
+  itemIdsInUnits: Types.ObjectId[],
+  learningData: LearningData | undefined
+) {
+  let learnedItems: LearnedItem[] = [];
+  let ignoredItems: Types.ObjectId[] = [];
+  if (learningData) {
+    learnedItems = learningData.learnedItems;
+    ignoredItems = learningData.ignoredItems;
+  }
+  const listStats = calculateListStats(
+    itemIdsInUnits,
+    learnedItems,
+    ignoredItems
+  );
+  const listStatus = determineListStatus(listStats);
+  return { listStats, listStatus };
 }

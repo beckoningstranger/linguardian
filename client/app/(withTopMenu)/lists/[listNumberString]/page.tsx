@@ -8,10 +8,7 @@ import {
 
 import notFound from "@/app/not-found";
 import ListContainer from "@/components/Lists/ListContainer";
-import {
-  calculateListStats,
-  determineListStatus,
-} from "@/components/Lists/ListHelpers";
+import { getListStatsAndStatus } from "@/components/Lists/ListHelpers";
 import ChartsLButtonsLeaderboard from "@/components/Lists/ListOverview/ChartsLearningButtonsLeaderBoard";
 import DeleteListButton from "@/components/Lists/ListOverview/DeleteListButton";
 import ListHeader from "@/components/Lists/ListOverview/ListHeader";
@@ -20,8 +17,6 @@ import Spinner from "@/components/Spinner";
 import { ListContextProvider } from "@/context/ListContext";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
-import { Item, LearnedItem, LearningData } from "@/lib/types";
-import { Types } from "mongoose";
 import { Suspense } from "react";
 
 export async function generateMetadata({ params }: ListPageProps) {
@@ -79,8 +74,9 @@ export default async function ListPage({
   const unlockedLearningModesForUser =
     unlockedReviewModes[sessionUser.native.name];
 
+  const itemIdsInUnits = units.map((item) => item.item._id);
   const { listStats, listStatus } = getListStatsAndStatus(
-    units,
+    itemIdsInUnits,
     learningDataForUser
   );
   return (
@@ -107,26 +103,4 @@ export default async function ListPage({
       </ListContainer>
     </ListContextProvider>
   );
-}
-
-function getListStatsAndStatus(
-  units: {
-    unitName: string;
-    item: Item;
-  }[],
-  learningData: LearningData | undefined
-) {
-  let learnedItems: LearnedItem[] = [];
-  let ignoredItems: Types.ObjectId[] = [];
-  if (learningData) {
-    learnedItems = learningData.learnedItems;
-    ignoredItems = learningData.ignoredItems;
-  }
-  const listStats = calculateListStats(
-    units.map((item) => item.item._id),
-    learnedItems,
-    ignoredItems
-  );
-  const listStatus = determineListStatus(listStats);
-  return { listStats, listStatus };
 }
