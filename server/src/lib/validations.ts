@@ -54,7 +54,7 @@ const itemSchemaWithoutTranslations = z.object({
     "particle",
     "phrase",
   ]),
-  lemmas: z.custom<Types.ObjectId>().optional(),
+  lemmas: z.custom<Types.ObjectId>().array().optional(),
   definition: z
     .string()
     .max(300, "Item definitions can be no longer than 300 characters")
@@ -123,10 +123,14 @@ const itemSchemaWithoutTranslations = z.object({
 });
 
 const parsedItemSpecificSchema = z.object({
+  _id: z.custom<Types.ObjectId>().optional(),
   translations: z
     .custom<Partial<Record<SupportedLanguage, string[]>>>()
     .optional(),
-  unit: z.string().max(50, "Unit names cannot be longer than 50 characters"),
+  unit: z
+    .string()
+    .max(50, "Unit names cannot be longer than 50 characters")
+    .optional(),
 });
 
 export const parsedItemSchema = itemSchemaWithoutTranslations.merge(

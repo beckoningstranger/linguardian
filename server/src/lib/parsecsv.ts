@@ -19,31 +19,15 @@ import {
   Gender,
   Item,
   List,
-  PartOfSpeech,
   PopulatedList,
   SupportedLanguage,
   Tag,
-  ValidatedParsedItem,
+  ParsedItem,
 } from "./types.js";
 import { parsedItemSchema } from "./validations.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-interface ItemInPrep {
-  name: string;
-  language: SupportedLanguage;
-  partOfSpeech: PartOfSpeech;
-  normalizedName: string;
-  slug: string;
-  case?: Case;
-  gender?: Gender;
-  pluralForm?: string[];
-  tags?: Tag[];
-  translations?: Partial<Record<SupportedLanguage, string[]>>;
-  lemmas?: Types.ObjectId[];
-  unit?: string;
-}
 
 export async function parseCSV(filename: string, newList: List) {
   console.log("Parsing CSV File...");
@@ -60,7 +44,7 @@ export async function parseCSV(filename: string, newList: List) {
     )
       .pipe(parse({ columns: true, comment: "#" }))
       .on("data", async (data) => {
-        let formattedData: ItemInPrep = {
+        let formattedData: ParsedItem = {
           name: data.name,
           normalizedName: normalizeString(data.name),
           slug: slugifyString(data.name, newList.language),
@@ -100,25 +84,18 @@ export async function parseCSV(filename: string, newList: List) {
         }
 
         const processRow = async () => {
-          // Remove translations that are just empty strings
-          const cleanedUpData = await cleanUpTranslationProperty(validatedData);
-
-          // Harvest and upload all possible lemmas from each parsed item
-          const lemmas = convertItemToLemmas(cleanedUpData);
-          await uploadLemmas(lemmas);
+          await getLemmasFromEachItemAndUpload(validatedData);
 
           // Harvest all possible items from each parsed item
-          const harvestedItems: ItemInPrep[] =
-            await harvestAndUploadItemsWithoutTranslations(cleanedUpData);
+          const harvestedItems: ParsedItem[] =
+            await harvestItemsWithoutTranslations(validatedData);
+          await uploadItemsWithoutTranslations(harvestedItems);
 
-          // Link items to all of their lemmas
-          await linkItemsToLemmas(harvestedItems);
-
-          // Upload all harvested items with all the information supplied
-          await addTranslationsToItems(harvestedItems);
-
-          // Add all relevant harvested items to the new list
-          await addItemsToList(harvestedItems, newListId, newList.language);
+          await Promise.all([
+            linkItemsToTheirLemmas(harvestedItems),
+            addTranslationsToItems(harvestedItems),
+            addItemsToList(harvestedItems, newListId, newList.language),
+          ]);
         };
 
         promises.push(processRow());
@@ -143,7 +120,7 @@ interface LemmaItem {
   language: SupportedLanguage;
 }
 
-function convertItemToLemmas(item: ValidatedParsedItem): LemmaItem[] {
+async function getLemmasFromEachItemAndUpload(item: ParsedItem) {
   // Function to create lemmas from words that are not placeholders
   const createLemmas = (
     words: string[],
@@ -165,8 +142,7 @@ function convertItemToLemmas(item: ValidatedParsedItem): LemmaItem[] {
         : []
     ),
   ];
-
-  return lemmas;
+  await uploadLemmas(lemmas);
 }
 
 async function uploadLemmas(lemmaArray: LemmaItem[]): Promise<void> {
@@ -207,110 +183,102 @@ async function getAllLemmaObjectIdsForItem(
   return allFoundLemmaObjectIds;
 }
 
-async function harvestAndUploadItemsWithoutTranslations(
-  item: ValidatedParsedItem
-): Promise<ItemInPrep[]> {
-  const harvestedItems: ItemInPrep[] = [];
-  // Push item itself to harvestedItems
-
+async function harvestItemsWithoutTranslations(
+  item: ParsedItem
+): Promise<ParsedItem[]> {
+  const harvestedItems: ParsedItem[] = [];
   // Get all lemmas object ids for the item itself
   const allFoundLemmaObjectIds = await getAllLemmaObjectIdsForItem(
     item.name,
     item.language
   );
 
-  // Add as harvested item
+  // Add item itself as harvested item
   harvestedItems.push({
     ...item,
     lemmas: allFoundLemmaObjectIds,
   });
 
   // Push item translations as own items to harvestedItems
-  const iterateOverAllTranslations = Object.entries(
+  const addTranslationsAsItemsPromises = Object.entries(
     item.translations || {}
-  ).map(async (language) => {
-    // Destructure into language name and translations
-    const [lang, translations] = language;
+  ).map(async ([lang, translations]) => {
+    const language = lang as SupportedLanguage;
+    // Each translation is an Object entry of shape SupportedLanguage: string[]
+
     if (translations) {
       const addLemmaObjectIds = translations.map(async (translation) => {
         if (translation.length > 0) {
-          // Get all lemma object ids for this translation
           const allFoundLemmaObjectIds = await getAllLemmaObjectIdsForItem(
             translation,
-            lang as SupportedLanguage
+            language
           );
 
-          // Add as harvested item
-          const itemToPush: ItemInPrep = {
+          // Add translation as harvested item
+          harvestedItems.push({
             name: translation,
             normalizedName: normalizeString(translation),
-            slug: slugifyString(translation, lang as SupportedLanguage),
-            language: lang as SupportedLanguage,
+            slug: slugifyString(translation, language),
+            language: language,
             partOfSpeech: item.partOfSpeech,
+            // Add lemma object ids
             lemmas: allFoundLemmaObjectIds,
             translations: {
+              // Use item it was harvested from as translation
               [item.language]: [item.name],
             },
-          };
-          harvestedItems.push(itemToPush);
+          });
         }
       });
       await Promise.all(addLemmaObjectIds);
     }
   });
-  await Promise.all(iterateOverAllTranslations);
+  await Promise.all(addTranslationsAsItemsPromises);
 
-  const uploadHarvestedItemsWithoutTranslations = harvestedItems.map(
-    async (item) => {
-      try {
-        await Items.findOneAndUpdate(
-          { name: item.name, language: item.language },
-          {
-            $set: {
-              name: item.name,
-              normalizedName: item.normalizedName,
-              slug: item.slug,
-              language: item.language,
-              partOfSpeech: item.partOfSpeech,
-              lemmas: item.lemmas,
-            },
-          },
-          { upsert: true }
-        );
-      } catch (err) {
-        console.error(
-          `Error while processing item ${JSON.stringify(item)}: ${err}`
-        );
-      }
-    }
-  );
-  await Promise.all(uploadHarvestedItemsWithoutTranslations);
   return harvestedItems;
 }
 
+async function uploadItemsWithoutTranslations(items: ParsedItem[]) {
+  const uploadHarvestedItemsPromises = items.map(async (item) => {
+    try {
+      await Items.findOneAndUpdate(
+        { name: item.name, language: item.language },
+        {
+          $set: {
+            name: item.name,
+            normalizedName: item.normalizedName,
+            slug: item.slug,
+            language: item.language,
+            partOfSpeech: item.partOfSpeech,
+            lemmas: item.lemmas,
+          },
+        },
+        { upsert: true }
+      );
+    } catch (err) {
+      console.error(
+        `Error while processing item ${JSON.stringify(item)}: ${err}`
+      );
+    }
+  });
+  await Promise.all(uploadHarvestedItemsPromises);
+}
+
 async function addTranslationsToItems(
-  harvestedItems: ItemInPrep[]
+  harvestedItems: ParsedItem[]
 ): Promise<void> {
   // We iterate over every translation of every item
   const supportedLanguages = await getSupportedLanguages();
   if (!supportedLanguages) throw new Error("Failed to get supported languages");
-  const filteredItems: ItemInPrep[] = harvestedItems.map((item) => {
+  const filteredItems: ParsedItem[] = harvestedItems.map((item) => {
     return {
       ...item,
-      translations: filterOutUndefinedTranslations(item.translations),
+      translations: filterOutUndefinedTranslations(
+        item.translations,
+        supportedLanguages
+      ),
     };
   });
-
-  function filterOutUndefinedTranslations(
-    translations: Partial<Record<SupportedLanguage, string[]>> | undefined
-  ): Partial<Record<SupportedLanguage, string[]>> {
-    const translationObject: Partial<Record<SupportedLanguage, string[]>> = {};
-    supportedLanguages?.forEach((lang) => {
-      if (translations && translations[lang])
-        translationObject[lang] = translations[lang];
-    });
-    return translationObject;
-  }
 
   filteredItems.forEach(async (item) => {
     if (item.translations) {
@@ -318,21 +286,19 @@ async function addTranslationsToItems(
         Record<SupportedLanguage, Types.ObjectId[]>
       > = {};
 
-      Object.entries(item.translations).map(async (translationProperty) => {
-        const [language, translation] = translationProperty;
+      Object.entries(item.translations).forEach(async ([lang, translation]) => {
+        const language = lang as SupportedLanguage;
         // We get the object ids for every translation of each item...
         const objectIDs = await Items.find(
           { name: { $in: translation }, language: language },
           { _id: 1 }
         );
         if (objectIDs) {
-          objectIDs.map((idObject) => {
+          objectIDs.forEach((idObject) => {
             // ... and save them in an object of type {SupportedLanguage: ObjectId[]}
-            if (!newTranslationProperty[language as SupportedLanguage])
-              newTranslationProperty[language as SupportedLanguage] = [];
-            newTranslationProperty[language as SupportedLanguage]?.push(
-              idObject._id
-            );
+            if (!newTranslationProperty[language])
+              newTranslationProperty[language] = [];
+            newTranslationProperty[language]?.push(idObject._id);
           });
         }
 
@@ -350,13 +316,15 @@ async function addTranslationsToItems(
   });
 }
 
-async function linkItemsToLemmas(harvestedItems: ItemInPrep[]): Promise<void> {
+async function linkItemsToTheirLemmas(
+  harvestedItems: ParsedItem[]
+): Promise<void> {
   harvestedItems.map(async (item) => {
     const thisItemsObjectId = await Items.findOne(
       { name: item.name, language: item.language },
       { _id: 1 }
     );
-    item.lemmas?.map(async (lemmaObjectId) => {
+    item.lemmas?.forEach(async (lemmaObjectId) => {
       // Since we didn't populate, item.lemmas is an array of ObjectIds
       try {
         // We push the item's ObjectId to the lemmas items array if it's not in already
@@ -374,38 +342,23 @@ async function linkItemsToLemmas(harvestedItems: ItemInPrep[]): Promise<void> {
   });
 }
 
-async function cleanUpTranslationProperty(
-  data: ValidatedParsedItem
-): Promise<ValidatedParsedItem> {
-  // Delete non-existent translations
-  const supportedLanguages = await getSupportedLanguages();
-  if (!supportedLanguages) throw new Error("Failed to get supported languages");
-
-  if (data.translations) {
-    supportedLanguages.forEach((lang) => {
-      if (!data.translations?.[lang]) {
-        delete data.translations![lang];
-      }
-    });
-  }
-
-  return data;
-}
-
 interface FetchedItem extends Item {
   _id: Types.ObjectId;
 }
 
 async function addItemsToList(
-  harvestedItems: ItemInPrep[],
+  harvestedItems: ParsedItem[],
   newListId: Types.ObjectId,
   listLanguage: SupportedLanguage
 ) {
   harvestedItems.forEach(async (item) => {
     if (item.language === listLanguage) {
-      const itemInDatabase = (await Items.findOne({
-        name: item.name,
-      })) as FetchedItem;
+      const itemInDatabase = (await Items.findOne(
+        {
+          name: item.name,
+        },
+        { _id: 1 }
+      )) as FetchedItem;
       if (itemInDatabase) {
         const itemId = itemInDatabase._id;
         await Lists.findByIdAndUpdate(
@@ -413,7 +366,7 @@ async function addItemsToList(
           {
             $addToSet: { units: { unitName: item.unit, item: itemId } },
           },
-          { upsert: true, new: true }
+          { upsert: true }
         );
       }
     }
@@ -433,4 +386,16 @@ async function defineUnitOrder(newListId: Types.ObjectId) {
       $set: { unitOrder: unitNames },
     });
   }
+}
+
+function filterOutUndefinedTranslations(
+  translations: Partial<Record<SupportedLanguage, string[]>> | undefined,
+  supportedLanguages: SupportedLanguage[]
+): Partial<Record<SupportedLanguage, string[]>> {
+  const translationObject: Partial<Record<SupportedLanguage, string[]>> = {};
+  supportedLanguages?.forEach((lang) => {
+    if (translations && translations[lang])
+      translationObject[lang] = translations[lang];
+  });
+  return translationObject;
 }

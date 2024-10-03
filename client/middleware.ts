@@ -16,6 +16,7 @@ export const config = {
     "/setNativeLanguage/:path*",
     "/dictionary/:path*",
     "/profile/:path*",
+    "/settings/:path",
     "/social/:path*",
     "/welcome",
     "/newLanguage",
