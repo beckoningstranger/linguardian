@@ -1,7 +1,7 @@
 import express from "express";
 import {
   httpAddListToLearnedLists,
-  httpAddNewLanguage,
+  httpAddNewLanguageToLearn,
   httpAddNewRecentDictionarySearches,
   httpCreateUser,
   httpGetAllLearnedListsForUser,
@@ -24,6 +24,8 @@ import {
 
 export const usersRouter = express.Router();
 
+// GET
+
 usersRouter.get("/get/:id", httpGetUserById);
 
 usersRouter.get("/getByEmail/:email", httpGetUserByEmail);
@@ -40,26 +42,11 @@ usersRouter.get(
   httpGetLearnedList
 );
 
-usersRouter.post(
-  "/addListToLearnedLists/:userId/:listNumber",
-  httpAddListToLearnedLists
-);
+usersRouter.get("/isEmailTaken/:email", httpIsEmailTaken);
 
-usersRouter.post(
-  "/removeListFromDashboard/:userId/:listNumber",
-  httpRemoveListFromDashboard
-);
-
-usersRouter.post("/addNewLanguage/:userId/:language", httpAddNewLanguage);
-
-usersRouter.post(
-  "/updateLearnedItems/:userId/:language/:mode",
-  httpUpdateLearnedItems
-);
+usersRouter.get("/isUsernameTaken/:username", httpIsUsernameTaken);
 
 usersRouter.get("/nextUserId", httpGetNextUserId);
-
-usersRouter.post("/setNativeLanguage/:userId/:language", httpSetNativeLanguage);
 
 usersRouter.get("/getNativeLanguage/:userId", httpGetNativeLanguageById);
 
@@ -67,23 +54,37 @@ usersRouter.get("/getAllUserIds", httpGetAllUserIds);
 
 usersRouter.get("/getLearnedLists/:userId", httpGetAllLearnedListsForUser);
 
-usersRouter.post(
-  "/addRecentDictionarySearches/:userId/:slug",
-  httpAddNewRecentDictionarySearches
-);
-
 usersRouter.get(
   "/getRecentDictionarySearches/:userId",
   httpGetRecentDictionarySearches
 );
 
-usersRouter.post(
-  "/stopLearningLanguage/:userId/:language",
-  httpStopLearningLanguage
-);
+// POST
 
 usersRouter.post("/createUser", httpCreateUser);
 
-usersRouter.get("/isEmailTaken/:email", httpIsEmailTaken);
+// PATCH
 
-usersRouter.get("/isUsernameTaken/:username", httpIsUsernameTaken);
+usersRouter.patch("/setNativeLanguage", httpSetNativeLanguage);
+
+usersRouter.patch("/stopLearningLanguage", httpStopLearningLanguage);
+
+usersRouter.patch("/addListToLearnedLists", httpAddListToLearnedLists);
+
+usersRouter.patch("/addNewLanguageToLearn", httpAddNewLanguageToLearn);
+
+usersRouter.patch(
+  "/addRecentDictionarySearches",
+  httpAddNewRecentDictionarySearches
+);
+
+usersRouter.patch("/updateLearnedItems", httpUpdateLearnedItems);
+
+// DELETE
+
+usersRouter.delete(
+  "/removeListFromDashboard/:userId/:listNumber",
+  httpRemoveListFromDashboard
+);
+
+// PUT

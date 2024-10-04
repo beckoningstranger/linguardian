@@ -7,10 +7,10 @@ const itemSchema = new Schema<Item>({
     type: String,
     required: true,
   },
-  normalizedName: { type: String, require: true },
+  normalizedName: { type: String, required: true },
   slug: {
     type: String,
-    require: true,
+    required: true,
     unique: true,
   },
   language: {

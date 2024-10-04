@@ -9,6 +9,8 @@ import {
 
 export const settingsRouter = express.Router();
 
+// GET
+
 settingsRouter.get("/all", httpGetAllSettings);
 
 settingsRouter.get("/supportedLanguages", httpGetSupportedLanguages);

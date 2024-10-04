@@ -30,17 +30,14 @@ export default function StartLearningListButton({}: StartLearningListButtonProps
 
   const addListToLearnedListsAction = async () => {
     setUpdating(true);
-    await toast.promise(
-      addListToLearnedLists(listNumber, language, sessionUser.id),
-      {
-        loading: `Adding "${name}" to your lists...`,
-        success: () => {
-          setUserIsLearningThisList(true);
-          return `"${name}" has been added to your lists! 🎉`;
-        },
-        error: (err) => err.toString(),
-      }
-    );
+    await toast.promise(addListToLearnedLists(listNumber, language), {
+      loading: `Adding "${name}" to your lists...`,
+      success: () => {
+        setUserIsLearningThisList(true);
+        return `"${name}" has been added to your lists! 🎉`;
+      },
+      error: (err) => err.toString(),
+    });
 
     const updatedLearnedLists = { ...sessionUser.learnedLists };
     if (updatedLearnedLists[language]?.length) {

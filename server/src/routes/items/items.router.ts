@@ -9,6 +9,8 @@ import {
 
 export const itemsRouter = express.Router();
 
+// GET
+
 itemsRouter.get("/getItemBySlug/:slug", httpGetItemBySlug);
 
 itemsRouter.get(
@@ -22,5 +24,7 @@ itemsRouter.get(
 );
 
 itemsRouter.get("/findItems/:languages/:query", httpFindItemsByName);
+
+// POST
 
 itemsRouter.post("/editOrCreateBySlug/:slug", httpEditOrCreateItem);

@@ -8,7 +8,6 @@ import { parseCSV } from "../../lib/parsecsv.js";
 import {
   FullyPopulatedList,
   List,
-  ListDetails,
   SupportedLanguage,
 } from "../../lib/types.js";
 import {
@@ -191,7 +190,7 @@ export async function httpRemoveItemFromList(req: Request, res: Response) {
   const itemId = req.params.itemId;
   const response = await removeItemFromList(listNumber, itemId);
   if (!response) res.status(404).json();
-  return res.status(200).json(response);
+  return res.status(204).send();
 }
 
 export async function httpAddUnitToList(req: Request, res: Response) {
@@ -212,7 +211,7 @@ export async function httpRemoveUnitFromList(req: Request, res: Response) {
 
   try {
     const response = await removeUnitFromList(listNumber, unitName);
-    return res.status(200).json(response);
+    return res.status(204).send();
   } catch (error) {
     return res.status(500).json({ error: "Error removing unit from list" });
   }
@@ -223,7 +222,7 @@ export async function httpRemoveList(req: Request, res: Response) {
 
   try {
     const response = await removeList(listNumber);
-    return res.status(200).json(response);
+    return res.status(204).send();
   } catch (error) {
     return res.status(500).json({ error: "Error removing unit from list" });
   }

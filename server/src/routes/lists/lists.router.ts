@@ -19,6 +19,8 @@ import {
   httpRemoveUnitFromList,
 } from "./lists.controller.js";
 
+export const listsRouter = express.Router();
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "data/csvUploads/");
@@ -30,16 +32,9 @@ const storage = multer.diskStorage({
     );
   },
 });
-
 const upload = multer({ storage: storage });
 
-export const listsRouter = express.Router();
-
-listsRouter.post(
-  "/createNewList",
-  upload.single("csvfile"),
-  httpPostCreateNewList
-);
+// GET
 
 listsRouter.get("/getAllLists/:language", httpGetAllListsForLanguage);
 
@@ -65,23 +60,33 @@ listsRouter.get("/nextListNumber", httpGetNextListNumber);
 
 listsRouter.get("/amountOfUnits/:listNumber", httpGetAmountOfUnits);
 
+// POST
+
+listsRouter.post(
+  "/createNewList",
+  upload.single("csvfile"),
+  httpPostCreateNewList
+);
+
+listsRouter.post("/addUnitToList/:listNumber/:unitName", httpAddUnitToList);
+
+listsRouter.post("/editListDetails", httpEditListDetails);
+
 listsRouter.post(
   "/addItemToList/:listNumber/:unitName/:itemId",
   httpAddItemToList
 );
 
-listsRouter.post(
+// DELETE
+
+listsRouter.delete(
   "/removeItemFromList/:listNumber/:itemId",
   httpRemoveItemFromList
 );
 
-listsRouter.post("/addUnitToList/:listNumber/:unitName", httpAddUnitToList);
-
-listsRouter.post(
+listsRouter.delete(
   "/removeUnitFromList/:listNumber/:unitName",
   httpRemoveUnitFromList
 );
 
-listsRouter.post("/removeList/:listNumber", httpRemoveList);
-
-listsRouter.post("/editListDetails", httpEditListDetails);
+listsRouter.delete("/removeList/:listNumber", httpRemoveList);

@@ -32,10 +32,11 @@ export async function setNativeLanguage({
 }) {
   await getUserAndVerifyUserIsLoggedIn("You need to be logged in to do this!");
   try {
-    const response = await fetch(
-      `${server}/users/setNativeLanguage/${userId}/${language}`,
-      { method: "POST", headers: { "Content-Type": "application/json" } }
-    );
+    const response = await fetch(`${server}/users/setNativeLanguage`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, language }),
+    });
     if (!response.ok) throw new Error(response.statusText);
   } catch (err) {
     console.error(`Error setting native language for user ${userId}: ${err}`);
@@ -75,14 +76,11 @@ export async function updateLearnedItems(
 ) {
   await getUserAndVerifyUserIsLoggedIn("You need to be logged in to do this!");
   try {
-    const response = await fetch(
-      `${server}/users/updateLearnedItems/${userId}/${language}/${mode}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(items),
-      }
-    );
+    const response = await fetch(`${server}/users/updateLearnedItems`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items, userId, language, mode }),
+    });
 
     if (!response.ok) throw new Error(response.statusText);
   } catch (err) {
@@ -102,12 +100,13 @@ export async function removeListFromDashboard(
   try {
     const response = await fetch(
       `${server}/users/removeListFromDashboard/${userId}/${listNumber}`,
-      { method: "POST" }
+      { method: "DELETE" }
     );
     if (!response.ok) throw new Error(response.statusText);
   } catch (err) {
     console.error(`Error removing ${language} list 
   #${listNumber} for user ${userId}: ${err}`);
+    throw err;
   }
   revalidatePath(paths.dashboardLanguagePath(language));
   redirect(paths.dashboardLanguagePath(language));
@@ -115,24 +114,25 @@ export async function removeListFromDashboard(
 
 export async function addListToLearnedLists(
   listNumber: number,
-  language: SupportedLanguage,
-  userId: string
+  listLanguage: SupportedLanguage
 ) {
-  await getUserAndVerifyUserIsLoggedIn(
+  const sessionUser = await getUserAndVerifyUserIsLoggedIn(
     "You need to be logged in to add a list to your dashboard!"
   );
+  const userId = sessionUser.id;
   try {
-    const response = await fetch(
-      `${server}/users/addListToLearnedLists/${userId}/${listNumber}`,
-      { method: "POST" }
-    );
+    const response = await fetch(`${server}/users/addListToLearnedLists`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, listNumber }),
+    });
     if (!response.ok) throw new Error(response.statusText);
   } catch (err) {
     console.error(
       `Error adding list number ${listNumber} user ${userId}'s dashboard: ${err}`
     );
   }
-  revalidatePath(paths.dashboardLanguagePath(language));
+  revalidatePath(paths.dashboardLanguagePath(listLanguage));
   revalidatePath(paths.listDetailsPath(listNumber));
 }
 
@@ -222,13 +222,16 @@ export async function submitItemCreateOrEdit(
 }
 
 export async function updateRecentDictionarySearches(slug: string) {
-  const [sessionUser] = await Promise.all([getUserOnServer()]);
-  const response = await fetch(
-    `${server}/users/addRecentDictionarySearches/${sessionUser.id}/${slug}`,
-    {
-      method: "POST",
-    }
+  const sessionUser = await getUserAndVerifyUserIsLoggedIn(
+    "You need to be logged in to do this!"
   );
+  const response = await fetch(`${server}/users/addRecentDictionarySearches/`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ slug, userId: sessionUser.id }),
+  });
   if (!response.ok) {
     const responseData = await response.json();
     throw new Error(responseData?.error);
@@ -274,7 +277,7 @@ export async function removeItemFromList(
   const response = await fetch(
     `${server}/lists/removeItemFromList/${listData.listNumber}/${itemId}`,
     {
-      method: "POST",
+      method: "DELETE",
     }
   );
   if (response.ok) {
@@ -287,7 +290,7 @@ export async function removeItemFromList(
 }
 
 export async function addUnitToList(unitName: string, listNumber: number) {
-  const list = await verifyUserIsAuthorAndGetList(
+  await verifyUserIsAuthorAndGetList(
     listNumber,
     "Only list authors can add units to their lists!"
   );
@@ -306,14 +309,14 @@ export async function addUnitToList(unitName: string, listNumber: number) {
 }
 
 export async function removeUnitFromList(unitName: string, listNumber: number) {
-  const list = await verifyUserIsAuthorAndGetList(
+  await verifyUserIsAuthorAndGetList(
     listNumber,
     "Only list authors can remove units from their lists!"
   );
   const response = await fetch(
     `${server}/lists/removeUnitFromList/${listNumber}/${unitName}`,
     {
-      method: "POST",
+      method: "DELETE",
     }
   );
   if (response.ok) {
@@ -329,7 +332,7 @@ export async function removeList(listNumber: number) {
     "Only list authors can remove their lists!"
   );
   const response = await fetch(`${server}/lists/removeList/${listNumber}`, {
-    method: "POST",
+    method: "DELETE",
   });
   if (response.ok) {
     revalidatePath(paths.listDetailsPath(listNumber));
@@ -376,13 +379,13 @@ export async function stopLearningLanguage(language: SupportedLanguage) {
   );
   if (!sessionUser.isLearning.map((lwf) => lwf.name).includes(language))
     throw new Error("You are not learning this language");
+  const userId = sessionUser.id;
 
-  const response = await fetch(
-    `${server}/users/stopLearningLanguage/${sessionUser.id}/${language}`,
-    {
-      method: "POST",
-    }
-  );
+  const response = await fetch(`${server}/users/stopLearningLanguage`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId, language }),
+  });
   const responseData = await response.json();
 
   if (response.ok) {
@@ -405,10 +408,11 @@ export async function addNewLanguageToLearn(
   const sessionUser = await getUserAndVerifyUserIsLoggedIn(
     "You need to be logged in to add a new language!"
   );
-  const response = await fetch(
-    `${server}/users/addNewLanguage/${userId}/${language}`,
-    { method: "POST" }
-  );
+  const response = await fetch(`${server}/users/addNewLanguageToLearn`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId, language }),
+  });
   const responseData = await response.json();
   if (response.ok) {
     revalidatePath(paths.listsLanguagePath(language));

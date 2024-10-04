@@ -76,7 +76,7 @@ export async function removeListFromDashboard(
   }
 }
 
-export async function addNewLanguage(
+export async function addNewLanguageToLearn(
   userId: string,
   language: SupportedLanguage
 ) {

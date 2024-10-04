@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import {
   addListToLearnedLists,
-  addNewLanguage,
+  addNewLanguageToLearn,
   addNewlyLearnedItems,
   addRecentDictionarySearches,
   checkUsernameAvailability,
@@ -22,7 +22,11 @@ import {
 } from "../../models/users.model.js";
 
 import { formatZodErrors } from "../../lib/helperFunctions.js";
-import { LearningMode, SupportedLanguage } from "../../lib/types.js";
+import {
+  ItemForServer,
+  LearningMode,
+  SupportedLanguage,
+} from "../../lib/types.js";
 import { registerSchema } from "../../lib/validations.js";
 import { getItemById } from "../../models/items.model.js";
 import { getSupportedLanguages } from "../../models/settings.model.js";
@@ -65,8 +69,10 @@ export async function httpGetLearnedLanguageDataForLanguage(
 }
 
 export async function httpAddListToLearnedLists(req: Request, res: Response) {
-  const userId = req.params.userId;
-  const listNumber = parseInt(req.params.listNumber);
+  const { userId, listNumber } = req.body as {
+    userId: string;
+    listNumber: number;
+  };
 
   const response = await addListToLearnedLists(userId, listNumber);
   if (response) return res.status(200).json();
@@ -77,31 +83,53 @@ export async function httpRemoveListFromDashboard(req: Request, res: Response) {
   const userId = req.params.userId;
   const listNumber = parseInt(req.params.listNumber);
 
+  if (isNaN(listNumber)) {
+    return res.status(400).json({ error: "Invalid list number." });
+  }
+
   const response = await removeListFromDashboard(userId, listNumber);
-  if (response) return res.status(200).json();
-  return res.status(400).json();
+  if (response) return res.status(204).send();
+  return res.status(500).json({ error: "Internal Server Error" });
 }
 
-export async function httpAddNewLanguage(req: Request, res: Response) {
-  const userId = req.params.userId;
-  const language = req.params.language as SupportedLanguage;
+export async function httpAddNewLanguageToLearn(req: Request, res: Response) {
+  const { userId, language } = req.body as {
+    userId: string;
+    language: SupportedLanguage;
+  };
+  console.log("Add", language);
 
-  const response = await addNewLanguage(userId, language);
-  if (response) return res.status(200).json(response);
-  return res.status(400).json();
+  try {
+    const response = await addNewLanguageToLearn(userId, language);
+
+    if (response?.acknowledged) {
+      return res.status(200).json({ message: "Language added successfully." });
+    }
+
+    return res.status(400).json({ error: "Unable to add the language." });
+  } catch (err) {
+    console.error("Error in httpAddNewLanguageToLearn:", err);
+    return res.status(500).json({ error: "Server error." });
+  }
 }
 
 export async function httpUpdateLearnedItems(req: Request, res: Response) {
-  const userId = req.params.userId;
-  const language = req.params.language as SupportedLanguage;
-  const mode = req.params.mode as LearningMode;
-  let response;
-  if (mode === "learn") {
-    response = await addNewlyLearnedItems(req.body, userId, language);
-  } else {
-    response = await updateReviewedItems(req.body, userId, language);
-  }
-  return res.status(200).json();
+  const { userId, language, mode, items } = req.body as {
+    userId: string;
+    language: SupportedLanguage;
+    mode: LearningMode;
+    items: ItemForServer[];
+  };
+
+  const response =
+    mode === "learn"
+      ? await addNewlyLearnedItems(items, userId, language)
+      : await updateReviewedItems(items, userId, language);
+
+  if (!response)
+    return res.status(500).json({ error: "Could not update learned items" });
+
+  return res.status(200).json(response);
 }
 
 export async function httpGetNextUserId(req: Request, res: Response) {
@@ -109,11 +137,16 @@ export async function httpGetNextUserId(req: Request, res: Response) {
 }
 
 export async function httpSetNativeLanguage(req: Request, res: Response) {
-  const userId = req.params.userId;
-  const language = req.params.language as SupportedLanguage;
+  const { userId, language } = req.body as {
+    userId: string;
+    language: SupportedLanguage;
+  };
 
   const response = await setNativeLanguage(userId, language);
-  if (response.modifiedCount === 1) return res.status(201).json();
+  if (response.modifiedCount === 1)
+    return res
+      .status(200)
+      .json({ message: "Native language set successfully" });
   return res.status(500).json();
 }
 
@@ -187,12 +220,11 @@ export async function httpAddNewRecentDictionarySearches(
   req: Request,
   res: Response
 ) {
-  const userId = req.params.userId;
-  const slug = req.params.slug;
+  const { slug, userId } = req.body;
 
   const response = await addRecentDictionarySearches(userId, slug);
-  if (!response) return res.status(404).json();
-  return res.status(201).json(response);
+  if (!response) return res.status(404).json({ error: "Not Found" });
+  return res.status(200).json(response);
 }
 
 export async function httpGetRecentDictionarySearches(
@@ -211,8 +243,10 @@ export async function httpGetRecentDictionarySearches(
 }
 
 export async function httpStopLearningLanguage(req: Request, res: Response) {
-  const userId = req.params.userId;
-  const language = req.params.language as SupportedLanguage;
+  const { userId, language } = req.body as {
+    userId: string;
+    language: SupportedLanguage;
+  };
 
   const response = await stopLearningLanguage(userId, language);
   if (!response) return res.status(500).json();

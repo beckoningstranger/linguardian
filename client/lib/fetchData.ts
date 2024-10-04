@@ -2,7 +2,6 @@ import {
   DictionarySearchResult,
   FullyPopulatedList,
   LanguageFeatures,
-  LearnedItem,
   LearnedLanguageWithPopulatedLists,
   LearningData,
   LearningMode,
@@ -12,10 +11,8 @@ import {
   SupportedLanguage,
   User,
 } from "@/lib/types";
-import { Types } from "mongoose";
 import { notFound } from "next/navigation";
 import { getUserOnServer } from "./helperFunctionsServer";
-import { itemSchemaWithPopulatedTranslations } from "./validations";
 
 const server = process.env.SERVER_URL;
 
