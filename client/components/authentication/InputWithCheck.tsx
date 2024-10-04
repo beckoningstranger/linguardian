@@ -32,13 +32,6 @@ export default function InputWithCheck({
 
   useEffect(() => {
     if (debouncedValue.length > 4) {
-      if (checkMode === "email" && !isValidEmail(debouncedValue)) {
-        setFormError("email", {
-          type: "manual",
-          message: `This is not a valid ${checkMode}`,
-        });
-        return;
-      }
       setStatus((prev) => ({ ...prev, checking: true }));
       (async () => {
         const isTaken =
@@ -88,9 +81,4 @@ export default function InputWithCheck({
       )}
     </div>
   );
-}
-
-function isValidEmail(email: string) {
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return regex.test(email);
 }

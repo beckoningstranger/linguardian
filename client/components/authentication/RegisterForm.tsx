@@ -120,5 +120,5 @@ function FormErrors({ errors, field }: FormErrorsProps) {
   const error = errors[field];
   const message =
     typeof error?.message === "string" ? error.message : undefined;
-  return <div className="ml-2 text-sm text-red-500">{message}</div>;
+  return <div className="ml-2 max-w-96 text-sm text-red-500">{message}</div>;
 }

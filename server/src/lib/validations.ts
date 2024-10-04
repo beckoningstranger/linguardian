@@ -7,8 +7,25 @@ export const registerSchema = z
     username: z
       .string()
       .min(4, "Your username must be between 4 and 24 characters long")
-      .max(24, "Your username must be between 4 and 24 characters long"),
-    email: z.string().email().min(7),
+      .max(24, "Your username must be between 4 and 24 characters long")
+      .regex(
+        ...createRegexWithMessage({
+          nameOfString: "Username",
+          numbers: true,
+          characters: "-_",
+        })
+      ),
+    email: z
+      .string()
+      .email()
+      .min(7)
+      .regex(
+        ...createRegexWithMessage({
+          nameOfString: "Email",
+          numbers: true,
+          characters: "-_.@",
+        })
+      ),
     password: z
       .string()
       .min(8, "Your password should have at least 8 characters")
@@ -36,8 +53,36 @@ export const registerSchema = z
     { message: "You must enter your password twice", path: ["confirmPassword"] }
   );
 
+const ObjectIdSchema = z.custom<Types.ObjectId>(
+  (value) => value instanceof Types.ObjectId,
+  {
+    message: "Invalid ObjectId",
+  }
+);
+
+// type ItemSchema = {
+//   _id: Types.ObjectId;
+//   name: string;
+//   normalizedName: string;
+//   language: SupportedLanguage;
+//   partOfSpeech: PartOfSpeech;
+//   lemmas?: Types.ObjectId[];
+//   definition?: string[];
+//   gender?: Gender;
+//   pluralForm?: string[];
+//   slug: string;
+//   case?: Case;
+//   audio?: string[];
+//   pics?: string[];
+//   vids?: string[];
+//   IPA?: string[];
+//   tags?: Tag[];
+//   relevance?: Types.ObjectId;
+//   collocations?: Types.ObjectId;
+// };
+
 const itemSchemaWithoutTranslations = z.object({
-  _id: z.custom<Types.ObjectId>(),
+  _id: ObjectIdSchema,
   name: z.string().max(60, "Item names can be no longer than 60 characters"),
   normalizedName: z.string().max(60),
   language: z.custom<SupportedLanguage>(),
@@ -54,19 +99,22 @@ const itemSchemaWithoutTranslations = z.object({
     "particle",
     "phrase",
   ]),
-  lemmas: z.custom<Types.ObjectId>().array().optional(),
+  lemmas: ObjectIdSchema.array().optional(),
   definition: z
-    .string()
-    .max(300, "Item definitions can be no longer than 300 characters")
-    .array()
+    .array(
+      z
+        .string()
+        .max(300, "Item definitions can be no longer than 300 characters")
+    )
     .optional(),
   gender: z
     .enum(["masculine", "feminine", "neuter", "common", "animate", "inanimate"])
     .optional(),
   pluralForm: z
-    .string()
-    .max(65, "Plural forms can be no longer than 30 characters")
-    .array()
+    .array(
+      z.string().max(65, "Plural forms can be no longer than 65 characters")
+    )
+
     .max(2, "There can be no more than 2 different plural forms")
     .optional(),
   slug: z.string().max(65),
@@ -83,24 +131,32 @@ const itemSchemaWithoutTranslations = z.object({
     ])
     .optional(),
   audio: z
-    .string()
-    .max(80, "URLs to audio files can be no longer than 80 characters")
-    .array()
+    .array(
+      z
+        .string()
+        .max(80, "URLs to audio files can be no longer than 80 characters")
+    )
     .optional(),
   pics: z
-    .string()
-    .max(80, "URLs to pictures can be no longer than 80 characters")
-    .array()
+    .array(
+      z
+        .string()
+        .max(80, "URLs to image files can be no longer than 80 characters")
+    )
     .optional(),
   vids: z
-    .string()
-    .max(80, "URLs to videos can be no longer than 80 characters")
-    .array()
+    .array(
+      z
+        .string()
+        .max(80, "URLs to video files can be no longer than 80 characters")
+    )
     .optional(),
   IPA: z
-    .string()
-    .max(50, "IPA transcriptions can be no longer than 50 characters")
-    .array()
+    .array(
+      z
+        .string()
+        .max(50, "IPA transcriptions can be no longer than 50 characters")
+    )
     .optional(),
   tags: z
     .enum([
@@ -118,12 +174,34 @@ const itemSchemaWithoutTranslations = z.object({
     .array()
     .max(5, "Each item can receive a maximum of 5 tags")
     .optional(),
-  relevance: z.custom<Types.ObjectId>().optional(),
-  collocations: z.custom<Types.ObjectId>().optional(),
+  relevance: ObjectIdSchema.optional(),
+  collocations: ObjectIdSchema.optional(),
 });
+// .refine(
+//   (data: ItemSchema): data is ItemSchema => {
+//     const langFeatures = siteSettings.languageFeatures.find(
+//       (lang) => lang.langCode === data.language
+//     );
+
+//     const additionalCharacters = "";
+//     const languageSpecificCharacters =
+//       langFeatures?.requiresHelperKeys.join("") || "";
+
+//     const [regex] = createRegexWithMessage({
+//       characters: (languageSpecificCharacters || "") + additionalCharacters,
+//     });
+
+//     // Assuming we're sure definition (as an example) is an array of strings
+//     return data.definition?.every((string) => regex.test(string)) ?? false;
+//   },
+//   {
+//     message: "BOOM",
+//     path: ["definition"],
+//   }
+// );
 
 const parsedItemSpecificSchema = z.object({
-  _id: z.custom<Types.ObjectId>().optional(),
+  _id: ObjectIdSchema.optional(),
   translations: z
     .custom<Partial<Record<SupportedLanguage, string[]>>>()
     .optional(),
@@ -150,3 +228,32 @@ export const itemSchemaWithTranslations =
   itemSchemaWithoutTranslations.merge(translationsSchema);
 export const itemSchemaWithPopulatedTranslations =
   itemSchemaWithoutTranslations.merge(populatedTranslationsSchema);
+
+function createRegexWithMessage({
+  nameOfString = "String",
+  letters = true,
+  numbers = false,
+  characters,
+}: {
+  nameOfString?: string;
+  letters?: boolean;
+  numbers?: boolean;
+  characters: string;
+}): [RegExp, string] {
+  // Escape special characters in the provided characters
+  const escapedCharacters = characters.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+
+  // Construct regex, ensuring '-' is at the end of the character class if needed
+  const regex = new RegExp(
+    `^[${letters ? "a-zA-Z" : ""}${numbers ? "0-9" : ""}${escapedCharacters}]+$`
+  );
+
+  // Create the validation message
+  const message = `${nameOfString} may only contain ${
+    letters ? "letters" : ""
+  }${letters && numbers ? ", " : ""}${numbers ? "numbers" : ""}${
+    (letters || numbers) && characters ? " and " : ""
+  }${characters ? `these characters: ${characters}` : ""}`.trim();
+
+  return [regex, message];
+}

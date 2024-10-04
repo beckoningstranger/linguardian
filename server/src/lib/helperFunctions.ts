@@ -45,3 +45,34 @@ export function formatZodErrors(
 
   return formattedErrors;
 }
+
+export function createRegexWithMessage({
+  nameOfString = "String",
+  letters = true,
+  numbers = false,
+  characters,
+}: {
+  nameOfString?: string;
+  letters?: boolean;
+  numbers?: boolean;
+  characters: string;
+}): [RegExp, string] {
+  // Escape special characters in the provided characters
+  const escapedCharacters = characters.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+
+  // Construct regex, ensuring '%' is excluded and '-' is at the end of the character class if needed
+  const regex = new RegExp(
+    `^[${letters ? "a-zA-Z" : ""}${
+      numbers ? "0-9" : ""
+    }${escapedCharacters}&&[^%]]+$`
+  );
+
+  // Create the validation message
+  const message = `${nameOfString} may only contain ${
+    letters ? "letters" : ""
+  }${letters && numbers ? ", " : ""}${numbers ? "numbers" : ""}${
+    (letters || numbers) && characters ? " and " : ""
+  }${characters ? `these characters: ${characters}` : ""}`.trim();
+
+  return [regex, message];
+}

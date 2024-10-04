@@ -14,7 +14,6 @@ export default async function RegisterPage() {
   if (!sessionUser.native || !sessionUser.isLearning) {
     redirect(paths.welcomePath());
   } else {
-    sessionUser.native && sessionUser.isLearning;
     redirect(paths.dashboardLanguagePath(sessionUser.isLearning[0].name));
   }
 }

@@ -431,7 +431,11 @@ export async function isEmailTaken(email: string): Promise<boolean> {
 }
 
 export async function isUsernameTaken(username: string): Promise<boolean> {
-  const response = await fetch(`${server}/users/isUsernameTaken/${username}`);
+  const encodedUsername = encodeURIComponent(username);
+
+  const response = await fetch(
+    `${server}/users/isUsernameTaken/${encodedUsername}`
+  );
   const responseData = await response.json();
   if (response.ok) return responseData;
   throw new Error("Could not verify whether username is taken.");
