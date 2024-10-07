@@ -82,7 +82,6 @@ const ObjectIdSchema = z.custom<Types.ObjectId>(
 // };
 
 const itemSchemaWithoutTranslations = z.object({
-  _id: ObjectIdSchema,
   name: z.string().max(60, "Item names can be no longer than 60 characters"),
   normalizedName: z.string().max(60),
   language: z.custom<SupportedLanguage>(),

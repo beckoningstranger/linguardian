@@ -1,28 +1,17 @@
 import EditOrCreateItem from "@/components/Dictionary/EditOrCreateItem";
-import { getLanguageFeaturesForLanguage } from "@/lib/fetchData";
+import { getAllLanguageFeatures } from "@/lib/fetchData";
 import { getSeperatedUserLanguagesWithFlags } from "@/lib/helperFunctionsServer";
-import { LanguageFeatures } from "@/lib/types";
 
 export default async function NewItemPage() {
-  const [seperatedUserLanguagesWithFlags] = await Promise.all([
-    await getSeperatedUserLanguagesWithFlags(),
-  ]);
-
-  const allUserLanguages = Object.values(seperatedUserLanguagesWithFlags)
-    .flat()
-    .map((lwf) => lwf.name);
-
-  const languageFeaturesForUserLanguagesPromises = allUserLanguages.map(
-    (lang) => getLanguageFeaturesForLanguage(lang)
-  );
-
-  const languageFeaturesForUserLanguages = (
-    await Promise.all(languageFeaturesForUserLanguagesPromises)
-  ).filter((features): features is LanguageFeatures => features !== undefined);
+  const [seperatedUserLanguagesWithFlags, allLanguageFeatures] =
+    await Promise.all([
+      getSeperatedUserLanguagesWithFlags(),
+      getAllLanguageFeatures(),
+    ]);
 
   return (
     <EditOrCreateItem
-      languageFeaturesForUserLanguages={languageFeaturesForUserLanguages}
+      allLanguageFeatures={allLanguageFeatures!}
       userLanguagesWithFlags={seperatedUserLanguagesWithFlags}
     />
   );

@@ -30,6 +30,7 @@ export async function getFullyPopulatedItemBySlug(
     Item,
     "translations"
   > & {
+    _id: Types.ObjectId;
     translations: {
       [key in SupportedLanguage]?: {
         _id: Types.ObjectId;

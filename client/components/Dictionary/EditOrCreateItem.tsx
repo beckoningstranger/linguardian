@@ -14,7 +14,6 @@ import {
 import { itemSchemaWithPopulatedTranslations } from "@/lib/validations";
 import { Input } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Types } from "mongoose";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -28,14 +27,14 @@ import ComboBoxWrapper from "./ComboBoxWrapper";
 import EditOrCreatePageContainer from "./EditOrCreatePageContainer";
 import LanguagePicker from "./EditOrCreatePageLanguagePicker";
 import EnterMultiple from "./EnterMultiple";
+import { FormErrors } from "./FormErrors";
 import ManageTranslations from "./ManageTranslations";
 import PickMultiple from "./PickMultiple";
-import { FormErrors } from "./FormErrors";
 
 interface EditOrCreateItemProps {
   userLanguagesWithFlags: UserLanguagesWithFlags;
   item?: ItemWithPopulatedTranslations;
-  languageFeaturesForUserLanguages: LanguageFeatures[];
+  allLanguageFeatures: LanguageFeatures[];
   addToThisList?: ListAndUnitData;
 }
 
@@ -45,7 +44,6 @@ export default function EditOrCreateItem({
   item = {
     name: "",
     normalizedName: "",
-    _id: new Types.ObjectId(),
     language:
       addToThisList?.languageWithFlag.name ||
       userLanguagesWithFlags.isLearning[0].name,
@@ -53,7 +51,7 @@ export default function EditOrCreateItem({
     slug: "new-item",
     translations: {},
   },
-  languageFeaturesForUserLanguages,
+  allLanguageFeatures,
 }: EditOrCreateItemProps) {
   const initialName = useSearchParams().get("initialName");
   if (item.name === "" && initialName) item.name = initialName;
@@ -76,15 +74,19 @@ export default function EditOrCreateItem({
 
   const [itemLanguage, setItemLanguage] = useState(language);
 
+  const featuresForItemLanguage = allLanguageFeatures.find(
+    (lang) => lang.langCode === itemLanguage
+  );
+  if (!featuresForItemLanguage)
+    throw new Error("Item language features not found");
+
   const {
     partsOfSpeech,
     hasGender,
     hasCases,
     tags: langTags,
     ipa,
-  } = languageFeaturesForUserLanguages.find(
-    (lang) => lang.langCode === itemLanguage
-  )!;
+  } = featuresForItemLanguage;
   const {
     control,
     handleSubmit,

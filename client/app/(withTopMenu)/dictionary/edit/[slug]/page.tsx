@@ -1,13 +1,12 @@
 import EditOrCreateItem from "@/components/Dictionary/EditOrCreateItem";
 import {
-  getLanguageFeaturesForLanguage,
+  getAllLanguageFeatures,
   getPopulatedItemBySlug,
 } from "@/lib/fetchData";
 import {
   getAllUserLanguages,
   getSeperatedUserLanguagesWithFlags,
 } from "@/lib/helperFunctionsServer";
-import { LanguageFeatures } from "@/lib/types";
 
 interface EditPageProps {
   params: { slug: string };
@@ -24,13 +23,8 @@ export default async function EditPage({ params: { slug } }: EditPageProps) {
     [getAllUserLanguages(), getSeperatedUserLanguagesWithFlags()]
   );
 
-  const languageFeaturesForUserLanguagesPromises = allUserLanguages.map(
-    (lang) => getLanguageFeaturesForLanguage(lang)
-  );
-
-  const languageFeaturesForUserLanguages = (
-    await Promise.all(languageFeaturesForUserLanguagesPromises)
-  ).filter((features): features is LanguageFeatures => features !== undefined);
+  const allLanguageFeatures = await getAllLanguageFeatures();
+  if (!allLanguageFeatures) throw new Error("Could not get langauge features");
 
   const [item] = await Promise.all([
     getPopulatedItemBySlug(slug, allUserLanguages),
@@ -41,7 +35,7 @@ export default async function EditPage({ params: { slug } }: EditPageProps) {
   return (
     <EditOrCreateItem
       item={item}
-      languageFeaturesForUserLanguages={languageFeaturesForUserLanguages}
+      allLanguageFeatures={allLanguageFeatures}
       userLanguagesWithFlags={seperatedUserLanguagesWithFlags}
     />
   );
