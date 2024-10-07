@@ -1,10 +1,10 @@
 import EditOrCreateItem from "@/components/Dictionary/EditOrCreateItem";
-import { getLanguageFeaturesForLanguage, getList } from "@/lib/fetchData";
+import { getAllLanguageFeatures, getList } from "@/lib/fetchData";
 import {
   getAllUserLanguages,
   getSeperatedUserLanguagesWithFlags,
 } from "@/lib/helperFunctionsServer";
-import { LanguageFeatures, ListAndUnitData } from "@/lib/types";
+import { ListAndUnitData } from "@/lib/types";
 
 interface NewItemPageProps {
   params: { listNumber: string; unitName: string };
@@ -15,15 +15,20 @@ export default async function NewItemPage({
 }: NewItemPageProps) {
   const decodedUnitName = decodeURIComponent(unitName);
 
-  const [allUserLanguages, seperatedUserLanguagesWithFlags, listData] =
-    await Promise.all([
-      getAllUserLanguages(),
-      getSeperatedUserLanguagesWithFlags(),
-      getList(Number(listNumber)),
-    ]);
+  const [
+    allUserLanguages,
+    seperatedUserLanguagesWithFlags,
+    listData,
+    allLanguageFeatures,
+  ] = await Promise.all([
+    getAllUserLanguages(),
+    getSeperatedUserLanguagesWithFlags(),
+    getList(Number(listNumber)),
+    getAllLanguageFeatures(),
+  ]);
 
-  if (!listData || !allUserLanguages)
-    throw new Error("Failed to get user or list data");
+  if (!listData || !allUserLanguages || !allLanguageFeatures)
+    throw new Error("Failed to get data");
 
   const listAndUnitData: ListAndUnitData = {
     languageWithFlag: { name: listData.language, flag: listData.flag },
@@ -39,17 +44,9 @@ export default async function NewItemPage({
     }, 0),
   };
 
-  const languageFeaturesForUserLanguagesPromises = allUserLanguages.map(
-    (lang) => getLanguageFeaturesForLanguage(lang)
-  );
-
-  const languageFeaturesForUserLanguages = (
-    await Promise.all(languageFeaturesForUserLanguagesPromises)
-  ).filter((features): features is LanguageFeatures => features !== undefined);
-
   return (
     <EditOrCreateItem
-      languageFeaturesForUserLanguages={languageFeaturesForUserLanguages}
+      allLanguageFeatures={allLanguageFeatures}
       userLanguagesWithFlags={seperatedUserLanguagesWithFlags}
       addToThisList={listAndUnitData}
     />

@@ -61,7 +61,6 @@ const ObjectIdSchema = z.custom<Types.ObjectId>(
 );
 
 // type ItemSchema = {
-//   _id: Types.ObjectId;
 //   name: string;
 //   normalizedName: string;
 //   language: SupportedLanguage;
@@ -200,7 +199,6 @@ const itemSchemaWithoutTranslations = z.object({
 // );
 
 const parsedItemSpecificSchema = z.object({
-  _id: ObjectIdSchema.optional(),
   translations: z
     .custom<Partial<Record<SupportedLanguage, string[]>>>()
     .optional(),

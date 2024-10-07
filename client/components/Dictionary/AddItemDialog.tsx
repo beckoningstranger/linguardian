@@ -22,7 +22,7 @@ interface AddItemDialogProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   seperatedUserLanguagesWithFlags: UserLanguagesWithFlags;
-  item?: ItemWithPopulatedTranslations;
+  item?: Omit<ItemWithPopulatedTranslations, "_id">;
   itemLanguage?: SupportedLanguage;
   translations?: Partial<Record<SupportedLanguage, Item[]>>;
   setTranslations?: Dispatch<

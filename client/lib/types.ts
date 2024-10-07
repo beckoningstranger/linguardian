@@ -55,10 +55,12 @@ export interface sortedTags {
   [key: string]: Tag[];
 }
 
-export type Item = z.infer<typeof itemSchemaWithTranslations>;
+export type Item = z.infer<typeof itemSchemaWithTranslations> & {
+  _id: Types.ObjectId;
+};
 export type ItemWithPopulatedTranslations = z.infer<
   typeof itemSchemaWithPopulatedTranslations
->;
+> & { _id: Types.ObjectId };
 
 export type ItemToLearn = ItemWithPopulatedTranslations & {
   learningStep: number;

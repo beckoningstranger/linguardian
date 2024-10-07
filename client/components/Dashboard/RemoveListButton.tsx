@@ -26,26 +26,26 @@ export default function RemoveListButton({
 
   const handleRemoveList = async () => {
     setUpdating(true);
-    await toast.promise(
-      removeListFromDashboard(listNumber, listLanguage, userId),
-      {
+    try {
+      toast.promise(removeListFromDashboard(listNumber, listLanguage, userId), {
         loading: `Removing "${listName}" from your dashboard...`,
         success: `"${listName}" has been removed from your dashboard! 🎉`,
-        error: (err) => {
-          setUpdating(false);
-          return err.toString();
-        },
-      }
-    );
-
-    const updatedLearnedLists = sessionUser.learnedLists[listLanguage]?.filter(
-      (number) => number !== listNumber
-    );
-    update({
-      ...data,
-      user: { ...sessionUser, learnedLists: updatedLearnedLists },
-    });
-    setUpdating(false);
+        error: (err) => err.toString(),
+      });
+      console.log("before", sessionUser.learnedLists);
+      const updatedLearnedLists = sessionUser.learnedLists[
+        listLanguage
+      ]?.filter((number) => number !== listNumber);
+      console.log("after", sessionUser.learnedLists);
+      await update({
+        ...data,
+        user: { ...sessionUser, learnedLists: updatedLearnedLists },
+      });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUpdating(false);
+    }
   };
 
   if (status === "loading") return <Spinner centered />;

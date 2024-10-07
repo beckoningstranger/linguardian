@@ -29,10 +29,7 @@ export default function StopLearningLanguageButton({
       toast.promise(stopLearningLanguage(langCode as SupportedLanguage), {
         loading: "Updating your learning settings...",
         success: `You are no longer learning ${langName}!`,
-        error: (err) => {
-          setUpdating(false);
-          return err.toString();
-        },
+        error: (err) => err.toString(),
       });
 
       const updatedIsLearning = sessionUser?.isLearning.filter(

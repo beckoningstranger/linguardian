@@ -108,7 +108,9 @@ export async function httpEditOrCreateItem(req: Request, res: Response) {
     .json({ error: "Internal server error, could not create/edit item" });
 }
 
-async function updateRelatedItems(item: ItemWithPopulatedTranslations) {
+async function updateRelatedItems(
+  item: Omit<ItemWithPopulatedTranslations, "_id">
+) {
   const allSupportedLanguages = await getSupportedLanguages();
   if (!allSupportedLanguages)
     throw new Error("Failed to get all supported languages");

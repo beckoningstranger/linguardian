@@ -16,7 +16,7 @@ import AddItemDialog from "./AddItemDialog";
 import { FormErrors } from "./FormErrors";
 
 interface ManageTranslationsProps {
-  item: ItemWithPopulatedTranslations;
+  item: Omit<ItemWithPopulatedTranslations, "_id">;
   itemLanguage: SupportedLanguage;
   setValue: Function;
   errors: FieldErrors<FieldValues>;

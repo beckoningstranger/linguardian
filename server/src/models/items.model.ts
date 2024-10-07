@@ -74,12 +74,12 @@ export async function findItemsByName(
 }
 
 export async function editOrCreateBySlug(
-  item: ItemWithPopulatedTranslations,
+  item: Omit<ItemWithPopulatedTranslations, "_id">,
   slug: string
 ) {
   const isNewItem = item.slug === "new-item" ? true : false;
 
-  const update: ItemWithPopulatedTranslations = {
+  const update: Omit<ItemWithPopulatedTranslations, "_id"> = {
     ...item,
     tags: await filterOutInvalidTags(
       item.tags,
@@ -107,7 +107,9 @@ export async function editOrCreateBySlug(
   });
 }
 
-function resolveConflictsInUpdate(update: ItemWithPopulatedTranslations) {
+function resolveConflictsInUpdate(
+  update: Omit<ItemWithPopulatedTranslations, "_id">
+) {
   // When doing the given update, MongoDB will save undefined values as null, which collides with zod validation
   // and causes problems. Below code fixes this by instead unsetting the keys that have undefined values.
   const conflictFreeUpdate: any = { $set: {}, $unset: {} };
@@ -120,7 +122,9 @@ function resolveConflictsInUpdate(update: ItemWithPopulatedTranslations) {
 
   const propertiesToUnset: any = {};
   const propertiesWithValueUndefined = Object.keys(update).filter(
-    (key) => update[key as keyof ItemWithPopulatedTranslations] === undefined
+    (key) =>
+      update[key as keyof Omit<ItemWithPopulatedTranslations, "_id">] ===
+      undefined
   );
   propertiesWithValueUndefined.forEach(
     (property) => (propertiesToUnset[property] = 1)

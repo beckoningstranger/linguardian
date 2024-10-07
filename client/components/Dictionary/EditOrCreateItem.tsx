@@ -33,7 +33,7 @@ import PickMultiple from "./PickMultiple";
 
 interface EditOrCreateItemProps {
   userLanguagesWithFlags: UserLanguagesWithFlags;
-  item?: ItemWithPopulatedTranslations;
+  item?: Omit<ItemWithPopulatedTranslations, "_id">;
   allLanguageFeatures: LanguageFeatures[];
   addToThisList?: ListAndUnitData;
 }
