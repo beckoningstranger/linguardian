@@ -1,35 +1,35 @@
 import { Request, Response } from "express";
 
 import {
-  addListToLearnedLists,
-  addNewLanguageToLearn,
   addNewlyLearnedItems,
   addRecentDictionarySearches,
   checkUsernameAvailability,
   createUser,
   getAllUserIds,
-  getLearnedLanguageDataWithPopulatedLists,
+  getLearningDataForUser,
   getNativeLanguageById,
   getNextUserId,
   getRecentDictionarySearches,
   getUserByEmail,
   getUserById,
   getUserByUsernameSlug,
-  removeListFromDashboard,
+  setLearnedLanguagesForUserId,
+  setLearnedLists,
   setNativeLanguage,
-  stopLearningLanguage,
   updateReviewedItems,
 } from "../../models/users.model.js";
 
 import { formatZodErrors } from "../../lib/helperFunctions.js";
 import {
   ItemForServer,
+  LanguageWithFlagAndName,
+  LearningDataForLanguage,
   LearningMode,
   SupportedLanguage,
 } from "../../lib/types.js";
 import { registerSchema } from "../../lib/validations.js";
 import { getItemById } from "../../models/items.model.js";
-import { getSupportedLanguages } from "../../models/settings.model.js";
+import { getPopulatedListByListNumber } from "../../models/lists.model.js";
 
 export async function httpGetUserById(req: Request, res: Response) {
   const response = await getUserById(req.params.id);
@@ -50,66 +50,44 @@ export async function httpGetUserByUsernameSlug(req: Request, res: Response) {
   return res.status(404).json();
 }
 
-export async function httpGetLearnedLanguageDataForLanguage(
+export async function httpSetLearnedListsForUserId(
   req: Request,
   res: Response
 ) {
-  const language = req.params.language as SupportedLanguage;
-  const userId = req.params.userId;
-
-  const learnedLanguageData = await getLearnedLanguageDataWithPopulatedLists(
-    userId
-  );
-
-  const responseFilteredForLanguage = learnedLanguageData?.find(
-    (lang) => lang.code === language
-  );
-
-  return res.status(200).json(responseFilteredForLanguage || {});
-}
-
-export async function httpAddListToLearnedLists(req: Request, res: Response) {
-  const { userId, listNumber } = req.body as {
+  const { userId, learnedLists } = req.body as {
     userId: string;
-    listNumber: number;
+    learnedLists: Partial<Record<SupportedLanguage, number[]>>;
   };
 
-  const response = await addListToLearnedLists(userId, listNumber);
-  if (response) return res.status(200).json();
-  return res.status(400).json();
-}
-
-export async function httpRemoveListFromDashboard(req: Request, res: Response) {
-  const userId = req.params.userId;
-  const listNumber = parseInt(req.params.listNumber);
-
-  if (isNaN(listNumber)) {
-    return res.status(400).json({ error: "Invalid list number." });
-  }
-
-  const response = await removeListFromDashboard(userId, listNumber);
+  const response = await setLearnedLists(userId, learnedLists);
   if (response) return res.status(204).send();
   return res.status(500).json({ error: "Internal Server Error" });
 }
 
-export async function httpAddNewLanguageToLearn(req: Request, res: Response) {
-  const { userId, language } = req.body as {
+export async function httpSetLearnedLanguagesForUserId(
+  req: Request,
+  res: Response
+) {
+  const { userId, learnedLanguages } = req.body as {
     userId: string;
-    language: SupportedLanguage;
+    learnedLanguages: LanguageWithFlagAndName[];
   };
-  console.log("Add", language);
 
   try {
-    const response = await addNewLanguageToLearn(userId, language);
+    const response = await setLearnedLanguagesForUserId(
+      userId,
+      learnedLanguages
+    );
 
     if (response?.acknowledged) {
-      return res.status(200).json({ message: "Language added successfully." });
+      return res
+        .status(200)
+        .json({ message: "Learned languages set successfully." });
     }
-
-    return res.status(400).json({ error: "Unable to add the language." });
   } catch (err) {
-    console.error("Error in httpAddNewLanguageToLearn:", err);
-    return res.status(500).json({ error: "Server error." });
+    return res.status(500).json({
+      error: `Server error, could not set learned languages for user ${userId}`,
+    });
   }
 }
 
@@ -136,13 +114,16 @@ export async function httpGetNextUserId(req: Request, res: Response) {
   return res.status(200).json(await getNextUserId());
 }
 
-export async function httpSetNativeLanguage(req: Request, res: Response) {
-  const { userId, language } = req.body as {
+export async function httpSetNativeLanguageForUserId(
+  req: Request,
+  res: Response
+) {
+  const { userId, nativeLanguage } = req.body as {
     userId: string;
-    language: SupportedLanguage;
+    nativeLanguage: SupportedLanguage;
   };
 
-  const response = await setNativeLanguage(userId, language);
+  const response = await setNativeLanguage(userId, nativeLanguage);
   if (response.modifiedCount === 1)
     return res
       .status(200)
@@ -162,58 +143,6 @@ export async function httpGetAllUserIds(req: Request, res: Response) {
   const response = await getAllUserIds();
   if (response) return res.status(200).json(response);
   return res.status(404).json();
-}
-
-export async function httpGetAllLearnedListsForUser(
-  req: Request,
-  res: Response
-) {
-  const userId = req.params.userId;
-  const languages = await getSupportedLanguages();
-  if (!languages) throw new Error("Failed to get all supported languages");
-
-  const response = await getLearnedLanguageDataWithPopulatedLists(userId);
-  const allLearnedLists:
-    | Record<SupportedLanguage, number[]>
-    | Record<string, never> = {};
-  if (!response) throw new Error("Failed to get all learned lists");
-  languages.forEach((lang) =>
-    Object.assign(allLearnedLists, {
-      [lang]: response
-        .find((lan) => lan.code === lang)
-        ?.learnedLists.map((list) => list.listNumber),
-    })
-  );
-
-  if (response) return res.status(200).json(allLearnedLists);
-  return res.status(404).json();
-}
-
-export async function httpGetLearnedList(req: Request, res: Response) {
-  const userId = req.params.userId;
-  const language = req.params.language as SupportedLanguage;
-  const listNumber = parseInt(req.params.listNumber);
-
-  const response = await getLearnedLanguageDataWithPopulatedLists(userId);
-  const learnedItems = response?.find(
-    (lang) => lang.code === language
-  )?.learnedItems;
-  const ignoredItems = response?.find(
-    (lang) => lang.code === language
-  )?.ignoredItems;
-
-  if (!response) return res.status(404).json();
-  const foundList = response
-    .find((lang) => lang.code === language)
-    ?.learnedLists.find((list) => list.listNumber === listNumber);
-
-  if (!foundList) return res.status(404).json();
-
-  return res.status(200).json({
-    learnedList: foundList,
-    learnedItems,
-    ignoredItems,
-  });
 }
 
 export async function httpAddNewRecentDictionarySearches(
@@ -236,21 +165,41 @@ export async function httpGetRecentDictionarySearches(
   const user = await getRecentDictionarySearches(userId);
   if (!user) return res.status(404).json();
 
-  const itemIdsToGet = user.recentDictionarySearches.map((item) => item.itemId);
-  const itemPromises = itemIdsToGet.map(async (id) => getItemById(id));
-  const items = await Promise.all(itemPromises);
-  return res.status(200).json(items);
+  const itemIdsToGet = user.recentDictionarySearches?.map(
+    (item) => item.itemId
+  );
+  if (itemIdsToGet) {
+    const itemPromises = itemIdsToGet.map(async (id) => getItemById(id));
+    const items = await Promise.all(itemPromises);
+    return res.status(200).json(items);
+  }
+  return res.status(500).json({ error: "Internal server error" });
 }
 
-export async function httpStopLearningLanguage(req: Request, res: Response) {
-  const { userId, language } = req.body as {
-    userId: string;
-    language: SupportedLanguage;
-  };
+export async function httpGetLearningDataForUser(req: Request, res: Response) {
+  const userId = req.params.userId;
+  const response = await getLearningDataForUser(userId);
+  return res
+    .status(200)
+    .json(response ? response : { learnedItems: {}, ignoredItems: {} });
+}
 
-  const response = await stopLearningLanguage(userId, language);
-  if (!response) return res.status(500).json();
-  return res.status(200).json(response);
+export async function httpGetLearningDataForLanguage(
+  req: Request,
+  res: Response
+) {
+  const userId = req.params.userId;
+  const language = req.params.language as SupportedLanguage;
+  const response = await getLearningDataForUser(userId);
+
+  return res.status(200).json({
+    learnedItems:
+      (response && response.learnedItems && response.learnedItems[language]) ||
+      [],
+    ignoredItems:
+      (response && response.ignoredItems && response.ignoredItems[language]) ||
+      [],
+  } as LearningDataForLanguage);
 }
 
 export async function httpCreateUser(req: Request, res: Response) {
@@ -285,4 +234,29 @@ export async function httpIsUsernameTaken(req: Request, res: Response) {
   const response = await checkUsernameAvailability(username);
   if (response) return res.status(200).json(true);
   return res.status(200).json(false);
+}
+
+export async function httpGetDashboardData(req: Request, res: Response) {
+  const userId = req.params.userId;
+  const language = req.params.language as SupportedLanguage;
+  const user = await getUserById(userId);
+  const response = await getLearningDataForUser(userId);
+  const learningDataForLanguage = {
+    learnedItems:
+      response && response.learnedItems ? response.learnedItems[language] : [],
+    ignoredItems:
+      response && response.ignoredItems ? response.ignoredItems[language] : [],
+  } as LearningDataForLanguage;
+
+  const listPromises =
+    user?.learnedLists[language]?.map(async (listNumber) =>
+      getPopulatedListByListNumber(listNumber)
+    ) || [];
+  const lists = await Promise.all(listPromises);
+
+  return res.status(200).json({
+    learnedLists: user?.learnedLists,
+    learningDataForLanguage,
+    lists,
+  });
 }

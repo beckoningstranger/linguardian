@@ -4,7 +4,7 @@ import { useListContext } from "@/context/ListContext";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { changeListDetails } from "@/lib/actions";
 import paths from "@/lib/paths";
-import { Item, LearnedItem } from "@/lib/types";
+import { Item } from "@/lib/types";
 import {
   DragDropContext,
   Draggable,
@@ -22,14 +22,14 @@ export default function ListUnits() {
   const {
     listData: { listNumber, units, unitOrder: initialUnitOrder },
     userIsAuthor,
-    learningDataForUser,
+    learningDataForLanguage,
   } = useListContext();
-  let learnedItems: LearnedItem[] = [];
-  if (learningDataForUser) learnedItems = learningDataForUser.learnedItems;
 
   const [unitOrder, setUnitOrder] = useState(initialUnitOrder);
   const hasOrderChanged = useRef(false);
-  const learnedIds = learnedItems?.map((item) => item.id);
+  const learnedIds = learningDataForLanguage?.learnedItems?.map(
+    (item) => item.id
+  );
 
   useEffect(() => {
     if (hasOrderChanged.current) {

@@ -7,12 +7,12 @@ import toast from "react-hot-toast";
 
 interface createNewListFormProps {
   userId: string;
-  listLanguage: SupportedLanguage;
+  languageCode: SupportedLanguage;
 }
 
 export default function CreateNewListForm({
   userId,
-  listLanguage,
+  languageCode,
 }: createNewListFormProps) {
   const {
     register,
@@ -102,7 +102,7 @@ export default function CreateNewListForm({
       {errors.csvfile && (
         <p className="text-sm text-red-500">{`${errors.csvfile.message}`}</p>
       )}
-      <input type="hidden" {...register("language", { value: listLanguage })} />
+      <input type="hidden" {...register("language", { value: languageCode })} />
       <input type="hidden" {...register("author", { value: userId })} />
       <button
         type="submit"

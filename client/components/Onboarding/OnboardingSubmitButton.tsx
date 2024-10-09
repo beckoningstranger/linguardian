@@ -1,10 +1,12 @@
 "use client";
-import { addNewLanguageToLearn, finishOnboarding } from "@/lib/actions";
-import { LanguageWithFlagAndName, SessionUser } from "@/lib/types";
+import { setLearnedLanguages, setNativeLanguage } from "@/lib/actions";
+import { LanguageWithFlagAndName, User } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import Spinner from "../Spinner";
+import { useRouter } from "next/navigation";
+import paths from "@/lib/paths";
 
 interface OnboardingSubmitButtonProps {
   userNative: LanguageWithFlagAndName;
@@ -15,8 +17,9 @@ export default function OnboardingSubmitButton({
   userNative,
   languageToLearn,
 }: OnboardingSubmitButtonProps) {
+  const router = useRouter();
   const { data, status, update } = useSession();
-  const sessionUser: SessionUser = data?.user;
+  const user: User = data?.user;
   const [updating, setUpdating] = useState<boolean>(false);
 
   if (status === "loading") return <Spinner centered />;
@@ -27,39 +30,34 @@ export default function OnboardingSubmitButton({
       onClick={async () => {
         setUpdating(true);
         try {
-          await toast.promise(
-            finishOnboarding(userNative.name, languageToLearn.name),
-            {
-              loading: "Your account is being created...",
-              success: () => {
-                return "Account created! 🎉";
-              },
-              error: (err) => {
-                return err.toString();
-              },
-            }
-          );
+          await toast.promise(setNativeLanguage(userNative), {
+            loading: "Setting your native language...",
+            success: () => {
+              return `Your native language is ${userNative.name}! 🎉`;
+            },
+            error: (err) => {
+              return err.toString();
+            },
+          });
 
-          await toast.promise(
-            addNewLanguageToLearn(sessionUser.id, languageToLearn.name),
-            {
-              loading: "Updating your learning settings...",
-              success: `You are now learning ${languageToLearn.langName}! 🎉`,
-              error: (err) => {
-                return err.toString();
-              },
-            }
-          );
+          await toast.promise(setLearnedLanguages([languageToLearn]), {
+            loading: "Updating your learning settings...",
+            success: `You are now learning ${languageToLearn.name}! 🎉`,
+            error: (err) => {
+              return err.toString();
+            },
+          });
 
           await update({
             ...data,
             user: {
-              ...sessionUser,
+              ...user,
               native: userNative,
-              isLearning: [languageToLearn],
+              learnedLanguages: [languageToLearn],
               activeLanguageAndFlag: languageToLearn,
             },
           });
+          router.push(paths.dashboardLanguagePath(languageToLearn.code));
         } catch (err) {
           console.error("There was an error during registration: ", err);
         } finally {

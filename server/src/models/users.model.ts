@@ -1,25 +1,19 @@
 import bcrypt from "bcryptjs";
-import { Types } from "mongoose";
 import { slugifyString } from "../lib/helperFunctions.js";
 import {
   ItemForServer,
+  LanguageWithFlagAndName,
   RecentDictionarySearches,
   RegisterSchema,
   SupportedLanguage,
   User,
-  UserWithPopulatedLearnedLists,
 } from "../lib/types.js";
 import Items from "./item.schema.js";
-import { getList } from "./lists.model.js";
-import {
-  getAllSettings,
-  getLanguageFeaturesForLanguage,
-} from "./settings.model.js";
 import Users from "./users.schema.js";
 
 export async function getUserById(id: string) {
   try {
-    const response = await Users.findOne<User>({ id: id }, { _id: 0 });
+    const response = await Users.findOne<User>({ id: id }, { _id: 0, __v: 0 });
     if (response) return response;
   } catch (err) {
     console.error(`Error getting user: ${err}`);
@@ -40,70 +34,35 @@ export async function getUserByUsernameSlug(usernameSlug: string) {
   }
 }
 
-export async function addListToLearnedLists(
+export async function setLearnedLists(
   userId: string,
-  listNumber: number
+  learnedLists: Partial<Record<SupportedLanguage, number[]>>
 ) {
   try {
-    const list = await getList(listNumber);
     return await Users.updateOne<User>(
-      { id: userId, "languages.code": list?.language },
+      { id: userId },
+      { $set: { learnedLists } }
+    );
+  } catch (err) {
+    console.error(`Error setting learned lists for user ${userId}: ${err}`);
+  }
+}
+
+export async function setLearnedLanguagesForUserId(
+  userId: string,
+  learnedLanguages: LanguageWithFlagAndName[]
+) {
+  try {
+    return await Users.updateOne(
+      { id: userId },
       {
-        $push: { "languages.$.learnedLists": list?._id },
+        $set: {
+          learnedLanguages,
+        },
       }
     );
   } catch (err) {
-    console.error(
-      `Error adding list ${listNumber} to user ${userId}'s dashboard: ${err}`
-    );
-  }
-}
-
-export async function removeListFromDashboard(
-  userId: string,
-  listNumber: number
-) {
-  try {
-    const list = await getList(listNumber);
-    return await Users.updateOne<User>(
-      { id: userId, "languages.code": list?.language },
-      { $pull: { "languages.$.learnedLists": list?._id } }
-    );
-  } catch (err) {
-    console.error(
-      `Error removing list ${listNumber} from user ${userId}'s dashboard: ${err}`
-    );
-  }
-}
-
-export async function addNewLanguageToLearn(
-  userId: string,
-  language: SupportedLanguage
-) {
-  try {
-    const languageFeatures = await getLanguageFeaturesForLanguage(language);
-    const siteSettings = await getAllSettings();
-    if (languageFeatures) {
-      return await Users.updateOne(
-        { id: userId },
-        {
-          $addToSet: {
-            languages: {
-              name: languageFeatures.langName,
-              code: languageFeatures.langCode,
-              flag: languageFeatures.flagCode,
-              learnedItems: [],
-              learnedLists: [],
-              customSRSettings: siteSettings?.defaultSRSettings,
-            },
-          },
-        }
-      );
-    }
-  } catch (err) {
-    console.error(
-      `Error adding language ${language} for user ${userId}: ${err}`
-    );
+    console.error(`Error setting learned languages for user ${userId}: ${err}`);
   }
 }
 
@@ -219,10 +178,19 @@ export async function getAllLearnedItems(
   try {
     const user = await Users.findOne({ id: userId });
     if (!user) return;
-    const selectedLanguageData = user.languages.find(
-      (lang) => lang.code === language
-    );
-    return selectedLanguageData?.learnedItems || [];
+    return user.learnedItems[language] || [];
+  } catch (err) {
+    console.error(`Error getting learned item ids: ${err}`);
+  }
+}
+
+export async function getLearningDataForUser(userId: string) {
+  try {
+    const user = await Users.findOne({ id: userId });
+    return {
+      learnedItems: user?.learnedItems,
+      ignoredItems: user?.ignoredItems,
+    };
   } catch (err) {
     console.error(`Error getting learned item ids: ${err}`);
   }
@@ -230,9 +198,7 @@ export async function getAllLearnedItems(
 
 async function getUserSRSettings(userId: string, language: SupportedLanguage) {
   const user = await Users.findOne({ id: userId });
-  if (!user) return;
-  const languageData = user.languages.find((lang) => lang.code === language);
-  return languageData?.customSRSettings;
+  return user?.customSRSettings[language];
 }
 
 export async function getNextUserId() {
@@ -264,14 +230,6 @@ export async function getNativeLanguageById(userId: string) {
 
 export async function getAllUserIds() {
   return await Users.find<User>({}, { username: 1, _id: 0 });
-}
-
-export async function getLearnedLanguageDataWithPopulatedLists(userId: string) {
-  const user = await Users.findOne<UserWithPopulatedLearnedLists>(
-    { id: userId },
-    { languages: 1, _id: 0 }
-  ).populate("languages.learnedLists");
-  return user?.languages;
 }
 
 export async function addRecentDictionarySearches(
@@ -314,17 +272,6 @@ export async function getRecentDictionarySearches(userId: string) {
   return await Users.findOne<User>(
     { id: userId },
     { recentDictionarySearches: 1, _id: 0 }
-  );
-}
-
-export async function stopLearningLanguage(
-  userId: string,
-  language: SupportedLanguage
-) {
-  return await Users.findOneAndUpdate(
-    { id: userId },
-    { $pull: { languages: { code: language } } },
-    { new: true }
   );
 }
 

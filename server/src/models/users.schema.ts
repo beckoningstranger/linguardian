@@ -1,71 +1,111 @@
-import { User } from "../../../client/lib/types.js";
 import { model, Schema } from "mongoose";
+import { siteSettings } from "../lib/siteSettings.js";
+import { SupportedLanguage, User } from "../lib/types.js";
+import { languageWithFlagAndNameSchema } from "./helperSchemas.js";
+
+const supportedLanguages = siteSettings.supportedLanguages;
 
 const userSchema = new Schema<User>(
   {
-    id: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    username: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    usernameSlug: {
-      type: String,
-      required: true,
-      unique: true,
-    },
+    id: { type: String, required: true, unique: true },
+    username: { type: String, required: true, unique: true },
+    usernameSlug: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
-    password: {
-      type: String,
-    },
-    image: { type: String },
+    password: { type: String, required: false },
+    image: { type: String, required: false },
     native: {
-      type: String,
+      type: languageWithFlagAndNameSchema,
     },
-    languages: [
-      {
-        name: { type: String },
-        code: { type: String },
-        flag: { type: String },
-        learnedItems: [
-          {
-            id: { type: Schema.Types.ObjectId, ref: "Item" },
-            level: { type: Number },
-            nextReview: { type: Number },
-          },
-        ],
-        ignoredItems: [{ type: Schema.Types.ObjectId, ref: "Item" }],
-        learnedLists: [{ type: Schema.Types.ObjectId, ref: "List" }],
-        customSRSettings: {
-          reviewTimes: {
-            1: { type: Number },
-            2: { type: Number },
-            3: { type: Number },
-            4: { type: Number },
-            5: { type: Number },
-            6: { type: Number },
-            7: { type: Number },
-            8: { type: Number },
-            9: { type: Number },
-            10: { type: Number },
-          },
-          itemsPerSession: {
-            learning: { type: Number },
-            reviewing: { type: Number },
-          },
+    learnedLanguages: {
+      type: [languageWithFlagAndNameSchema],
+      default: [],
+    },
+    learnedLists: {
+      type: Object,
+      validate: {
+        validator: (value: any) => {
+          return Object.keys(value).every((key) =>
+            supportedLanguages.includes(key as SupportedLanguage)
+          );
+        },
+        message: (props) =>
+          `${
+            props.value
+          } contains invalid keys. Allowed are: ${supportedLanguages.join(
+            ", "
+          )}`,
+      },
+      default: {},
+    },
+    learnedItems: {
+      type: Object,
+      validate: {
+        validator: (value: Record<string, any>) => {
+          const validKeys = Object.keys(value).every((key) =>
+            supportedLanguages.includes(key as SupportedLanguage)
+          );
+
+          const validValues = Object.values(value).every(
+            (arr) =>
+              Array.isArray(arr) && arr.every((num) => typeof num === "number")
+          );
+
+          return validKeys && validValues;
+        },
+        message: (props: { value: Record<string, any> }) => {
+          const invalidKeys = Object.keys(props.value).filter(
+            (key) => !supportedLanguages.includes(key as SupportedLanguage)
+          );
+          const invalidValues = Object.entries(props.value).filter(
+            ([_, arr]) =>
+              !Array.isArray(arr) || arr.some((num) => typeof num !== "number")
+          );
+          return `Invalid keys : ${invalidKeys.join(
+            ", "
+          )}, Invalid values: ${invalidValues.map(([key]) => key).join(", ")}`;
         },
       },
-    ],
-    recentDictionarySearches: [
-      {
-        itemId: { type: Schema.Types.ObjectId, ref: "Item" },
-        dateSearched: { type: Date },
+      default: {},
+    },
+    ignoredItems: {
+      type: Object,
+      validate: {
+        validator: (value: any) => {
+          return Object.keys(value).every((key) =>
+            supportedLanguages.includes(key as SupportedLanguage)
+          );
+        },
+        message: (props) =>
+          `${
+            props.value
+          } contains invalid language keys. Allowed keys are: ${supportedLanguages.join(
+            ", "
+          )}`,
       },
-    ],
+      default: {},
+    },
+    customSRSettings: {
+      type: Object,
+      validate: {
+        validator: (value: any) => {
+          return Object.keys(value).every((key) =>
+            supportedLanguages.includes(key as SupportedLanguage)
+          );
+        },
+        message: (props) =>
+          `${
+            props.value
+          } contains invalid language keys. Allowed keys are: ${supportedLanguages.join(
+            ", "
+          )}`,
+      },
+      default: {},
+    },
+    recentDictionarySearches: { type: [Object], required: true, default: [] },
+    activeLanguageAndFlag: {
+      type: languageWithFlagAndNameSchema,
+      required: false,
+    },
   },
   { timestamps: true }
 );

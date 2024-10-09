@@ -11,7 +11,7 @@ export default function TopMenuLogo({}: TopMenuLogoProps) {
   if (activeLanguage)
     return (
       <Link
-        href={paths.dashboardLanguagePath(activeLanguage?.name)}
+        href={paths.dashboardLanguagePath(activeLanguage?.code)}
         className="hidden h-20 items-center px-3 transition-all hover:bg-slate-300 md:flex"
       >
         Linguardian

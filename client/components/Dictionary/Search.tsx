@@ -2,7 +2,7 @@
 
 import {
   DictionarySearchResult,
-  LanguageWithFlag,
+  LanguageWithFlagAndName,
   ListAndUnitData,
   SupportedLanguage,
 } from "@/lib/types";
@@ -14,7 +14,7 @@ import SearchBox from "./SearchBox";
 import SearchResults from "./SearchResults";
 
 interface SearchProps {
-  searchLanguagesWithFlags: LanguageWithFlag[];
+  searchLanguages: LanguageWithFlagAndName[];
   mode:
     | "searchResultIsLinkToItemPage"
     | "searchResultIsTranslation"
@@ -24,7 +24,7 @@ interface SearchProps {
   listData?: ListAndUnitData;
 }
 export default function Search({
-  searchLanguagesWithFlags,
+  searchLanguages,
   mode,
   doAfterClickOnSearchResult,
   recentSearches = [],
@@ -38,8 +38,8 @@ export default function Search({
   useState(false);
 
   const getFlagCode = (langCode: SupportedLanguage) => {
-    return searchLanguagesWithFlags.reduce((a, curr) => {
-      if (curr.name === langCode) a = curr.flag;
+    return searchLanguages.reduce((a, curr) => {
+      if (curr.code === langCode) a = curr.flag;
       return a;
     }, "" as string);
   };
@@ -52,7 +52,7 @@ export default function Search({
         setQuery={setQuery}
         searchResults={searchResults}
         setSearchResults={setSearchResults}
-        searchLanguagesWithFlags={searchLanguagesWithFlags}
+        searchLanguages={searchLanguages}
         getFlagCode={getFlagCode}
       />
       {searchResults && searchResults.length > 0 && (

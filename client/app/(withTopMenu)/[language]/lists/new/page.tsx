@@ -15,7 +15,7 @@ interface CreateListProps {
 export default async function CreateList({
   params: { language },
 }: CreateListProps) {
-  const sessionUser = await getUserOnServer();
+  const user = await getUserOnServer();
   const languageFeaturesForLanguage = await getLanguageFeaturesForLanguage(
     language
   );
@@ -25,7 +25,7 @@ export default async function CreateList({
       <h1 className="max-w-88 m-4 text-center text-2xl font-bold">
         Create a new {languageFeaturesForLanguage?.langName} list
       </h1>
-      <CreateNewListForm userId={sessionUser.id} listLanguage={language} />
+      <CreateNewListForm userId={user.id} languageCode={language} />
     </div>
   );
 }

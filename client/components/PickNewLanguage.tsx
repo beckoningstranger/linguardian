@@ -1,8 +1,8 @@
 "use client";
 
-import { addNewLanguageToLearn } from "@/lib/actions";
+import { setLearnedLanguages } from "@/lib/actions";
 import paths from "@/lib/paths";
-import { LanguageWithFlag, SessionUser } from "@/lib/types";
+import { LanguageWithFlagAndName, User } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -11,43 +11,38 @@ import Flag from "react-world-flags";
 import Spinner from "./Spinner";
 
 interface PickNewLanguageProps {
-  languageAndFlag: LanguageWithFlag;
-  languageName?: string;
+  newLanguage: LanguageWithFlagAndName;
 }
 
-export default function PickNewLanguage({
-  languageAndFlag,
-  languageName,
-}: PickNewLanguageProps) {
+export default function PickNewLanguage({ newLanguage }: PickNewLanguageProps) {
   const { data, status, update } = useSession();
-  const sessionUser = data?.user as SessionUser;
+  const user = data?.user as User;
   const [updating, setUpdating] = useState(false);
   const router = useRouter();
 
   const handleLanguageSelection = async () => {
     setUpdating(true);
+    const newLearnedLanguages = user.learnedLanguages
+      ? [...user.learnedLanguages, newLanguage]
+      : [newLanguage];
     try {
-      toast.promise(
-        addNewLanguageToLearn(sessionUser.id, languageAndFlag.name),
-        {
-          loading: "Adding a new language...",
-          success: `You are now learning ${languageName}! 🎉`,
-          error: (err) => {
-            return err.toString();
-          },
-        }
-      );
+      toast.promise(setLearnedLanguages(newLearnedLanguages), {
+        loading: "Adding a new language...",
+        success: `You are now learning ${newLanguage.name}! 🎉`,
+        error: (err) => {
+          return err.toString();
+        },
+      });
 
-      const updatedIsLearning = [...sessionUser.isLearning, languageAndFlag];
       await update({
         ...data,
         user: {
-          ...sessionUser,
-          isLearning: updatedIsLearning,
-          activeLanguageAndFlag: languageAndFlag,
+          ...user,
+          learnedLanguages: newLearnedLanguages,
+          activeLanguageAndFlag: newLanguage,
         },
       });
-      router.push(paths.dashboardLanguagePath(languageAndFlag.name));
+      router.push(paths.dashboardLanguagePath(newLanguage.code));
     } catch (err) {
       console.error(err);
     } finally {
@@ -59,12 +54,12 @@ export default function PickNewLanguage({
 
   return (
     <button
-      key={languageAndFlag.name}
+      key={newLanguage.code}
       onClick={handleLanguageSelection}
       disabled={updating}
     >
       <Flag
-        code={languageAndFlag.flag}
+        code={newLanguage.flag}
         className={`my-2 h-24 w-24 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125`}
       />
     </button>

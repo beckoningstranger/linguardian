@@ -2,7 +2,7 @@ import NoMoreLanguagesToLearn from "@/components/NoMoreLanguagesToLearn";
 import PickNewLanguage from "@/components/PickNewLanguage";
 import { getAllLanguageFeatures } from "@/lib/fetchData";
 import { getAllUserLanguages } from "@/lib/helperFunctionsServer";
-import { LanguageWithFlag } from "@/lib/types";
+import { LanguageWithFlagAndName } from "@/lib/types";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -16,28 +16,24 @@ export default async function AddNewLanguageToLearn() {
   const allUserLanguages = await getAllUserLanguages();
 
   const allAvailableLanguageFeatures = allLanguageFeatures?.filter(
-    ({ langCode }) => !allUserLanguages.includes(langCode)
+    ({ langCode }) =>
+      !allUserLanguages.map((lang) => lang.code).includes(langCode)
   );
 
-  const languagesAndFlags = allAvailableLanguageFeatures?.map(
+  const languagesAndFlagsWithNames = allAvailableLanguageFeatures?.map(
     (langFeat) =>
       ({
-        name: langFeat.langCode,
+        code: langFeat.langCode,
         flag: langFeat.flagCode,
-      } as LanguageWithFlag)
+        name: langFeat.langName,
+      } as LanguageWithFlagAndName)
   );
 
-  const renderedFlags = languagesAndFlags.map((langAndFlag) => (
-    <PickNewLanguage
-      key={langAndFlag.name}
-      languageAndFlag={langAndFlag}
-      languageName={
-        allAvailableLanguageFeatures.find(
-          (features) => features.langCode === langAndFlag.name
-        )?.langName
-      }
-    />
-  ));
+  const renderedFlags = languagesAndFlagsWithNames.map(
+    (langAndFlagWithName, index) => (
+      <PickNewLanguage key={index} newLanguage={langAndFlagWithName} />
+    )
+  );
 
   if (allAvailableLanguageFeatures.length === 0)
     return <NoMoreLanguagesToLearn />;

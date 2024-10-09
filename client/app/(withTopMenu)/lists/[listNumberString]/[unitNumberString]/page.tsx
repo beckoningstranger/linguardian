@@ -15,15 +15,12 @@ import { calculateUnitStats } from "@/components/Lists/UnitHelpers";
 import UnitItems from "@/components/Lists/UnitItems";
 import {
   getFullyPopulatedListByListNumber,
-  getLearnedLanguageData,
+  getLearningDataForLanguage,
   getListDataForMetadata,
 } from "@/lib/fetchData";
-import {
-  getSeperatedUserLanguages,
-  getUserOnServer,
-} from "@/lib/helperFunctionsServer";
+import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
-import { LearningMode, ListAndUnitData, SupportedLanguage } from "@/lib/types";
+import { LearningMode, ListAndUnitData } from "@/lib/types";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata({ params }: UnitDetailPageProps) {
@@ -70,7 +67,6 @@ export async function generateMetadata({ params }: UnitDetailPageProps) {
 
 interface UnitDetailPageProps {
   params: {
-    language: SupportedLanguage;
     listNumberString: string;
     unitNumberString: string;
   };
@@ -83,7 +79,8 @@ export default async function UnitDetailPage({
   const unitNumber = parseInt(unitNumberString);
   const {
     id: userId,
-    native: { name: userNative },
+    native: { code: userNative },
+    learnedLists,
   } = await getUserOnServer();
 
   const listData = await getFullyPopulatedListByListNumber(
@@ -94,32 +91,33 @@ export default async function UnitDetailPage({
 
   const { language: listLanguage } = listData;
 
-  const [allListsUserData, seperateUserLanguages] = await Promise.all([
-    getLearnedLanguageData(userId, listLanguage),
-    getSeperatedUserLanguages(),
-  ]);
-  if (!listData || !allListsUserData || !seperateUserLanguages)
-    throw new Error("Could not get data");
-
   const unitName = listData.unitOrder[unitNumber - 1];
   if (!unitName) notFound();
+  const learningDataForLanguage = await getLearningDataForLanguage(
+    userId,
+    listData.language.code
+  );
+  if (!learningDataForLanguage) throw new Error("Could not get learning data");
+  console.log("ACBC", learningDataForLanguage);
 
   const unitItems = listData?.units
     .filter((unit) => unit.unitName === unitName)
     .map((unitItem) => unitItem.item);
 
-  const allLearnedListNumbers = allListsUserData?.learnedLists.map(
-    (list) => list.listNumber
+  const userHasAddedThisList = Object.values(learnedLists)
+    .flat()
+    ?.includes(listNumber);
+  const stats = await calculateUnitStats(
+    unitName,
+    learningDataForLanguage,
+    listData
   );
-  const allLearnedItems = allListsUserData?.learnedItems;
-  const userHasAddedThisList = allLearnedListNumbers?.includes(listNumber);
-  const stats = await calculateUnitStats(unitName, allListsUserData, listData);
 
   const unlockedModes: LearningMode[] =
     listData.unlockedReviewModes[userNative];
 
   const listAndUnitData: ListAndUnitData = {
-    languageWithFlag: { name: listData.language, flag: listData.flag },
+    languageWithFlagAndName: listData.language,
     listNumber: listNumber,
     listName: listData.name,
     unitName: unitName,
@@ -135,7 +133,6 @@ export default async function UnitDetailPage({
         itemNumber={unitItems.length}
         listNumber={listNumber}
         unitCount={listData.unitOrder.length}
-        listLanguage={listData.language}
       />
       {userHasAddedThisList && (
         <>
@@ -158,18 +155,17 @@ export default async function UnitDetailPage({
         </>
       )}
       <UnitItems
-        allLearnedItems={allLearnedItems}
+        allLearnedItems={learningDataForLanguage.learnedItems}
         unitItems={unitItems}
         userNative={userNative}
         userIsAuthor={listData.authors.includes(userId)}
         pathToUnit={paths.unitDetailsPath(listNumber, unitNumber)}
-        userLanguagesWithFlags={seperateUserLanguages}
         listAndUnitData={listAndUnitData}
       />
       {userHasAddedThisList && (
         <AllLearningButtonsMobileContainer>
           <FlexibleLearningButtons
-            listLanguage={listLanguage}
+            listLanguage={listLanguage.code}
             stats={stats}
             status={determineListStatus(stats)}
             listNumber={listNumber}

@@ -1,20 +1,13 @@
 "use client";
 
 import {
-  LearningData,
+  LearningDataForLanguage,
   LearningMode,
   ListStats,
   ListStatus,
   PopulatedList,
 } from "@/lib/types";
-import {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  createContext,
-  useContext,
-  useState,
-} from "react";
+import { ReactNode, createContext, useContext } from "react";
 
 type ListContext = {
   userIsAuthor: boolean;
@@ -23,23 +16,17 @@ type ListContext = {
     username: string;
     usernameSlug: string;
   }[];
-  userIsLearningThisList: boolean;
-  listLanguageName: string;
-  learningDataForUser: LearningData | undefined;
+  learningDataForLanguage: LearningDataForLanguage | undefined;
   unlockedLearningModesForUser: LearningMode[];
   listStats: ListStats;
   listStatus: ListStatus;
-  setUserIsLearningThisList: Dispatch<SetStateAction<boolean>>;
 };
 
 const ListContext = createContext<ListContext>({
   userIsAuthor: false,
   listData: {} as PopulatedList,
   authorData: [],
-  userIsLearningThisList: false,
-  setUserIsLearningThisList: () => {},
-  listLanguageName: "",
-  learningDataForUser: undefined,
+  learningDataForLanguage: undefined,
   unlockedLearningModesForUser: [],
   listStats: {} as ListStats,
   listStatus: "add",
@@ -57,26 +44,18 @@ export const ListContextProvider = ({
   userIsAuthor,
   listData,
   authorData,
-  userIsLearningThisList: initialUserIsLearning,
-  listLanguageName,
-  learningDataForUser,
+  learningDataForLanguage,
   unlockedLearningModesForUser,
   listStats,
   listStatus,
 }: ListContextProviderProps) => {
-  const [userIsLearningThisList, setUserIsLearningThisList] = useState(
-    initialUserIsLearning
-  );
   return (
     <ListContext.Provider
       value={{
         userIsAuthor,
         listData,
         authorData,
-        userIsLearningThisList,
-        setUserIsLearningThisList,
-        listLanguageName,
-        learningDataForUser,
+        learningDataForLanguage,
         unlockedLearningModesForUser,
         listStats,
         listStatus,

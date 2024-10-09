@@ -38,15 +38,8 @@ export default async function ListStore({ params }: ListStoreProps) {
     return (
       <ListStoreCard
         authorData={authorData}
-        title={list.name}
-        description={list.description}
-        image={list.image}
-        numberOfItems={list.units.length}
-        numberOfUnits={list.unitOrder?.length}
-        difficulty={list.difficulty}
-        listNumber={list.listNumber}
+        list={list}
         key={list.listNumber}
-        language={list.language}
       />
     );
   });

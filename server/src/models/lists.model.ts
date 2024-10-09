@@ -13,7 +13,7 @@ import { getSupportedLanguages } from "./settings.model.js";
 
 export async function getList(listNumber: number) {
   try {
-    return (await Lists.findOne({ listNumber: listNumber })) as
+    return (await Lists.findOne({ listNumber })) as
       | (List & { _id: Types.ObjectId })
       | undefined;
   } catch (err) {
@@ -33,7 +33,7 @@ export async function getPopulatedListByObjectId(listId: Types.ObjectId) {
 
 export async function getPopulatedListByListNumber(listNumber: number) {
   try {
-    return await Lists.findOne({ listNumber: listNumber }).populate<{
+    return await Lists.findOne({ listNumber }).populate<{
       units: { unitName: string; item: Item }[];
     }>({ path: "units.item" });
   } catch (err) {
@@ -46,7 +46,7 @@ export async function getFullyPopulatedListByListNumber(
   listNumber: number
 ) {
   try {
-    return await Lists.findOne({ listNumber: listNumber }).populate<{
+    return await Lists.findOne({ listNumber }).populate<{
       units: { unitName: string; item: ItemWithPopulatedTranslations }[];
     }>({
       path: "units.item",
@@ -61,7 +61,7 @@ export async function getFullyPopulatedListByListNumber(
 
 export async function getAllListsForLanguage(language: SupportedLanguage) {
   try {
-    return await Lists.find({ language: language });
+    return await Lists.find({ "language.code": language });
   } catch (err) {
     console.error(`Error getting all lists for language ${language}`);
   }

@@ -1,19 +1,19 @@
 import Search from "@/components/Dictionary/Search";
 import { getRecentDictionarySearches } from "@/lib/fetchData";
-import { getAllUserLanguagesWithFlags } from "@/lib/helperFunctionsServer";
+import { getAllUserLanguages } from "@/lib/helperFunctionsServer";
 
 export const metadata = { title: "Dictionary" };
 
 export default async function DictionaryPage() {
-  const [userLanguagesWithFlags, recentSearches] = await Promise.all([
-    getAllUserLanguagesWithFlags(),
+  const [allUserLanguages, recentSearches] = await Promise.all([
+    getAllUserLanguages(),
     getRecentDictionarySearches(),
   ]);
 
   return (
     <div className="md:mx-12">
       <Search
-        searchLanguagesWithFlags={userLanguagesWithFlags}
+        searchLanguages={allUserLanguages}
         mode="searchResultIsLinkToItemPage"
         recentSearches={recentSearches}
       />

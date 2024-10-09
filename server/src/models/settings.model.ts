@@ -12,7 +12,7 @@ export async function setSiteSettings(siteSettings: GlobalSettings) {
 
 export async function getAllSettings() {
   try {
-    return await Settings.findOne({}, { _id: 0, __v: 0, id: 0 });
+    return await Settings.findOne({}, { _id: 0, __v: 0 });
   } catch (err) {
     console.error(`Error getting all settings: ${err}`);
   }

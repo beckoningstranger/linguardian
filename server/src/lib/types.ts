@@ -94,10 +94,9 @@ export type Difficulty =
 export interface List {
   name: string;
   listNumber: number;
-  language: SupportedLanguage;
+  language: LanguageWithFlagAndName;
   description?: string;
   image?: string;
-  flag: string;
   difficulty?: Difficulty;
   authors: string[];
   private: boolean;
@@ -129,7 +128,7 @@ export type ListStatus = "review" | "add" | "practice";
 
 export type SupportedLanguage = "DE" | "EN" | "FR" | "CN";
 
-export interface SRSettings {
+export type SRSettings = {
   reviewTimes: {
     1: number;
     2: number;
@@ -143,7 +142,7 @@ export interface SRSettings {
     10: number;
   };
   itemsPerSession: { learning: number; reviewing: number };
-}
+};
 
 export interface IPA {
   help: string;
@@ -174,23 +173,6 @@ export interface GlobalSettings {
   defaultSRSettings: SRSettings;
 }
 
-export interface LearnedLanguage {
-  code: SupportedLanguage;
-  name: string;
-  flag: string;
-  learnedItems: LearnedItem[];
-  ignoredItems: Types.ObjectId[];
-  learnedLists: Types.ObjectId[];
-  customSRSettings?: SRSettings;
-}
-
-export type LearnedLanguageWithPopulatedLists = Omit<
-  LearnedLanguage,
-  "learnedLists"
-> & {
-  learnedLists: List[];
-};
-
 export interface LearnedItem {
   id: Types.ObjectId;
   level: number;
@@ -204,19 +186,20 @@ export interface User {
   email: string;
   password?: string;
   image: string;
-  native: SupportedLanguage;
-  languages: LearnedLanguage[];
+  native: LanguageWithFlagAndName;
+  learnedLanguages: LanguageWithFlagAndName[];
+  learnedLists: Partial<Record<SupportedLanguage, number[]>>;
+  learnedItems: Partial<Record<SupportedLanguage, LearnedItem[]>>;
+  ignoredItems: Partial<Record<SupportedLanguage, Types.ObjectId[]>>;
+  customSRSettings: Partial<Record<SupportedLanguage, SRSettings>>;
   recentDictionarySearches: RecentDictionarySearches[];
+  activeLanguageAndFlag?: LanguageWithFlagAndName;
 }
 
 export interface RecentDictionarySearches {
   itemId: Types.ObjectId;
   dateSearched: Date;
 }
-
-export type UserWithPopulatedLearnedLists = Omit<User, "languages"> & {
-  languages: LearnedLanguageWithPopulatedLists[];
-};
 
 export interface DictionarySearchResult {
   _id: Types.ObjectId;
@@ -229,27 +212,10 @@ export interface DictionarySearchResult {
   language: SupportedLanguage;
 }
 
-export interface LanguageWithFlag {
-  name: SupportedLanguage;
-  flag: string;
-}
-
 export interface LanguageWithFlagAndName {
-  name: SupportedLanguage;
+  code: SupportedLanguage;
   flag: string;
-  langName: string;
-}
-
-export interface SessionUser {
   name: string;
-  email: string;
-  image: string;
-  id: string;
-  usernameSlug: string;
-  native: LanguageWithFlag;
-  isLearning: LanguageWithFlag[];
-  learnedLists: Partial<Record<SupportedLanguage, number[]>>;
-  activeLanguageAndFlag: LanguageWithFlag;
 }
 
 export interface SlugLanguageObject {
@@ -261,18 +227,13 @@ export type StringOrPickOne = string | "Pick one...";
 
 export type Label = { singular: string; plural: string };
 
-export type UserLanguages = {
-  native: SupportedLanguage;
-  learning: SupportedLanguage[];
-};
-
-export type UserLanguagesWithFlags = {
-  native: LanguageWithFlag;
-  isLearning: LanguageWithFlag[];
+export type SeperatedUserLanguages = {
+  native: LanguageWithFlagAndName;
+  learnedLanguages: LanguageWithFlagAndName[];
 };
 
 export type ListAndUnitData = {
-  languageWithFlag: LanguageWithFlag;
+  languageWithFlagAndName: LanguageWithFlagAndName;
   listNumber: number;
   listName: string;
   unitNumber: number;
@@ -289,8 +250,7 @@ export type ListDetails = {
 export type RegisterSchema = z.infer<typeof registerSchema>;
 export type ParsedItem = z.infer<typeof parsedItemSchema>;
 
-export type LearningData = {
-  learnedList: List;
+export type LearningDataForLanguage = {
   learnedItems: LearnedItem[];
   ignoredItems: Types.ObjectId[];
 };

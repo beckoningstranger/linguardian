@@ -5,18 +5,8 @@ import FaceBookProvider from "next-auth/providers/facebook";
 import GoogleProvider from "next-auth/providers/google";
 
 import { createUser } from "@/lib/actions";
-import {
-  getAllLearnedListsForUser,
-  getLanguageFeaturesForLanguage,
-  getUserByEmail,
-  getUserById,
-} from "@/lib/fetchData";
-import {
-  LanguageWithFlag,
-  LanguageWithFlagAndName,
-  LearnedLanguage,
-  SupportedLanguage,
-} from "@/lib/types";
+import { getUserByEmail, getUserById } from "@/lib/fetchData";
+import { LanguageWithFlagAndName, User } from "@/lib/types";
 
 const GOOGLE_ID = process.env.GOOGLE_ID;
 const GOOGLE_SECRET = process.env.GOOGLE_SECRET;
@@ -41,7 +31,6 @@ const authOptions: NextAuthOptions = {
 
           const passwordsMatch = await bcrypt.compare(password, user.password);
           if (!passwordsMatch) return null;
-          user.name = user.username; // Just to have it in the token as it's called differently in the user schema
           return user;
         } catch (err) {
           console.error("Error during login", err);
@@ -65,7 +54,7 @@ const authOptions: NextAuthOptions = {
     async jwt({ token, user, account, trigger, session }) {
       if (user && account) {
         token.email = user.email;
-        token.name = user.name;
+        token.username = user.name;
         token.image = user.image;
         token.id =
           account.provider === "credentials"
@@ -75,7 +64,7 @@ const authOptions: NextAuthOptions = {
       if (trigger === "update") {
         return { ...token, ...session.user };
       }
-      if (!token.native || !token.isLearning) {
+      if (!token.native || !token.learnedLanguages) {
         const updatedToken = addUserDataToToken(token as any);
         return updatedToken;
       }
@@ -83,10 +72,12 @@ const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       session.user.id = token.id;
+      session.user.username = token.username;
       session.user.native = token.native;
-      session.user.isLearning = token.isLearning;
+      session.user.learnedLanguages = token.learnedLanguages;
       session.user.usernameSlug = token.usernameSlug;
       session.user.learnedLists = token.learnedLists;
+      session.user.customSRSettings = token.customSRSettings;
       if (!session.user.activeLanguage)
         session.user.activeLanguageAndFlag = token.activeLanguageAndFlag;
       return session;
@@ -134,50 +125,25 @@ interface ProfileExtended {
   picture?: string;
 }
 
-interface Token {
-  name: string;
-  email: string;
+type Token = Omit<User, "native"> & {
   picture: string;
   sub: string;
   image: string;
-  id: string;
+  username: string;
   native: LanguageWithFlagAndName | undefined;
-  isLearning: LanguageWithFlagAndName[];
-  usernameSlug: string | undefined;
-  learnedLists: Record<SupportedLanguage, number[]> | never[];
-  activeLanguageAndFlag: LanguageWithFlag;
-}
+};
 
 async function addUserDataToToken(token: Token) {
   const userData = await getUserById(token.id);
-
-  if (!token.native && userData?.native) {
-    const languageFeatures = await getLanguageFeaturesForLanguage(
-      userData.native
-    );
-    if (!languageFeatures) throw new Error("Failed to fetch language features");
-    token.native = {
-      name: userData.native,
-      flag: languageFeatures?.flagCode,
-      langName: languageFeatures.langName,
-    };
+  if (userData) {
+    if (!token.native && userData?.native) token.native = userData.native;
+    token.learnedLanguages = userData.learnedLanguages || [];
+    token.learnedLists = userData?.learnedLists || {};
+    token.usernameSlug = userData?.usernameSlug;
+    token.username = userData.username;
+    token.customSRSettings = userData.customSRSettings;
   }
-  if (
-    !token.isLearning &&
-    userData?.languages &&
-    userData.languages.length > 0
-  ) {
-    const userIsLearning: LanguageWithFlagAndName[] = userData.languages.map(
-      (lang: LearnedLanguage) => ({
-        name: lang.code,
-        flag: lang.flag,
-        langName: lang.name,
-      })
-    );
-    token.isLearning = userIsLearning;
-  }
-  token.learnedLists = await getAllLearnedListsForUser(token.id);
-  token.usernameSlug = userData?.usernameSlug;
-  if (token.isLearning) token.activeLanguageAndFlag = token.isLearning[0];
+  if (token.learnedLanguages)
+    token.activeLanguageAndFlag = token.learnedLanguages[0];
   return token;
 }

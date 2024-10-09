@@ -47,8 +47,8 @@ export async function parseCSV(filename: string, newList: List) {
         let formattedData: ParsedItem = {
           name: data.name,
           normalizedName: normalizeString(data.name),
-          slug: slugifyString(data.name, newList.language),
-          language: newList.language,
+          slug: slugifyString(data.name, newList.language.code),
+          language: newList.language.code,
           partOfSpeech: data.partOfSpeech,
           case:
             data.case && data.case.length > 0 ? (data.case as Case) : undefined,
@@ -94,7 +94,7 @@ export async function parseCSV(filename: string, newList: List) {
           await Promise.all([
             linkItemsToTheirLemmas(harvestedItems),
             addTranslationsToItems(harvestedItems),
-            addItemsToList(harvestedItems, newListId, newList.language),
+            addItemsToList(harvestedItems, newListId, newList.language.code),
           ]);
         };
 

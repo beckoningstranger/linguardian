@@ -1,12 +1,14 @@
 "use client";
 
-import { useOutsideClick } from "@/lib/hooks";
+import { useListContext } from "@/context/ListContext";
 import { changeListDetails } from "@/lib/actions";
+import { useOutsideClick } from "@/lib/hooks";
+import { User } from "@/lib/types";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import CreatedByLine from "./CreatedByLine";
-import { useListContext } from "@/context/ListContext";
 
 interface ListHeaderProps {}
 
@@ -15,6 +17,7 @@ export default function ListHeader({}: ListHeaderProps) {
   const {
     listData: {
       name,
+      language,
       listNumber,
       description,
       image = "https://picsum.photos/200?grayscale",
@@ -22,8 +25,13 @@ export default function ListHeader({}: ListHeaderProps) {
     },
     userIsAuthor,
     authorData,
-    userIsLearningThisList,
   } = useListContext();
+
+  const { data } = useSession();
+  const user = data?.user as User;
+
+  const userIsLearningThisList =
+    user.learnedLists[language.code]?.includes(listNumber);
 
   const numberOfItems = units.length;
 

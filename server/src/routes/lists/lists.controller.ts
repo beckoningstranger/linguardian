@@ -3,8 +3,8 @@ import fs from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
-import { getFlagForLanguage } from "../../lib/helperFunctions.js";
 import { parseCSV } from "../../lib/parsecsv.js";
+import { siteSettings } from "../../lib/siteSettings.js";
 import {
   FullyPopulatedList,
   List,
@@ -35,15 +35,24 @@ const __dirname = dirname(__filename);
 
 export async function httpPostCreateNewList(req: Request, res: Response) {
   // Needs proper validation
+  const { listName, language, author, description } = req.body;
+
+  const { flagCode, langName } = siteSettings.languageFeatures.find(
+    (lfeatures) => lfeatures.langCode === language
+  )!;
+
   try {
     const newList: List = {
-      authors: [req.body.author],
-      language: req.body.language,
-      name: req.body.listName,
-      description: req.body.listDescription,
+      authors: [author],
+      language: {
+        code: language,
+        flag: flagCode,
+        name: langName,
+      },
+      name: listName,
+      description,
       private: false,
       listNumber: await getNextListNumber(),
-      flag: await getFlagForLanguage(req.body.language),
       units: [],
       unitOrder: [],
       unlockedReviewModes: {},
@@ -52,7 +61,7 @@ export async function httpPostCreateNewList(req: Request, res: Response) {
     const responseObject = {
       message: {
         listNumber: newList.listNumber,
-        listLanguage: req.body.language,
+        listLanguage: language,
       },
     };
 
@@ -143,7 +152,7 @@ export async function httpGetListDataForMetadata(req: Request, res: Response) {
   if (!list) return res.status(404).json();
 
   const { name, unitOrder, language, description } = list;
-  const languageFeatures = await getLanguageFeaturesForLanguage(language);
+  const languageFeatures = await getLanguageFeaturesForLanguage(language.code);
   if (!languageFeatures) return res.status(404).json();
 
   return res.status(200).json({

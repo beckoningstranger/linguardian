@@ -20,8 +20,9 @@ export default async function ItemPageDEFTRCO({
 
   const foundTranslations: Item[] = [];
   allUserLanguages.forEach((lang) => {
-    if (!translations || !translations[lang]) return;
-    translations[lang]?.forEach((item) => {
+    if (!translations || !translations[lang.code]) return;
+
+    translations[lang.code]?.forEach((item) => {
       foundTranslations.push(item);
     });
   });
@@ -70,7 +71,6 @@ export default async function ItemPageDEFTRCO({
               )) +
               ")"
             }
-            // type={lang}
             content={lang}
           />
         );

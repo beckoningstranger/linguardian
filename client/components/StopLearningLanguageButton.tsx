@@ -1,8 +1,7 @@
 "use client";
 
-import { stopLearningLanguage } from "@/lib/actions";
-import paths from "@/lib/paths";
-import { SessionUser, SupportedLanguage } from "@/lib/types";
+import { setLearnedLanguages } from "@/lib/actions";
+import { LanguageWithFlagAndName, User } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -10,41 +9,40 @@ import toast from "react-hot-toast";
 import Spinner from "./Spinner";
 
 interface StopLearningLanguageButtonProps {
-  langName: string;
-  langCode: string;
+  language: LanguageWithFlagAndName;
 }
 
 export default function StopLearningLanguageButton({
-  langName,
-  langCode,
+  language,
 }: StopLearningLanguageButtonProps) {
   const [updating, setUpdating] = useState(false);
   const { data, status, update } = useSession();
-  const sessionUser = data?.user as SessionUser;
+  const user = data?.user as User;
   const router = useRouter();
 
   const handleStopLearningLanguage = async () => {
     setUpdating(true);
+    const updatedLearnedLanguages = user.learnedLanguages
+      ? user?.learnedLanguages.filter(
+          (languageObject) => languageObject.code !== language.code
+        )
+      : [];
+
     try {
-      toast.promise(stopLearningLanguage(langCode as SupportedLanguage), {
+      toast.promise(setLearnedLanguages(updatedLearnedLanguages), {
         loading: "Updating your learning settings...",
-        success: `You are no longer learning ${langName}!`,
+        success: `You are no longer learning ${language.name}!`,
         error: (err) => err.toString(),
       });
 
-      const updatedIsLearning = sessionUser?.isLearning.filter(
-        (lwf) => lwf.name !== langCode
-      );
       await update({
         ...data,
         user: {
-          ...sessionUser,
-          isLearning: updatedIsLearning,
-          activeLanguageAndFlag: updatedIsLearning[0],
+          ...user,
+          learnedLanguages: updatedLearnedLanguages,
+          activeLanguageAndFlag: updatedLearnedLanguages[0],
         },
       });
-
-      router.push(paths.profilePath(sessionUser.usernameSlug));
     } catch (err) {
       console.error(err);
     } finally {
@@ -60,7 +58,7 @@ export default function StopLearningLanguageButton({
       onClick={handleStopLearningLanguage}
       disabled={updating}
     >
-      Stop learning {langName}
+      Stop learning {language.name}
     </button>
   );
 }

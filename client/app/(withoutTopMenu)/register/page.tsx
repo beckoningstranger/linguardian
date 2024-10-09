@@ -8,12 +8,12 @@ export const metadata = {
 };
 
 export default async function RegisterPage() {
-  const sessionUser = await getUserOnServer();
-  if (!sessionUser) return <RegisterForm />;
+  const user = await getUserOnServer();
+  if (!user) return <RegisterForm />;
 
-  if (!sessionUser.native || !sessionUser.isLearning) {
+  if (!user.native || !user.learnedLanguages) {
     redirect(paths.welcomePath());
-  } else {
-    redirect(paths.dashboardLanguagePath(sessionUser.isLearning[0].name));
   }
+
+  redirect(paths.dashboardLanguagePath(user.learnedLanguages[0].code));
 }

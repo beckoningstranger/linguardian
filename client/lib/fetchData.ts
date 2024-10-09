@@ -2,8 +2,7 @@ import {
   DictionarySearchResult,
   FullyPopulatedList,
   LanguageFeatures,
-  LearnedLanguageWithPopulatedLists,
-  LearningData,
+  LearningDataForLanguage,
   LearningMode,
   List,
   PopulatedList,
@@ -18,7 +17,9 @@ const server = process.env.SERVER_URL;
 
 export async function getSupportedLanguages() {
   try {
-    const response = await fetch(`${server}/settings/supportedLanguages`);
+    const response = await fetch(`${server}/settings/supportedLanguages`, {
+      next: { revalidate: 86400 },
+    }); // revalidate once per day
     if (!response.ok) throw new Error(response.statusText);
     const supportedLanguages: SupportedLanguage[] = await response.json();
     return supportedLanguages;
@@ -122,14 +123,16 @@ export async function getFullyPopulatedListByListNumber(
   }
 }
 
-export async function getPopulatedList(lNumber: number) {
+export async function getPopulatedList(listNumber: number) {
   try {
-    const response = await fetch(`${server}/lists/getPopulatedList/${lNumber}`);
+    const response = await fetch(
+      `${server}/lists/getPopulatedList/${listNumber}`
+    );
     if (!response.ok) throw new Error(response.statusText);
     const list: PopulatedList = await response.json();
     return list;
   } catch (err) {
-    console.error(`Error fetching populated list number ${lNumber}: ${err}`);
+    console.error(`Error fetching populated list number ${listNumber}: ${err}`);
   }
 }
 
@@ -152,43 +155,6 @@ export async function getListsByLanguage(language: SupportedLanguage) {
     return lists;
   } catch (err) {
     console.error(`Error fetching all lists for language ${language}`);
-  }
-}
-
-export async function getLearnedLanguageData(
-  userId: string,
-  language: SupportedLanguage
-) {
-  try {
-    const response = await fetch(
-      `${server}/users/getLearnedLanguageDataForLanguage/${language}/${userId}`
-    );
-    if (!response.ok) throw new Error(response.statusText);
-    const learnedLanguageData: LearnedLanguageWithPopulatedLists =
-      await response.json();
-    return learnedLanguageData;
-  } catch (err) {
-    console.error(
-      `Error fetching learned lists for language ${language} for user ${userId}: ${err}`
-    );
-  }
-}
-
-export async function getLearningDataForList(
-  userId: string,
-  language: SupportedLanguage,
-  listNumber: number
-) {
-  try {
-    const response = await fetch(
-      `${server}/users/getLearnedList/${language}/${userId}/${listNumber}`
-    );
-    if (!response.ok) throw new Error(response.statusText);
-    return (await response.json()) as LearningData;
-  } catch (err) {
-    console.log(
-      `No learning data for list ${listNumber} for user ${userId}: ${err}`
-    );
   }
 }
 
@@ -304,24 +270,42 @@ export async function getUnitNumbers(listNumber: number) {
   }
 }
 
-export async function getAllLearnedListsForUser(userId: string) {
+export async function getLearningDataForUser(userId: string) {
   try {
-    const response = await fetch(`${server}/users/getLearnedLists/${userId}`);
+    const response = await fetch(
+      `${server}/users/getLearningDataForUser/${userId}`
+    );
     if (!response.ok) throw new Error(response.statusText);
     return await response.json();
   } catch (err) {
     console.error(
-      `Error fetching learned lists for user with id ${userId}: ${err}`
+      `Error fetching learning data for user with id ${userId}: ${err}`
     );
-    return [];
+  }
+}
+
+export async function getLearningDataForLanguage(
+  userId: string,
+  language: SupportedLanguage
+) {
+  try {
+    const response = await fetch(
+      `${server}/users/getLearningDataForLanguage/${userId}/${language}`
+    );
+    if (!response.ok) throw new Error(response.statusText);
+    return (await response.json()) as LearningDataForLanguage;
+  } catch (err) {
+    console.error(
+      `Failed to get learning data for ${language} for ${userId}: ${err}`
+    );
   }
 }
 
 export async function getRecentDictionarySearches() {
-  const [sessionUser] = await Promise.all([getUserOnServer()]);
+  const [user] = await Promise.all([getUserOnServer()]);
 
   const response = await fetch(
-    `${server}/users/getRecentDictionarySearches/${sessionUser.id}`
+    `${server}/users/getRecentDictionarySearches/${user.id}`
   );
   if (!response.ok) {
     const responseData = await response.json();
@@ -335,4 +319,19 @@ export async function getUserByEmail(email: string) {
   const responseData = await response.json();
   if (response.ok) return responseData;
   throw new Error("Could not get user by email.");
+}
+
+export async function getDefaultSRSettings() {
+  const response = await fetch(`${server}/settings/defaultSRSettings`);
+  return await response.json();
+}
+
+export async function getDashboardDataForUser(
+  userId: string,
+  language: SupportedLanguage
+) {
+  const response = await fetch(
+    `${server}/users/getDashboardDataForUserId/${userId}/${language}`
+  );
+  return await response.json();
 }

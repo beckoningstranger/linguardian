@@ -1,6 +1,6 @@
 "use client";
 
-import { LanguageWithFlag, SessionUser } from "@/lib/types";
+import { LanguageWithFlagAndName, User } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import {
   Dispatch,
@@ -14,8 +14,8 @@ import {
 } from "react";
 
 interface ActiveLanguageContext {
-  activeLanguage: LanguageWithFlag | null;
-  setActiveLanguage: Dispatch<SetStateAction<LanguageWithFlag | null>>;
+  activeLanguage: LanguageWithFlagAndName | null;
+  setActiveLanguage: Dispatch<SetStateAction<LanguageWithFlagAndName | null>>;
 }
 
 const ActiveLanguageContext = createContext<ActiveLanguageContext>({
@@ -31,19 +31,20 @@ export const ActiveLanguageProvider = ({
   children,
 }: ActiveLanguageProviderProps) => {
   const { data, status } = useSession();
-  const sessionUser = data?.user as SessionUser;
-  const [activeLanguage, setActiveLanguage] = useState<LanguageWithFlag | null>(
-    sessionUser?.activeLanguageAndFlag
-  );
+  const user = data?.user as User;
+  const [activeLanguage, setActiveLanguage] =
+    useState<LanguageWithFlagAndName | null>(
+      user?.activeLanguageAndFlag ? user.activeLanguageAndFlag : null
+    );
   const contextValue = useMemo(
     () => ({ activeLanguage, setActiveLanguage }),
     [activeLanguage]
   );
 
   useEffect(() => {
-    if (sessionUser?.activeLanguageAndFlag)
-      setActiveLanguage(sessionUser.activeLanguageAndFlag);
-  }, [sessionUser]);
+    if (user?.activeLanguageAndFlag)
+      setActiveLanguage(user.activeLanguageAndFlag);
+  }, [user]);
 
   return status === "authenticated" ? (
     <ActiveLanguageContext.Provider value={contextValue}>

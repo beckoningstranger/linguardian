@@ -11,17 +11,24 @@ import FlexibleLearningButtons from "../FlexibleLearningButtons";
 import Leaderboard from "../Leaderboard";
 import AllLearningButtons from "./AllLearningButtons";
 import StartLearningListButton from "./StartLearningListButton";
+import { useSession } from "next-auth/react";
+import { User } from "@/lib/types";
 
 export default function ChartsLButtonsLeaderboard() {
   const {
-    userIsLearningThisList,
     listStats,
     listStatus,
     listData: { language, listNumber },
     unlockedLearningModesForUser,
   } = useListContext();
 
-  if (!userIsLearningThisList) return <StartLearningListButton />;
+  const { data } = useSession();
+  const user = data?.user as User;
+
+  if (!user?.learnedLists?.[language.code]?.includes(listNumber)) {
+    return <StartLearningListButton />;
+  }
+
   return (
     <>
       <>
@@ -48,7 +55,7 @@ export default function ChartsLButtonsLeaderboard() {
           stats={listStats}
           status={listStatus}
           listNumber={listNumber}
-          listLanguage={language}
+          listLanguage={language.code}
           unlockedModes={unlockedLearningModesForUser}
         />
       </AllLearningButtonsMobileContainer>

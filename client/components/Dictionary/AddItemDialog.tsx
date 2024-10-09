@@ -1,27 +1,27 @@
 "use client";
 
 import { addItemToList } from "@/lib/actions";
+import paths from "@/lib/paths";
 import {
   DictionarySearchResult,
   Item,
   ItemWithPopulatedTranslations,
   ListAndUnitData,
   SupportedLanguage,
-  UserLanguagesWithFlags,
+  User,
 } from "@/lib/types";
 import { Button, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
-import { Dispatch, SetStateAction } from "react";
-import Search from "./Search";
-import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import paths from "@/lib/paths";
+import { Dispatch, SetStateAction } from "react";
+import toast from "react-hot-toast";
+import Search from "./Search";
 
 interface AddItemDialogProps {
   mode: "addAsTranslation" | "addToList";
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  seperatedUserLanguagesWithFlags: UserLanguagesWithFlags;
   item?: Omit<ItemWithPopulatedTranslations, "_id">;
   itemLanguage?: SupportedLanguage;
   translations?: Partial<Record<SupportedLanguage, Item[]>>;
@@ -36,26 +36,25 @@ export default function AddItemDialog({
   itemLanguage,
   isOpen,
   setIsOpen,
-  seperatedUserLanguagesWithFlags,
   translations,
   setTranslations,
   mode,
   listAndUnitData,
 }: AddItemDialogProps) {
   const router = useRouter();
-  const allUserLanguagesWithFlags = Object.values(
-    seperatedUserLanguagesWithFlags
-  ).flat();
+  const { data } = useSession();
+  const user = data?.user as User;
+  const allUserLanguagesWithFlags = [user.native, user.learnedLanguages].flat();
 
-  const searchLanguagesWithFlags =
+  const searchLanguages =
     listAndUnitData && mode === "addToList"
-      ? [listAndUnitData.languageWithFlag]
+      ? [listAndUnitData.languageWithFlagAndName]
       : [...allUserLanguagesWithFlags];
 
   if (item && mode === "addAsTranslation")
-    searchLanguagesWithFlags.splice(
+    searchLanguages.splice(
       allUserLanguagesWithFlags.findIndex(
-        (itemLanguageAndFlag) => itemLanguageAndFlag.name === itemLanguage
+        (itemLanguageAndFlag) => itemLanguageAndFlag.code === itemLanguage
       ),
       1
     );
@@ -78,7 +77,7 @@ export default function AddItemDialog({
               contains the word you want to add.
             </div>
             <Search
-              searchLanguagesWithFlags={searchLanguagesWithFlags}
+              searchLanguages={searchLanguages}
               mode={
                 mode === "addAsTranslation"
                   ? "searchResultIsTranslation"
@@ -100,22 +99,19 @@ export default function AddItemDialog({
   async function addItemToThisList(item: ItemWithPopulatedTranslations) {
     if (!listAndUnitData)
       throw new Error("Cannot add item, list data is missing...");
-    toast.promise(
-      addItemToList(listAndUnitData, item), // Your fetch function
-      {
-        loading: "Adding item to this list...",
-        success: (result) => {
-          setIsOpen(false);
-          if (result?.message === "Duplicate item") {
-            return "Item is already in the list! ⚠️";
-          }
-          return `Item added! 🎉`;
-        },
-        error: (err) => {
-          return `Failed to add item: ${err.message}`;
-        },
-      }
-    );
+    toast.promise(addItemToList(listAndUnitData, item), {
+      loading: "Adding item to this list...",
+      success: (result) => {
+        setIsOpen(false);
+        if (result?.message === "Duplicate item") {
+          return "Item is already in the list! ⚠️";
+        }
+        return `Item added! 🎉`;
+      },
+      error: (err) => {
+        return `Failed to add item: ${err.message}`;
+      },
+    });
   }
 
   function addItemAsTranslation(item: DictionarySearchResult) {

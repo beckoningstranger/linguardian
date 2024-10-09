@@ -1,7 +1,6 @@
 import {
   fetchAuthors,
-  getLanguageFeaturesForLanguage,
-  getLearningDataForList,
+  getLearningDataForLanguage,
   getListDataForMetadata,
   getPopulatedList,
 } from "@/lib/fetchData";
@@ -43,50 +42,32 @@ export default async function ListPage({
 }: ListPageProps) {
   const listNumber = parseInt(listNumberString);
 
-  const [listData, sessionUser] = await Promise.all([
+  const [listData, user] = await Promise.all([
     getPopulatedList(listNumber),
     getUserOnServer(),
   ]);
   if (!listData) return notFound();
 
-  const { language, authors, unlockedReviewModes, units } = listData;
-  const [authorData, languageFeaturesForListLanguage, learningDataForUser] =
-    await Promise.all([
-      fetchAuthors(authors),
-      getLanguageFeaturesForLanguage(language),
-      getLearningDataForList(
-        sessionUser.id,
-        listData.language,
-        listData.listNumber
-      ),
-    ]);
-  const learnedListsForUserAndLanguage = sessionUser.learnedLists[language];
+  const { authors, unlockedReviewModes, units } = listData;
+  const [authorData, learningDataForLanguage] = await Promise.all([
+    fetchAuthors(authors),
+    getLearningDataForLanguage(user.id, listData.language.code),
+  ]);
 
-  if (!languageFeaturesForListLanguage)
-    throw new Error("Could not get language features");
-
-  const listLanguageName = languageFeaturesForListLanguage?.langName;
-  const userIsLearningThisList: boolean =
-    learnedListsForUserAndLanguage?.includes(listNumber) || false;
-
-  const userIsAuthor = authors.includes(sessionUser.id);
-
-  const unlockedLearningModesForUser =
-    unlockedReviewModes[sessionUser.native.name];
-
+  const userIsAuthor = authors.includes(user.id);
+  const unlockedLearningModesForUser = unlockedReviewModes[user.native.code];
   const itemIdsInUnits = units.map((item) => item.item._id);
   const { listStats, listStatus } = getListStatsAndStatus(
     itemIdsInUnits,
-    learningDataForUser
+    learningDataForLanguage
   );
+
   return (
     <ListContextProvider
       userIsAuthor={userIsAuthor}
       listData={listData}
       authorData={authorData}
-      userIsLearningThisList={userIsLearningThisList}
-      listLanguageName={listLanguageName}
-      learningDataForUser={learningDataForUser}
+      learningDataForLanguage={learningDataForLanguage}
       unlockedLearningModesForUser={unlockedLearningModesForUser}
       listStats={listStats}
       listStatus={listStatus}
@@ -94,6 +75,7 @@ export default async function ListPage({
       <ListContainer>
         <MobileMenuContextProvider>
           <DeleteListButton />
+          {/* <StopLearningListButton list={{ language, listNumber, name }} /> */}
         </MobileMenuContextProvider>
         <ListHeader />
         <Suspense fallback={<Spinner centered />}>

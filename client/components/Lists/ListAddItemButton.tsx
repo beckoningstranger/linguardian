@@ -1,17 +1,15 @@
 "use client";
 
-import { ListAndUnitData, UserLanguagesWithFlags } from "@/lib/types";
+import { ListAndUnitData } from "@/lib/types";
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import AddItemDialog from "../Dictionary/AddItemDialog";
 
 interface ListAddItemButtonProps {
-  userLanguagesWithFlags: UserLanguagesWithFlags;
   addToThisList: ListAndUnitData;
 }
 
 export default function ListAddItemButton({
-  userLanguagesWithFlags,
   addToThisList,
 }: ListAddItemButtonProps) {
   const [showAddNewItemDialog, setShowAddNewItemDialog] = useState(false);
@@ -32,7 +30,6 @@ export default function ListAddItemButton({
         <AddItemDialog
           isOpen={showAddNewItemDialog}
           setIsOpen={setShowAddNewItemDialog}
-          seperatedUserLanguagesWithFlags={userLanguagesWithFlags}
           mode="addToList"
           listAndUnitData={addToThisList}
         />

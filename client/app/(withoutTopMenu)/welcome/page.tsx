@@ -9,15 +9,15 @@ export const metadata: Metadata = {
 };
 
 export default async function Welcome() {
-  const [sessionUser, allLanguageFeatures] = await Promise.all([
+  const [user, allLanguageFeatures] = await Promise.all([
     getUserOnServer(),
     getAllLanguageFeatures(),
   ]);
 
-  if (!sessionUser || !allLanguageFeatures)
-    throw new Error("Error fetching data");
+  if (!user || !allLanguageFeatures) throw new Error("Error fetching data");
 
-  if (sessionUser.native && sessionUser.isLearning?.length > 0) redirect("/");
+  if (user.native && user.learnedLanguages && user.learnedLanguages?.length > 0)
+    redirect("/");
 
   return (
     <div className="relative grid h-screen bg-green-300">

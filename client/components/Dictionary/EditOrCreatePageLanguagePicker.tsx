@@ -1,6 +1,6 @@
 "use client";
 
-import { SupportedLanguage, UserLanguagesWithFlags } from "@/lib/types";
+import { LanguageWithFlagAndName, SupportedLanguage } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { FieldErrors, FieldValues } from "react-hook-form";
 import Flag from "react-world-flags";
@@ -8,7 +8,7 @@ import ConfirmLanguageChange from "./ConfirmLanguageChange";
 import { FormErrors } from "./FormErrors";
 
 interface LanguagePickerProps {
-  userLanguagesWithFlags: UserLanguagesWithFlags;
+  userLanguages: LanguageWithFlagAndName[];
   setValue: Function;
   itemLanguage: SupportedLanguage;
   isNewItem: boolean;
@@ -18,7 +18,7 @@ interface LanguagePickerProps {
 }
 
 export default function LanguagePicker({
-  userLanguagesWithFlags,
+  userLanguages,
   setValue,
   itemLanguage,
   isNewItem,
@@ -32,9 +32,7 @@ export default function LanguagePicker({
     SupportedLanguage | undefined
   >(undefined);
 
-  const allUserLanguagesWithFlags = Object.values(
-    userLanguagesWithFlags
-  ).flat();
+  const allUserLanguages = Object.values(userLanguages).flat();
 
   useEffect(() => {
     setValue("language", itemLanguage, {
@@ -56,19 +54,19 @@ export default function LanguagePicker({
 
   return (
     <div className="ml-4 flex w-full justify-evenly gap-4 rounded-md text-center sm:justify-start">
-      {allUserLanguagesWithFlags.map((lwf) => (
+      {allUserLanguages.map((lang) => (
         <Flag
-          code={lwf.flag}
-          key={lwf.name}
+          code={lang.flag}
+          key={lang.code}
           className={`my-2 h-12 w-12 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125  hover:grayscale-0 ${
-            itemLanguage === lwf.name ? "scale-125" : "scale-90 grayscale"
+            itemLanguage === lang.code ? "scale-125" : "scale-90 grayscale"
           }`}
           onClick={() => {
             if (isNewItem) {
-              setItemLanguage(lwf.name);
+              setItemLanguage(lang.code);
               return;
             } else {
-              setSelectedLanguage(lwf.name);
+              setSelectedLanguage(lang.code);
               setShowConfirmLanguageChange(true);
             }
           }}

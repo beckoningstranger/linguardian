@@ -2,7 +2,7 @@ import EditOrCreateItem from "@/components/Dictionary/EditOrCreateItem";
 import { getAllLanguageFeatures, getList } from "@/lib/fetchData";
 import {
   getAllUserLanguages,
-  getSeperatedUserLanguagesWithFlags,
+  getSeperatedUserLanguages,
 } from "@/lib/helperFunctionsServer";
 import { ListAndUnitData } from "@/lib/types";
 
@@ -17,12 +17,12 @@ export default async function NewItemPage({
 
   const [
     allUserLanguages,
-    seperatedUserLanguagesWithFlags,
+    seperatedUserLanguages,
     listData,
     allLanguageFeatures,
   ] = await Promise.all([
     getAllUserLanguages(),
-    getSeperatedUserLanguagesWithFlags(),
+    getSeperatedUserLanguages(),
     getList(Number(listNumber)),
     getAllLanguageFeatures(),
   ]);
@@ -31,7 +31,13 @@ export default async function NewItemPage({
     throw new Error("Failed to get data");
 
   const listAndUnitData: ListAndUnitData = {
-    languageWithFlag: { name: listData.language, flag: listData.flag },
+    languageWithFlagAndName: {
+      code: listData.language.code,
+      flag: listData.language.flag,
+      name: allLanguageFeatures.find(
+        (lang) => lang.flagCode === listData.language.flag
+      )?.langName!,
+    },
     listNumber: Number(listNumber),
     listName: listData.name,
     unitName: decodedUnitName,
@@ -47,7 +53,7 @@ export default async function NewItemPage({
   return (
     <EditOrCreateItem
       allLanguageFeatures={allLanguageFeatures}
-      userLanguagesWithFlags={seperatedUserLanguagesWithFlags}
+      seperatedUserLanguages={seperatedUserLanguages}
       addToThisList={listAndUnitData}
     />
   );

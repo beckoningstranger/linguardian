@@ -1,31 +1,29 @@
 import paths from "@/lib/paths";
-import { SupportedLanguage } from "@/lib/types";
+import { PopulatedList } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
 
 interface ListStoreCardProps {
   authorData: { username: string; usernameSlug: string }[];
-  title: string;
-  description: string | undefined;
-  image: string | undefined;
-  numberOfItems: number;
-  numberOfUnits: number | undefined;
-  difficulty: string | undefined;
-  listNumber: number;
-  language: SupportedLanguage;
+  list: PopulatedList;
 }
 
 export default function ListStoreCard({
   authorData,
-  title,
-  description = "No description entered yet...",
-  image = "https:/picsum.photos/150?grayscale",
-  numberOfItems,
-  numberOfUnits,
-  difficulty = "Unknown",
-  listNumber,
-  language,
+  list,
 }: ListStoreCardProps) {
+  const {
+    listNumber,
+    difficulty = "Unknown",
+    units,
+    image = "https:/picsum.photos/150?grayscale",
+    description = "No description entered yet...",
+    name: title,
+    unitOrder,
+  } = list;
+
+  const numberOfItems = units.length;
+  const numberOfUnits = unitOrder?.length;
   return (
     <Link href={paths.listDetailsPath(listNumber)}>
       <article className="flex w-[340px] flex-col justify-between rounded-md bg-slate-100 shadow-md transition-all hover:shadow-xl xl:w-[350px]">

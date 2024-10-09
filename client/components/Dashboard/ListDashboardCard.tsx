@@ -4,34 +4,38 @@ import { RxDotsVertical } from "react-icons/rx";
 
 import ListBarChart from "@/components/Charts/ListBarChart";
 import paths from "@/lib/paths";
-import { LearningData, LearningMode, PopulatedList } from "@/lib/types";
+import {
+  LearningDataForLanguage,
+  LearningMode,
+  PopulatedList,
+} from "@/lib/types";
 import Link from "next/link";
 import ListPieChart from "../Charts/ListPieChart";
 import FlexibleLearningButtons from "../Lists/FlexibleLearningButtons";
 import { getListStatsAndStatus } from "../Lists/ListHelpers";
+import StopLearningListButton from "../Lists/ListOverview/StopLearningListButton";
 import ContextMenu from "../Menus/ContextMenu";
-import RemoveListButton from "./RemoveListButton";
 
 interface ListDashboardCardProps {
   list: PopulatedList;
-  userId: string;
   unlockedModes: LearningMode[] | undefined;
-  learningDataForList: LearningData | undefined;
+  learningDataForLanguage: LearningDataForLanguage | undefined;
 }
 
 export default function ListDashboardCard({
   list,
-  userId,
   unlockedModes,
-  learningDataForList,
+  learningDataForLanguage,
 }: ListDashboardCardProps) {
   const [showContextMenu, setShowContextMenu] = useState(false);
 
   const itemIdsInUnits = list.units.map((item) => item.item._id);
   const { listStats, listStatus } = getListStatsAndStatus(
     itemIdsInUnits,
-    learningDataForList
+    learningDataForLanguage
   );
+
+  const { language, listNumber, name } = list;
 
   return (
     <div className="relative mx-6 rounded-md bg-slate-200 lg:mx-3 xl:mx-6">
@@ -41,11 +45,8 @@ export default function ListDashboardCard({
         moreClasses="absolute top-0 left-0 h-full"
       >
         <div className="m-4 flex flex-col">
-          <RemoveListButton
-            listLanguage={list.language}
-            listName={list.name}
-            listNumber={list.listNumber}
-            userId={userId}
+          <StopLearningListButton
+            list={{ language: language.code, listNumber, name }}
           />
         </div>
       </ContextMenu>
@@ -78,7 +79,7 @@ export default function ListDashboardCard({
           status={listStatus}
           listNumber={list.listNumber}
           unlockedModes={unlockedModes}
-          listLanguage={list.language}
+          listLanguage={list.language.code}
         />
       </div>
     </div>

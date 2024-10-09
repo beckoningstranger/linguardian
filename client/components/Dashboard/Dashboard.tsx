@@ -1,48 +1,43 @@
 import Link from "next/link";
 
-import { getLearningDataForList, getPopulatedList } from "@/lib/fetchData";
-import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
-import { SupportedLanguage } from "@/lib/types";
+import {
+  LearningDataForLanguage,
+  PopulatedList,
+  SupportedLanguage,
+} from "@/lib/types";
 import BottomRightButton from "../BottomRightButton";
 import ListDashboardCard from "./ListDashboardCard";
 
 interface DashboardProps {
   language: SupportedLanguage;
+  learnedLists: number[];
+  populatedLists: PopulatedList[];
+  learningDataForLanguage: LearningDataForLanguage;
+
+  userNative: SupportedLanguage;
 }
 
-export default async function Dashboard({ language }: DashboardProps) {
-  const sessionUser = await getUserOnServer();
-
-  let learnedLists: number[] | undefined = sessionUser.learnedLists[language];
-  if (!learnedLists) learnedLists = [];
-
-  const { fetchedLists, fetchedLearningDataForEachList } =
-    await getListsAndLearningDataForLanguage(
-      learnedLists,
-      sessionUser.id,
-      language
-    );
-
+export default async function Dashboard({
+  language,
+  learnedLists,
+  populatedLists,
+  learningDataForLanguage,
+  userNative,
+}: DashboardProps) {
   const renderedLists = (
     <div className="grid w-full max-w-xl grid-cols-1 items-stretch justify-center gap-y-3 py-4 md:max-w-full md:grid-cols-2 lg:grid-cols-3 2xl:mx-8 2xl:max-w-[1500px] 2xl:gap-x-6">
-      {learnedLists?.map(async (listNumber) => {
-        const listData = fetchedLists.find(
+      {learnedLists?.map((listNumber) => {
+        const listData = populatedLists.find(
           (list) => list?.listNumber === listNumber
         );
         if (!listData) return null;
-        const learningDataForList = fetchedLearningDataForEachList.find(
-          (list) => list?.learnedList.listNumber
-        );
         return (
           <ListDashboardCard
             key={listNumber}
             list={listData}
-            userId={sessionUser.id}
-            unlockedModes={
-              listData.unlockedReviewModes[sessionUser.native.name]
-            }
-            learningDataForList={learningDataForList}
+            unlockedModes={listData.unlockedReviewModes[userNative]}
+            learningDataForLanguage={learningDataForLanguage}
           />
         );
       })}
@@ -70,33 +65,9 @@ function AddNewListOption({
   return (
     <Link
       href={paths.listsLanguagePath(language)}
-      className={`${dashboardIsEmpty ? "animate-pulse" : ""}`}
+      className={`${dashboardIsEmpty && "animate-pulse"}`}
     >
       <BottomRightButton />
     </Link>
   );
-}
-
-async function getListsAndLearningDataForLanguage(
-  learnedLists: number[],
-  sessionUserId: string,
-  language: SupportedLanguage
-) {
-  const fetchedListsPromises =
-    learnedLists.length > 0
-      ? learnedLists.map((listNumber) => getPopulatedList(listNumber))
-      : [];
-
-  const fetchedLearningDataForEachListPromises = learnedLists?.map(
-    (listNumber) => getLearningDataForList(sessionUserId, language, listNumber)
-  );
-  const [fetchedLists, fetchedLearningDataForEachList] = await Promise.all([
-    Promise.all(fetchedListsPromises),
-    Promise.all(fetchedLearningDataForEachListPromises),
-  ]);
-  if (!fetchedLists) throw new Error("Could not get lists");
-  if (!fetchedLearningDataForEachList)
-    throw new Error("Could not get learning data");
-
-  return { fetchedLists, fetchedLearningDataForEachList };
 }

@@ -5,7 +5,6 @@ import {
   LearnedItem,
   ListAndUnitData,
   SupportedLanguage,
-  UserLanguagesWithFlags,
 } from "@/lib/types";
 import { useState } from "react";
 import ListAddItemButton from "./ListAddItemButton";
@@ -17,7 +16,6 @@ interface UnitItemsProps {
   userNative: SupportedLanguage;
   userIsAuthor: boolean;
   pathToUnit: string;
-  userLanguagesWithFlags: UserLanguagesWithFlags;
   listAndUnitData: ListAndUnitData;
 }
 
@@ -33,7 +31,6 @@ export default function UnitItems({
   userNative,
   userIsAuthor,
   pathToUnit,
-  userLanguagesWithFlags,
   listAndUnitData,
 }: UnitItemsProps) {
   const [showTranslations, setShowTranslations] = useState<boolean>(false);
@@ -85,12 +82,7 @@ export default function UnitItems({
         </button>
       )}
       {learnedItems} {unlearnedItems}
-      {userIsAuthor && (
-        <ListAddItemButton
-          userLanguagesWithFlags={userLanguagesWithFlags}
-          addToThisList={listAndUnitData}
-        />
-      )}
+      {userIsAuthor && <ListAddItemButton addToThisList={listAndUnitData} />}
     </div>
   );
 }

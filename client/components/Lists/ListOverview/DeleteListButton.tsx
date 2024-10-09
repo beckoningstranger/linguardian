@@ -30,7 +30,7 @@ export default function DeleteListButton({}: DeleteListButtonProps) {
       success: `${name} has been deleted`,
       error: (err) => err.toString(),
     });
-    router.push(paths.dashboardLanguagePath(language));
+    router.push(paths.dashboardLanguagePath(language.code));
   };
 
   return (

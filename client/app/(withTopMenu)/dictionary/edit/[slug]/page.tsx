@@ -5,7 +5,7 @@ import {
 } from "@/lib/fetchData";
 import {
   getAllUserLanguages,
-  getSeperatedUserLanguagesWithFlags,
+  getSeperatedUserLanguages,
 } from "@/lib/helperFunctionsServer";
 
 interface EditPageProps {
@@ -19,15 +19,19 @@ export async function generateMetadata({ params: { slug } }: EditPageProps) {
 }
 
 export default async function EditPage({ params: { slug } }: EditPageProps) {
-  const [allUserLanguages, seperatedUserLanguagesWithFlags] = await Promise.all(
-    [getAllUserLanguages(), getSeperatedUserLanguagesWithFlags()]
-  );
+  const [allUserLanguages, seperatedUserLanguages] = await Promise.all([
+    getAllUserLanguages(),
+    getSeperatedUserLanguages(),
+  ]);
 
   const allLanguageFeatures = await getAllLanguageFeatures();
   if (!allLanguageFeatures) throw new Error("Could not get langauge features");
 
   const [item] = await Promise.all([
-    getPopulatedItemBySlug(slug, allUserLanguages),
+    getPopulatedItemBySlug(
+      slug,
+      allUserLanguages.map((lang) => lang.code)
+    ),
   ]);
 
   if (!item) throw new Error("Could not get data from server");
@@ -36,7 +40,7 @@ export default async function EditPage({ params: { slug } }: EditPageProps) {
     <EditOrCreateItem
       item={item}
       allLanguageFeatures={allLanguageFeatures}
-      userLanguagesWithFlags={seperatedUserLanguagesWithFlags}
+      seperatedUserLanguages={seperatedUserLanguages}
     />
   );
 }

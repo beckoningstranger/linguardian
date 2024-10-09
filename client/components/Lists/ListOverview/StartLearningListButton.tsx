@@ -2,8 +2,8 @@
 import Spinner from "@/components/Spinner";
 import { useActiveLanguage } from "@/context/ActiveLanguageContext";
 import { useListContext } from "@/context/ListContext";
-import { addListToLearnedLists, addNewLanguageToLearn } from "@/lib/actions";
-import { SessionUser } from "@/lib/types";
+import { setLearnedLanguages, setLearnedLists } from "@/lib/actions";
+import { User } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -12,67 +12,66 @@ interface StartLearningListButtonProps {}
 
 export default function StartLearningListButton({}: StartLearningListButtonProps) {
   const {
-    listData: { language, flag, listNumber, name },
-    listLanguageName,
-    setUserIsLearningThisList,
+    listData: { language: listLanguage, listNumber, name },
   } = useListContext();
 
   const [updating, setUpdating] = useState(false);
   const { data, status, update } = useSession();
-  const sessionUser = data?.user as SessionUser;
+  const user = data?.user as User;
   const { setActiveLanguage } = useActiveLanguage();
   let userIsLearningThisLanguage = false;
 
-  if (sessionUser)
-    sessionUser.isLearning.forEach((lang) => {
-      if (lang.name === language) userIsLearningThisLanguage = true;
+  if (user && user.learnedLanguages)
+    user.learnedLanguages.forEach((lang) => {
+      if (lang.code === listLanguage.code) userIsLearningThisLanguage = true;
     });
 
   const addListToLearnedListsAction = async () => {
     setUpdating(true);
-    await toast.promise(addListToLearnedLists(listNumber, language), {
-      loading: `Adding "${name}" to your lists...`,
-      success: () => {
-        setUserIsLearningThisList(true);
-        return `"${name}" has been added to your lists! 🎉`;
-      },
-      error: (err) => err.toString(),
-    });
 
-    const updatedLearnedLists = { ...sessionUser.learnedLists };
-    if (updatedLearnedLists[language]?.length) {
-      updatedLearnedLists[language]?.push(listNumber);
-    } else {
-      updatedLearnedLists[language] = [listNumber];
-    }
-    update({ ...data, user: { learnedLists: updatedLearnedLists } });
+    const updatedLearnedLists = {
+      ...user.learnedLists,
+      [listLanguage.code]: Array.from(
+        new Set(
+          [...(user.learnedLists[listLanguage.code] ?? []), listNumber].flat()
+        )
+      ),
+    };
+
+    await toast.promise(
+      setLearnedLists(listNumber, updatedLearnedLists, listLanguage.code),
+      {
+        loading: `Adding "${name}" to your learned lists...`,
+        success: () => {
+          return `"${name}" has been added to your learned lists! 🎉`;
+        },
+        error: (err) => err.toString(),
+      }
+    );
+
+    await update({ ...data, user: { learnedLists: updatedLearnedLists } });
     setUpdating(false);
   };
 
   const startLearningLanguageAndList = async () => {
-    await toast.promise(addNewLanguageToLearn(sessionUser.id, language), {
-      loading: `Adding ${listLanguageName} to your languages...`,
-      success: `You are now learning ${listLanguageName}! 🎉`,
+    const updatedIsLearning = user.learnedLanguages
+      ? [...user.learnedLanguages, listLanguage]
+      : [listLanguage];
+    await toast.promise(setLearnedLanguages(updatedIsLearning), {
+      loading: `Adding ${listLanguage.name} to your languages...`,
+      success: `You are now learning ${listLanguage.name}! 🎉`,
       error: (err) => err.toString(),
     });
 
-    const updatedIsLearning = [
-      ...sessionUser.isLearning,
-      {
-        flag,
-        name: language,
-      },
-    ];
-
-    update({
+    await update({
       ...data,
       user: {
-        ...sessionUser,
+        ...user,
         updatedIsLearning,
-        activeLanguageAndFlag: { name: language, flag },
+        activeLanguageAndFlag: listLanguage,
       },
     });
-    setActiveLanguage({ name: language, flag });
+    setActiveLanguage(listLanguage);
     await addListToLearnedListsAction();
   };
 
@@ -86,7 +85,7 @@ export default function StartLearningListButton({}: StartLearningListButtonProps
           disabled={updating}
           className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
         >
-          Start learning {listLanguageName} with this list!
+          Start learning {listLanguage.name} with this list!
         </button>
       )}
       {userIsLearningThisLanguage && (

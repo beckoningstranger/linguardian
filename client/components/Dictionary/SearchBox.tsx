@@ -2,7 +2,7 @@
 
 import { findItems } from "@/lib/actions";
 import paths from "@/lib/paths";
-import { DictionarySearchResult, LanguageWithFlag } from "@/lib/types";
+import { DictionarySearchResult, LanguageWithFlagAndName } from "@/lib/types";
 import { Combobox, ComboboxInput } from "@headlessui/react";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect } from "react";
@@ -12,7 +12,7 @@ interface SearchBoxProps {
   debouncedQuery: string;
   setQuery: Dispatch<SetStateAction<string>>;
   searchResults: DictionarySearchResult[];
-  searchLanguagesWithFlags: LanguageWithFlag[];
+  searchLanguages: LanguageWithFlagAndName[];
   setSearchResults: Function;
   getFlagCode: Function;
 }
@@ -22,18 +22,20 @@ export default function SearchBox({
   setQuery,
   searchResults,
   setSearchResults,
-  searchLanguagesWithFlags,
+  searchLanguages,
 }: SearchBoxProps) {
   const router = useRouter();
 
   useEffect(() => {
-    const searchLanguages = searchLanguagesWithFlags.map((item) => item.name);
     if (query.length < 2 || debouncedQuery.length < 2) setSearchResults([]);
 
     if (debouncedQuery.length > 1) {
       const controller = new AbortController();
       (async () => {
-        const response = await findItems(searchLanguages, debouncedQuery);
+        const response = await findItems(
+          searchLanguages.map((lang) => lang.code),
+          debouncedQuery
+        );
         if (response) {
           response.sort((a, b) => {
             if (
@@ -50,7 +52,7 @@ export default function SearchBox({
     } else {
       setSearchResults([]);
     }
-  }, [debouncedQuery, query, setSearchResults, searchLanguagesWithFlags]);
+  }, [debouncedQuery, query, setSearchResults, searchLanguages]);
 
   const handleChange = (result: DictionarySearchResult | "showAll") => {
     if (!result) return;

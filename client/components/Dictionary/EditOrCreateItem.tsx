@@ -8,8 +8,8 @@ import {
   ItemWithPopulatedTranslations,
   LanguageFeatures,
   ListAndUnitData,
+  SeperatedUserLanguages,
   SupportedLanguage,
-  UserLanguagesWithFlags,
 } from "@/lib/types";
 import { itemSchemaWithPopulatedTranslations } from "@/lib/validations";
 import { Input } from "@headlessui/react";
@@ -32,27 +32,31 @@ import ManageTranslations from "./ManageTranslations";
 import PickMultiple from "./PickMultiple";
 
 interface EditOrCreateItemProps {
-  userLanguagesWithFlags: UserLanguagesWithFlags;
+  seperatedUserLanguages: SeperatedUserLanguages;
   item?: Omit<ItemWithPopulatedTranslations, "_id">;
   allLanguageFeatures: LanguageFeatures[];
   addToThisList?: ListAndUnitData;
 }
 
 export default function EditOrCreateItem({
-  userLanguagesWithFlags,
+  seperatedUserLanguages,
   addToThisList,
   item = {
     name: "",
     normalizedName: "",
     language:
-      addToThisList?.languageWithFlag.name ||
-      userLanguagesWithFlags.isLearning[0].name,
+      addToThisList?.languageWithFlagAndName.code ||
+      seperatedUserLanguages.learnedLanguages[0].code,
     partOfSpeech: "noun",
     slug: "new-item",
     translations: {},
   },
   allLanguageFeatures,
 }: EditOrCreateItemProps) {
+  const allUserLanguages = [
+    seperatedUserLanguages.native,
+    ...seperatedUserLanguages.learnedLanguages,
+  ];
   const initialName = useSearchParams().get("initialName");
   if (item.name === "" && initialName) item.name = initialName;
   const {
@@ -188,13 +192,13 @@ export default function EditOrCreateItem({
         <FormErrors field="name" errors={errors} />
 
         <LanguagePicker
-          userLanguagesWithFlags={userLanguagesWithFlags}
+          userLanguages={allUserLanguages}
           setValue={setValue}
           itemLanguage={itemLanguage}
           isNewItem={item.slug === "new-item"}
           setItemLanguage={setItemLanguage}
           errors={errors}
-          staticFlag={addToThisList?.languageWithFlag.flag}
+          staticFlag={addToThisList?.languageWithFlagAndName.flag}
         />
 
         <div className="ml-4 flex flex-col justify-center gap-3">
@@ -294,7 +298,7 @@ export default function EditOrCreateItem({
             errors={errors}
             allTranslations={watch().translations}
             visibleTranslations={getTranslationsForUserLanguages()}
-            userLanguagesWithFlags={userLanguagesWithFlags}
+            seperatedUserLanguages={seperatedUserLanguages}
           />
         </div>
       </form>
@@ -304,15 +308,13 @@ export default function EditOrCreateItem({
   function getTranslationsForUserLanguages() {
     const translations: Partial<Record<SupportedLanguage, Item[]>> =
       watch().translations;
-    const userLanguages = userLanguagesWithFlags.isLearning
-      .concat(userLanguagesWithFlags.native)
-      .map((lang) => lang.name);
+    const userLanguageCodes = allUserLanguages.map((lang) => lang.code);
 
     const copyOfTranslations: Partial<Record<SupportedLanguage, Item[]>> =
       JSON.parse(JSON.stringify(translations));
 
     Object.keys(copyOfTranslations).forEach((lang) => {
-      if (!userLanguages.includes(lang as SupportedLanguage))
+      if (!userLanguageCodes.includes(lang as SupportedLanguage))
         delete copyOfTranslations[lang as SupportedLanguage];
     });
     return copyOfTranslations;

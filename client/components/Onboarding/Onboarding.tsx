@@ -21,23 +21,23 @@ export default function Onboarding({ allLanguageFeatures }: OnboardingProps) {
 
   const allLanguagesAndFlags: LanguageWithFlagAndName[] =
     allLanguageFeatures.map((lang) => ({
-      name: lang.langCode,
+      code: lang.langCode,
       flag: lang.flagCode,
-      langName: lang.langName,
+      name: lang.langName,
     }));
   const allLanguagesExceptPickedNative: LanguageWithFlagAndName[] =
-    allLanguagesAndFlags.filter((lang) => lang.name !== userNative?.name);
+    allLanguagesAndFlags.filter((lang) => lang.code !== userNative?.code);
 
   const allLanguagesAndFlagsExceptPicked: LanguageWithFlagAndName[] =
     allLanguagesAndFlags.filter(
       (lang) =>
-        lang.name !== userNative?.name && lang.name !== languageToLearn?.name
+        lang.code !== userNative?.code && lang.code !== languageToLearn?.code
     );
 
   const allLanguageOptions = allLanguagesExceptPickedNative.map((item) =>
     menuItemWithFlag(item, () => {
       setUserNative(item);
-      if (languageToLearn?.name === item.name) setLanguageToLearn(null);
+      if (languageToLearn?.code === item.code) setLanguageToLearn(null);
       if (step < 2) setStep(2);
     })
   );
@@ -56,7 +56,7 @@ export default function Onboarding({ allLanguageFeatures }: OnboardingProps) {
           allOptions={allLanguageOptions}
           initialString="Select your native language"
           languageObject={userNative}
-          pickedString={`My native language is ${userNative?.langName}`}
+          pickedString={`My native language is ${userNative?.name}`}
         />
       )}
       {step >= 2 && (
@@ -64,7 +64,7 @@ export default function Onboarding({ allLanguageFeatures }: OnboardingProps) {
           allOptions={allLanguageOptionsExceptPicked}
           initialString="Select a language to learn"
           languageObject={languageToLearn}
-          pickedString={`I want to learn ${languageToLearn?.langName}`}
+          pickedString={`I want to learn ${languageToLearn?.name}`}
         />
       )}
 
@@ -94,7 +94,7 @@ export default function Onboarding({ allLanguageFeatures }: OnboardingProps) {
               key={item.name}
               className="my-2 h-12 w-12 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125"
             />
-            <div className="pl-4">{item.langName}</div>
+            <div className="pl-4">{item.name}</div>
           </div>
         )}
       </ListboxOption>

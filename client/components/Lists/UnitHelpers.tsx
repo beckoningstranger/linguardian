@@ -1,16 +1,12 @@
+import { FullyPopulatedList, LearningDataForLanguage } from "@/lib/types";
 import { generateStats } from "./ListHelpers";
-import {
-  FullyPopulatedList,
-  LearnedLanguageWithPopulatedLists,
-} from "@/lib/types";
 
 export async function calculateUnitStats(
   unitName: string,
-  learnedLanguageData: LearnedLanguageWithPopulatedLists,
+  learningDataForLanguage: LearningDataForLanguage,
   listData: FullyPopulatedList
 ) {
-  const learnedItems = learnedLanguageData.learnedItems;
-  const ignoredItems = learnedLanguageData.ignoredItems;
+  const { learnedItems, ignoredItems } = learningDataForLanguage;
 
   const selectedUnitData = listData.units.filter(
     (unit) => unit.unitName === unitName

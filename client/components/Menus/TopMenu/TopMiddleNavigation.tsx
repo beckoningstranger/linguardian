@@ -13,7 +13,7 @@ export default function TopMiddleNavigation({}: TopMiddleNavigationProps) {
     return (
       <div className="absolute left-1/2 hidden -translate-x-1/2 md:flex">
         <Link
-          href={paths.listsLanguagePath(activeLanguage?.name)}
+          href={paths.listsLanguagePath(activeLanguage?.code)}
           className="flex h-20 items-center px-4 hover:bg-slate-300"
         >
           Lists

@@ -3,8 +3,8 @@
 import {
   Item,
   ItemWithPopulatedTranslations,
+  SeperatedUserLanguages,
   SupportedLanguage,
-  UserLanguagesWithFlags,
 } from "@/lib/types";
 import { Button } from "@headlessui/react";
 import { MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/20/solid";
@@ -22,7 +22,7 @@ interface ManageTranslationsProps {
   errors: FieldErrors<FieldValues>;
   allTranslations: Partial<Record<SupportedLanguage, Item[]>> | undefined;
   visibleTranslations: Partial<Record<SupportedLanguage, Item[]>> | undefined;
-  userLanguagesWithFlags: UserLanguagesWithFlags;
+  seperatedUserLanguages: SeperatedUserLanguages;
 }
 
 export default function ManageTranslations({
@@ -32,7 +32,7 @@ export default function ManageTranslations({
   errors,
   allTranslations,
   visibleTranslations,
-  userLanguagesWithFlags,
+  seperatedUserLanguages,
 }: ManageTranslationsProps) {
   const label = { singular: "Translation", plural: "Translations" };
   const [translations, setTranslations] = useState(visibleTranslations || {});
@@ -43,7 +43,7 @@ export default function ManageTranslations({
     const touchedTranslations = getTouchedTranslations(
       translations,
       allTranslations,
-      userLanguagesWithFlags.isLearning.map((lang) => lang.name)
+      seperatedUserLanguages.learnedLanguages.map((lang) => lang.code)
     );
     if (JSON.stringify(touchedTranslations) !== JSON.stringify(allTranslations))
       setValue("translations", touchedTranslations, {
@@ -55,7 +55,7 @@ export default function ManageTranslations({
     translations,
     setValue,
     allTranslations,
-    userLanguagesWithFlags.isLearning,
+    seperatedUserLanguages.learnedLanguages,
   ]);
 
   const renderedTranslations = Object.values(translations).map((x) =>
@@ -112,7 +112,6 @@ export default function ManageTranslations({
         itemLanguage={itemLanguage}
         isOpen={showAddTranslationDialog}
         setIsOpen={setShowAddTranslationDialog}
-        seperatedUserLanguagesWithFlags={userLanguagesWithFlags}
         translations={translations}
         setTranslations={setTranslations}
         mode="addAsTranslation"

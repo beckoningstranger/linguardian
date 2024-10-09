@@ -1,23 +1,21 @@
 import LearnAndReview from "@/components/LearningModes/LearnAndReview";
 import NavigateBackButton from "@/components/NavigateBackButton";
 import {
+  getDefaultSRSettings,
   getFullyPopulatedListByListNumber,
   getLanguageFeaturesForLanguage,
-  getLearnedLanguageData,
   getLearningModes,
   getListName,
   getListNumbers,
   getSupportedLanguages,
-  getUserById,
 } from "@/lib/fetchData";
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import {
   FullyPopulatedList,
   ItemToLearn,
-  LearnedLanguageWithPopulatedLists,
   LearningMode,
+  SRSettings,
   SupportedLanguage,
-  User,
 } from "@/lib/types";
 import { notFound } from "next/navigation";
 
@@ -84,31 +82,27 @@ export default async function LearnAndReviewPage({
       </div>
     );
 
-  const sessionUser = await getUserOnServer();
+  const user = await getUserOnServer();
 
-  const [user, populatedListData, targetLanguageFeatures, learnedLanguageData] =
+  const [populatedListData, targetLanguageFeatures, defaultSRSettings] =
     await Promise.all([
-      getUserById(sessionUser.id),
-      getFullyPopulatedListByListNumber(sessionUser.native.name, listNumber),
-      await getLanguageFeaturesForLanguage(language),
-      await getLearnedLanguageData(sessionUser.id, language),
+      getFullyPopulatedListByListNumber(user.native.code, listNumber),
+      getLanguageFeaturesForLanguage(language),
+      getDefaultSRSettings(),
     ]);
-  if (
-    !user ||
-    !populatedListData ||
-    !targetLanguageFeatures ||
-    !learnedLanguageData
-  )
+  if (!populatedListData || !targetLanguageFeatures || !defaultSRSettings)
     notFound();
 
+  const SRSettingsForLanguage = user?.customSRSettings
+    ? user.customSRSettings[language]
+    : defaultSRSettings;
   const allItemStringsInList = populatedListData.units.map(
     (unitItem) => unitItem.item.name
   );
   const itemsForSession = prepareItemsForSession(
     mode,
-    user,
-    populatedListData,
-    learnedLanguageData
+    SRSettingsForLanguage,
+    populatedListData
   );
 
   return (
@@ -116,8 +110,8 @@ export default async function LearnAndReviewPage({
       targetLanguageFeatures={targetLanguageFeatures}
       items={itemsForSession}
       listName={populatedListData.name}
-      userNative={sessionUser.native.name}
-      userId={sessionUser.id}
+      userNative={user.native.code}
+      userId={user.id}
       allItemStringsInList={allItemStringsInList}
       mode={mode}
     />
@@ -126,21 +120,9 @@ export default async function LearnAndReviewPage({
 
 function prepareItemsForSession(
   mode: LearningMode,
-  user: User,
-  populatedListData: FullyPopulatedList,
-  learnedLanguageData: LearnedLanguageWithPopulatedLists
+  SRSettingsForLanguage: SRSettings,
+  populatedListData: FullyPopulatedList
 ): ItemToLearn[] {
-  const languageDataForListLanguage = user.languages.find(
-    (lang) => lang.code === populatedListData.language
-  );
-
-  const itemsPerSession =
-    languageDataForListLanguage?.customSRSettings?.itemsPerSession;
-
-  const allLearnedItemIds = learnedLanguageData.learnedItems.map(
-    (item) => item.id
-  );
-
   const allLearnableItems: ItemToLearn[] = [];
   const allReviewableItems: ItemToLearn[] = [];
   populatedListData.units.forEach((unitItem) => {
@@ -163,10 +145,16 @@ function prepareItemsForSession(
   let itemsForSession: ItemToLearn[] = [];
   switch (mode) {
     case "translation":
-      itemsForSession = allReviewableItems.slice(0, itemsPerSession?.reviewing);
+      itemsForSession = allReviewableItems.slice(
+        0,
+        SRSettingsForLanguage.itemsPerSession?.reviewing
+      );
       break;
     case "learn":
-      itemsForSession = allLearnableItems.slice(0, itemsPerSession?.learning);
+      itemsForSession = allLearnableItems.slice(
+        0,
+        SRSettingsForLanguage.itemsPerSession?.learning
+      );
       break;
     default:
       console.error("No valid learning mode");

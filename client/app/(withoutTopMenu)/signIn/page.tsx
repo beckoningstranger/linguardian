@@ -5,12 +5,11 @@ import { redirect } from "next/navigation";
 export const metadata = { title: "Signing in..." };
 
 export default async function SignInPage() {
-  const sessionUser = await getUserOnServer();
-  if (!sessionUser) redirect(paths.rootPath());
+  const user = await getUserOnServer();
+  if (!user) redirect(paths.rootPath());
 
-  if (!sessionUser.native) redirect(paths.welcomePath());
-  if (!sessionUser.isLearning) redirect(paths.welcomePath());
+  if (!user.native || !user.learnedLanguages || !user.learnedLanguages[0])
+    redirect(paths.welcomePath());
 
-  if (sessionUser.native && sessionUser.isLearning)
-    redirect(paths.dashboardLanguagePath(sessionUser.isLearning[0].name));
+  redirect(paths.dashboardLanguagePath(user.learnedLanguages[0].code));
 }

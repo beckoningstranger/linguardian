@@ -36,12 +36,12 @@ export default function SideBarNavigation({}: SideBarNavigationProps) {
                 <SideNavItem
                   icon={<RxHamburgerMenu />}
                   label="Dashboard"
-                  href={paths.dashboardLanguagePath(activeLanguage.name)}
+                  href={paths.dashboardLanguagePath(activeLanguage.code)}
                 />
                 <SideNavItem
                   icon={<RiFileList3Fill />}
                   label="Lists"
-                  href={paths.listsLanguagePath(activeLanguage.name)}
+                  href={paths.listsLanguagePath(activeLanguage.code)}
                 />
               </>
             )}

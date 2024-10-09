@@ -1,5 +1,4 @@
 import paths from "@/lib/paths";
-import { SupportedLanguage } from "@/lib/types";
 import Link from "next/link";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
@@ -8,7 +7,6 @@ interface UnitHeaderProps {
   unitNumber: number;
   itemNumber: number;
   listNumber: number;
-  listLanguage: SupportedLanguage;
   unitCount: number;
 }
 
@@ -17,7 +15,6 @@ export default function UnitHeader({
   unitNumber,
   itemNumber,
   listNumber,
-  listLanguage,
   unitCount,
 }: UnitHeaderProps) {
   return (

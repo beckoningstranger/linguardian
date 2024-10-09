@@ -49,7 +49,10 @@ export default async function ItemPage({
 }: ItemPageProps) {
   const userLanguages = await getAllUserLanguages();
 
-  const item = await getPopulatedItemBySlug(slug, userLanguages);
+  const item = await getPopulatedItemBySlug(
+    slug,
+    userLanguages.map((lang) => lang.code)
+  );
   if (!item)
     return (
       <div className="grid h-96 place-items-center">

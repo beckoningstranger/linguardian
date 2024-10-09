@@ -4,15 +4,15 @@ import { usePathname } from "next/navigation";
 import { RefObject, useState } from "react";
 import Flag from "react-world-flags";
 
-import { useOutsideClick } from "@/lib/hooks";
 import { MAX_NUMBER_OF_LANGUAGES_ALLOWED } from "@/lib/constants";
-import { LanguageWithFlag, SessionUser, SupportedLanguage } from "@/lib/types";
+import { useOutsideClick } from "@/lib/hooks";
+import { LanguageWithFlagAndName, SupportedLanguage, User } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import AddNewLanguageOption from "./AddNewLanguageOption";
 import LanguageSelectorLink from "./LanguageSelectorLink";
 
 interface LanguageSelectorProps {
-  activeLanguage: LanguageWithFlag;
+  activeLanguage: LanguageWithFlagAndName;
   allSupportedLanguages: SupportedLanguage[];
 }
 
@@ -20,15 +20,12 @@ export default function LanguageSelector({
   activeLanguage,
   allSupportedLanguages,
 }: LanguageSelectorProps) {
-  const sessionUser = useSession().data?.user as SessionUser;
+  const user = useSession().data?.user as User;
   const [showAllLanguageOptions, setShowAllLanguageOptions] = useState(false);
   const currentPath = usePathname();
   const amountOfSupportedLanguages = allSupportedLanguages.length;
 
-  const allLanguagesAndFlagsUserIsLearning: {
-    name: SupportedLanguage;
-    flag: string;
-  }[] = sessionUser?.isLearning || [];
+  const allLanguagesAndFlagsUserIsLearning = user?.learnedLanguages || [];
 
   const amountOfLanguagesUserLearns = Object.keys(
     allLanguagesAndFlagsUserIsLearning
@@ -36,7 +33,7 @@ export default function LanguageSelector({
 
   const allLanguageAndFlagExceptActive =
     allLanguagesAndFlagsUserIsLearning.filter(
-      (lang) => lang.name !== activeLanguage.name
+      (lang) => lang.code !== activeLanguage.code
     );
 
   const ref = useOutsideClick(
@@ -70,8 +67,7 @@ export default function LanguageSelector({
             <LanguageSelectorLink
               setShowAllLanguageOptions={setShowAllLanguageOptions}
               showAllLanguageOptions={showAllLanguageOptions}
-              flag={lang.flag}
-              language={lang.name}
+              language={lang}
               currentPath={currentPath}
               key={lang.flag}
             />

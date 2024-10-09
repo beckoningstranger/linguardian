@@ -9,10 +9,10 @@ import { useMobileMenu } from "@/context/MobileMenuContext";
 
 import { useOutsideClickForUserMenu } from "@/lib/hooks";
 import paths from "@/lib/paths";
-import { SessionUser } from "@/lib/types";
 import MobileMenu from "../MobileMenu/MobileMenu";
 import SidebarItem from "./Sidebar/SideNavItem";
 import UserMenuItem from "./UserMenuItem";
+import { User } from "@/lib/types";
 
 interface UserMenuProps {}
 
@@ -20,7 +20,7 @@ export default function UserMenu({}: UserMenuProps) {
   const { toggleMobileMenu } = useMobileMenu();
   if (!toggleMobileMenu) throw new Error("Could not use mobile menu");
   const [showUserMenu, setShowUserMenu] = useState<boolean>(false);
-  const sessionUser = useSession().data?.user as SessionUser;
+  const user = useSession().data?.user as User;
 
   const ref = useOutsideClickForUserMenu(() => setShowUserMenu(false));
 
@@ -34,9 +34,9 @@ export default function UserMenu({}: UserMenuProps) {
           setShowUserMenu((x) => !x);
         }}
       >
-        {sessionUser?.image && (
+        {user?.image && (
           <Image
-            src={sessionUser.image}
+            src={user.image}
             alt="User profile image"
             width={100}
             height={100}
@@ -48,7 +48,7 @@ export default function UserMenu({}: UserMenuProps) {
         <div className="absolute -right-16 top-20 z-50 mr-2 mt-2 flex h-36 w-64 -translate-x-16 flex-col justify-center rounded-md border border-slate-500 bg-slate-100 p-6">
           <div className="flex flex-col gap-y-3">
             <UserMenuItem
-              to={paths.profilePath(sessionUser.usernameSlug)}
+              to={paths.profilePath(user.usernameSlug)}
               icon={<FaUserAlt />}
               label="Profile"
               onClick={() => setShowUserMenu(false)}
@@ -74,9 +74,9 @@ export default function UserMenu({}: UserMenuProps) {
         className="m-4 h-[60px] w-[60px] select-none rounded-full bg-slate-200 md:hidden md:h-[50px] md:w-[50px]"
         onClick={toggleMobileMenu as MouseEventHandler}
       >
-        {sessionUser?.image && (
+        {user?.image && (
           <Image
-            src={sessionUser.image}
+            src={user.image}
             alt="User profile image"
             width={100}
             height={100}
@@ -87,9 +87,9 @@ export default function UserMenu({}: UserMenuProps) {
       <MobileMenu fromDirection="animate-from-right">
         <nav className="flex select-none flex-col items-center transition-all">
           <ul>
-            {sessionUser?.image && (
+            {user?.image && (
               <Image
-                src={sessionUser.image}
+                src={user.image}
                 alt="User profile image"
                 width={200}
                 height={200}
@@ -100,7 +100,7 @@ export default function UserMenu({}: UserMenuProps) {
             <SidebarItem
               icon={<FaUserAlt />}
               label="Profile"
-              href={paths.profilePath(sessionUser?.usernameSlug)}
+              href={paths.profilePath(user?.usernameSlug)}
               onClick={() => toggleMobileMenu()}
             />
             <SidebarItem

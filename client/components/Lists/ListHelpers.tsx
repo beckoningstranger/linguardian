@@ -1,4 +1,9 @@
-import { LearnedItem, LearningData, ListStats, ListStatus } from "@/lib/types";
+import {
+  LearnedItem,
+  LearningDataForLanguage,
+  ListStats,
+  ListStatus,
+} from "@/lib/types";
 import { Types } from "mongoose";
 
 export function calculateListStats(
@@ -6,8 +11,8 @@ export function calculateListStats(
   learnedItems: LearnedItem[],
   ignoredItemObjectIds: Types.ObjectId[]
 ): ListStats {
-  const learnedItemIds = learnedItems.map((item) => item.id);
-  const learnedItemIdsInList = learnedItemIds.filter((id) =>
+  const learnedItemIds = learnedItems?.map((item) => item.id);
+  const learnedItemIdsInList = learnedItemIds?.filter((id) =>
     allItemObjectIds.includes(id)
   );
 
@@ -31,35 +36,39 @@ export function generateStats(
   allItemIDs: Types.ObjectId[],
   selectedlearnedItems: Types.ObjectId[]
 ) {
-  const ignoredItemsInList = ignoredItemIds.filter((id) =>
-    allItemIDs.includes(id)
-  );
+  const ignoredItemsInList =
+    ignoredItemIds?.filter((id) => allItemIDs.includes(id)) || [];
 
-  const readyToReview = learnedItems.filter(
-    (item) =>
-      allItemIDs.includes(item.id) &&
-      !ignoredItemsInList.includes(item.id) &&
-      item.nextReview < Date.now()
-  );
+  const readyToReview =
+    learnedItems?.filter(
+      (item) =>
+        allItemIDs.includes(item.id) &&
+        !ignoredItemsInList.includes(item.id) &&
+        item.nextReview < Date.now()
+    ) || [];
 
-  const learned = learnedItems.filter(
-    (item) =>
-      allItemIDs.includes(item.id) &&
-      !ignoredItemsInList.includes(item.id) &&
-      !readyToReview.includes(item) &&
-      item.level > 8
-  );
+  const learned =
+    learnedItems?.filter(
+      (item) =>
+        allItemIDs.includes(item.id) &&
+        !ignoredItemsInList.includes(item.id) &&
+        !readyToReview.includes(item) &&
+        item.level > 8
+    ) || [];
 
-  const learning = learnedItems.filter(
-    (item) =>
-      allItemIDs.includes(item.id) &&
-      !ignoredItemsInList.includes(item.id) &&
-      !readyToReview.includes(item) &&
-      item.level < 8
-  );
+  const learning =
+    learnedItems?.filter(
+      (item) =>
+        allItemIDs.includes(item.id) &&
+        !ignoredItemsInList.includes(item.id) &&
+        !readyToReview.includes(item) &&
+        item.level < 8
+    ) || [];
 
   return {
-    unlearned: allItemIDs.length - selectedlearnedItems.length,
+    unlearned:
+      allItemIDs.length -
+      (selectedlearnedItems ? selectedlearnedItems.length : 0),
     readyToReview: readyToReview.length,
     learned: learned.length,
     learning: learning.length,
@@ -69,7 +78,7 @@ export function generateStats(
 
 export function getListStatsAndStatus(
   itemIdsInUnits: Types.ObjectId[],
-  learningData: LearningData | undefined
+  learningData: LearningDataForLanguage | undefined
 ) {
   let learnedItems: LearnedItem[] = [];
   let ignoredItems: Types.ObjectId[] = [];

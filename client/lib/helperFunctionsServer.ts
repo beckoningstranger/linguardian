@@ -1,52 +1,29 @@
 import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
 import {
-  SessionUser,
+  LanguageWithFlagAndName,
+  SeperatedUserLanguages,
   SupportedLanguage,
-  UserLanguagesWithFlags,
+  User,
 } from "@/lib/types";
 import { getServerSession } from "next-auth";
 import { getList, getSupportedLanguages } from "./fetchData";
 
 export async function getUserOnServer() {
   const session = await getServerSession(authOptions);
-  return session?.user as SessionUser;
-}
-
-export async function getAllUserLanguagesWithFlags() {
-  const sessionUser = await getUserOnServer();
-  const userLanguagesWithFlags = [];
-  if (sessionUser.native) userLanguagesWithFlags.push(sessionUser.native);
-  if (sessionUser.isLearning)
-    sessionUser.isLearning.forEach((languageWithFlag) =>
-      userLanguagesWithFlags.push(languageWithFlag)
-    );
-  return userLanguagesWithFlags;
-}
-
-export async function getSeperatedUserLanguagesWithFlags() {
-  const sessionUser = await getUserOnServer();
-  return {
-    native: sessionUser.native,
-    isLearning: sessionUser.isLearning,
-  } as UserLanguagesWithFlags;
+  return session?.user as User;
 }
 
 export async function getAllUserLanguages() {
-  const sessionUser = await getUserOnServer();
-  const allLanguages: SupportedLanguage[] = [];
-  allLanguages.push(sessionUser.native.name);
-  sessionUser.isLearning.forEach((languageWithFlag) =>
-    allLanguages.push(languageWithFlag.name)
-  );
-  return allLanguages;
+  const user = await getUserOnServer();
+  return [user.native, ...user.learnedLanguages] as LanguageWithFlagAndName[];
 }
 
 export async function getSeperatedUserLanguages() {
-  const sessionUser = await getUserOnServer();
+  const user = await getUserOnServer();
   return {
-    native: sessionUser.native,
-    isLearning: sessionUser.isLearning.map((lang) => lang),
-  } as UserLanguagesWithFlags;
+    native: user.native,
+    learnedLanguages: user.learnedLanguages,
+  } as SeperatedUserLanguages;
 }
 
 export async function checkPassedLanguageAsync(
@@ -59,9 +36,9 @@ export async function checkPassedLanguageAsync(
 }
 
 export async function getUserAndVerifyUserIsLoggedIn(errorMessage: string) {
-  const [sessionUser] = await Promise.all([getUserOnServer()]);
-  if (!sessionUser) throw new Error(errorMessage);
-  return sessionUser;
+  const [user] = await Promise.all([getUserOnServer()]);
+  if (!user) throw new Error(errorMessage);
+  return user;
 }
 
 export async function verifyUserIsAuthorAndGetList(
@@ -69,7 +46,7 @@ export async function verifyUserIsAuthorAndGetList(
   errorMessage: string
 ) {
   const list = await getList(listNumber);
-  const [sessionUser] = await Promise.all([getUserOnServer()]);
-  if (!list?.authors.includes(sessionUser.id)) throw new Error(errorMessage);
+  const [user] = await Promise.all([getUserOnServer()]);
+  if (!list?.authors.includes(user.id)) throw new Error(errorMessage);
   return list;
 }

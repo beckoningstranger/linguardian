@@ -1,5 +1,6 @@
 import { List } from "../lib/types.js";
 import { model, Schema } from "mongoose";
+import { languageWithFlagAndNameSchema } from "./helperSchemas.js";
 
 const listSchema = new Schema<List>({
   name: {
@@ -19,10 +20,9 @@ const listSchema = new Schema<List>({
     type: String,
   },
   language: {
-    type: String,
+    type: languageWithFlagAndNameSchema,
     required: true,
   },
-  flag: { type: String, required: true },
   difficulty: {
     type: String,
   },

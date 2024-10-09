@@ -26,7 +26,7 @@ export default function LanguagePicker({
             <div className="flex h-16 items-center">
               <Flag
                 code={languageObject?.flag}
-                key={languageObject?.name}
+                key={languageObject?.code}
                 className="my-2 h-12 w-12 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125"
               />
               <div className="pl-4">{pickedString}</div>

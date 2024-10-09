@@ -14,42 +14,42 @@ export default function AllLearningButtons({}: AllLearningButtonsProps) {
   return (
     <>
       <ReviewButton
-        listLanguage={language}
+        listLanguage={language.code}
         listNumber={listNumber}
         mode="learn"
         stats={listStats}
         unlockedModes={unlockedLearningModesForUser}
       />
       <ReviewButton
-        listLanguage={language}
+        listLanguage={language.code}
         listNumber={listNumber}
         mode="translation"
         stats={listStats}
         unlockedModes={unlockedLearningModesForUser}
       />
       <ReviewButton
-        listLanguage={language}
+        listLanguage={language.code}
         listNumber={listNumber}
         mode="dictionary"
         stats={listStats}
         unlockedModes={unlockedLearningModesForUser}
       />
       <ReviewButton
-        listLanguage={language}
+        listLanguage={language.code}
         listNumber={listNumber}
         mode="context"
         stats={listStats}
         unlockedModes={unlockedLearningModesForUser}
       />
       <ReviewButton
-        listLanguage={language}
+        listLanguage={language.code}
         listNumber={listNumber}
         mode="visual"
         stats={listStats}
         unlockedModes={unlockedLearningModesForUser}
       />
       <ReviewButton
-        listLanguage={language}
+        listLanguage={language.code}
         listNumber={listNumber}
         mode="spellingBee"
         stats={listStats}

@@ -1,13 +1,11 @@
 import express from "express";
 import {
-  httpAddListToLearnedLists,
-  httpAddNewLanguageToLearn,
   httpAddNewRecentDictionarySearches,
   httpCreateUser,
-  httpGetAllLearnedListsForUser,
   httpGetAllUserIds,
-  httpGetLearnedLanguageDataForLanguage,
-  httpGetLearnedList,
+  httpGetDashboardData,
+  httpGetLearningDataForLanguage,
+  httpGetLearningDataForUser,
   httpGetNativeLanguageById,
   httpGetNextUserId,
   httpGetRecentDictionarySearches,
@@ -16,10 +14,9 @@ import {
   httpGetUserByUsernameSlug,
   httpIsEmailTaken,
   httpIsUsernameTaken,
-  httpRemoveListFromDashboard,
-  httpSetNativeLanguage,
-  httpStopLearningLanguage,
-  httpUpdateLearnedItems,
+  httpSetLearnedLanguagesForUserId,
+  httpSetLearnedListsForUserId,
+  httpSetNativeLanguageForUserId,
 } from "./users.controller.js";
 
 export const usersRouter = express.Router();
@@ -32,16 +29,6 @@ usersRouter.get("/getByEmail/:email", httpGetUserByEmail);
 
 usersRouter.get("/getByUsernameSlug/:usernameSlug", httpGetUserByUsernameSlug);
 
-usersRouter.get(
-  "/getLearnedLanguageDataForLanguage/:language/:userId",
-  httpGetLearnedLanguageDataForLanguage
-);
-
-usersRouter.get(
-  "/getLearnedList/:language/:userId/:listNumber",
-  httpGetLearnedList
-);
-
 usersRouter.get("/isEmailTaken/:email", httpIsEmailTaken);
 
 usersRouter.get("/isUsernameTaken/:username", httpIsUsernameTaken);
@@ -52,11 +39,22 @@ usersRouter.get("/getNativeLanguage/:userId", httpGetNativeLanguageById);
 
 usersRouter.get("/getAllUserIds", httpGetAllUserIds);
 
-usersRouter.get("/getLearnedLists/:userId", httpGetAllLearnedListsForUser);
+usersRouter.get("/getLearnedList/:language/:userId/:listNumber");
 
 usersRouter.get(
   "/getRecentDictionarySearches/:userId",
   httpGetRecentDictionarySearches
+);
+
+usersRouter.get("/getLearningDataForUser/:userId", httpGetLearningDataForUser);
+usersRouter.get(
+  "/getLearningDataForLanguage/:userId/:language",
+  httpGetLearningDataForLanguage
+);
+
+usersRouter.get(
+  "/getDashboardDataForUserId/:userId/:language",
+  httpGetDashboardData
 );
 
 // POST
@@ -65,26 +63,22 @@ usersRouter.post("/createUser", httpCreateUser);
 
 // PATCH
 
-usersRouter.patch("/setNativeLanguage", httpSetNativeLanguage);
-
-usersRouter.patch("/stopLearningLanguage", httpStopLearningLanguage);
-
-usersRouter.patch("/addListToLearnedLists", httpAddListToLearnedLists);
-
-usersRouter.patch("/addNewLanguageToLearn", httpAddNewLanguageToLearn);
-
 usersRouter.patch(
   "/addRecentDictionarySearches",
   httpAddNewRecentDictionarySearches
 );
 
-usersRouter.patch("/updateLearnedItems", httpUpdateLearnedItems);
-
-// DELETE
-
-usersRouter.delete(
-  "/removeListFromDashboard/:userId/:listNumber",
-  httpRemoveListFromDashboard
-);
+// usersRouter.patch("/updateLearnedItems", httpUpdateLearnedItems);
 
 // PUT
+
+usersRouter.put("/setNativeLanguageForUserId", httpSetNativeLanguageForUserId);
+
+usersRouter.put("/setLearnedListsForUserId", httpSetLearnedListsForUserId);
+
+usersRouter.put(
+  "/setLearnedLanguagesForUserId",
+  httpSetLearnedLanguagesForUserId
+);
+
+// DELETE

@@ -1,8 +1,5 @@
-import {
-  getAllLanguageFeatures,
-  getAllUserIds,
-  getUserByUsernameSlug,
-} from "@/lib/fetchData";
+import { getAllUserIds, getUserByUsernameSlug } from "@/lib/fetchData";
+import { getUserOnServer } from "@/lib/helperFunctionsServer";
 
 interface ProfilePageProps {
   params: { usernameSlug: string };
@@ -23,22 +20,16 @@ export async function generateStaticParams() {
 export default async function ProfilePage({
   params: { usernameSlug },
 }: ProfilePageProps) {
-  const [user, allLanguageFeatures] = await Promise.all([
-    getUserByUsernameSlug(usernameSlug),
-    getAllLanguageFeatures(),
-  ]);
-
-  const usersNativeLanguageName = allLanguageFeatures?.find(
-    (langFeatures) => langFeatures.langCode === user?.native
-  )?.langName;
+  const user = await getUserOnServer();
+  console.log(user);
 
   return (
     <>
       <h1>
-        {`${
-          user?.username
-        }, a native ${usersNativeLanguageName} speaker is learning ${thisCommaThisAndThat(
-          user?.languages.map((lang) => lang.name)!
+        {`${user?.username}, a native ${
+          user?.native.name
+        } speaker is learning ${thisCommaThisAndThat(
+          user?.learnedLanguages?.map((lang) => lang.name)!
         )}.`}
       </h1>
     </>
