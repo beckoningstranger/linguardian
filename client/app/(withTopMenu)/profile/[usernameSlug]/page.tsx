@@ -1,4 +1,4 @@
-import { getAllUserIds, getUserByUsernameSlug } from "@/lib/fetchData";
+import { getAllUsernameSlugs, getUserByUsernameSlug } from "@/lib/fetchData";
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
 
 interface ProfilePageProps {
@@ -13,15 +13,13 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams() {
-  const allUserIds = await getAllUserIds();
-  return allUserIds;
+  return await getAllUsernameSlugs();
 }
 
 export default async function ProfilePage({
   params: { usernameSlug },
 }: ProfilePageProps) {
   const user = await getUserOnServer();
-  console.log(user);
 
   return (
     <>

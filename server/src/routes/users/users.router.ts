@@ -2,7 +2,7 @@ import express from "express";
 import {
   httpAddNewRecentDictionarySearches,
   httpCreateUser,
-  httpGetAllUserIds,
+  httpGetAllUsernameSlugs,
   httpGetDashboardData,
   httpGetLearningDataForLanguage,
   httpGetLearningDataForUser,
@@ -37,7 +37,7 @@ usersRouter.get("/nextUserId", httpGetNextUserId);
 
 usersRouter.get("/getNativeLanguage/:userId", httpGetNativeLanguageById);
 
-usersRouter.get("/getAllUserIds", httpGetAllUserIds);
+usersRouter.get("/getAllUsernameSlugs", httpGetAllUsernameSlugs);
 
 usersRouter.get("/getLearnedList/:language/:userId/:listNumber");
 

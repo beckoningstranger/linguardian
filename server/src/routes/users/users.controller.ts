@@ -5,7 +5,7 @@ import {
   addRecentDictionarySearches,
   checkUsernameAvailability,
   createUser,
-  getAllUserIds,
+  getAllUsernameSlugs,
   getLearningDataForUser,
   getNativeLanguageById,
   getNextUserId,
@@ -139,8 +139,8 @@ export async function httpGetNativeLanguageById(req: Request, res: Response) {
   return res.status(404).json();
 }
 
-export async function httpGetAllUserIds(req: Request, res: Response) {
-  const response = await getAllUserIds();
+export async function httpGetAllUsernameSlugs(req: Request, res: Response) {
+  const response = await getAllUsernameSlugs();
   if (response) return res.status(200).json(response);
   return res.status(404).json();
 }

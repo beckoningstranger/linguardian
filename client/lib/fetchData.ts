@@ -226,9 +226,9 @@ export async function getListName(listNumber: number) {
   }
 }
 
-export async function getAllUserIds() {
+export async function getAllUsernameSlugs() {
   try {
-    const response = await fetch(`${server}/users/getAllUserIds`);
+    const response = await fetch(`${server}/users/getAllUsernameSlugs`);
     if (!response.ok) throw new Error(response.statusText);
     return (await response.json()) as string[];
   } catch (err) {

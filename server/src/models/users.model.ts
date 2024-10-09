@@ -228,8 +228,8 @@ export async function getNativeLanguageById(userId: string) {
   return user?.native;
 }
 
-export async function getAllUserIds() {
-  return await Users.find<User>({}, { username: 1, _id: 0 });
+export async function getAllUsernameSlugs() {
+  return await Users.find<User>({}, { usernameSlug: 1, _id: 0 });
 }
 
 export async function addRecentDictionarySearches(
