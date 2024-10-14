@@ -126,18 +126,16 @@ function prepareItemsForSession(
   const allLearnableItems: ItemToLearn[] = [];
   const allReviewableItems: ItemToLearn[] = [];
   populatedListData.units.forEach((unitItem) => {
+    const item = unitItem.item as ItemToLearn;
+    item.increaseLevel = true;
     if (mode === "learn") {
-      const item = unitItem.item as ItemToLearn;
       item.learningStep = 0;
-      item.increaseLevel = true;
       item.firstPresentation = true;
       allLearnableItems.push(item);
     }
     if (mode === "translation") {
-      const item = unitItem.item as ItemToLearn;
       item.learningStep = 3;
       item.firstPresentation = false;
-      item.increaseLevel = true;
       allReviewableItems.push(item);
     }
   });

@@ -1,12 +1,15 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "@/app/globals.css";
+import {
+  breeSerif,
+  dancingScript,
+  playfairDisplay,
+  poppins,
+} from "@/lib/fonts";
+import type { Metadata } from "next";
 
 import { ReactNode } from "react";
-import { AuthProvider } from "./Providers";
 import { Toaster } from "react-hot-toast";
-
-const inter = Inter({ subsets: ["latin"] });
+import { AuthProvider } from "./Providers";
 
 export const metadata: Metadata = {
   title: { template: "%s | Linguardian", default: "Linguardian" },
@@ -20,7 +23,9 @@ interface RootLayoutProps {
 export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body
+        className={`${dancingScript} ${poppins} ${breeSerif} ${playfairDisplay} font-breeSerif font-light text-lg tracking-wider `}
+      >
         <AuthProvider>{children}</AuthProvider>
         <Toaster position="top-right" reverseOrder={true} />
       </body>

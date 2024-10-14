@@ -4,13 +4,17 @@ import { setErrorsFromBackend } from "@/lib/helperFunctionsClient";
 import paths from "@/lib/paths";
 import { RegisterSchema } from "@/lib/types";
 import { registerSchema } from "@/lib/validations";
-import { Input } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { FieldErrors, FieldValues, useForm } from "react-hook-form";
 import Spinner from "../Spinner";
 import InputWithCheck from "./InputWithCheck";
+import {
+  LandingPageContainer,
+  LandingPageFormHeader,
+  LandingPageInput,
+} from "./LandingPageComponents";
 
 export default function RegisterForm() {
   const {
@@ -26,9 +30,6 @@ export default function RegisterForm() {
     defaultValues: { id: "credentials" },
     mode: "onBlur",
   });
-
-  const inputStyling =
-    "w-[400px] border border-gray-200 py-2 px-6 bg-zinc-100/40";
 
   const onSubmit = async ({
     username,
@@ -57,58 +58,50 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="grid h-screen place-items-center">
-      <div className="rounded-lg border-t-4 border-green-400 p-5 shadow-lg">
-        <h1 className="my-4 text-xl font-bold">Create a Linguardian account</h1>
-        <form className="flex flex-col gap-1" onSubmit={handleSubmit(onSubmit)}>
-          <InputWithCheck
-            setValue={setValue}
-            checkMode="username"
-            setError={setError}
-            register={register}
-            watch={watch}
-          />
-          <FormErrors errors={errors} field="username" />
+    <LandingPageContainer>
+      <LandingPageFormHeader title="Create an account" />
+      <form className="flex flex-col gap-1" onSubmit={handleSubmit(onSubmit)}>
+        <InputWithCheck
+          setValue={setValue}
+          checkMode="username"
+          setError={setError}
+          register={register}
+          watch={watch}
+        />
+        <FormErrors errors={errors} field="username" />
 
-          <InputWithCheck
-            setValue={setValue}
-            checkMode="email"
-            setError={setError}
-            register={register}
-            watch={watch}
-          />
-          <FormErrors errors={errors} field="email" />
+        <InputWithCheck
+          setValue={setValue}
+          checkMode="email"
+          setError={setError}
+          register={register}
+          watch={watch}
+        />
+        <FormErrors errors={errors} field="email" />
 
-          <Input
-            {...register("password")}
-            type="password"
-            placeholder="Password"
-            className={inputStyling}
-          />
-          <FormErrors errors={errors} field="password" />
+        <LandingPageInput
+          {...register("password")}
+          type="password"
+          placeholder="Password"
+        />
+        <FormErrors errors={errors} field="password" />
 
-          <Input
-            {...register("confirmPassword")}
-            type="password"
-            placeholder="Please type your password again"
-            className={inputStyling}
-          />
-          <FormErrors errors={errors} field="confirmPassword" />
-          <FormErrors errors={errors} field="root" />
+        <LandingPageInput
+          {...register("confirmPassword")}
+          type="password"
+          placeholder="Please type your password again"
+        />
+        <FormErrors errors={errors} field="confirmPassword" />
+        <FormErrors errors={errors} field="root" />
 
-          <button
-            className="cursor-pointer bg-green-600 px-6 py-2 font-bold text-white"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? <Spinner centered size="mini" /> : "Register"}
-          </button>
-
-          <Link href={paths.rootPath()} className="mt-3 text-right text-sm">
-            Already have an account? <span className="underline">Login</span>
-          </Link>
-        </form>
-      </div>
-    </div>
+        <button
+          className="cursor-pointer bg-green-600 px-6 py-2 font-bold text-white"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? <Spinner centered size="mini" /> : "Register"}
+        </button>
+      </form>
+    </LandingPageContainer>
   );
 }
 

@@ -1,3 +1,4 @@
+import LandingPageContent from "@/components/authentication/LandingPageContent";
 import LoginForm from "@/components/authentication/LoginForm";
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
@@ -14,8 +15,10 @@ export default async function Root() {
     redirect(paths.dashboardLanguagePath(user.learnedLanguages[0].code));
 
   return (
-    <main>
-      <LoginForm />
-    </main>
+    <div className="relative h-screen select-none bg-[url('public/images/landingPageBackground.png')] bg-cover bg-center">
+      <div className="h-screen bg-gradient-to-b from-white/0 via-white/0 via-50% to-black/80 to-100%">
+        <LandingPageContent />
+      </div>
+    </div>
   );
 }
