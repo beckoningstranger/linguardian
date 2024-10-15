@@ -68,7 +68,7 @@ export type ItemToLearn = ItemWithPopulatedTranslations & {
   increaseLevel: boolean;
 };
 
-export type ItemForServer = { id: Types.ObjectId; increaseLevel: boolean };
+export type ItemForServer = { id: string; increaseLevel: boolean };
 
 export interface Lemma {
   language: SupportedLanguage;
@@ -174,7 +174,7 @@ export interface GlobalSettings {
 }
 
 export interface LearnedItem {
-  id: Types.ObjectId;
+  id: string;
   level: number;
   nextReview: number;
 }

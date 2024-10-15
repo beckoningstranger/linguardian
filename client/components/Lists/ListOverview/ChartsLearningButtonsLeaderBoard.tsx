@@ -45,7 +45,11 @@ export default function ChartsLButtonsLeaderboard() {
         </div>
       </>
       <AllLearningButtonsDesktopContainer>
-        <AllLearningButtons />
+        <AllLearningButtons
+          listNumber={listNumber}
+          unlockedLearningModesForUser={unlockedLearningModesForUser}
+          listStats={listStats}
+        />
       </AllLearningButtonsDesktopContainer>
       <div className="m-2 rounded-md bg-slate-100 py-4 md:hidden">
         <Leaderboard />
@@ -55,7 +59,6 @@ export default function ChartsLButtonsLeaderboard() {
           stats={listStats}
           status={listStatus}
           listNumber={listNumber}
-          listLanguage={language.code}
           unlockedModes={unlockedLearningModesForUser}
         />
       </AllLearningButtonsMobileContainer>

@@ -1,6 +1,9 @@
 import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
 import {
+  ItemToLearn,
+  ItemWithPopulatedTranslations,
   LanguageWithFlagAndName,
+  LearningMode,
   SeperatedUserLanguages,
   SupportedLanguage,
   User,
@@ -49,4 +52,36 @@ export async function verifyUserIsAuthorAndGetList(
   const [user] = await Promise.all([getUserOnServer()]);
   if (!list?.authors.includes(user.id)) throw new Error(errorMessage);
   return list;
+}
+
+export function prepareItemsForSession(
+  mode: LearningMode,
+  itemsToLearn: ItemWithPopulatedTranslations[]
+): ItemToLearn[] {
+  const allLearnableItems: ItemToLearn[] = [];
+  const allReviewableItems: ItemToLearn[] = [];
+  itemsToLearn.forEach((unitItem) => {
+    const item = unitItem as ItemToLearn;
+    item.increaseLevel = true;
+    if (mode === "learn") {
+      item.learningStep = 0;
+      item.firstPresentation = true;
+      allLearnableItems.push(item);
+    }
+    if (mode === "translation") {
+      item.learningStep = 3;
+      item.firstPresentation = false;
+      allReviewableItems.push(item);
+    }
+  });
+
+  switch (mode) {
+    case "translation":
+      return allReviewableItems;
+    case "learn":
+      return allLearnableItems;
+    default:
+      console.error("No valid learning mode");
+      return [];
+  }
 }

@@ -1,39 +1,33 @@
 "use client";
 
-import {
-  GiWateringCan,
-  GiSeedling,
-  GiSpellBook,
-  GiRead,
-  GiCheckMark,
-} from "react-icons/gi"; // Learn, Classic/Translation Review Mode, Dictionary Mode, alternatives for Context and Spelling Bee Mode
+import paths from "@/lib/paths";
+import { LearningMode, ListStats } from "@/lib/types";
+import Link from "next/link";
 import {
   FaBookOpenReader,
-  FaSpellCheck,
   FaRegEye,
+  FaSpellCheck,
   FaSpinner,
-} from "react-icons/fa6"; // Context and Spelling Bee Mode
-import { RxDotsHorizontal, RxDotsVertical } from "react-icons/rx"; // More button
-import Link from "next/link";
-import { LearningMode, ListStats, SupportedLanguage } from "@/lib/types";
-import paths from "@/lib/paths";
+} from "react-icons/fa6";
+import { GiSeedling, GiSpellBook, GiWateringCan } from "react-icons/gi";
+import { RxDotsHorizontal } from "react-icons/rx";
 
 interface ReviewButtonProps {
   mode: LearningMode | "more" | "spinner";
   showAllModes?: Function;
   listNumber: number;
+  unitNumber?: number;
   stats: ListStats;
   unlockedModes: LearningMode[] | undefined;
-  listLanguage: SupportedLanguage;
 }
 
 export default function ReviewButton({
   mode,
   showAllModes,
   listNumber,
+  unitNumber,
   stats,
   unlockedModes,
-  listLanguage,
 }: ReviewButtonProps) {
   let icon;
   let color;
@@ -75,6 +69,13 @@ export default function ReviewButton({
       throw new Error("Unknown learning mode");
   }
 
+  const href =
+    mode !== "spinner" && mode !== "more"
+      ? unitNumber
+        ? paths.learnUnitPath(mode, listNumber, unitNumber)
+        : paths.learnListPath(mode, listNumber)
+      : "";
+
   return mode === "more" ? (
     <button
       className="m-1 rounded-lg border-4 border-white bg-yellow-300 p-2 text-3xl text-white transition-all hover:scale-125 hover:border-slate-200"
@@ -84,7 +85,7 @@ export default function ReviewButton({
     </button>
   ) : (
     <Link
-      href={paths.learnPath(listLanguage, mode, listNumber)}
+      href={href}
       className={`m-1 rounded-lg border-4 border-white ${
         isDisabled()
           ? "bg-gray-300 pointer-events-none"

@@ -1,27 +1,26 @@
 "use client";
 
+import { updateLearnedItems } from "@/lib/actions";
+import { arrayShuffle } from "@/lib/helperFunctionsClient";
 import {
   ItemForServer,
   ItemToLearn,
   LanguageFeatures,
   LearningMode,
   SupportedLanguage,
+  User,
 } from "@/lib/types";
-import TopBar from "./TopBar";
-import ItemPrompt from "./ItemPrompt";
-import { useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import ItemPresentation from "./ItemPresentation";
+import ItemPrompt from "./ItemPrompt";
 import MultipleChoice from "./MultipleChoice";
 import PuzzleMode from "./PuzzleMode";
+import TopBar from "./TopBar";
 import BetterSolutionInput from "./TypeSolution";
-import { useRouter } from "next/navigation";
-import { updateLearnedItems } from "@/lib/actions";
-import paths from "@/lib/paths";
+import { useSession } from "next-auth/react";
 
 interface LearnAndReviewProps {
   listName: string;
-  userNative: SupportedLanguage;
-  userId: string;
   items: ItemToLearn[];
   targetLanguageFeatures: LanguageFeatures;
   allItemStringsInList: string[];
@@ -32,13 +31,13 @@ export type ReviewStatus = "neutral" | "correct" | "incorrect";
 
 export default function LearnAndReview({
   listName,
-  userNative,
-  userId,
   items,
   targetLanguageFeatures,
   allItemStringsInList,
   mode,
 }: LearnAndReviewProps) {
+  const { data } = useSession();
+  const user = data?.user as User;
   const [itemsToLearn, setItemsToLearn] = useState<ItemToLearn[]>(items);
   const [activeItem, setActiveItem] = useState<ItemToLearn>(items[0]);
   const [learnedItems, setLearnedItems] = useState<ItemToLearn[]>([]);
@@ -47,9 +46,6 @@ export default function LearnAndReview({
   );
   const [sessionEnd, setSessionEnd] = useState<boolean>(false);
   const [wrongAnswer, setWrongAnswer] = useState<string>("");
-  const [_, startTransition] = useTransition();
-
-  const router = useRouter();
 
   function evaluateUserAnswer(
     status: Omit<ReviewStatus, "neutral">,
@@ -89,11 +85,6 @@ export default function LearnAndReview({
           setLearnedItems(newLearnedItems);
           newItemOrder = itemsToLearn;
           break;
-        default:
-          console.error(
-            "Something went wrong in switch statement, received",
-            removedItem?.learningStep
-          );
       }
 
       if (newItemOrder[0] && newItemOrder[0].learningStep === 0) {
@@ -110,28 +101,11 @@ export default function LearnAndReview({
     }
   }
 
-  function passDataToServer(learnedItems: ItemToLearn[]) {
-    const itemsForServer: ItemForServer[] = learnedItems.map((item) => {
-      return {
-        id: item._id,
-        increaseLevel: item.increaseLevel,
-      };
-    });
-
-    startTransition(async () => {
-      await updateLearnedItems(
-        itemsForServer,
-        activeItem.language,
-        userId,
-        mode
-      );
-    });
-  }
-
-  if (sessionEnd) {
-    passDataToServer(learnedItems);
-    router.push(paths.dashboardLanguagePath(learnedItems[0].language));
-  }
+  useEffect(() => {
+    if (sessionEnd) {
+      passDataToServer(learnedItems, user.id, activeItem.language, mode);
+    }
+  }, [sessionEnd, activeItem, mode, user.id, learnedItems]);
 
   if (!sessionEnd)
     return (
@@ -144,14 +118,14 @@ export default function LearnAndReview({
         />
         <div className="mt-3 flex w-[95%] flex-col gap-3">
           {!itemPresentation && (
-            <ItemPrompt item={activeItem} userNative={userNative} />
+            <ItemPrompt item={activeItem} userNative={user.native.code} />
           )}
           {itemPresentation && (
             <ItemPresentation
               item={activeItem}
               wrongSolution={wrongAnswer}
               endPresentation={evaluateUserAnswer}
-              userNative={userNative}
+              userNative={user.native.code}
             />
           )}
           {!itemPresentation && activeItem.learningStep === 1 && (
@@ -181,6 +155,25 @@ export default function LearnAndReview({
         </div>
       </div>
     );
+  return "Updating data on server...";
+}
+
+function passDataToServer(
+  learnedItems: ItemToLearn[],
+  userId: string,
+  language: SupportedLanguage,
+  mode: LearningMode
+) {
+  const itemsForServer: ItemForServer[] = learnedItems.map((item) => {
+    return {
+      id: item._id.toString(),
+      increaseLevel: item.increaseLevel,
+    };
+  });
+
+  (async () => {
+    await updateLearnedItems(itemsForServer, language, userId, mode);
+  })();
 }
 
 function createMultipleChoiceOptions(
@@ -229,15 +222,6 @@ function createMultipleChoiceOptions(
   const shuffledOptions = arrayShuffle(options);
 
   return shuffledOptions;
-}
-
-export function arrayShuffle(array: string[]) {
-  // Durstenfeld Shuffle: https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
 }
 
 function createPuzzlePieces(item: ItemToLearn) {

@@ -20,6 +20,7 @@ import {
 } from "../../models/users.model.js";
 
 import { formatZodErrors } from "../../lib/helperFunctions.js";
+import { siteSettings } from "../../lib/siteSettings.js";
 import {
   ItemForServer,
   LanguageWithFlagAndName,
@@ -29,7 +30,10 @@ import {
 } from "../../lib/types.js";
 import { registerSchema } from "../../lib/validations.js";
 import { getItemById } from "../../models/items.model.js";
-import { getPopulatedListByListNumber } from "../../models/lists.model.js";
+import {
+  getFullyPopulatedListByListNumber,
+  getPopulatedListByListNumber,
+} from "../../models/lists.model.js";
 
 export async function httpGetUserById(req: Request, res: Response) {
   const response = await getUserById(req.params.id);
@@ -258,5 +262,90 @@ export async function httpGetDashboardData(req: Request, res: Response) {
     learnedLists: user?.learnedLists,
     learningDataForLanguage,
     lists,
+  });
+}
+
+export async function httpGetLearningSessionForList(
+  req: Request,
+  res: Response
+) {
+  const userId = req.params.userId;
+  const listNumber = parseInt(req.params.listNumber);
+  const learningMode = req.params.mode as LearningMode;
+  const unitNumber = req.params.unitNumber
+    ? parseInt(req.params.unitNumber)
+    : null;
+
+  const user = await getUserById(userId);
+  const list = await getFullyPopulatedListByListNumber(
+    user?.native.code,
+    listNumber
+  );
+  if (!list) return res.status(500).json({ error: "Could not find list" });
+  const sSRSettings =
+    user?.customSRSettings[list.language.code] ||
+    siteSettings.defaultSRSettings;
+  const targetLanguageFeatures = siteSettings.languageFeatures.find(
+    (lf) => lf.langCode === list.language.code
+  )!;
+  const allItemStringsInList = list.units.map((unitItem) => unitItem.item.name);
+
+  const sortedItemsInList = list.units.sort(
+    (a, b) =>
+      list.unitOrder.indexOf(a.unitName) - list.unitOrder.indexOf(b.unitName)
+  );
+
+  const allItemsDueForReview = user?.learnedItems[list.language.code]?.filter(
+    (learnedItem) => learnedItem.nextReview < Date.now()
+  );
+
+  const allItemsDueForReviewIncludedInListAndUnit =
+    allItemsDueForReview?.filter((dueItem) =>
+      sortedItemsInList.some((sortedItem) =>
+        sortedItem.item._id.equals(dueItem.id)
+      )
+    );
+
+  const allLearnedItemIds = user?.learnedItems[list.language.code]?.map(
+    (learnedItem) => learnedItem.id
+  );
+
+  const allLearnedItemIdsOfDueItems =
+    allItemsDueForReviewIncludedInListAndUnit?.map(
+      (learnedItem) => learnedItem.id
+    );
+
+  const sortedItems = unitNumber
+    ? sortedItemsInList.filter((sortedItem) =>
+        unitNumber
+          ? list.unitOrder.indexOf(sortedItem.unitName) === unitNumber - 1
+          : sortedItem
+      )
+    : sortedItemsInList;
+
+  const itemsToReview = sortedItems
+    .filter((items) =>
+      allLearnedItemIdsOfDueItems?.some((learnedItemId) =>
+        items.item._id.equals(learnedItemId)
+      )
+    )
+    .slice(0, sSRSettings.itemsPerSession.reviewing)
+    .map((unitItem) => unitItem.item);
+
+  const itemsToLearn = sortedItems
+    .filter(
+      (items) =>
+        !allLearnedItemIds?.some((learnedItemId) =>
+          items.item._id.equals(learnedItemId)
+        )
+    )
+    .slice(0, sSRSettings.itemsPerSession.learning)
+    .map((unitItem) => unitItem.item);
+
+  return res.status(200).json({
+    targetLanguageFeatures,
+    listName: list.name,
+    allItemStringsInList,
+    itemsToLearn: learningMode === "learn" ? itemsToLearn : itemsToReview,
   });
 }

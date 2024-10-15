@@ -1,13 +1,8 @@
 "use client";
-import {
-  LearningMode,
-  ListStats,
-  ListStatus,
-  SupportedLanguage,
-} from "@/lib/types";
+import { LearningMode, ListStats, ListStatus } from "@/lib/types";
 import { useRef, useState } from "react";
-import ReviewButton from "../ReviewButton";
 import ContextMenu from "../Menus/ContextMenu";
+import ReviewButton from "../ReviewButton";
 import AllLearningButtons from "./ListOverview/AllLearningButtons";
 
 interface FlexibleLearningButtonsProps {
@@ -15,7 +10,6 @@ interface FlexibleLearningButtonsProps {
   stats: ListStats;
   listNumber: number;
   unlockedModes: LearningMode[] | undefined;
-  listLanguage: SupportedLanguage;
 }
 
 export default function FlexibleLearningButtons({
@@ -23,7 +17,6 @@ export default function FlexibleLearningButtons({
   stats,
   listNumber,
   unlockedModes,
-  listLanguage,
 }: FlexibleLearningButtonsProps) {
   const [showAllReviewModes, setShowAllReviewModes] = useState(false);
 
@@ -40,7 +33,6 @@ export default function FlexibleLearningButtons({
     <div className="flex justify-around md:mr-2 md:flex-col">
       {/* First Button */}
       <ReviewButton
-        listLanguage={listLanguage}
         listNumber={listNumber}
         mode={firstButtonMode}
         stats={stats}
@@ -48,7 +40,6 @@ export default function FlexibleLearningButtons({
       />
       {/* Second Button */}
       <ReviewButton
-        listLanguage={listLanguage}
         listNumber={listNumber}
         mode={status === "practice" ? randomMode2 : randomMode1}
         stats={stats}
@@ -57,7 +48,6 @@ export default function FlexibleLearningButtons({
       {/* Button Only Visible on Mobile */}
       <div className="md:hidden">
         <ReviewButton
-          listLanguage={listLanguage}
           listNumber={listNumber}
           mode={status === "practice" ? randomMode3 : randomMode2}
           stats={stats}
@@ -66,7 +56,6 @@ export default function FlexibleLearningButtons({
       </div>
       {/* More Button */}
       <ReviewButton
-        listLanguage={listLanguage}
         listNumber={listNumber}
         mode="more"
         showAllModes={setShowAllReviewModes}
@@ -84,7 +73,11 @@ export default function FlexibleLearningButtons({
         moreClasses="absolute bottom-0 right-0 w-full border-slate-300 border-t-4 md:border-t-0 md:border-l-4 h-36"
       >
         <div className="grid grid-cols-3 place-items-center md:h-full md:grid-cols-2">
-          <AllLearningButtons />
+          <AllLearningButtons
+            listNumber={listNumber}
+            unlockedLearningModesForUser={unlockedModes}
+            listStats={stats}
+          />
         </div>
       </ContextMenu>
       {renderedButtons}

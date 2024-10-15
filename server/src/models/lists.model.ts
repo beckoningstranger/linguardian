@@ -42,7 +42,7 @@ export async function getPopulatedListByListNumber(listNumber: number) {
 }
 
 export async function getFullyPopulatedListByListNumber(
-  userNative: SupportedLanguage,
+  userNative: SupportedLanguage | undefined,
   listNumber: number
 ) {
   try {

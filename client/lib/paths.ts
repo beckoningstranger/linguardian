@@ -1,67 +1,30 @@
 import { LearningMode, SupportedLanguage } from "./types";
 
 const paths = {
-  rootPath() {
-    return "/";
-  },
-  welcomePath() {
-    return "/welcome";
-  },
-  dashboardLanguagePath(language: SupportedLanguage) {
-    return `/${language}/dashboard`;
-  },
-  dictionaryPath() {
-    return `/dictionary`;
-  },
-  dictionaryItemPath(slug: string) {
-    return `/dictionary/${slug}`;
-  },
-  editDictionaryItemPath(slug: string) {
-    return `/dictionary/edit/${slug}`;
-  },
-  learnPath(
-    language: SupportedLanguage,
-    mode: LearningMode | "spinner",
-    listId: number
-  ) {
-    return `/${language}/${mode}/${listId}`;
-  },
-  listsLanguagePath(language: SupportedLanguage) {
-    return `/${language}/lists`;
-  },
-  listDetailsPath(listNumber: number) {
-    return `/lists/${listNumber}`;
-  },
-  newListPath(language: SupportedLanguage) {
-    return `/${language}/lists/new`;
-  },
-  unitDetailsPath(listNumber: number, unitNumber: number) {
-    return `/lists/${listNumber}/${unitNumber}`;
-  },
-  uploadListPath() {
-    return "/lists/new";
-  },
-  socialPath() {
-    return `/social`;
-  },
-  aboutPath() {
-    return `/about`;
-  },
-  learnNewLanguagePath() {
-    return `/newLanguage`;
-  },
-  profilePath(usernameSlug: string) {
-    return `/profile/${usernameSlug}`;
-  },
-  settingsPath() {
-    return `/settings`;
-  },
-  signInPath() {
-    return `/signIn`;
-  },
-  registerPath() {
-    return `/register`;
-  },
+  rootPath: () => "/",
+  welcomePath: () => "/welcome",
+  dashboardLanguagePath: (language: SupportedLanguage) =>
+    `/${language}/dashboard`,
+  dictionaryPath: () => `/dictionary`,
+  dictionaryItemPath: (slug: string) => `/dictionary/${slug}`,
+  editDictionaryItemPath: (slug: string) => `/dictionary/edit/${slug}`,
+  learnListPath: (mode: LearningMode, listId: number) =>
+    `/learn/${mode}/${listId}`,
+  learnUnitPath: (mode: LearningMode, listId: number, unitNumber: number) =>
+    `/learn/${mode}/${listId}/${unitNumber}`,
+  listsLanguagePath: (language: SupportedLanguage) => `/${language}/lists`,
+  listDetailsPath: (listNumber: number) => `/lists/${listNumber}`,
+  newListPath: (language: SupportedLanguage) => `/${language}/lists/new`,
+  unitDetailsPath: (listNumber: number, unitNumber: number) =>
+    `/lists/${listNumber}/${unitNumber}`,
+  uploadListPath: () => "/lists/new",
+  socialPath: () => `/social`,
+  aboutPath: () => `/about`,
+  learnNewLanguagePath: () => `/newLanguage`,
+  profilePath: (usernameSlug: string) => `/profile/${usernameSlug}`,
+  settingsPath: () => `/settings`,
+  signInPath: () => `/signIn`,
+  registerPath: () => `/register`,
 };
 
 export default paths;

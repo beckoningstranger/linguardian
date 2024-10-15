@@ -89,8 +89,6 @@ export default async function UnitDetailPage({
   );
   if (!listData) throw new Error("List not found");
 
-  const { language: listLanguage } = listData;
-
   const unitName = listData.unitOrder[unitNumber - 1];
   if (!unitName) notFound();
   const learningDataForLanguage = await getLearningDataForLanguage(
@@ -98,7 +96,6 @@ export default async function UnitDetailPage({
     listData.language.code
   );
   if (!learningDataForLanguage) throw new Error("Could not get learning data");
-  console.log("ACBC", learningDataForLanguage);
 
   const unitItems = listData?.units
     .filter((unit) => unit.unitName === unitName)
@@ -149,7 +146,12 @@ export default async function UnitDetailPage({
               </div>
             </div>
             <AllLearningButtonsDesktopContainer>
-              <AllLearningButtons />
+              <AllLearningButtons
+                listStats={stats}
+                listNumber={listNumber}
+                unlockedLearningModesForUser={unlockedModes}
+                unitNumber={unitNumber}
+              />
             </AllLearningButtonsDesktopContainer>
           </div>
         </>
@@ -165,7 +167,6 @@ export default async function UnitDetailPage({
       {userHasAddedThisList && (
         <AllLearningButtonsMobileContainer>
           <FlexibleLearningButtons
-            listLanguage={listLanguage.code}
             stats={stats}
             status={determineListStatus(stats)}
             listNumber={listNumber}

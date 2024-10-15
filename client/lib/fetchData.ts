@@ -7,6 +7,7 @@ import {
   List,
   PopulatedList,
   SlugLanguageObject,
+  SRSettings,
   SupportedLanguage,
   User,
 } from "@/lib/types";
@@ -332,6 +333,20 @@ export async function getDashboardDataForUser(
 ) {
   const response = await fetch(
     `${server}/users/getDashboardDataForUserId/${userId}/${language}`
+  );
+  return (await response.json()) as SRSettings;
+}
+
+export async function getLearningSessionForList(
+  listNumber: number,
+  mode: LearningMode,
+  unitNumber?: number
+) {
+  const user = await getUserOnServer();
+  const response = await fetch(
+    `${server}/users/getLearningSessionForList/${
+      user.id
+    }/${listNumber}/${mode}/${unitNumber || ""}}`
   );
   return await response.json();
 }

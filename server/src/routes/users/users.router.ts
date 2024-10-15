@@ -6,6 +6,7 @@ import {
   httpGetDashboardData,
   httpGetLearningDataForLanguage,
   httpGetLearningDataForUser,
+  httpGetLearningSessionForList,
   httpGetNativeLanguageById,
   httpGetNextUserId,
   httpGetRecentDictionarySearches,
@@ -17,6 +18,7 @@ import {
   httpSetLearnedLanguagesForUserId,
   httpSetLearnedListsForUserId,
   httpSetNativeLanguageForUserId,
+  httpUpdateLearnedItems,
 } from "./users.controller.js";
 
 export const usersRouter = express.Router();
@@ -56,6 +58,10 @@ usersRouter.get(
   "/getDashboardDataForUserId/:userId/:language",
   httpGetDashboardData
 );
+usersRouter.get(
+  "/getLearningSessionForList/:userId/:listNumber/:mode/:unitNumber?",
+  httpGetLearningSessionForList
+);
 
 // POST
 
@@ -68,7 +74,7 @@ usersRouter.patch(
   httpAddNewRecentDictionarySearches
 );
 
-// usersRouter.patch("/updateLearnedItems", httpUpdateLearnedItems);
+usersRouter.patch("/updateLearnedItems", httpUpdateLearnedItems);
 
 // PUT
 

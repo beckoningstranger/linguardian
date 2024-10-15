@@ -37,7 +37,7 @@ export default function UnitItems({
   const enrichedItems = unitItems.map((item) => {
     const enrichedItem = item as ItemPlusLearningInfo;
     const foundLearnedItem = allLearnedItems.find(
-      (learnedItem) => learnedItem.id === item._id
+      (learnedItem) => learnedItem.id === item._id.toString()
     );
     if (foundLearnedItem) {
       enrichedItem.learned = true;

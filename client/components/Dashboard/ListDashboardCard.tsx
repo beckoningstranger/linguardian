@@ -79,7 +79,6 @@ export default function ListDashboardCard({
           status={listStatus}
           listNumber={list.listNumber}
           unlockedModes={unlockedModes}
-          listLanguage={list.language.code}
         />
       </div>
     </div>

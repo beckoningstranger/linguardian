@@ -85,6 +85,7 @@ export async function updateLearnedItems(
     console.error(`Error passing items to server: ${err}`);
   }
   revalidatePath(paths.dashboardLanguagePath(language));
+  redirect(paths.dashboardLanguagePath(language));
 }
 
 export async function setLearnedLists(

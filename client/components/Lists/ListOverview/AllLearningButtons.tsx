@@ -1,60 +1,78 @@
 "use client";
 
 import ReviewButton from "@/components/ReviewButton";
-import { useListContext } from "@/context/ListContext";
+import { LearningMode, ListStats } from "@/lib/types";
+import { useMemo } from "react";
 
-interface AllLearningButtonsProps {}
+interface AllLearningButtonsProps {
+  listNumber: number;
+  unitNumber?: number;
+  listStats: ListStats;
+  unlockedLearningModesForUser?: LearningMode[];
+}
 
-export default function AllLearningButtons({}: AllLearningButtonsProps) {
-  const {
-    listData: { listNumber, language },
-    listStats,
-    unlockedLearningModesForUser,
-  } = useListContext();
-  return (
-    <>
-      <ReviewButton
-        listLanguage={language.code}
-        listNumber={listNumber}
-        mode="learn"
-        stats={listStats}
-        unlockedModes={unlockedLearningModesForUser}
-      />
-      <ReviewButton
-        listLanguage={language.code}
-        listNumber={listNumber}
-        mode="translation"
-        stats={listStats}
-        unlockedModes={unlockedLearningModesForUser}
-      />
-      <ReviewButton
-        listLanguage={language.code}
-        listNumber={listNumber}
-        mode="dictionary"
-        stats={listStats}
-        unlockedModes={unlockedLearningModesForUser}
-      />
-      <ReviewButton
-        listLanguage={language.code}
-        listNumber={listNumber}
-        mode="context"
-        stats={listStats}
-        unlockedModes={unlockedLearningModesForUser}
-      />
-      <ReviewButton
-        listLanguage={language.code}
-        listNumber={listNumber}
-        mode="visual"
-        stats={listStats}
-        unlockedModes={unlockedLearningModesForUser}
-      />
-      <ReviewButton
-        listLanguage={language.code}
-        listNumber={listNumber}
-        mode="spellingBee"
-        stats={listStats}
-        unlockedModes={unlockedLearningModesForUser}
-      />
-    </>
-  );
+export default function AllLearningButtons({
+  listNumber,
+  unitNumber,
+  listStats,
+  unlockedLearningModesForUser,
+}: AllLearningButtonsProps) {
+  const renderedButtons = useMemo(() => {
+    if (!listNumber || !listStats || !unlockedLearningModesForUser) {
+      return null;
+    }
+
+    return (
+      <>
+        <ReviewButton
+          listNumber={listNumber}
+          unitNumber={unitNumber}
+          mode="learn"
+          stats={listStats}
+          unlockedModes={unlockedLearningModesForUser}
+        />
+        <ReviewButton
+          listNumber={listNumber}
+          unitNumber={unitNumber}
+          mode="translation"
+          stats={listStats}
+          unlockedModes={unlockedLearningModesForUser}
+        />
+        <ReviewButton
+          listNumber={listNumber}
+          unitNumber={unitNumber}
+          mode="dictionary"
+          stats={listStats}
+          unlockedModes={unlockedLearningModesForUser}
+        />
+        <ReviewButton
+          listNumber={listNumber}
+          unitNumber={unitNumber}
+          mode="context"
+          stats={listStats}
+          unlockedModes={unlockedLearningModesForUser}
+        />
+        <ReviewButton
+          listNumber={listNumber}
+          unitNumber={unitNumber}
+          mode="visual"
+          stats={listStats}
+          unlockedModes={unlockedLearningModesForUser}
+        />
+        <ReviewButton
+          listNumber={listNumber}
+          unitNumber={unitNumber}
+          mode="spellingBee"
+          stats={listStats}
+          unlockedModes={unlockedLearningModesForUser}
+        />
+      </>
+    );
+  }, [listNumber, unitNumber, listStats, unlockedLearningModesForUser]);
+
+  if (!renderedButtons) {
+    return "Loading buttons...";
+  }
+
+  return renderedButtons;
 }

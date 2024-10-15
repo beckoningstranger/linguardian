@@ -1,8 +1,10 @@
 import bcrypt from "bcryptjs";
 import { slugifyString } from "../lib/helperFunctions.js";
+import { siteSettings } from "../lib/siteSettings.js";
 import {
   ItemForServer,
   LanguageWithFlagAndName,
+  LearnedItem,
   RecentDictionarySearches,
   RegisterSchema,
   SupportedLanguage,
@@ -72,35 +74,32 @@ export async function updateReviewedItems(
   language: SupportedLanguage
 ) {
   try {
-    const allPassedItemIds = items.map((item) => item.id as unknown as string);
-    const allLearnedItems = await getAllLearnedItems(userId, language);
-    const userSRSettings = await getUserSRSettings(userId, language);
-    if (!allLearnedItems || !userSRSettings)
-      throw new Error("Error fetching learned items or user settings");
+    const allPassedItemIds = items.map((item) => item.id);
+    const user = await getUserById(userId);
+    const allLearnedItems = user?.learnedItems[language] || [];
+    const userSRSettings =
+      user?.customSRSettings[language] || siteSettings.defaultSRSettings;
 
     const allItemsWeNeedToUpdate = allLearnedItems.filter((item) =>
-      allPassedItemIds.includes(item.id.toHexString())
+      allPassedItemIds.includes(item.id)
     );
-    const passedItemsWithfetchedItems = allItemsWeNeedToUpdate.map(
+    const passedItemsAndFetchedItems = allItemsWeNeedToUpdate.map(
       (fetchedItem) => {
         return {
           fetchedItem: fetchedItem,
-          passedItem: items.find(
-            (item) =>
-              (item.id as unknown as string) === fetchedItem.id.toHexString()
-          ),
+          passedItem: items.find((item) => item.id === fetchedItem.id),
         };
       }
     );
 
-    passedItemsWithfetchedItems.forEach(async (itemPair) => {
+    passedItemsAndFetchedItems.forEach(async (itemPair) => {
       if (!itemPair)
         throw new Error("This item was not reviewed, please report this");
       await Users.updateOne<User>(
-        { id: userId, "languages.code": language },
+        { id: userId },
         {
           $pull: {
-            "languages.$.learnedItems": {
+            [`learnedItems.${language}`]: {
               id: itemPair.fetchedItem.id,
             },
           },
@@ -113,10 +112,10 @@ export async function updateReviewedItems(
           : itemPair.fetchedItem.level + 1
         : 1;
       await Users.updateOne<User>(
-        { id: userId, "languages.code": language },
+        { id: userId },
         {
           $push: {
-            "languages.$.learnedItems": {
+            [`learnedItems.${language}`]: {
               id: itemPair.passedItem?.id,
               level: newLevelForItem,
               nextReview:
@@ -143,44 +142,38 @@ export async function addNewlyLearnedItems(
   userId: string,
   language: SupportedLanguage
 ) {
-  console.log("models.ts, addNewlyAdded", items);
   try {
-    const userSRSettings = await getUserSRSettings(userId, language);
-    if (!userSRSettings) return;
-    const updateItems = items.map(async (item) =>
-      Users.updateOne<User>(
-        { id: userId, "languages.code": language },
-        {
-          $push: {
-            "languages.$.learnedItems": {
-              id: item.id,
-              level: 1,
-              nextReview: Date.now() + userSRSettings.reviewTimes[1],
-            },
-          },
-        }
-      )
+    const user = await Users.findOne({ id: userId });
+    if (!user) throw new Error("User not found");
+    const learnedItemsForLanguage = user.learnedItems[language] || [];
+    const sRSettings =
+      user.customSRSettings[language] || siteSettings.defaultSRSettings;
+    const newItemIds = items.map((item) => item.id);
+    const filteredItems = learnedItemsForLanguage.filter(
+      (learnedItem: LearnedItem) =>
+        !newItemIds.some((newItemId) => learnedItem.id === newItemId)
     );
-    return Promise.all(updateItems);
+    const newLearnedItems = items.map((item) => ({
+      id: item.id,
+      level: 1,
+      nextReview: Date.now() + sRSettings.reviewTimes[1],
+    }));
+    const updatedItems = [...filteredItems, ...newLearnedItems];
+
+    return await Users.updateOne<User>(
+      { id: userId },
+      {
+        $set: {
+          [`learnedItems.${language}`]: updatedItems,
+        },
+      }
+    );
   } catch (err) {
     console.error(
       `Error adding newly learned items. Received these ${JSON.stringify(
         items
       )}, user ${userId}, language ${language}. ${err}`
     );
-  }
-}
-
-export async function getAllLearnedItems(
-  userId: string,
-  language: SupportedLanguage
-) {
-  try {
-    const user = await Users.findOne({ id: userId });
-    if (!user) return;
-    return user.learnedItems[language] || [];
-  } catch (err) {
-    console.error(`Error getting learned item ids: ${err}`);
   }
 }
 
@@ -194,11 +187,6 @@ export async function getLearningDataForUser(userId: string) {
   } catch (err) {
     console.error(`Error getting learned item ids: ${err}`);
   }
-}
-
-async function getUserSRSettings(userId: string, language: SupportedLanguage) {
-  const user = await Users.findOne({ id: userId });
-  return user?.customSRSettings[language];
 }
 
 export async function getNextUserId() {
