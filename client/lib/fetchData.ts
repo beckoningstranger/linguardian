@@ -7,7 +7,6 @@ import {
   List,
   PopulatedList,
   SlugLanguageObject,
-  SRSettings,
   SupportedLanguage,
   User,
 } from "@/lib/types";
@@ -19,8 +18,8 @@ const server = process.env.SERVER_URL;
 export async function getSupportedLanguages() {
   try {
     const response = await fetch(`${server}/settings/supportedLanguages`, {
-      next: { revalidate: 86400 },
-    }); // revalidate once per day
+      next: { revalidate: 60 * 60 * 24 },
+    });
     if (!response.ok) throw new Error(response.statusText);
     const supportedLanguages: SupportedLanguage[] = await response.json();
     return supportedLanguages;
@@ -334,7 +333,7 @@ export async function getDashboardDataForUser(
   const response = await fetch(
     `${server}/users/getDashboardDataForUserId/${userId}/${language}`
   );
-  return (await response.json()) as SRSettings;
+  return await response.json();
 }
 
 export async function getLearningSessionForList(

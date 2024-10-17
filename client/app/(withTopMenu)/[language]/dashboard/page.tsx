@@ -18,6 +18,8 @@ interface DashboardPageProps {
   params?: { language: string };
 }
 
+export const revalidate = 0;
+
 export async function generateStaticParams() {
   const supportedLanguagesData = await getSupportedLanguages();
   return supportedLanguagesData?.map((lang) => ({ language: lang })) || [];

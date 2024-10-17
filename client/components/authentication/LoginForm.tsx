@@ -72,7 +72,7 @@ export default function LoginForm() {
           <p className="text-sm text-red-500">{signInError}</p>
         )}
         <Button className="cursor-pointer rounded-md bg-primary px-6 py-2 font-bold text-white">
-          Login with Email & Password
+          Login with Email
         </Button>
       </form>
       <div className="my-2 flex flex-col gap-y-2">

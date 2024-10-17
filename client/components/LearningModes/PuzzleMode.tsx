@@ -1,15 +1,15 @@
-import { ItemToLearn, PuzzlePieceObject } from "@/lib/types";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { PuzzlePieceObject } from "@/lib/types";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ReviewStatus } from "./LearnAndReview";
 
 interface PuzzleModeProps {
-  item: ItemToLearn;
+  itemName: string;
   evaluate: Function;
   initialPuzzlePieces: PuzzlePieceObject[];
 }
 
 export default function PuzzleMode({
-  item,
+  itemName,
   evaluate,
   initialPuzzlePieces,
 }: PuzzleModeProps) {
@@ -29,29 +29,60 @@ export default function PuzzleMode({
   );
   const keyListener = useRef<HTMLInputElement>(null);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    const legalKeys = [
-      ...Array.from({ length: puzzlePieces.length }, (_, i) => String(i + 1)),
-      "Backspace",
-      "Enter",
-    ];
-    if (!legalKeys.includes(e.key)) {
-      setInput(input + e.key);
-      return;
-    }
-    if (e.key === "Backspace") {
-      setInput("");
-      resetPuzzlePieces();
-      return;
-    }
-    if (e.key === "Enter") {
-      handleSubmit(e);
-      return;
-    }
-    setInput(input + puzzlePieces[+e.key - 1].content);
+  const numberKeys = useMemo(
+    () => Array.from({ length: puzzlePieces.length }, (_, i) => String(i + 1)),
+    [puzzlePieces]
+  );
 
-    updatePuzzlePieces(e.key);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const lastTypedKey = e.target.value[e.target.value.length - 1];
+    if (numberKeys.includes(lastTypedKey)) {
+      setPuzzlePieces((prevPuzzlePieces) =>
+        prevPuzzlePieces.map((piece, i) =>
+          i === +lastTypedKey - 1 && !piece.used
+            ? { ...piece, used: true }
+            : piece
+        )
+      );
+      setInput(input + puzzlePieces[+lastTypedKey - 1].content);
+    } else {
+      setInput(e.target.value);
+    }
   };
+
+  const handleSubmit = useCallback(
+    (e?: React.FormEvent) => {
+      if (e) e.preventDefault();
+      if (input === itemName) {
+        setReviewStatus("correct");
+        setInputFieldStyling(
+          "h-20 w-full rounded-md text-center text-xl bg-green-300"
+        );
+      } else {
+        setReviewStatus("incorrect");
+        setInputFieldStyling(
+          "h-20 w-full rounded-md text-center text-xl bg-red-400"
+        );
+      }
+    },
+    [input, itemName]
+  );
+
+  useEffect(() => {
+    if (
+      (puzzlePieces &&
+        puzzlePieces.length > 0 &&
+        puzzlePieces.every((piece) => piece.used) &&
+        reviewStatus === "neutral") ||
+      (input === itemName && reviewStatus === "neutral")
+    ) {
+      handleSubmit();
+    }
+  }, [puzzlePieces, handleSubmit, input, itemName, reviewStatus]);
+
+  useEffect(() => {
+    resetPuzzlePieces();
+  }, [resetPuzzlePieces]);
 
   useEffect(() => {
     if (reviewStatus !== "neutral") {
@@ -61,46 +92,24 @@ export default function PuzzleMode({
         setInputFieldStyling(
           "h-20 w-full rounded-md text-center text-xl bg-slate-200"
         );
+        setPuzzlePieces([]);
         evaluate(reviewStatus, input);
       }, 1000);
     }
-  }, [reviewStatus, evaluate, input]);
-
-  useEffect(() => {
-    resetPuzzlePieces();
-  }, [resetPuzzlePieces]);
-
-  useEffect(() => {
     if (reviewStatus === "neutral" && keyListener.current)
       keyListener.current.focus();
-  }, [reviewStatus]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (input === item.name) {
-      setReviewStatus("correct");
-      setInputFieldStyling(
-        "h-20 w-full rounded-md text-center text-xl bg-green-300"
-      );
-    } else {
-      setReviewStatus("incorrect");
-      setInputFieldStyling(
-        "h-20 w-full rounded-md text-center text-xl bg-red-400"
-      );
-    }
-  };
+  }, [reviewStatus, evaluate, input]);
 
   return (
-    <div>
+    <div className="mx-1">
       <form className="grid place-items-center" onSubmit={handleSubmit}>
         <input
           type="text"
           placeholder="Compose or enter the translation"
           value={input}
-          onChange={() => {}}
+          onChange={handleChange}
           className={inputFieldStyling}
           disabled={reviewStatus !== "neutral"}
-          onKeyDown={(e) => handleKeyDown(e)}
           ref={keyListener}
         />
         <div className="m-2 flex w-full justify-around">
@@ -152,12 +161,4 @@ export default function PuzzleMode({
       </div>
     </div>
   );
-
-  function updatePuzzlePieces(key: string) {
-    const updatedPuzzlePieces = puzzlePieces.map((piece, i) =>
-      i === +key - 1 ? { ...piece, used: true } : piece
-    );
-    setPuzzlePieces(updatedPuzzlePieces);
-  }
 }
-// "✅"

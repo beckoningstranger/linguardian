@@ -151,7 +151,7 @@ export default function LearnAndReview({
         )}
         {!itemPresentation && activeItem.learningStep === 2 && (
           <PuzzleMode
-            item={activeItem}
+            itemName={activeItem.name}
             evaluate={evaluateUserAnswer}
             initialPuzzlePieces={puzzlePieces}
           />

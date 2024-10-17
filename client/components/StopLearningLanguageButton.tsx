@@ -3,7 +3,6 @@
 import { setLearnedLanguages } from "@/lib/actions";
 import { LanguageWithFlagAndName, User } from "@/lib/types";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import Spinner from "./Spinner";
@@ -18,7 +17,6 @@ export default function StopLearningLanguageButton({
   const [updating, setUpdating] = useState(false);
   const { data, status, update } = useSession();
   const user = data?.user as User;
-  const router = useRouter();
 
   const handleStopLearningLanguage = async () => {
     setUpdating(true);
