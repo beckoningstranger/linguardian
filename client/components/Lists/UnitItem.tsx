@@ -31,13 +31,12 @@ export default function UnitItem({
   return (
     <Link
       href={paths.dictionaryItemPath(item.slug) + `?comingFrom=${pathToUnit}`}
-      key={item.name + item.language}
       className={`relative p-3 rounded-md w-full flex flex-col items-center justify-center ${bgColor(
         item.nextReview,
         item.level
       )}`}
-      onMouseOver={() => setShowItemTranslation(!showItemTranslation)}
-      onMouseOut={() => setShowItemTranslation(!showItemTranslation)}
+      onMouseOver={() => setShowItemTranslation(true)}
+      onMouseOut={() => setShowItemTranslation(false)}
       onClick={() => updateRecentDictionarySearches(item.slug)}
     >
       {userIsAuthor && (
@@ -58,19 +57,19 @@ export default function UnitItem({
       <div className="pointer-events-none text-xs">{item.partOfSpeech}</div>
       <div className="pointer-events-none text-xs">
         {item.level && <span>Level {item.level}:</span>}
-        <span> {nextReview(item.nextReview)}</span>
+        <span> {nextReview(item.nextReview, item.level)}</span>
       </div>
     </Link>
   );
 }
 
-function bgColor(nextReview?: number, level?: number) {
+function bgColor(nextReview?: number, itemLevel?: number) {
   // Ready to water blue: #26A0FC
   // Mature green: #00E396
   // Growing orange: #FEB019
-  if (!nextReview || !level) return "bg-slate-100";
+  if (!nextReview || !itemLevel) return "bg-slate-100";
   const now = Date.now();
-  return level < 8
+  return itemLevel < 8
     ? nextReview > now
       ? "bg-[#FEB019]"
       : "text-white bg-[#26A0FC]"
@@ -79,11 +78,23 @@ function bgColor(nextReview?: number, level?: number) {
     : "text-white bg-[#26A0FC]";
 }
 
-function nextReview(nextReview?: number) {
-  if (!nextReview) return null;
+function nextReview(nextReview?: number, itemLevel?: number) {
+  if (!nextReview || !itemLevel) return "";
   const now = Date.now();
 
+  const waterMessage =
+    `Water after ` +
+    new Date(nextReview).toLocaleString(undefined, {
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    });
+
   return nextReview > now
-    ? `Growing. Water after ${new Date(nextReview).toLocaleString()}`
+    ? itemLevel < 8
+      ? `Growing. ${waterMessage}`
+      : `Mature. ${waterMessage}`
     : "Ready to water";
 }
