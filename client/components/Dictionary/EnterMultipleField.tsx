@@ -1,6 +1,7 @@
 "use client";
 
 import { useOutsideInputAndKeyboardClick } from "@/lib/hooks";
+import { Input } from "@headlessui/react";
 import { MinusCircleIcon } from "@heroicons/react/20/solid";
 import { RefObject, useEffect, useState } from "react";
 
@@ -42,7 +43,7 @@ export default function EnterMultipleField({
 
   return (
     <div className="relative flex items-center">
-      <input
+      <Input
         ref={ref as RefObject<HTMLInputElement>}
         type="text"
         className="w-full rounded-md border px-2 py-2 shadow-md"

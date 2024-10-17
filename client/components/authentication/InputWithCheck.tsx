@@ -58,7 +58,11 @@ export default function InputWithCheck({
     <div className="relative">
       <LandingPageInput
         type={checkMode === "email" ? "email" : "text"}
-        placeholder={checkMode === "email" ? "Your Email" : "Your username"}
+        placeholder={
+          checkMode === "email"
+            ? "Please enter your email"
+            : "Please enter your password"
+        }
         {...register(checkMode)}
       />
       {status.checked && !status.checking && (

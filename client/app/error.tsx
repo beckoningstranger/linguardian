@@ -1,6 +1,7 @@
 "use client";
 
 import NavigateBackButton from "@/components/NavigateBackButton";
+import { Button } from "@headlessui/react";
 import { signOut } from "next-auth/react";
 import { useEffect } from "react";
 
@@ -20,27 +21,19 @@ export default function Error({ error, reset }: ErrorProps) {
       <div className="text-center">
         <h2 className="text-xl font-bold">Something went wrong!</h2>
         <p>{error.message}</p>
-        {/* <button
-          className="m-4 rounded-sm bg-slate-200 px-4 py-2"
-          onClick={
-            // Attempt to recover by trying to re-render the segment
-            () => reset()
-          }
-        >
-          Try again
-        </button> */}
+
         <NavigateBackButton className="mt-4 w-52 rounded-md bg-slate-200 px-4 py-2">
           Navigate Back
         </NavigateBackButton>
         <div>
-          <button
+          <Button
             className="mt-4 w-52 rounded-md bg-slate-200 px-4 py-2"
             onClick={() => {
               signOut({ callbackUrl: "/" });
             }}
           >
             Log out
-          </button>
+          </Button>
         </div>
       </div>
     </div>

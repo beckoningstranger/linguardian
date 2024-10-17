@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@headlessui/react";
 import { useRouter } from "next/navigation";
 
 export default function NavigateBackButton({
@@ -9,8 +10,12 @@ export default function NavigateBackButton({
 }>) {
   const router = useRouter();
   return (
-    <button className={className} onClick={() => router.back()}>
+    <Button
+      className={className}
+      onClick={() => router.back()}
+      aria-label="Navigate back"
+    >
       {children}
-    </button>
+    </Button>
   );
 }

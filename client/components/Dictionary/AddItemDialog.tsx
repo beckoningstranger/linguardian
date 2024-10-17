@@ -44,7 +44,9 @@ export default function AddItemDialog({
   const router = useRouter();
   const { data } = useSession();
   const user = data?.user as User;
-  const allUserLanguagesWithFlags = [user.native, user.learnedLanguages].flat();
+  const allUserLanguagesWithFlags = user
+    ? [user.native, user.learnedLanguages].flat()
+    : [];
 
   const searchLanguages =
     listAndUnitData && mode === "addToList"

@@ -81,7 +81,7 @@ export default function RegisterForm() {
         <LandingPageInput
           {...register("password")}
           type="password"
-          placeholder="Set a password for your account"
+          placeholder="Please enter your password"
         />
         <FormErrors errors={errors} field="password" />
 

@@ -11,7 +11,10 @@ export default function ItemPageBottomRightButton({
 }: ItemPageBottomRightButtonProps) {
   return (
     <Link href={path}>
-      <BottomRightButton icon={<MdEdit className="h-8 w-8 text-white" />} />
+      <BottomRightButton
+        icon={<MdEdit className="h-8 w-8 text-white" />}
+        ariaLabel="Edit this item"
+      />
     </Link>
   );
 }

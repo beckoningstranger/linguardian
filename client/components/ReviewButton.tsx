@@ -2,6 +2,7 @@
 
 import paths from "@/lib/paths";
 import { LearningMode, ListStats } from "@/lib/types";
+import { Button } from "@headlessui/react";
 import Link from "next/link";
 import {
   FaBookOpenReader,
@@ -77,12 +78,13 @@ export default function ReviewButton({
       : "";
 
   return mode === "more" ? (
-    <button
+    <Button
       className="m-1 rounded-lg border-4 border-white bg-yellow-300 p-2 text-3xl text-white transition-all hover:scale-125 hover:border-slate-200"
       onClick={mode === "more" ? () => showAllModes!(true) : () => {}}
+      aria-label="Show all learning modes"
     >
       {icon}
-    </button>
+    </Button>
   ) : (
     <Link
       href={href}
@@ -92,6 +94,7 @@ export default function ReviewButton({
           : color + " hover:border-slate-200 hover:scale-125"
       } p-2 text-3xl text-white transition-all block`}
       aria-disabled={isDisabled()}
+      aria-label={`Start a learning session in ${mode} mode`}
       tabIndex={isDisabled() ? -1 : undefined}
     >
       {icon}

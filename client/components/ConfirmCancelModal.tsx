@@ -23,7 +23,10 @@ export default function ConfirmCancelModal({
     <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
       <div className="fixed z-50 flex items-center justify-center md:inset-x-32 md:inset-y-56">
         {closeButton && (
-          <Button className="absolute right-8 top-8">
+          <Button
+            className="absolute right-8 top-8"
+            aria-label="Close this modal"
+          >
             <XMarkIcon className="h-8 w-8" />
           </Button>
         )}
@@ -37,16 +40,17 @@ export default function ConfirmCancelModal({
             </div>
           </div>
           <div className="absolute bottom-6 flex w-full max-w-[calc(100%-2rem)] justify-evenly">
-            <button
+            <Button
               className="rounded-md bg-red-500 px-8 py-3 text-lg text-white"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsOpen(false);
               }}
+              aria-label="Cancel and close this modal"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               className="rounded-md bg-green-400 px-8 py-3 text-lg text-white"
               onClick={(e) => {
                 e.stopPropagation();
@@ -55,7 +59,7 @@ export default function ConfirmCancelModal({
               }}
             >
               Confirm
-            </button>
+            </Button>
           </div>
         </DialogPanel>
       </div>

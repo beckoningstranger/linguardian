@@ -123,8 +123,12 @@ export default function UnitButton({
           {!editMode && <span className="cursor-pointer">{unitName}</span>}
           {editMode && (
             <form onSubmit={handleSubmit}>
+              <label htmlFor={unitName} className="sr-only">
+                {unitName} - Click to edit
+              </label>
               <input
                 type="text"
+                id={unitName}
                 value={updatedUnitName}
                 ref={inputRef as RefObject<HTMLInputElement>}
                 onChange={(e) => {
@@ -153,6 +157,7 @@ export default function UnitButton({
               }
             }}
             className="absolute right-0 top-1/2 -translate-y-1/2 transform p-4 md:hidden"
+            aria-label="Click to delete this unit"
           >
             <FaTrashCan className="text-red-500" />
           </Button>
@@ -175,6 +180,7 @@ export default function UnitButton({
               }
             }}
             className="absolute right-0 top-1/2 hidden -translate-y-1/2 transform p-4 md:right-4 md:block"
+            aria-label="Click to delete this unit"
           >
             <FaTrashCan className="text-red-500" />
           </Button>

@@ -16,6 +16,7 @@ import WelcomeMessage from "./WelcomeMessage";
 import { FormErrors } from "../Dictionary/FormErrors";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema } from "@/lib/validations";
+import { Button } from "@headlessui/react";
 
 export default function LoginForm() {
   const [signInError, setSignInError] = useState("");
@@ -58,25 +59,25 @@ export default function LoginForm() {
         <LandingPageInput
           {...register("email", { required: "Email is required" })}
           type="email"
-          placeholder="Please enter your email..."
+          placeholder="Please enter your email"
         />
         <FormErrors errors={errors} field="email" />
         <LandingPageInput
           {...register("password", { required: "Email is required" })}
           type="password"
-          placeholder="...and your password"
+          placeholder="Please enter your password"
         />
         <FormErrors errors={errors} field="password" />
         {signInError.length > 0 && (
           <p className="text-sm text-red-500">{signInError}</p>
         )}
-        <button className="cursor-pointer rounded-md bg-primary px-6 py-2 font-bold text-white">
+        <Button className="cursor-pointer rounded-md bg-primary px-6 py-2 font-bold text-white">
           Login with Email & Password
-        </button>
+        </Button>
       </form>
       <div className="my-2 flex flex-col gap-y-2">
         <div className="flex w-full justify-between gap-x-2">
-          <button
+          <Button
             className="w-full cursor-pointer rounded-md bg-white px-6 py-2 font-bold text-white"
             onClick={() => {
               signIn("google", { callbackUrl: paths.signInPath() });
@@ -84,8 +85,8 @@ export default function LoginForm() {
             aria-label="Sign in with Google"
           >
             <FcGoogle className="mx-auto text-2xl" />
-          </button>
-          <button
+          </Button>
+          <Button
             className="w-full cursor-pointer rounded-md bg-blue-500 px-6 py-2 font-bold text-white"
             onClick={() => {
               signIn("facebook", { callbackUrl: paths.signInPath() });
@@ -93,7 +94,7 @@ export default function LoginForm() {
             aria-label="Sign in with Facebook"
           >
             <FaFacebook className="mx-auto text-2xl" />
-          </button>
+          </Button>
         </div>
       </div>
     </LandingPageContainer>

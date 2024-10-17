@@ -1,6 +1,7 @@
 import React from "react";
 import MobileMenu from "./Menus/MobileMenu/MobileMenu";
 import { useMobileMenu } from "@/context/MobileMenuContext";
+import { Button } from "@headlessui/react";
 
 interface ConfirmCancelMobileMenuProps {
   children: React.ReactNode;
@@ -19,7 +20,7 @@ export default function ConfirmCancelMobileMenu({
         {children}
       </div>
       <div className="absolute bottom-24 mx-12 mt-32 flex w-full justify-evenly">
-        <button
+        <Button
           className="rounded-md bg-red-500 px-6 py-3 text-xl text-white"
           onClick={(e) => {
             e.stopPropagation();
@@ -27,8 +28,8 @@ export default function ConfirmCancelMobileMenu({
           }}
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
           className="rounded-md bg-green-400 px-6 py-3 text-xl text-white"
           onClick={(e) => {
             e.stopPropagation();
@@ -37,7 +38,7 @@ export default function ConfirmCancelMobileMenu({
           }}
         >
           Confirm
-        </button>
+        </Button>
       </div>
     </MobileMenu>
   );

@@ -1,7 +1,7 @@
 "use client";
 import { createList } from "@/lib/actions";
 import { SupportedLanguage } from "@/lib/types";
-import { Input, Textarea } from "@headlessui/react";
+import { Button, Input, Textarea } from "@headlessui/react";
 import { FieldValues, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
@@ -104,13 +104,13 @@ export default function CreateNewListForm({
       )}
       <input type="hidden" {...register("language", { value: languageCode })} />
       <input type="hidden" {...register("author", { value: userId })} />
-      <button
+      <Button
         type="submit"
         disabled={isSubmitting}
         className="m-2 rounded border-2 border-black p-3 transition-all hover:scale-105 hover:border-green-500 hover:bg-green-500 hover:text-white"
       >
         {filePicked ? "Start upload & Create a new list" : "Create a new list"}
-      </button>
+      </Button>
     </form>
   );
 }

@@ -50,7 +50,7 @@ export default async function ListStore({ params }: ListStoreProps) {
         {renderedLists}
       </div>
       <Link href={paths.newListPath(params?.language as SupportedLanguage)}>
-        <BottomRightButton />
+        <BottomRightButton ariaLabel="Create a new list" />
       </Link>
     </>
   );

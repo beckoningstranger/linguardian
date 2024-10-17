@@ -4,7 +4,11 @@ import React, { forwardRef, PropsWithChildren } from "react";
 
 type LandingPageInputProps = {
   type: string;
-  placeholder: string;
+  placeholder:
+    | "Please enter your email"
+    | "Please enter your username"
+    | "Please enter your password"
+    | "Please enter your password again";
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 export const LandingPageInput = forwardRef<
@@ -12,13 +16,19 @@ export const LandingPageInput = forwardRef<
   LandingPageInputProps
 >(({ type, placeholder, ...props }, ref) => {
   return (
-    <Input
-      type={type}
-      placeholder={placeholder}
-      className="text-md w-80 rounded-md border px-4 py-2 pr-4 tracking-normal"
-      ref={ref}
-      {...props}
-    />
+    <>
+      <label htmlFor={placeholder} className="sr-only">
+        {placeholder}
+      </label>
+      <Input
+        type={type}
+        id={placeholder}
+        placeholder={placeholder}
+        className="text-md w-80 rounded-md border px-4 py-2 pr-4 tracking-normal"
+        ref={ref}
+        {...props}
+      />
+    </>
   );
 });
 LandingPageInput.displayName = "LandingPageInput";

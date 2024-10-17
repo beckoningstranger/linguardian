@@ -19,7 +19,7 @@ import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { FaRegSave } from "react-icons/fa";
+import { GiSaveArrow } from "react-icons/gi";
 import { IoArrowBack } from "react-icons/io5";
 import BottomRightButton from "../BottomRightButton";
 import Spinner from "../Spinner";
@@ -168,9 +168,10 @@ export default function EditOrCreateItem({
               isSubmitting ? (
                 <Spinner size="mini" />
               ) : (
-                <FaRegSave className="h-8 w-8 text-white" />
+                <GiSaveArrow className="h-8 w-8 text-white" />
               )
             }
+            ariaLabel="Save your changes"
           />
         </div>
         <Controller

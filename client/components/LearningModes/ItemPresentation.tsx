@@ -1,4 +1,5 @@
 import { ItemToLearn, SupportedLanguage } from "@/lib/types";
+import { Button } from "@headlessui/react";
 
 interface ItemPresentationProps {
   item: ItemToLearn;
@@ -47,13 +48,13 @@ export default function ItemPresentation({
         </div>
       )}
 
-      <button
+      <Button
         onClick={() => endPresentation("correct", "")}
         className="rounded-md border-2 bg-green-300 p-2 outline-none focus:border-green-400 focus:outline-none focus:ring-0"
         autoFocus
       >
         Got it!
-      </button>
+      </Button>
     </>
   );
 }

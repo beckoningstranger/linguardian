@@ -67,7 +67,7 @@ function AddNewListOption({
       href={paths.listsLanguagePath(language)}
       className={`${dashboardIsEmpty && "animate-pulse"}`}
     >
-      <BottomRightButton />
+      <BottomRightButton ariaLabel="Add a new list to your dashboard" />
     </Link>
   );
 }
