@@ -46,7 +46,7 @@ export default function EnterMultipleField({
       <Input
         ref={ref as RefObject<HTMLInputElement>}
         type="text"
-        className="w-full rounded-md border px-2 py-2 shadow-md"
+        className="w-full rounded-md border px-2 py-2 font-voces shadow-md"
         spellCheck={false}
         id={identifier}
         onChange={(e) => {

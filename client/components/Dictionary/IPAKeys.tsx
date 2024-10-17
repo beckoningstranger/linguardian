@@ -24,7 +24,7 @@ export default function IPAKeys({
               array[arrayIndex] = array[arrayIndex] + key;
               setArray(array.slice());
             }}
-            className="my-2 grid h-9 w-9 place-items-center rounded-md border border-black p-2 text-sm"
+            className="my-2 grid h-9 w-9 place-items-center rounded-md border border-black p-2 font-voces font-normal"
           >
             {key}
           </button>

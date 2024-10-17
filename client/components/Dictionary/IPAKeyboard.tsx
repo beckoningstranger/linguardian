@@ -42,7 +42,7 @@ export default function IPAKeyboard({
           {IPA?.rare && IPA.rare.length > 0 && <StyledTab label="Rare" />}
           <StyledTab label="Helpers" />
         </TabList>
-        <TabPanels className="h-full px-2">
+        <TabPanels className="h-full px-2 font-voces font-semibold">
           <PanelWithIPAKeys IPASetOfKeys="consonants" />
           <PanelWithIPAKeys IPASetOfKeys="vowels" />
           {IPA?.rare && IPA.rare.length > 0 && (

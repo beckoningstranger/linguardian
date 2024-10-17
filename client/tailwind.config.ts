@@ -16,6 +16,7 @@ const config: Config = {
         poppins: ["var(--font-poppins)"],
         playfair: ["var(--font-playfairDisplay)"],
         breeSerif: ["var(--font-breeSerif)"],
+        voces: ["var(--font-voces)"],
       },
       animation: {
         "from-top": "from-top .3s forwards",
