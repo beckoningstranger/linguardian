@@ -127,9 +127,7 @@ export default function EditOrCreateItem({
         }
         return "Item updated! 🎉";
       },
-      error: (err) => {
-        return err.toString();
-      },
+      error: (err) => err.toString(),
     });
   };
 

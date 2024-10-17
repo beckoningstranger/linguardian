@@ -1,5 +1,5 @@
 import { ItemToLearn } from "@/lib/types";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ReviewStatus } from "./LearnAndReview";
 
 interface PuzzleModeProps {
@@ -20,6 +20,8 @@ export default function PuzzleMode({
     "h-20 w-full rounded-md bg-slate-200 text-center text-xl"
   );
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (reviewStatus !== "neutral") {
       setTimeout(() => {
@@ -36,6 +38,12 @@ export default function PuzzleMode({
   useEffect(() => {
     setPuzzlePieces([...initialPuzzlePieces]);
   }, [initialPuzzlePieces]);
+
+  useEffect(() => {
+    if (reviewStatus === "neutral" && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [reviewStatus]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,6 +71,7 @@ export default function PuzzleMode({
           autoFocus
           onChange={(e) => setInput(e.target.value)}
           disabled={reviewStatus !== "neutral"}
+          ref={inputRef}
         />
         <div className="m-2 flex w-full justify-around">
           <div
@@ -74,7 +83,11 @@ export default function PuzzleMode({
           >
             Reset
           </div>
-          <button className="rounded-md bg-slate-200 p-3 px-5" type="submit">
+          <button
+            className="rounded-md bg-slate-200 p-3 px-5"
+            type="submit"
+            disabled={reviewStatus !== "neutral"}
+          >
             Submit
           </button>
         </div>
@@ -86,8 +99,10 @@ export default function PuzzleMode({
             key={index}
             onClick={() => {
               setInput(input + piece);
-              puzzlePieces.splice(puzzlePieces.indexOf(piece), 1, "✅");
-              setPuzzlePieces(puzzlePieces);
+              const updatedPuzzlePieces = puzzlePieces.map((piece, i) =>
+                i === index ? "✅" : piece
+              );
+              setPuzzlePieces(updatedPuzzlePieces);
             }}
           >
             {piece}

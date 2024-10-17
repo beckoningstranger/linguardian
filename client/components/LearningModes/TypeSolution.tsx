@@ -7,17 +7,17 @@ import { ItemToLearn, LanguageFeatures } from "@/lib/types";
 import GenderCaseReview from "./GenderCaseReview";
 import { MoreReviewsMode } from "./MoreReviews";
 
-interface BetterSolutionInputProps {
+interface TypeSolutionProps {
   targetLanguageFeatures: LanguageFeatures;
   item: ItemToLearn;
   evaluate: Function;
 }
 
-export default function BetterSolutionInput({
+export default function TypeSolution({
   targetLanguageFeatures,
   item,
   evaluate,
-}: BetterSolutionInputProps) {
+}: TypeSolutionProps) {
   const [solution, setSolution] = useState("");
   const [reviewStatus, setReviewStatus] = useState<ReviewStatus>("neutral");
   const [moreReviews, setMoreReviews] = useState<MoreReviewsMode | null>(null);

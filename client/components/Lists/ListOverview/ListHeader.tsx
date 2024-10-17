@@ -30,8 +30,9 @@ export default function ListHeader({}: ListHeaderProps) {
   const { data } = useSession();
   const user = data?.user as User;
 
-  const userIsLearningThisList =
-    user.learnedLists[language.code]?.includes(listNumber);
+  const userIsLearningThisList = user
+    ? user.learnedLists[language.code]?.includes(listNumber)
+    : false;
 
   const numberOfItems = units.length;
 
