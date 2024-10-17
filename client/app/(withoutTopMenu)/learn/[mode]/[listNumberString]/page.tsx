@@ -27,8 +27,8 @@ export async function generateStaticParams() {
     getListNumbers(),
   ]);
 
-  return learningModes?.flatMap((mode) =>
-    listNumbers?.map((number) => ({
+  return (learningModes ?? []).flatMap((mode) =>
+    (listNumbers ?? []).map((number) => ({
       mode: mode,
       listNumberString: number,
     }))

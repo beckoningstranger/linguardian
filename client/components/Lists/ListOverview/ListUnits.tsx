@@ -11,7 +11,6 @@ import {
   Droppable,
   DropResult,
 } from "@hello-pangea/dnd";
-import { Types } from "mongoose";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -132,7 +131,7 @@ export default function ListUnits() {
 function getUnitInformation(
   units: { unitName: string; item: Item }[],
   unitName: string,
-  learnedIds: Types.ObjectId[] | undefined
+  learnedIds: string[] | undefined
 ) {
   const noOfItemsInUnit = units.reduce((a, itemInUnit) => {
     if (itemInUnit.unitName === unitName) a += 1;
@@ -142,7 +141,7 @@ function getUnitInformation(
   const itemsInUnit = units.filter((item) => item.unitName === unitName);
 
   const noOfLearnedItemsInUnit = itemsInUnit.filter((item) =>
-    learnedIds?.includes(item.item._id)
+    learnedIds?.includes(item.item._id.toString())
   ).length;
 
   const learnedItemsPercentage =

@@ -182,7 +182,9 @@ export async function getLearningDataForUser(userId: string) {
     const user = await Users.findOne({ id: userId });
     return {
       learnedItems: user?.learnedItems,
-      ignoredItems: user?.ignoredItems,
+      ignoredItems: user?.ignoredItems as Partial<
+        Record<SupportedLanguage, string[]>
+      >,
     };
   } catch (err) {
     console.error(`Error getting learned item ids: ${err}`);

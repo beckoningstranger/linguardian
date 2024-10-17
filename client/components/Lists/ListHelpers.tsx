@@ -4,12 +4,11 @@ import {
   ListStats,
   ListStatus,
 } from "@/lib/types";
-import { Types } from "mongoose";
 
 export function calculateListStats(
-  allItemObjectIds: Types.ObjectId[],
+  allItemObjectIds: string[],
   learnedItems: LearnedItem[],
-  ignoredItemObjectIds: Types.ObjectId[]
+  ignoredItemObjectIds: string[]
 ): ListStats {
   const learnedItemIds = learnedItems?.map((item) => item.id);
   const learnedItemIdsInList = learnedItemIds?.filter((id) =>
@@ -31,10 +30,10 @@ export function determineListStatus(stats: ListStats): ListStatus {
 }
 
 export function generateStats(
-  ignoredItemIds: Types.ObjectId[],
+  ignoredItemIds: string[],
   learnedItems: LearnedItem[],
-  allItemIDs: Types.ObjectId[],
-  selectedlearnedItems: Types.ObjectId[]
+  allItemIDs: string[],
+  selectedlearnedItems: string[]
 ) {
   const ignoredItemsInList =
     ignoredItemIds?.filter((id) => allItemIDs.includes(id)) || [];
@@ -77,11 +76,11 @@ export function generateStats(
 }
 
 export function getListStatsAndStatus(
-  itemIdsInUnits: Types.ObjectId[],
+  itemIdsInUnits: string[],
   learningData: LearningDataForLanguage | undefined
 ) {
   let learnedItems: LearnedItem[] = [];
-  let ignoredItems: Types.ObjectId[] = [];
+  let ignoredItems: string[] = [];
   if (learningData) {
     learnedItems = learningData.learnedItems;
     ignoredItems = learningData.ignoredItems;

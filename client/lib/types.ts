@@ -252,7 +252,7 @@ export type ParsedItem = z.infer<typeof parsedItemSchema>;
 
 export type LearningDataForLanguage = {
   learnedItems: LearnedItem[];
-  ignoredItems: Types.ObjectId[];
+  ignoredItems: string[];
 };
 
 export type PuzzlePieceObject = {

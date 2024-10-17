@@ -56,7 +56,7 @@ export default async function ListPage({
 
   const userIsAuthor = authors.includes(user.id);
   const unlockedLearningModesForUser = unlockedReviewModes[user.native.code];
-  const itemIdsInUnits = units.map((item) => item.item._id);
+  const itemIdsInUnits = units.map((item) => item.item._id.toString());
   const { listStats, listStatus } = getListStatsAndStatus(
     itemIdsInUnits,
     learningDataForLanguage

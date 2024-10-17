@@ -14,7 +14,9 @@ export async function calculateUnitStats(
   if (!selectedUnitData)
     throw new Error("Unit not found, unable to calculate stats");
 
-  const itemIDsInUnit = selectedUnitData.map((unitItem) => unitItem.item._id);
+  const itemIDsInUnit = selectedUnitData.map((unitItem) =>
+    unitItem.item._id.toString()
+  );
   const userlearnedItemIDs = learnedItems.map((item) => item.id);
   const learnedItemsInList = userlearnedItemIDs.filter((id) =>
     itemIDsInUnit.includes(id)

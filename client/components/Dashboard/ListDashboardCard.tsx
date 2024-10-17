@@ -29,7 +29,7 @@ export default function ListDashboardCard({
 }: ListDashboardCardProps) {
   const [showContextMenu, setShowContextMenu] = useState(false);
 
-  const itemIdsInUnits = list.units.map((item) => item.item._id);
+  const itemIdsInUnits = list.units.map((item) => item.item._id.toString());
   const { listStats, listStatus } = getListStatsAndStatus(
     itemIdsInUnits,
     learningDataForLanguage
