@@ -64,7 +64,7 @@ export default function InputWithCheck({
       {status.checked && !status.checking && (
         <div
           aria-live="polite"
-          className="absolute right-24 top-1/2 -translate-y-1/2 transform"
+          className="absolute right-4 top-1/2 -translate-y-1/2 transform"
         >
           {status.error ? (
             <BiSolidErrorAlt className="text-xl text-red-500" />

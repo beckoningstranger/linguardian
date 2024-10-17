@@ -2,12 +2,33 @@ import { Types } from "mongoose";
 import { z } from "zod";
 import { Item, SupportedLanguage } from "./types.js";
 
+const emailSchema = z
+  .string()
+  .email()
+  .min(7)
+  .regex(
+    ...createRegexWithMessage({
+      nameOfString: "Email",
+      numbers: true,
+      characters: "-_.@",
+    })
+  );
+
+const passwordSchema = z
+  .string()
+  .min(8, "Password should have at least 8 characters");
+
+export const signInSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+});
+
 export const registerSchema = z
   .object({
     username: z
       .string()
-      .min(4, "Your username must be between 4 and 24 characters long")
-      .max(24, "Your username must be between 4 and 24 characters long")
+      .min(4, "Username must be 4-24 characters")
+      .max(24, "Username must be 4-24 characters")
       .regex(
         ...createRegexWithMessage({
           nameOfString: "Username",
@@ -15,22 +36,9 @@ export const registerSchema = z
           characters: "-_",
         })
       ),
-    email: z
-      .string()
-      .email()
-      .min(7)
-      .regex(
-        ...createRegexWithMessage({
-          nameOfString: "Email",
-          numbers: true,
-          characters: "-_.@",
-        })
-      ),
-    password: z
-      .string()
-      .min(8, "Your password should have at least 8 characters")
-      .optional(),
-    confirmPassword: z.string().optional(),
+    email: emailSchema,
+    password: passwordSchema.optional(),
+    confirmPassword: passwordSchema.optional(),
     id: z.string(),
     image: z.string().optional(),
   })

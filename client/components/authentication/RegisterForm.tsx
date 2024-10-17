@@ -6,7 +6,6 @@ import { RegisterSchema } from "@/lib/types";
 import { registerSchema } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
-import Link from "next/link";
 import { FieldErrors, FieldValues, useForm } from "react-hook-form";
 import Spinner from "../Spinner";
 import InputWithCheck from "./InputWithCheck";
@@ -82,14 +81,14 @@ export default function RegisterForm() {
         <LandingPageInput
           {...register("password")}
           type="password"
-          placeholder="Password"
+          placeholder="Set a password for your account"
         />
         <FormErrors errors={errors} field="password" />
 
         <LandingPageInput
           {...register("confirmPassword")}
           type="password"
-          placeholder="Please type your password again"
+          placeholder="Please enter your password again"
         />
         <FormErrors errors={errors} field="confirmPassword" />
         <FormErrors errors={errors} field="root" />

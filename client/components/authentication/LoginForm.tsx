@@ -4,6 +4,7 @@ import paths from "@/lib/paths";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { FieldValues, useForm } from "react-hook-form";
 import { FaFacebook } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import {
@@ -12,52 +13,63 @@ import {
   LandingPageInput,
 } from "./LandingPageComponents";
 import WelcomeMessage from "./WelcomeMessage";
+import { FormErrors } from "../Dictionary/FormErrors";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signInSchema } from "@/lib/validations";
 
 export default function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loggingIn, setLoggingIn] = useState<boolean>(false);
+  const [signInError, setSignInError] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm({
+    resolver: zodResolver(signInSchema),
+    mode: "onBlur",
+  });
 
   const router = useRouter();
 
-  const handleCredentialsLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoggingIn(true);
+  const handleCredentialsLogin = async (data: FieldValues) => {
+    const result = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    });
 
-    try {
-      const res = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (res?.error) {
-        setError("Invalid Credentials");
-        setLoggingIn(false);
-        return;
-      }
+    if (result?.error) {
+      setSignInError("Email or Password are incorrect");
+      reset();
+    } else {
       router.replace(paths.signInPath());
-    } catch (err) {
-      console.error(err);
     }
   };
 
-  if (loggingIn) return <WelcomeMessage mode="login" />;
+  if (isSubmitting) return <WelcomeMessage mode="login" />;
   return (
     <LandingPageContainer>
       <LandingPageFormHeader title="Sign In" />
-      <form className="flex flex-col gap-3" onSubmit={handleCredentialsLogin}>
+      <form
+        className="flex flex-col gap-3"
+        onSubmit={handleSubmit(handleCredentialsLogin)}
+      >
         <LandingPageInput
-          type="text"
+          {...register("email", { required: "Email is required" })}
+          type="email"
           placeholder="Please enter your email..."
-          onChange={(e) => setEmail(e.target.value)}
         />
+        <FormErrors errors={errors} field="email" />
         <LandingPageInput
+          {...register("password", { required: "Email is required" })}
           type="password"
           placeholder="...and your password"
-          onChange={(e) => setPassword(e.target.value)}
         />
+        <FormErrors errors={errors} field="password" />
+        {signInError.length > 0 && (
+          <p className="text-sm text-red-500">{signInError}</p>
+        )}
         <button className="cursor-pointer rounded-md bg-primary px-6 py-2 font-bold text-white">
           Login with Email & Password
         </button>
@@ -67,28 +79,23 @@ export default function LoginForm() {
           <button
             className="w-full cursor-pointer rounded-md bg-white px-6 py-2 font-bold text-white"
             onClick={() => {
-              setLoggingIn(true);
               signIn("google", { callbackUrl: paths.signInPath() });
             }}
+            aria-label="Sign in with Google"
           >
             <FcGoogle className="mx-auto text-2xl" />
           </button>
           <button
             className="w-full cursor-pointer rounded-md bg-blue-500 px-6 py-2 font-bold text-white"
             onClick={() => {
-              setLoggingIn(true);
               signIn("facebook", { callbackUrl: paths.signInPath() });
             }}
+            aria-label="Sign in with Facebook"
           >
             <FaFacebook className="mx-auto text-2xl" />
           </button>
         </div>
       </div>
-      {error && (
-        <div className="mt-2 w-fit rounded-md bg-red-500 px-3 py-1 text-sm text-white">
-          {error}
-        </div>
-      )}
     </LandingPageContainer>
   );
 }
