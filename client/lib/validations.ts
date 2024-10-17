@@ -38,7 +38,7 @@ export const registerSchema = z
       ),
     email: emailSchema,
     password: passwordSchema.optional(),
-    confirmPassword: z.string().optional(),
+    confirmPassword: passwordSchema.optional(),
     id: z.string(),
     image: z.string().optional(),
   })

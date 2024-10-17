@@ -254,3 +254,10 @@ export type LearningDataForLanguage = {
   learnedItems: LearnedItem[];
   ignoredItems: Types.ObjectId[];
 };
+
+export type PuzzlePieceObject = {
+  position: number;
+  content: string;
+  first: boolean;
+  last: boolean;
+};

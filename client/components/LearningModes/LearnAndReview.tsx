@@ -7,6 +7,7 @@ import {
   ItemToLearn,
   LanguageFeatures,
   LearningMode,
+  PuzzlePieceObject,
   SupportedLanguage,
   User,
 } from "@/lib/types";
@@ -244,5 +245,15 @@ function createPuzzlePieces(itemName: string) {
   const puzzlePiecesWithoutEmptyOnes = puzzlePieces.filter(
     (piece) => piece.length > 0 && piece !== " "
   );
-  return arrayShuffle(puzzlePiecesWithoutEmptyOnes);
+
+  const puzzlePieceObjects = puzzlePiecesWithoutEmptyOnes.map(
+    (piece, index) => ({
+      position: index + 1,
+      content: piece,
+      first: index === 0,
+      last: index === puzzlePiecesWithoutEmptyOnes.length - 1,
+    })
+  );
+
+  return arrayShuffle<PuzzlePieceObject>(puzzlePieceObjects);
 }

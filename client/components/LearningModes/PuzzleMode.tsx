@@ -1,11 +1,11 @@
-import { ItemToLearn } from "@/lib/types";
-import { useEffect, useRef, useState } from "react";
+import { ItemToLearn, PuzzlePieceObject } from "@/lib/types";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ReviewStatus } from "./LearnAndReview";
 
 interface PuzzleModeProps {
   item: ItemToLearn;
   evaluate: Function;
-  initialPuzzlePieces: string[];
+  initialPuzzlePieces: PuzzlePieceObject[];
 }
 
 export default function PuzzleMode({
@@ -13,14 +13,45 @@ export default function PuzzleMode({
   evaluate,
   initialPuzzlePieces,
 }: PuzzleModeProps) {
-  const [puzzlePieces, setPuzzlePieces] = useState([] as string[]);
+  const [puzzlePieces, setPuzzlePieces] = useState(
+    [] as (PuzzlePieceObject & { used: boolean })[]
+  );
+  const resetPuzzlePieces = useCallback(() => {
+    setPuzzlePieces(
+      initialPuzzlePieces.map((piece) => ({ ...piece, used: false }))
+    );
+  }, [initialPuzzlePieces]);
+
   const [input, setInput] = useState("");
   const [reviewStatus, setReviewStatus] = useState<ReviewStatus>("neutral");
   const [inputFieldStyling, setInputFieldStyling] = useState(
     "h-20 w-full rounded-md bg-slate-200 text-center text-xl"
   );
+  const keyListener = useRef<HTMLInputElement>(null);
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    const legalKeys = [
+      ...Array.from({ length: puzzlePieces.length }, (_, i) => String(i + 1)),
+      "Backspace",
+      "Enter",
+    ];
+    if (!legalKeys.includes(e.key)) {
+      setInput(input + e.key);
+      return;
+    }
+    if (e.key === "Backspace") {
+      setInput("");
+      resetPuzzlePieces();
+      return;
+    }
+    if (e.key === "Enter") {
+      handleSubmit(e);
+      return;
+    }
+    setInput(input + puzzlePieces[+e.key - 1].content);
+
+    updatePuzzlePieces(e.key);
+  };
 
   useEffect(() => {
     if (reviewStatus !== "neutral") {
@@ -36,13 +67,12 @@ export default function PuzzleMode({
   }, [reviewStatus, evaluate, input]);
 
   useEffect(() => {
-    setPuzzlePieces([...initialPuzzlePieces]);
-  }, [initialPuzzlePieces]);
+    resetPuzzlePieces();
+  }, [resetPuzzlePieces]);
 
   useEffect(() => {
-    if (reviewStatus === "neutral" && inputRef.current) {
-      inputRef.current.focus();
-    }
+    if (reviewStatus === "neutral" && keyListener.current)
+      keyListener.current.focus();
   }, [reviewStatus]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -67,17 +97,18 @@ export default function PuzzleMode({
           type="text"
           placeholder="Compose or enter the translation"
           value={input}
+          onChange={() => {}}
           className={inputFieldStyling}
-          autoFocus
-          onChange={(e) => setInput(e.target.value)}
           disabled={reviewStatus !== "neutral"}
-          ref={inputRef}
+          onKeyDown={(e) => handleKeyDown(e)}
+          ref={keyListener}
         />
         <div className="m-2 flex w-full justify-around">
           <div
             onClick={() => {
               setInput("");
-              setPuzzlePieces([...initialPuzzlePieces]);
+              resetPuzzlePieces();
+              keyListener.current?.focus();
             }}
             className="rounded-md bg-slate-200 p-3 px-5"
           >
@@ -92,23 +123,41 @@ export default function PuzzleMode({
           </button>
         </div>
       </form>
-      <div className="mt-8 flex flex-wrap justify-center gap-8">
+      <div className="mt-8 grid grid-cols-2 gap-8">
         {puzzlePieces.map((piece, index) => (
-          <div
-            className="rounded-md bg-slate-200 p-3 px-5 text-xl"
+          <button
+            className="relative text-xl"
             key={index}
             onClick={() => {
-              setInput(input + piece);
+              setInput(input + piece.content);
               const updatedPuzzlePieces = puzzlePieces.map((piece, i) =>
-                i === index ? "✅" : piece
+                i === index ? { ...piece, used: true } : piece
               );
               setPuzzlePieces(updatedPuzzlePieces);
             }}
+            disabled={reviewStatus !== "neutral"}
           >
-            {piece}
-          </div>
+            <div className="absolute inset-0 -top-4 m-auto font-poppins text-2xl font-bold">
+              {piece.used ? "" : index + 1}
+            </div>
+            <div
+              className={`flex h-16 w-full min-w-32 items-center justify-center rounded-md ${
+                piece.used ? "bg-transparent" : "bg-slate-200"
+              } p-3 px-5`}
+            >
+              {!piece.used && piece.content}
+            </div>
+          </button>
         ))}
       </div>
     </div>
   );
+
+  function updatePuzzlePieces(key: string) {
+    const updatedPuzzlePieces = puzzlePieces.map((piece, i) =>
+      i === +key - 1 ? { ...piece, used: true } : piece
+    );
+    setPuzzlePieces(updatedPuzzlePieces);
+  }
 }
+// "✅"
