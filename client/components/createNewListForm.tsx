@@ -1,9 +1,10 @@
 "use client";
 import { createList } from "@/lib/actions";
 import { SupportedLanguage } from "@/lib/types";
-import { Button, Input, Textarea } from "@headlessui/react";
+import { Input, Textarea } from "@headlessui/react";
 import { FieldValues, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import Button from "./ui/Button";
 
 interface createNewListFormProps {
   userId: string;
@@ -65,6 +66,7 @@ export default function CreateNewListForm({
         })}
         type="text"
         placeholder="Enter a list name"
+        id="listName"
         className="px-4 py-2 text-center text-xl font-semibold"
       />
       {errors.listName && (
@@ -83,32 +85,27 @@ export default function CreateNewListForm({
       {errors.listDescription && (
         <p className="text-sm text-red-500">{`${errors.listDescription.message}`}</p>
       )}
-      <label
-        htmlFor="csvfile"
-        className="cursor-pointer rounded bg-blue-500 p-2 text-white hover:bg-blue-700"
-      >
-        <Input
-          {...register("csvfile")}
-          type="file"
-          id="csvfile"
-          accept=".csv"
-          className="sr-only"
-          aria-label="Upload a CSV File"
-        />
-        {filePicked
-          ? `Your file: ${watch().csvfile[0].name}`
-          : "Upload a CSV file (optional)"}
-      </label>
+      <Button color="blue">
+        <label htmlFor="csvfile">
+          <Input
+            {...register("csvfile")}
+            type="file"
+            id="csvfile"
+            accept=".csv"
+            className="sr-only"
+            aria-label="Upload a CSV File"
+          />
+          {filePicked
+            ? `Your file: ${watch().csvfile[0].name}`
+            : "Upload a CSV file (optional)"}
+        </label>
+      </Button>
       {errors.csvfile && (
         <p className="text-sm text-red-500">{`${errors.csvfile.message}`}</p>
       )}
       <input type="hidden" {...register("language", { value: languageCode })} />
       <input type="hidden" {...register("author", { value: userId })} />
-      <Button
-        type="submit"
-        disabled={isSubmitting}
-        className="m-2 rounded border-2 border-black p-3 transition-all hover:scale-105 hover:border-green-500 hover:bg-green-500 hover:text-white"
-      >
+      <Button type="submit" disabled={isSubmitting} intent="primary">
         {filePicked ? "Start upload & Create a new list" : "Create a new list"}
       </Button>
     </form>

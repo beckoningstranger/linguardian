@@ -1,8 +1,8 @@
-import ItemPageBottomRightButton from "@/components/Dictionary/ItemPageBottomRightButton";
 import ItemPageContainer from "@/components/Dictionary/ItemPageContainer";
 import ItemPageDEFTRCO from "@/components/Dictionary/ItemPageDEF-TR-CO";
 import ItemPageMain from "@/components/Dictionary/ItemPageMain";
 import ItemBackButton from "@/components/Lists/ItemBackButton";
+import Button from "@/components/ui/Button";
 import {
   getAllSlugsForLanguage,
   getPopulatedItemBySlug,
@@ -11,8 +11,8 @@ import {
 import { getAllUserLanguages } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
 import { SlugLanguageObject, SupportedLanguage } from "@/lib/types";
-import { Button } from "@headlessui/react";
 import Link from "next/link";
+import { MdEdit } from "react-icons/md";
 
 export const metadata = { title: "Dictionary" };
 
@@ -55,13 +55,11 @@ export default async function ItemPage({
   );
   if (!item)
     return (
-      <div className="grid h-96 place-items-center">
-        <div>
-          <div className="text-center">No item found</div>
+      <div className="grid h-[calc(100vh-90px)] place-items-center">
+        <div className="grid gap-y-6">
+          <div className="text-center text-xl">No item found</div>
           <Link href={paths.dictionaryPath()}>
-            <Button className={"rounded-md bg-green-400 px-4 py-2"}>
-              Back to dictionary
-            </Button>
+            <Button intent="primary">Back to dictionary</Button>
           </Link>
         </div>
       </div>
@@ -83,11 +81,15 @@ export default async function ItemPage({
         definition={item.definition}
         translations={item.translations}
       />
-      <ItemPageBottomRightButton
-        path={
+      <Link
+        href={
           paths.editDictionaryItemPath(item.slug) + `?comingFrom=${comingFrom}`
         }
-      />
+      >
+        <Button bottomRightButton intent="icon" aria-label="Edit this item">
+          <MdEdit className="h-8 w-8" />
+        </Button>
+      </Link>
     </ItemPageContainer>
   );
 }

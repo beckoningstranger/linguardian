@@ -8,9 +8,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { FieldErrors, FieldValues, useForm } from "react-hook-form";
 import Spinner from "../Spinner";
+import Button from "../ui/Button";
 import InputWithCheck from "./InputWithCheck";
 import {
-  LandingPageContainer,
+  LandingPageFormContainer,
   LandingPageFormHeader,
   LandingPageInput,
 } from "./LandingPageComponents";
@@ -21,7 +22,7 @@ export default function RegisterForm() {
     handleSubmit,
     setError,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isSubmitted },
     setValue,
     watch,
   } = useForm<RegisterSchema>({
@@ -57,7 +58,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <LandingPageContainer>
+    <LandingPageFormContainer>
       <LandingPageFormHeader title="Create an account" />
       <form className="flex flex-col gap-1" onSubmit={handleSubmit(onSubmit)}>
         <InputWithCheck
@@ -81,26 +82,29 @@ export default function RegisterForm() {
         <LandingPageInput
           {...register("password")}
           type="password"
-          placeholder="Please enter your password"
+          id="password"
+          placeholder="Enter your password"
         />
         <FormErrors errors={errors} field="password" />
 
         <LandingPageInput
           {...register("confirmPassword")}
           type="password"
-          placeholder="Please enter your password again"
+          id="confirmPassword"
+          placeholder="Enter your password again"
         />
         <FormErrors errors={errors} field="confirmPassword" />
         <FormErrors errors={errors} field="root" />
 
-        <button
-          className="cursor-pointer bg-green-600 px-6 py-2 font-bold text-white"
-          disabled={isSubmitting}
+        <Button
+          intent="primary"
+          disabled={isSubmitting || isSubmitted}
+          type="submit"
         >
           {isSubmitting ? <Spinner centered size="mini" /> : "Register"}
-        </button>
+        </Button>
       </form>
-    </LandingPageContainer>
+    </LandingPageFormContainer>
   );
 }
 

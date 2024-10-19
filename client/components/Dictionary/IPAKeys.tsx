@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
+import Button from "../ui/Button";
 
 interface IPAKeysProps {
   keys: string[] | undefined;
@@ -15,19 +16,20 @@ export default function IPAKeys({
 }: IPAKeysProps) {
   if (keys && keys.length > 0)
     return (
-      <div className="grid h-48 grid-cols-8 place-content-start">
+      <div className="mt-2 grid w-full grid-cols-6 gap-2">
         {keys.map((key) => (
-          <button
+          <Button
+            color="blue"
+            className="grid h-10 w-10 place-items-center font-voces font-light"
             key={key}
             id={"IPAKeys-" + key} // This is used in useOutsideInputAndKeyboardClick in hooks.ts
             onClick={() => {
               array[arrayIndex] = array[arrayIndex] + key;
               setArray(array.slice());
             }}
-            className="my-2 grid h-9 w-9 place-items-center rounded-md border border-black p-2 font-voces font-normal"
           >
             {key}
-          </button>
+          </Button>
         ))}
       </div>
     );

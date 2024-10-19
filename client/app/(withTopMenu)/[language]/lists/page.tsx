@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import BottomRightButton from "@/components/BottomRightButton";
 import ListStoreCard from "@/components/Lists/ListStoreCard";
+import Button from "@/components/ui/Button";
 import {
   fetchAuthors,
   getListsByLanguage,
@@ -10,6 +10,7 @@ import {
 import paths from "@/lib/paths";
 import { SupportedLanguage } from "@/lib/types";
 import { Metadata } from "next";
+import { FaPlus } from "react-icons/fa";
 
 export const metadata: Metadata = {
   title: "Lists",
@@ -50,7 +51,9 @@ export default async function ListStore({ params }: ListStoreProps) {
         {renderedLists}
       </div>
       <Link href={paths.newListPath(params?.language as SupportedLanguage)}>
-        <BottomRightButton ariaLabel="Create a new list" />
+        <Button bottomRightButton intent="icon" aria-label="Create a new list">
+          <FaPlus className="text-2xl font-semibold" />
+        </Button>
       </Link>
     </>
   );

@@ -1,6 +1,7 @@
 import { PuzzlePieceObject } from "@/lib/types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ReviewStatus } from "./LearnAndReview";
+import Button from "../ui/Button";
 
 interface PuzzleModeProps {
   itemName: string;
@@ -112,29 +113,32 @@ export default function PuzzleMode({
           disabled={reviewStatus !== "neutral"}
           ref={keyListener}
         />
-        <div className="m-2 flex w-full justify-around">
-          <div
+        <div className="m-2 flex w-full justify-around gap-x-8">
+          <Button
             onClick={() => {
               setInput("");
               resetPuzzlePieces();
               keyListener.current?.focus();
             }}
-            className="rounded-md bg-slate-200 p-3 px-5"
+            intent="secondary"
+            className="flex-1 py-4"
+            disabled={reviewStatus !== "neutral"}
           >
             Reset
-          </div>
-          <button
-            className="rounded-md bg-slate-200 p-3 px-5"
+          </Button>
+          <Button
+            intent="primary"
             type="submit"
+            className="flex-1 py-4"
             disabled={reviewStatus !== "neutral"}
           >
             Submit
-          </button>
+          </Button>
         </div>
       </form>
       <div className="mt-8 grid grid-cols-2 gap-8">
         {puzzlePieces.map((piece, index) => (
-          <button
+          <Button
             className="relative text-xl"
             key={index}
             onClick={() => {
@@ -156,7 +160,7 @@ export default function PuzzleMode({
             >
               {!piece.used && piece.content}
             </div>
-          </button>
+          </Button>
         ))}
       </div>
     </div>

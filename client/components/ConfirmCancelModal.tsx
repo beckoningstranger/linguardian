@@ -1,6 +1,7 @@
-import { Button, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { Dispatch, SetStateAction } from "react";
+import Button from "./ui/Button";
 
 interface ConfirmCancelModalProps {
   children: React.ReactNode;
@@ -30,36 +31,38 @@ export default function ConfirmCancelModal({
             <XMarkIcon className="h-8 w-8" />
           </Button>
         )}
-        <DialogPanel className="relative flex h-full max-h-[calc(100%-2rem)] w-full max-w-[calc(100%-2rem)] flex-col gap-2 overflow-y-auto rounded-md border bg-white p-8">
+        <DialogPanel className="relative flex w-full max-w-[calc(100%-2rem)] flex-col gap-2 overflow-y-auto rounded-md border bg-white p-4">
           <DialogTitle className="mb-4 text-center text-2xl font-bold">
             {title}
           </DialogTitle>
-          <div className="grid gap-2 text-lg">
-            <div className="relative mx-12 rounded-md text-center text-xl font-semibold">
+          <div className="flex flex-col gap-5 text-lg">
+            <div className="relative mx-12 rounded-md text-center text-lg font-semibold">
               {children}
             </div>
-          </div>
-          <div className="absolute bottom-6 flex w-full max-w-[calc(100%-2rem)] justify-evenly">
-            <Button
-              className="rounded-md bg-red-500 px-8 py-3 text-lg text-white"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsOpen(false);
-              }}
-              aria-label="Cancel and close this modal"
-            >
-              Cancel
-            </Button>
-            <Button
-              className="rounded-md bg-green-400 px-8 py-3 text-lg text-white"
-              onClick={(e) => {
-                e.stopPropagation();
-                doOnConfirm();
-                setIsOpen(false);
-              }}
-            >
-              Confirm
-            </Button>
+            <div className="flex w-full gap-5">
+              <Button
+                intent="secondary"
+                className="flex-1 p-3 px-5"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsOpen(false);
+                }}
+                aria-label="Cancel and close this modal"
+              >
+                Cancel
+              </Button>
+              <Button
+                className="flex-1"
+                intent="danger"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  doOnConfirm();
+                  setIsOpen(false);
+                }}
+              >
+                Confirm
+              </Button>
+            </div>
           </div>
         </DialogPanel>
       </div>

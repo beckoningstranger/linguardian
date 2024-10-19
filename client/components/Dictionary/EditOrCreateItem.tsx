@@ -21,8 +21,8 @@ import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { GiSaveArrow } from "react-icons/gi";
 import { IoArrowBack } from "react-icons/io5";
-import BottomRightButton from "../BottomRightButton";
 import Spinner from "../Spinner";
+import Button from "../ui/Button";
 import ComboBoxWrapper from "./ComboBoxWrapper";
 import EditOrCreatePageContainer from "./EditOrCreatePageContainer";
 import LanguagePicker from "./EditOrCreatePageLanguagePicker";
@@ -139,40 +139,43 @@ export default function EditOrCreateItem({
       >
         <div className="flex w-full justify-stretch gap-x-2">
           {slug !== "new-item" && (
-            <div>
-              <Link
-                href={paths.dictionaryItemPath(slug)}
-                className="flex h-12 w-12 items-center justify-center rounded-md border-2 border-black"
-              >
-                <IoArrowBack className="h-8 w-8 rounded-md" />
+            <Button
+              intent="icon"
+              className="h-12 w-12 border-2 border-black text-slate-800"
+            >
+              <Link href={paths.dictionaryItemPath(slug)}>
+                <IoArrowBack className="h-8 w-8" />
               </Link>
-            </div>
+            </Button>
           )}
           <div className="flex h-12 flex-1 items-center justify-center rounded-md bg-red-400 uppercase">
             {mode} mode
           </div>
-          <button
-            className="hidden w-0 items-center justify-center rounded-md bg-green-400 px-3 hover:bg-green-500 disabled:bg-gray-300 disabled:hover:bg-gray-300 sm:flex sm:h-full sm:w-40 sm:px-6"
+          <Button
+            intent="primary"
+            className="hidden place-items-center sm:grid"
             disabled={isSubmitting || !isDirty || !isValid}
+            type="submit"
           >
             {isSubmitting ? (
               <Spinner size="mini" />
             ) : (
               <span className="hidden sm:block">Save Changes</span>
             )}
-          </button>
-          <BottomRightButton
-            styles="sm:hidden"
+          </Button>
+          <Button
+            bottomRightButton
+            intent="icon"
+            className="sm:hidden"
             disabled={isSubmitting || !isDirty || !isValid}
-            icon={
-              isSubmitting ? (
-                <Spinner size="mini" />
-              ) : (
-                <GiSaveArrow className="h-8 w-8 text-white" />
-              )
-            }
-            ariaLabel="Save your changes"
-          />
+            aria-label="Save your changes"
+          >
+            {isSubmitting ? (
+              <Spinner size="mini" />
+            ) : (
+              <GiSaveArrow className="h-8 w-8" />
+            )}
+          </Button>
         </div>
         <Controller
           name="name"

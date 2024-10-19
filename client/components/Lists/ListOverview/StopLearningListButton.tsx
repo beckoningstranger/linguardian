@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import Spinner from "../../Spinner";
+import Button from "@/components/ui/Button";
 
 interface StopLearningListButtonProps {
   list: { language: SupportedLanguage; listNumber: number; name: string };
@@ -56,8 +57,8 @@ export default function StopLearningListButton({
   if (status === "loading") return <Spinner centered />;
 
   return (
-    <button onClick={handleRemoveList} disabled={updating}>
+    <Button intent="primary" onClick={handleRemoveList} disabled={updating}>
       Remove list & Stop learning
-    </button>
+    </Button>
   );
 }

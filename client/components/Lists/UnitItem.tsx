@@ -55,9 +55,17 @@ export default function UnitItem({
         showTranslations={showTranslations}
       />
       <div className="pointer-events-none text-xs">{item.partOfSpeech}</div>
-      <div className="pointer-events-none text-xs">
-        {item.level && <span>Level {item.level}:</span>}
-        <span> {nextReview(item.nextReview, item.level)}</span>
+      <div className="pointer-events-none flex gap-1 text-center text-xs sm:flex-col">
+        {item.level && (
+          <div>
+            <span>
+              Level {item.level}:{" "}
+              {currentItemStatus(item.nextReview, item.level)}
+            </span>
+            <span className="sm:hidden">.</span>
+          </div>
+        )}
+        <div>{nextReview(item.nextReview, item.level)}</div>
       </div>
     </Link>
   );
@@ -78,10 +86,18 @@ function bgColor(nextReview?: number, itemLevel?: number) {
     : "text-white bg-[#26A0FC]";
 }
 
-function nextReview(nextReview?: number, itemLevel?: number) {
+function currentItemStatus(nextReview?: number, itemLevel?: number) {
   if (!nextReview || !itemLevel) return "";
   const now = Date.now();
+  return nextReview > now
+    ? itemLevel < 8
+      ? "Growing"
+      : "Mature"
+    : "Ready to water";
+}
 
+function nextReview(nextReview?: number, itemLevel?: number) {
+  if (!nextReview || !itemLevel) return "";
   const waterMessage =
     `Water after ` +
     new Date(nextReview).toLocaleString(undefined, {
@@ -92,9 +108,5 @@ function nextReview(nextReview?: number, itemLevel?: number) {
       minute: "numeric",
     });
 
-  return nextReview > now
-    ? itemLevel < 8
-      ? `Growing. ${waterMessage}`
-      : `Mature. ${waterMessage}`
-    : "Ready to water";
+  return waterMessage;
 }

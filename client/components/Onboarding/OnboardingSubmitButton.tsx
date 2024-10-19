@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import Spinner from "../Spinner";
 import { useRouter } from "next/navigation";
 import paths from "@/lib/paths";
+import Button from "../ui/Button";
 
 interface OnboardingSubmitButtonProps {
   userNative: LanguageWithFlagAndName;
@@ -24,7 +25,8 @@ export default function OnboardingSubmitButton({
 
   if (status === "loading") return <Spinner centered />;
   return (
-    <button
+    <Button
+      intent="primary"
       type="submit"
       className="flex h-16 w-full items-center px-6 py-3 text-center disabled:cursor-not-allowed"
       onClick={async () => {
@@ -75,6 +77,6 @@ export default function OnboardingSubmitButton({
           Start learning by picking a list
         </span>
       )}
-    </button>
+    </Button>
   );
 }

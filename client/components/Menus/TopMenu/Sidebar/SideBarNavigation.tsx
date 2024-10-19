@@ -23,7 +23,7 @@ export default function SideBarNavigation({}: SideBarNavigationProps) {
     <>
       <div
         className={`flex flex-col md:justify-between md:items-start md:space-between h-full backdrop-blur-md absolute top-0 transition-all md:bg-slate-100 z-10 ${
-          showSidebar ? "w-full md:w-auto z-50" : "-translate-x-[300px]"
+          showSidebar ? "w-full md:w-auto z-50" : "-translate-x-[400px]"
         }
         `}
         ref={ref as RefObject<HTMLDivElement>}

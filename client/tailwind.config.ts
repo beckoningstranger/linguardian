@@ -9,7 +9,13 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#16a34a", // green-600
+        primarygreen: "#16a34a", // green-600
+        darkred: "#B63347",
+        autumnorange: "#CA843E",
+        harvestyellow: "#F7CD54",
+        lightblue: "#BEE2EE",
+        darkgrey: "#2D4C4D",
+        brown: "#893738",
       },
       fontFamily: {
         dancing: ["var(--font-dancingScript)"],

@@ -5,6 +5,7 @@ import {
   DialogTitle,
 } from "@headlessui/react";
 import { MouseEventHandler } from "react";
+import Button from "../ui/Button";
 
 interface ConfirmLanguageChangeProps {
   confirmFunction: Function;
@@ -29,19 +30,21 @@ export default function ConfirmLanguageChange({
             This will create a new item with all the provided data in the
             language you selected and delete the old item.
           </Description>
-          <div className="flex justify-between">
-            <button
+          <div className="flex items-stretch justify-between gap-x-5">
+            <Button
               onClick={closeFunction as MouseEventHandler}
-              className="rounded-md bg-red-500 px-4 py-2 text-white"
+              intent="secondary"
+              className="w-full flex-1"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={confirmFunction as MouseEventHandler}
-              className="rounded-md bg-green-500 px-4 py-2 text-white"
+              intent="primary"
+              className="w-full flex-1"
             >
               Change language
-            </button>
+            </Button>
           </div>
         </DialogPanel>
       </div>

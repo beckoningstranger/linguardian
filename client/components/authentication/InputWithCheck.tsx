@@ -1,6 +1,7 @@
 "use client";
 
 import { isEmailTaken, isUsernameTaken } from "@/lib/actions";
+import { capitalizeString } from "@/lib/helperFunctionsClient";
 import { useEffect, useState } from "react";
 import { CheckmarkIcon } from "react-hot-toast";
 import { BiSolidErrorAlt } from "react-icons/bi";
@@ -57,12 +58,9 @@ export default function InputWithCheck({
   return (
     <div className="relative">
       <LandingPageInput
+        id={checkMode}
         type={checkMode === "email" ? "email" : "text"}
-        placeholder={
-          checkMode === "email"
-            ? "Please enter your email"
-            : "Please enter your password"
-        }
+        placeholder={`Enter your ${capitalizeString(checkMode)} `}
         {...register(checkMode)}
       />
       {status.checked && !status.checking && (

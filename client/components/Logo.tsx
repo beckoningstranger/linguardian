@@ -1,9 +1,25 @@
-export default function Logo() {
+import { cn } from "@/lib/helperFunctionsClient";
+
+type LogoProps = {
+  mobileMenu?: boolean;
+} & React.HTMLAttributes<HTMLHeadingElement>;
+
+export default function Logo({ mobileMenu, ...props }: LogoProps) {
+  const remainingProps = { ...props };
+  delete remainingProps.className;
+
+  const styling = { "text-6xl": mobileMenu };
+
   return (
-    <div
-      className={`flex h-20 w-full select-none items-center justify-center bg-red-400 text-2xl font-bold transition-all md:hidden`}
+    <h1
+      className={cn(
+        `grid font-bold text-blue-800 w-full place-items-center font-dancing text-4xl sm:text-6xl`,
+        styling,
+        props.className
+      )}
+      {...remainingProps}
     >
       Linguardian
-    </div>
+    </h1>
   );
 }

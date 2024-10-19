@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { FaTrashCan } from "react-icons/fa6";
 import ConfirmCancelMobileMenu from "../ConfirmCancelMobileMenu";
 import ConfirmCancelModal from "../ConfirmCancelModal";
+import Button from "../ui/Button";
 
 interface DeleteItemButtonProps {
   listAndUnitData: ListAndUnitData;
@@ -38,15 +39,16 @@ export default function DeleteItemButton({
   return (
     <>
       {/* Mobile */}
-      <button
-        className="absolute right-3 top-1/2 -translate-y-1/2 transform p-3 text-2xl hover:text-red-500 md:hidden"
+      <Button
+        intent="icon"
+        className="absolute right-1 text-red-500 md:hidden"
         onClick={(e) => {
           e.preventDefault();
           toggleMobileMenu() as MouseEventHandler;
         }}
       >
-        <FaTrashCan />
-      </button>
+        <FaTrashCan className="text-xl" />
+      </Button>
       <ConfirmCancelMobileMenu doOnConfirm={deleteItemAction}>
         <div className="text-2xl">Confirm to delete item from list</div>
         <div className="mt-8 text-xl">
@@ -58,15 +60,16 @@ export default function DeleteItemButton({
       </ConfirmCancelMobileMenu>
 
       {/* Desktop */}
-      <button
-        className="absolute right-3 top-1/2 hidden -translate-y-1/2 transform p-3 text-2xl hover:text-red-500 md:block"
+      <Button
+        intent="icon"
+        className="absolute right-1 hidden text-red-500 md:block"
         onClick={async (e) => {
           e.preventDefault();
           setShowConfirmDeleteModel(true);
         }}
       >
-        <FaTrashCan />
-      </button>
+        <FaTrashCan className="text-xl" />
+      </Button>
       <ConfirmCancelModal
         title="Confirm to delete item from list"
         isOpen={showConfirmDeleteModal}

@@ -25,9 +25,9 @@ export default function AllLearningButtons({
     return (
       <>
         <ReviewButton
+          mode="learn"
           listNumber={listNumber}
           unitNumber={unitNumber}
-          mode="learn"
           stats={listStats}
           unlockedModes={unlockedLearningModesForUser}
         />

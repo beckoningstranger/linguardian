@@ -1,21 +1,16 @@
 "use client";
-import { Button } from "@headlessui/react";
 import { useRouter } from "next/navigation";
+import Button from "./ui/Button";
 
-export default function NavigateBackButton({
-  className,
-  children,
-}: React.PropsWithChildren<{
-  className?: string;
-}>) {
+export default function NavigateBackButton({}: React.PropsWithChildren<{}>) {
   const router = useRouter();
   return (
     <Button
-      className={className}
+      intent="secondary"
       onClick={() => router.back()}
       aria-label="Navigate back"
     >
-      {children}
+      Navigate Back
     </Button>
   );
 }

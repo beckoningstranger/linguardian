@@ -1,3 +1,10 @@
+import clsx, { ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
 export function setErrorsFromBackend<T>(
   errors: Record<keyof T, string[]>,
   setError: (field: keyof T, error: { type: string; message: string }) => void
@@ -19,4 +26,8 @@ export function arrayShuffle<T>(array: T[]) {
     [array[i], array[j]] = [array[j], array[i]];
   }
   return array;
+}
+
+export function capitalizeString(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }

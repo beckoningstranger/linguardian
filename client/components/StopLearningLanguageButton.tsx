@@ -1,11 +1,12 @@
 "use client";
 
 import { setLearnedLanguages } from "@/lib/actions";
-import { LanguageWithFlagAndName, User } from "@/lib/types";
+import { LanguageWithFlagAndName, SupportedLanguage, User } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import Spinner from "./Spinner";
+import Button from "./ui/Button";
 
 interface StopLearningLanguageButtonProps {
   language: LanguageWithFlagAndName;
@@ -14,12 +15,15 @@ interface StopLearningLanguageButtonProps {
 export default function StopLearningLanguageButton({
   language,
 }: StopLearningLanguageButtonProps) {
-  const [updating, setUpdating] = useState(false);
+  const [updatingMap, setUpdatingMap] = useState<
+    Map<SupportedLanguage, boolean>
+  >(new Map());
   const { data, status, update } = useSession();
   const user = data?.user as User;
 
+  console.log(updatingMap);
   const handleStopLearningLanguage = async () => {
-    setUpdating(true);
+    setUpdatingMap((prev) => new Map(prev).set(language.code, true));
     const updatedLearnedLanguages = user.learnedLanguages
       ? user?.learnedLanguages.filter(
           (languageObject) => languageObject.code !== language.code
@@ -44,19 +48,19 @@ export default function StopLearningLanguageButton({
     } catch (err) {
       console.error(err);
     } finally {
-      setUpdating(false);
+      setUpdatingMap((prev) => new Map(prev).set(language.code, false));
     }
   };
 
   if (status === "loading") return <Spinner centered />;
 
   return (
-    <button
-      className="rounded-md border border-red-500 px-4 py-2 text-red-500 transition-colors hover:bg-red-500 hover:text-white"
+    <Button
+      intent="danger"
       onClick={handleStopLearningLanguage}
-      disabled={updating}
+      disabled={updatingMap.get(language.code)}
     >
       Stop learning {language.name}
-    </button>
+    </Button>
   );
 }

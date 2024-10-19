@@ -9,7 +9,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import Flag from "react-world-flags";
 import Spinner from "./Spinner";
-import { Button } from "@headlessui/react";
+import Button from "./ui/Button";
 
 interface PickNewLanguageProps {
   newLanguage: LanguageWithFlagAndName;
@@ -54,11 +54,7 @@ export default function PickNewLanguage({ newLanguage }: PickNewLanguageProps) {
   if (status === "loading") return <Spinner centered />;
 
   return (
-    <Button
-      key={newLanguage.code}
-      onClick={handleLanguageSelection}
-      disabled={updating}
-    >
+    <Button onClick={handleLanguageSelection} disabled={updating}>
       <Flag
         code={newLanguage.flag}
         className={`my-2 h-24 w-24 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125`}

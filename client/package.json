@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@auth/mongodb-adapter": "^2.6.0",
+    "@auth/mongodb-adapter": "^3.7.0",
     "@headlessui/react": "^2.1.0",
     "@hello-pangea/dnd": "^17.0.0",
     "@heroicons/react": "^2.1.4",
@@ -17,10 +17,11 @@
     "@types/bcryptjs": "^2.4.6",
     "apexcharts": "^3.45.2",
     "bcryptjs": "^2.4.3",
+    "clsx": "^2.1.1",
     "mongodb": "^6.5.0",
     "mongoose": "^8.3.1",
     "next": "^14.2.3",
-    "next-auth": "^4.24.7",
+    "next-auth": "^4.24.8",
     "react": "^18.3.1",
     "react-apexcharts": "^1.4.1",
     "react-dom": "^18.3.1",
@@ -28,6 +29,7 @@
     "react-hot-toast": "^2.4.1",
     "react-icons": "^5.0.1",
     "react-world-flags": "^1.6.0",
+    "tailwind-merge": "^2.5.4",
     "use-debounce": "^10.0.1",
     "zod": "^3.23.8"
   },

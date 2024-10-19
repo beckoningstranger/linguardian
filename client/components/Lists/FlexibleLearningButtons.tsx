@@ -3,6 +3,7 @@ import { LearningMode, ListStats, ListStatus } from "@/lib/types";
 import { useRef, useState } from "react";
 import ContextMenu from "../Menus/ContextMenu";
 import ReviewButton from "../ReviewButton";
+import { AllLearningButtonsContainer } from "./AllLearningButtonsContainer";
 import AllLearningButtons from "./ListOverview/AllLearningButtons";
 
 interface FlexibleLearningButtonsProps {
@@ -72,13 +73,13 @@ export default function FlexibleLearningButtons({
         toggleContextMenu={() => setShowAllReviewModes(false)}
         moreClasses="absolute bottom-0 right-0 w-full border-slate-300 border-t-4 md:border-t-0 md:border-l-4 h-36"
       >
-        <div className="grid grid-cols-3 place-items-center md:h-full md:grid-cols-2">
+        <AllLearningButtonsContainer mode="dashboard">
           <AllLearningButtons
             listNumber={listNumber}
             unlockedLearningModesForUser={unlockedModes}
             listStats={stats}
           />
-        </div>
+        </AllLearningButtonsContainer>
       </ContextMenu>
       {renderedButtons}
     </>

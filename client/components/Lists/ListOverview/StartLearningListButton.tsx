@@ -1,5 +1,6 @@
 "use client";
 import Spinner from "@/components/Spinner";
+import Button from "@/components/ui/Button";
 import { useActiveLanguage } from "@/context/ActiveLanguageContext";
 import { useListContext } from "@/context/ListContext";
 import { setLearnedLanguages, setLearnedLists } from "@/lib/actions";
@@ -80,22 +81,24 @@ export default function StartLearningListButton({}: StartLearningListButtonProps
   return (
     <>
       {!userIsLearningThisLanguage && (
-        <button
+        <Button
+          intent="primary"
           onClick={startLearningLanguageAndList}
           disabled={updating}
-          className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
+          className="mx-2 p-4"
         >
           Start learning {listLanguage.name} with this list!
-        </button>
+        </Button>
       )}
       {userIsLearningThisLanguage && (
-        <button
+        <Button
+          intent="primary"
           onClick={addListToLearnedListsAction}
           disabled={updating}
-          className="m-2 rounded-md bg-green-500 p-4 text-center text-white"
+          className="mx-2 p-4"
         >
           Start learning this list
-        </button>
+        </Button>
       )}
     </>
   );

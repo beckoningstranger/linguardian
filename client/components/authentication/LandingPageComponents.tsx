@@ -4,27 +4,28 @@ import React, { forwardRef, PropsWithChildren } from "react";
 
 type LandingPageInputProps = {
   type: string;
+  id: string;
   placeholder:
-    | "Please enter your email"
-    | "Please enter your username"
-    | "Please enter your password"
-    | "Please enter your password again";
+    | "Enter your email"
+    | "Enter your username"
+    | "Enter your password"
+    | "Enter your password again";
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 export const LandingPageInput = forwardRef<
   HTMLInputElement,
   LandingPageInputProps
->(({ type, placeholder, ...props }, ref) => {
+>(({ type, placeholder, id, ...props }, ref) => {
   return (
     <>
-      <label htmlFor={placeholder} className="sr-only">
+      <label htmlFor={id} className="sr-only">
         {placeholder}
       </label>
       <Input
         type={type}
-        id={placeholder}
+        id={id}
         placeholder={placeholder}
-        className="text-md w-80 rounded-md border px-4 py-2 pr-4 tracking-normal"
+        className="text-md w-full rounded-md border px-4 py-2 pr-4 tracking-normal"
         ref={ref}
         {...props}
       />
@@ -33,9 +34,9 @@ export const LandingPageInput = forwardRef<
 });
 LandingPageInput.displayName = "LandingPageInput";
 
-export function LandingPageContainer({ children }: PropsWithChildren) {
+export function LandingPageFormContainer({ children }: PropsWithChildren) {
   return (
-    <div className="absolute bottom-0 w-full rounded-lg bg-white bg-opacity-60 bg-cover px-8 py-2 sm:bottom-3 sm:right-3 sm:w-auto">
+    <div className="absolute bottom-0 w-full rounded-lg bg-white bg-opacity-60 bg-cover px-8 py-2 sm:bottom-3 sm:right-3 sm:w-96">
       {children}
     </div>
   );

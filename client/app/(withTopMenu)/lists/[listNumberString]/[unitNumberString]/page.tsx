@@ -1,9 +1,6 @@
 import ListBarChart from "@/components/Charts/ListBarChart";
 import ListPieChart from "@/components/Charts/ListPieChart";
-import {
-  AllLearningButtonsDesktopContainer,
-  AllLearningButtonsMobileContainer,
-} from "@/components/Lists/AllLearningButtonsContainer";
+import { AllLearningButtonsContainer } from "@/components/Lists/AllLearningButtonsContainer";
 import FlexibleLearningButtons from "@/components/Lists/FlexibleLearningButtons";
 import ItemBackButton from "@/components/Lists/ItemBackButton";
 import Leaderboard from "@/components/Lists/Leaderboard";
@@ -136,7 +133,7 @@ export default async function UnitDetailPage({
           <div className="md:hidden">
             <ListBarChart stats={stats} />
           </div>
-          <div className="hidden md:block">
+          <div className="hidden sm:block">
             <div className="flex">
               <div className="m-2 w-1/2 rounded-md bg-slate-100 py-4">
                 <ListPieChart stats={stats} />
@@ -145,14 +142,14 @@ export default async function UnitDetailPage({
                 <Leaderboard />
               </div>
             </div>
-            <AllLearningButtonsDesktopContainer>
+            <AllLearningButtonsContainer mode="desktop">
               <AllLearningButtons
                 listStats={stats}
                 listNumber={listNumber}
                 unlockedLearningModesForUser={unlockedModes}
                 unitNumber={unitNumber}
               />
-            </AllLearningButtonsDesktopContainer>
+            </AllLearningButtonsContainer>
           </div>
         </>
       )}
@@ -165,14 +162,14 @@ export default async function UnitDetailPage({
         listAndUnitData={listAndUnitData}
       />
       {userHasAddedThisList && (
-        <AllLearningButtonsMobileContainer>
+        <AllLearningButtonsContainer mode="mobile">
           <FlexibleLearningButtons
             stats={stats}
             status={determineListStatus(stats)}
             listNumber={listNumber}
             unlockedModes={unlockedModes}
           />
-        </AllLearningButtonsMobileContainer>
+        </AllLearningButtonsContainer>
       )}
     </ListContainer>
   );

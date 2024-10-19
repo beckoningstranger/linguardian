@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import RegisterForm from "./RegisterForm";
+import Logo from "../Logo";
 import LoginForm from "./LoginForm";
+import RegisterForm from "./RegisterForm";
 
 export default function LandingPageContent() {
   const [mode, setMode] = useState<"present" | "signin" | "register">(
@@ -12,22 +13,17 @@ export default function LandingPageContent() {
   return (
     <>
       <header>
-        <nav className="mx-4 flex items-baseline justify-between py-8 font-semibold text-blue-800 sm:mx-12">
-          <button
-            className="font-dancing text-4xl font-bold sm:text-6xl"
-            onClick={() => {
-              setMode("present");
-            }}
-          >
-            <h1>Linguardian</h1>
-          </button>
-          <div className="items-bottom mx-1 flex gap-x-2 font-breeSerif text-lg font-light tracking-wider sm:gap-x-4 sm:text-xl md:mx-4">
-            <button onClick={() => setMode("signin")}>
-              <h3>Sign In</h3>
-            </button>
-            <button onClick={() => setMode("register")}>
-              <h3>Register</h3>
-            </button>
+        <nav className="mx-4 flex items-baseline justify-between py-8 sm:mx-12">
+          <div>
+            <Logo
+              onClick={() => {
+                setMode("present");
+              }}
+            />
+          </div>
+          <div className="items-bottom mx-1 flex gap-x-2 font-breeSerif text-lg font-light tracking-wider text-blue-800 sm:gap-x-4 sm:text-xl md:mx-4">
+            <h3 onClick={() => setMode("signin")}>Sign In</h3>
+            <h3 onClick={() => setMode("register")}>Register</h3>
           </div>
         </nav>
       </header>

@@ -9,9 +9,9 @@ export default function LogoWithCloseButton({
   toggleFunction,
 }: LogoWithCloseButtonProps) {
   return (
-    <div className="relative md:hidden">
+    <div className="relative flex h-20 w-full select-none border-black md:hidden">
       <div
-        className="absolute left-0 grid h-20 w-20 place-items-center border-r border-black"
+        className="grid w-20 place-items-center border-r border-black"
         onClick={(e) => {
           e.stopPropagation();
           toggleFunction();
@@ -19,7 +19,8 @@ export default function LogoWithCloseButton({
       >
         <ArrowUpLeftIcon className="h-10" />
       </div>
-      <Logo />
+
+      <Logo mobileMenu />
     </div>
   );
 }

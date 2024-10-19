@@ -179,7 +179,7 @@ export default function UnitButton({
                 removeUnitFromListAction();
               }
             }}
-            className="absolute right-0 top-1/2 hidden -translate-y-1/2 transform p-4 md:right-4 md:block"
+            className="absolute right-0 hidden md:right-4 md:block"
             aria-label="Click to delete this unit"
           >
             <FaTrashCan className="text-red-500" />

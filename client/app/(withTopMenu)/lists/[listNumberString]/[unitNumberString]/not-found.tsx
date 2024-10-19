@@ -4,8 +4,8 @@ export default async function notFound() {
   return (
     <div className="grid h-96 place-items-center">
       <div className="flex flex-col items-center">
-        <div className="text-center w-96">
-          <p className="text-2xl mb-4">
+        <div className="w-96 text-center">
+          <p className="mb-4 text-2xl">
             We could not find this unit. Sorry! :-/
           </p>
 
@@ -15,9 +15,7 @@ export default async function notFound() {
             logged in and have entered the correct URL.
           </p>
         </div>
-        <NavigateBackButton className="w-52 mt-4 bg-slate-200 p-4 rounded-md">
-          Navigate Back
-        </NavigateBackButton>
+        <NavigateBackButton />
       </div>
     </div>
   );

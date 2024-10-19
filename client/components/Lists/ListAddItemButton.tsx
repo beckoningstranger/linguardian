@@ -4,6 +4,7 @@ import { ListAndUnitData } from "@/lib/types";
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import AddItemDialog from "../Dictionary/AddItemDialog";
+import Button from "../ui/Button";
 
 interface ListAddItemButtonProps {
   addToThisList: ListAndUnitData;
@@ -15,8 +16,10 @@ export default function ListAddItemButton({
   const [showAddNewItemDialog, setShowAddNewItemDialog] = useState(false);
 
   return (
-    <button
-      className="flex w-full flex-col items-center justify-center rounded-md bg-slate-100 p-1"
+    <Button
+      color="blue"
+      fullWidth
+      intent="icon"
       onClick={() => {
         setShowAddNewItemDialog(true);
       }}
@@ -34,6 +37,6 @@ export default function ListAddItemButton({
           listAndUnitData={addToThisList}
         />
       )}
-    </button>
+    </Button>
   );
 }

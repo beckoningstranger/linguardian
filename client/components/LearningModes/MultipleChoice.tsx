@@ -1,6 +1,7 @@
 import { ItemToLearn } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { ReviewStatus } from "./LearnAndReview";
+import Button from "../ui/Button";
 
 interface MultipleChoiceProps {
   options: string[];
@@ -49,21 +50,16 @@ export default function MultipleChoice({
   return (
     <div className="grid grid-cols-1 place-items-center items-stretch gap-3">
       {options.map((option, index) => (
-        <button
+        <Button
           key={index}
-          className={calculateStyling(
-            option,
-            selectedOption,
-            reviewStatus,
-            correctItem.name
-          )}
+          className={calculateStyling(option === selectedOption, reviewStatus)}
           onClick={() => {
             handleClick(option);
           }}
         >
           <span className="mx-4">{index + 1}:</span>
           <span>{option}</span>
-        </button>
+        </Button>
       ))}
       <input
         type="text"
@@ -75,21 +71,12 @@ export default function MultipleChoice({
   );
 }
 
-function calculateStyling(
-  option: string,
-  selectedOption: string | null,
-  reviewStatus: ReviewStatus,
-  correctOption: string
-) {
-  let styling = "w-full rounded-full p-4 flex items-center";
-  if (option !== selectedOption) styling += " bg-slate-200";
-  if (option === selectedOption && reviewStatus === "incorrect")
-    styling += " bg-red-600";
-  if (
-    (option === selectedOption && reviewStatus === "correct") ||
-    (option === correctOption && reviewStatus === "incorrect")
-  ) {
-    styling = "w-full rounded-full p-4 bg-green-300 flex";
+function calculateStyling(selected: boolean, reviewStatus: ReviewStatus) {
+  let styling = "w-full rounded-full p-4 flex items-center text-slate-800";
+  if (!selected) styling += " bg-slate-200";
+  if (selected && reviewStatus === "incorrect") styling += " bg-red-600";
+  if (selected && reviewStatus === "correct") {
+    styling += " bg-green-300";
   }
   return styling;
 }

@@ -6,7 +6,8 @@ import {
   PopulatedList,
   SupportedLanguage,
 } from "@/lib/types";
-import BottomRightButton from "../BottomRightButton";
+import { FaPlus } from "react-icons/fa";
+import Button from "../ui/Button";
 import ListDashboardCard from "./ListDashboardCard";
 
 interface DashboardProps {
@@ -67,7 +68,13 @@ function AddNewListOption({
       href={paths.listsLanguagePath(language)}
       className={`${dashboardIsEmpty && "animate-pulse"}`}
     >
-      <BottomRightButton ariaLabel="Add a new list to your dashboard" />
+      <Button
+        bottomRightButton
+        intent="icon"
+        aria-label="Add a new list to your dashboard"
+      >
+        <FaPlus className="text-2xl font-semibold text-white" />
+      </Button>
     </Link>
   );
 }

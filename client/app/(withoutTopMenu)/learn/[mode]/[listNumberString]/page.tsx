@@ -89,9 +89,7 @@ function checkIfModeIsUnlockedOrAbort(
             No valid learning mode selected. Mode &apos;{mode}&apos; either does
             not exist or has not been unlocked for this list.
           </p>
-          <NavigateBackButton className="mt-4 w-52 rounded-md bg-slate-200 p-4">
-            Navigate Back
-          </NavigateBackButton>
+          <NavigateBackButton />
         </div>
       </div>
     );

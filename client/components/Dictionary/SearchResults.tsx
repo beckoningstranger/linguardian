@@ -23,7 +23,7 @@ export default function SearchResults({
   doAfterClickOnSearchResult,
 }: SearchResultsProps) {
   return (
-    <div className="mx-1 mt-2 grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
+    <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
       {results.map((result) => {
         return result && mode === "searchResultIsLinkToItemPage" ? (
           <Link

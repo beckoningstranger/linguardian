@@ -2,7 +2,6 @@
 
 import paths from "@/lib/paths";
 import { LearningMode, ListStats } from "@/lib/types";
-import { Button } from "@headlessui/react";
 import Link from "next/link";
 import {
   FaBookOpenReader,
@@ -12,6 +11,8 @@ import {
 } from "react-icons/fa6";
 import { GiSeedling, GiSpellBook, GiWateringCan } from "react-icons/gi";
 import { RxDotsHorizontal } from "react-icons/rx";
+import Button from "./ui/Button";
+import { cn } from "@/lib/helperFunctionsClient";
 
 interface ReviewButtonProps {
   mode: LearningMode | "more" | "spinner";
@@ -63,7 +64,7 @@ export default function ReviewButton({
       color = "bg-fuchsia-600";
       break;
     case "spinner":
-      icon = <FaSpinner className="animate-spin" />;
+      icon = <FaSpinner />;
       color = "bg-slate-300";
       break;
     default:
@@ -79,26 +80,23 @@ export default function ReviewButton({
 
   return mode === "more" ? (
     <Button
-      className="m-1 rounded-lg border-4 border-white bg-yellow-300 p-2 text-3xl text-white transition-all hover:scale-125 hover:border-slate-200"
+      intent="icon"
+      className={cn(color, "text-3xl h-14 w-14")}
       onClick={mode === "more" ? () => showAllModes!(true) : () => {}}
       aria-label="Show all learning modes"
     >
       {icon}
     </Button>
   ) : (
-    <Link
-      href={href}
-      className={`m-1 rounded-lg border-4 border-white ${
-        isDisabled()
-          ? "bg-gray-300 pointer-events-none"
-          : color + " hover:border-slate-200 hover:scale-125"
-      } p-2 text-3xl text-white transition-all block`}
-      aria-disabled={isDisabled()}
+    <Button
+      intent="icon"
+      disabled={isDisabled()}
       aria-label={`Start a learning session in ${mode} mode`}
+      className={cn(color, "text-3xl h-14 w-14")}
       tabIndex={isDisabled() ? -1 : undefined}
     >
-      {icon}
-    </Link>
+      <Link href={href}>{icon}</Link>
+    </Button>
   );
 
   function isDisabled(): boolean | undefined {

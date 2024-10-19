@@ -18,7 +18,7 @@ export default function LanguagePicker({
 }: LanguagePickerProps) {
   return (
     <Listbox>
-      <ListboxButton className="relative flex w-full items-center justify-center gap-2 rounded-md bg-green-100 px-3 py-2 text-center shadow-inner shadow-white/10 focus:outline-none">
+      <ListboxButton className="relative flex w-full items-center justify-center gap-2 rounded-md border-2 border-green-600 px-3 py-2 text-center shadow-inner shadow-white/10 focus:outline-none">
         <div
           className={`flex w-full items-center gap-4 rounded-md text-center`}
         >
@@ -41,7 +41,7 @@ export default function LanguagePicker({
         <ChevronDownIcon className="absolute right-0 mr-6 flex size-4 fill-black/60" />
       </ListboxButton>
       <ListboxOptions
-        className="mt-1 flex flex-col rounded-md bg-green-100 text-left"
+        className="mt-1 flex flex-col rounded-md border-2 border-green-600 text-left"
         transition
       >
         {allOptions}

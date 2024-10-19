@@ -12,6 +12,7 @@ import { useDebounce } from "use-debounce";
 import RecentSearches from "./RecentSearches";
 import SearchBox from "./SearchBox";
 import SearchResults from "./SearchResults";
+import Button from "../ui/Button";
 
 interface SearchProps {
   searchLanguages: LanguageWithFlagAndName[];
@@ -45,7 +46,7 @@ export default function Search({
   };
 
   return (
-    <>
+    <div className="mx-1 grid gap-y-1">
       <SearchBox
         query={query}
         debouncedQuery={debouncedQuery}
@@ -74,17 +75,18 @@ export default function Search({
       {searchResults.length === 0 &&
         debouncedQuery.length > 0 &&
         mode !== "searchResultIsTranslation" && (
-          <Link
-            href={
-              listData
-                ? `/dictionary/new/${listData?.listNumber}/${listData?.unitName}?initialName=${query}`
-                : `/dictionary/new?initialName=${query}`
-            }
-            className="ml-1 block w-48 select-none rounded-md border bg-green-500 px-4 py-3 text-center text-white"
-          >
-            Add a new item
-          </Link>
+          <Button intent="primary" className="p-3">
+            <Link
+              href={
+                listData
+                  ? `/dictionary/new/${listData?.listNumber}/${listData?.unitName}?initialName=${query}`
+                  : `/dictionary/new?initialName=${query}`
+              }
+            >
+              Add a new item
+            </Link>
+          </Button>
         )}
-    </>
+    </div>
   );
 }

@@ -3,16 +3,13 @@
 import ListBarChart from "@/components/Charts/ListBarChart";
 import ListPieChart from "@/components/Charts/ListPieChart";
 import { useListContext } from "@/context/ListContext";
-import {
-  AllLearningButtonsDesktopContainer,
-  AllLearningButtonsMobileContainer,
-} from "../AllLearningButtonsContainer";
+import { User } from "@/lib/types";
+import { useSession } from "next-auth/react";
+import { AllLearningButtonsContainer } from "../AllLearningButtonsContainer";
 import FlexibleLearningButtons from "../FlexibleLearningButtons";
 import Leaderboard from "../Leaderboard";
 import AllLearningButtons from "./AllLearningButtons";
 import StartLearningListButton from "./StartLearningListButton";
-import { useSession } from "next-auth/react";
-import { User } from "@/lib/types";
 
 export default function ChartsLButtonsLeaderboard() {
   const {
@@ -44,24 +41,24 @@ export default function ChartsLButtonsLeaderboard() {
           </div>
         </div>
       </>
-      <AllLearningButtonsDesktopContainer>
+      <AllLearningButtonsContainer mode="desktop">
         <AllLearningButtons
           listNumber={listNumber}
           unlockedLearningModesForUser={unlockedLearningModesForUser}
           listStats={listStats}
         />
-      </AllLearningButtonsDesktopContainer>
+      </AllLearningButtonsContainer>
       <div className="m-2 rounded-md bg-slate-100 py-4 md:hidden">
         <Leaderboard />
       </div>
-      <AllLearningButtonsMobileContainer>
+      <AllLearningButtonsContainer mode="mobile">
         <FlexibleLearningButtons
           stats={listStats}
           status={listStatus}
           listNumber={listNumber}
           unlockedModes={unlockedLearningModesForUser}
         />
-      </AllLearningButtonsMobileContainer>
+      </AllLearningButtonsContainer>
     </>
   );
 }
