@@ -32,7 +32,7 @@ export default function Button({
       intent === "danger",
     "grid place-items-center h-16 w-16 p-0": intent === "icon",
     "w-full": fullWidth,
-    "rounded-full absolute bottom-4 right-4 bg-green-600 from-green-600 to-green-700 hover:ring-green-700 disabled:after:rounded-full":
+    "fixed rounded-full bottom-4 right-4 bg-green-600 from-green-600 to-green-700 hover:ring-green-700 disabled:after:rounded-full":
       bottomRightButton,
   };
 

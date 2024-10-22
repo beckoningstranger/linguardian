@@ -1,20 +1,15 @@
+import { createServer } from "http";
 import app from "./app.js";
-import dotenv from "dotenv";
-// import fs from "fs";
-// import https from "https";
-
-import { siteSettings } from "./lib/siteSettings.js";
-
 import { mongoConnect } from "./lib/mongo.js";
+import { siteSettings } from "./lib/siteSettings.js";
+import { setSiteSettings } from "./models/settings.model.js";
+// import fs from "fs";
 // import { fileURLToPath } from "url";
 // import { dirname, join } from "path";
-import { createServer } from "http";
-import { setSiteSettings } from "./models/settings.model.js";
+// import https from "https";
 
-// const __filename = fileURLToPath(import.meta.url);
+// // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = dirname(__filename);
-
-dotenv.config({ path: "/home/jan/linguardian/.env" });
 
 const PORT = process.env.PORT || 8000;
 // const server = https.createServer(

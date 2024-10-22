@@ -139,8 +139,9 @@ export default function PuzzleMode({
       <div className="mt-8 grid grid-cols-2 gap-8">
         {puzzlePieces.map((piece, index) => (
           <Button
-            className="relative text-xl"
+            className="relative text-xl text-black"
             key={index}
+            noRing
             onClick={() => {
               setInput(input + piece.content);
               const updatedPuzzlePieces = puzzlePieces.map((piece, i) =>

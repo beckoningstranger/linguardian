@@ -115,7 +115,8 @@ export default function LoginForm() {
               signIn("facebook", { callbackUrl: paths.signInPath() });
             }}
             aria-label="Sign in with Facebook"
-            disabled={isSubmitting || !!isSigningIn}
+            disabled
+            // disabled={isSubmitting || !!isSigningIn}
           >
             {isSigningIn === "facebook" ? (
               <Spinner centered size="mini" />
