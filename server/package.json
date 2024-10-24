@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node --loader=ts-node/esm src/server.ts",
     "watch-compiler": "npx tsc --watch --noEmit --preserveWatchOutput",
-    "dev": "nodemon src/server.ts"
+    "dev": "nodemon"
   },
   "author": "",
   "license": "ISC",
