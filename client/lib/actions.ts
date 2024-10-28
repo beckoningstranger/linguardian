@@ -107,7 +107,6 @@ export async function setLearnedLists(
     console.error(`Error setting learned lists for user ${user.id}: ${err}`);
     throw err;
   }
-  console.log("Revalidating");
   revalidatePath(paths.listDetailsPath(listNumber));
   revalidatePath(paths.dashboardLanguagePath(listLanguage));
 }

@@ -9,7 +9,6 @@ node_modules
 # testing
 coverage
 
-
 # next.js
 .next/
 out/
@@ -40,8 +39,8 @@ yarn-error.log*
 next-env.d.ts
 
 mongosh_connect.sh
-/tailwind.config.ts
-/server/data/csvUploads*
-/server/scripts*
-/client/types.ts
-mScripts/
+tailwind.config.ts
+server/data/csvUploads*
+server/scripts*
+client/types.ts
+mongoScripts/

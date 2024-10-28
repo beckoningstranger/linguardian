@@ -6,11 +6,12 @@ import helmet from "helmet";
 import api from "./routes/api.js";
 
 const app = express();
+const FRONTEND_URL = process.env.FRONTEND;
 
 app.use(helmet());
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: FRONTEND_URL,
   })
 );
 app.use(morgan("combined"));

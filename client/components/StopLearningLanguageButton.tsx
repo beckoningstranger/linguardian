@@ -21,7 +21,6 @@ export default function StopLearningLanguageButton({
   const { data, status, update } = useSession();
   const user = data?.user as User;
 
-  console.log(updatingMap);
   const handleStopLearningLanguage = async () => {
     setUpdatingMap((prev) => new Map(prev).set(language.code, true));
     const updatedLearnedLanguages = user.learnedLanguages

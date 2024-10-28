@@ -1,0 +1,33 @@
+services:
+
+  backend:
+    build:
+      context: ./server
+    environment:
+      - PORT=8000
+      - NODE_ENV=production
+    env_file:
+      - ./server/.env
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./client
+    environment:
+      - SERVER_URL=http://backend:8000
+      - FRONTEND_URL=http://frontend:3000
+      - NEXTAUTH_URL=http://localhost:3000
+    env_file:
+      - ./client/.env.local
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+      
