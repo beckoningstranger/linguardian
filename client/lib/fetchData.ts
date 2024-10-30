@@ -72,7 +72,9 @@ export async function getLanguageFeaturesForLanguage(
 
 export async function getAllLanguageFeatures() {
   try {
-    const response = await fetch(`${server}/settings/allLanguageFeatures`);
+    const response = await fetch(`${server}/settings/allLanguageFeatures`, {
+      next: { revalidate: 60 * 60 },
+    });
     if (!response.ok) throw new Error(response.statusText);
     const allLanguageFeatures: LanguageFeatures[] = await response.json();
     return allLanguageFeatures;
@@ -218,7 +220,9 @@ export async function getAllSlugsForLanguage(language: SupportedLanguage) {
 
 export async function getListName(listNumber: number) {
   try {
-    const response = await fetch(`${server}/lists/getListName/${listNumber}`);
+    const response = await fetch(`${server}/lists/getListName/${listNumber}`, {
+      next: { revalidate: 60 * 60 * 24 },
+    });
     if (!response.ok) throw new Error(response.statusText);
     return (await response.json()) as string;
   } catch (err) {
@@ -228,7 +232,9 @@ export async function getListName(listNumber: number) {
 
 export async function getAllUsernameSlugs() {
   try {
-    const response = await fetch(`${server}/users/getAllUsernameSlugs`);
+    const response = await fetch(`${server}/users/getAllUsernameSlugs`, {
+      next: { revalidate: 60 * 60 },
+    });
     if (!response.ok) throw new Error(response.statusText);
     return (await response.json()) as string[];
   } catch (err) {

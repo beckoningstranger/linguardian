@@ -1,5 +1,4 @@
 import { getAllUsernameSlugs, getUserByUsernameSlug } from "@/lib/fetchData";
-import { getUserOnServer } from "@/lib/helperFunctionsServer";
 
 interface ProfilePageProps {
   params: { usernameSlug: string };
@@ -19,7 +18,7 @@ export async function generateStaticParams() {
 export default async function ProfilePage({
   params: { usernameSlug },
 }: ProfilePageProps) {
-  const user = await getUserOnServer();
+  const user = await getUserByUsernameSlug(usernameSlug);
 
   return (
     <>
