@@ -2,11 +2,7 @@ import Link from "next/link";
 
 import ListStoreCard from "@/components/Lists/ListStoreCard";
 import Button from "@/components/ui/Button";
-import {
-  fetchAuthors,
-  getListsByLanguage,
-  getSupportedLanguages,
-} from "@/lib/fetchData";
+import { fetchAuthors, getListsByLanguage } from "@/lib/fetchData";
 import paths from "@/lib/paths";
 import { SupportedLanguage } from "@/lib/types";
 import { Metadata } from "next";
@@ -20,28 +16,32 @@ interface ListStoreProps {
   params?: { language: string };
 }
 
-export async function generateStaticParams() {
-  const supportedLanguagesData = await getSupportedLanguages();
-  return supportedLanguagesData
-    ? supportedLanguagesData.map((lang) => ({ language: lang }))
-    : [];
-}
+// export async function generateStaticParams() {
+//   const supportedLanguagesData = await getSupportedLanguages();
+//   return supportedLanguagesData
+//     ? supportedLanguagesData.map((lang) => ({ language: lang }))
+//     : [];
+// }
 
 export default async function ListStore({ params }: ListStoreProps) {
   const listsForLanguage = await getListsByLanguage(
     params?.language as SupportedLanguage
   );
 
-  const renderedLists = listsForLanguage?.map(async (list) => {
-    const authorData = await fetchAuthors(list.authors);
-    return (
-      <ListStoreCard
-        authorData={authorData}
-        list={list}
-        key={list.listNumber}
-      />
-    );
-  });
+  const renderedLists = listsForLanguage
+    ? await Promise.all(
+        listsForLanguage.map(async (list) => {
+          const authorData = await fetchAuthors(list.authors);
+          return (
+            <ListStoreCard
+              authorData={authorData}
+              list={list}
+              key={list.listNumber}
+            />
+          );
+        })
+      )
+    : null;
 
   return (
     <>
