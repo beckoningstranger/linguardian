@@ -3,40 +3,36 @@ import ItemPageDEFTRCO from "@/components/Dictionary/ItemPageDEF-TR-CO";
 import ItemPageMain from "@/components/Dictionary/ItemPageMain";
 import ItemBackButton from "@/components/Lists/ItemBackButton";
 import Button from "@/components/ui/Button";
-import {
-  getAllSlugsForLanguage,
-  getPopulatedItemBySlug,
-  getSupportedLanguages,
-} from "@/lib/fetchData";
+import { getPopulatedItemBySlug } from "@/lib/fetchData";
 import { getAllUserLanguages } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
-import { SlugLanguageObject, SupportedLanguage } from "@/lib/types";
+import { SlugLanguageObject } from "@/lib/types";
 import Link from "next/link";
 import { MdEdit } from "react-icons/md";
 
 export const metadata = { title: "Dictionary" };
 
-export async function generateStaticParams() {
-  const supportedLanguages = await getSupportedLanguages();
-  let allSlugs: { slug: string }[] = [];
-  const promises = supportedLanguages?.map((lang: SupportedLanguage) =>
-    getAllSlugsForLanguage(lang)
-  );
+// export async function generateStaticParams() {
+//   const supportedLanguages = await getSupportedLanguages();
+//   let allSlugs: { slug: string }[] = [];
+//   const promises = supportedLanguages?.map((lang: SupportedLanguage) =>
+//     getAllSlugsForLanguage(lang)
+//   );
+//
+//   if (promises) {
+//     const resolvedPromises = await Promise.all(promises);
+//     if (resolvedPromises)
+//       resolvedPromises.forEach((language) =>
+//         language?.forEach((item) => {
+//           allSlugs.push(item);
+//         })
+//       );
 
-  if (promises) {
-    const resolvedPromises = await Promise.all(promises);
-    if (resolvedPromises)
-      resolvedPromises.forEach((language) =>
-        language?.forEach((item) => {
-          allSlugs.push(item);
-        })
-      );
-
-    return allSlugs;
-  } else {
-    return [];
-  }
-}
+//     return allSlugs;
+//   } else {
+//     return [];
+//   }
+// }
 
 interface ItemPageProps {
   params: SlugLanguageObject;

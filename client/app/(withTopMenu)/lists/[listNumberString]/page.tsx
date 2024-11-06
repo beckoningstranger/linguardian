@@ -1,7 +1,6 @@
 import {
   fetchAuthors,
   getLearningDataForLanguage,
-  getListDataForMetadata,
   getPopulatedList,
 } from "@/lib/fetchData";
 
@@ -16,20 +15,25 @@ import Spinner from "@/components/Spinner";
 import { ListContextProvider } from "@/context/ListContext";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
+import { Metadata } from "next";
 import { Suspense } from "react";
 
-export async function generateMetadata({ params }: ListPageProps) {
-  const listNumber = parseInt(params.listNumberString);
+// export async function generateMetadata({ params }: ListPageProps) {
+//   const listNumber = parseInt(params.listNumberString);
 
-  const listData = await getListDataForMetadata(listNumber, 1);
-  const { listName, langName, description } = listData;
-  return {
-    title: listName,
-    description: `Learn ${langName} and enrich your vocabulary by memorizing Linguardian's list "${listName}.${
-      description ? ` ${description}` : ""
-    }"`,
-  };
-}
+//   const listData = await getListDataForMetadata(listNumber, 1);
+//   const { listName, langName, description } = listData;
+//   return {
+//     title: listName,
+//     description: `Learn ${langName} and enrich your vocabulary by memorizing Linguardian's list "${listName}.${
+//       description ? ` ${description}` : ""
+//     }"`,
+//   };
+// }
+
+export const metadata: Metadata = {
+  description: "Enrich your vocabulary by memorizing this list",
+};
 
 interface ListPageProps {
   params: {

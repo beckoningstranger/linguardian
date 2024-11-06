@@ -1,5 +1,5 @@
 import StopLearningLanguageButton from "@/components/StopLearningLanguageButton";
-import { getSupportedLanguages, getUserById } from "@/lib/fetchData";
+import { getUserById } from "@/lib/fetchData";
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
 import Link from "next/link";
@@ -7,7 +7,6 @@ import Link from "next/link";
 export default async function SettingsPage() {
   const sessionUser = await getUserOnServer();
   const user = await getUserById(sessionUser.id);
-  const supportedLanguages = await getSupportedLanguages();
 
   return (
     <div className="mx-2 flex flex-col gap-2">

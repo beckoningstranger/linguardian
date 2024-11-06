@@ -1,17 +1,22 @@
 import LearnAndReview from "@/components/LearningModes/LearnAndReview";
-import { getLearningSessionForList, getListName } from "@/lib/fetchData";
+import { getLearningSessionForList } from "@/lib/fetchData";
 import { prepareItemsForSession } from "@/lib/helperFunctionsServer";
 import {
   ItemWithPopulatedTranslations,
   LanguageFeatures,
   LearningMode,
 } from "@/lib/types";
+import { Metadata } from "next";
 
-export async function generateMetadata({ params }: ReviewPageProps) {
-  const listNumber = parseInt(params.listNumberString);
-  const listName = await getListName(listNumber);
-  return { title: `${listName} - Unit ${params.unitNumberString}` };
-}
+// export async function generateMetadata({ params }: ReviewPageProps) {
+//   const listNumber = parseInt(params.listNumberString);
+//   const listName = await getListName(listNumber);
+//   return { title: `${listName} - Unit ${params.unitNumberString}` };
+// }
+
+export const metadata: Metadata = {
+  title: "Learn and Review",
+};
 
 interface ReviewPageProps {
   params: {

@@ -13,27 +13,26 @@ import UnitItems from "@/components/Lists/UnitItems";
 import {
   getFullyPopulatedListByListNumber,
   getLearningDataForLanguage,
-  getListDataForMetadata,
 } from "@/lib/fetchData";
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
 import { LearningMode, ListAndUnitData } from "@/lib/types";
 import { notFound } from "next/navigation";
 
-export async function generateMetadata({ params }: UnitDetailPageProps) {
-  const listNumber = parseInt(params.listNumberString);
-  const unitNumber = parseInt(params.unitNumberString);
+// export async function generateMetadata({ params }: UnitDetailPageProps) {
+//   const listNumber = parseInt(params.listNumberString);
+//   const unitNumber = parseInt(params.unitNumberString);
 
-  const { listName, unitName, langName, description } =
-    await getListDataForMetadata(listNumber, unitNumber);
+//   const { listName, unitName, langName, description } =
+//     await getListDataForMetadata(listNumber, unitNumber);
 
-  return {
-    title: `${unitName} | ${listName}`,
-    description: `Learn ${langName} and enrich your vocabulary by memorizing Linguardian's list "${listName}.${
-      description ? ` ${description}` : ""
-    }"`,
-  };
-}
+//   return {
+//     title: `${unitName} | ${listName}`,
+//     description: `Learn ${langName} and enrich your vocabulary by memorizing Linguardian's list "${listName}.${
+//       description ? ` ${description}` : ""
+//     }"`,
+//   };
+// }
 
 // export async function generateStaticParams() {
 //   const listNumbers = await getListNumbers();

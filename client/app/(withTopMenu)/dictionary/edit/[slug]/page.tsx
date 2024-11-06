@@ -7,16 +7,19 @@ import {
   getAllUserLanguages,
   getSeperatedUserLanguages,
 } from "@/lib/helperFunctionsServer";
+import { Metadata } from "next";
 
 interface EditPageProps {
   params: { slug: string };
   searchParams: { comingFrom: string };
 }
 
-export async function generateMetadata({ params: { slug } }: EditPageProps) {
-  const item = await getPopulatedItemBySlug(slug);
-  return { title: `Edit ${item?.name}` };
-}
+// export async function generateMetadata({ params: { slug } }: EditPageProps) {
+//   const item = await getPopulatedItemBySlug(slug);
+//   return { title: `Edit ${item?.name}` };
+// }
+
+export const metadata: Metadata = { title: "Edit an item" };
 
 export default async function EditPage({ params: { slug } }: EditPageProps) {
   const [allUserLanguages, seperatedUserLanguages] = await Promise.all([
@@ -33,8 +36,6 @@ export default async function EditPage({ params: { slug } }: EditPageProps) {
       allUserLanguages.map((lang) => lang.code)
     ),
   ]);
-
-  if (!item) throw new Error("Could not get data from server");
 
   return (
     <EditOrCreateItem

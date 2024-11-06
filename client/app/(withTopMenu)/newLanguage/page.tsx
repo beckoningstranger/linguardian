@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 };
 
 export default async function AddNewLanguageToLearn() {
-  const allLanguageFeatures = await getAllLanguageFeatures();
-  if (!allLanguageFeatures) throw new Error("Failed to get language features");
-
-  const allUserLanguages = await getAllUserLanguages();
+  const [allLanguageFeatures, allUserLanguages] = await Promise.all([
+    getAllLanguageFeatures(),
+    getAllUserLanguages(),
+  ]);
 
   const allAvailableLanguageFeatures = allLanguageFeatures?.filter(
     ({ langCode }) =>
@@ -29,13 +29,13 @@ export default async function AddNewLanguageToLearn() {
       } as LanguageWithFlagAndName)
   );
 
-  const renderedFlags = languagesAndFlagsWithNames.map(
+  const renderedFlags = languagesAndFlagsWithNames?.map(
     (langAndFlagWithName, index) => (
       <PickNewLanguage key={index} newLanguage={langAndFlagWithName} />
     )
   );
 
-  if (allAvailableLanguageFeatures.length === 0)
+  if (allAvailableLanguageFeatures?.length === 0)
     return <NoMoreLanguagesToLearn />;
   return (
     <div className="flex h-screen flex-col items-center">

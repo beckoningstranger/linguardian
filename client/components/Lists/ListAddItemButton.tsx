@@ -23,6 +23,7 @@ export default function ListAddItemButton({
       onClick={() => {
         setShowAddNewItemDialog(true);
       }}
+      className="h-auto"
     >
       <div
         className={`m-1 grid h-12 w-12 place-items-center rounded-full border border-white bg-green-400`}

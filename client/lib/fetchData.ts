@@ -12,10 +12,20 @@ import {
 } from "@/lib/types";
 import { notFound } from "next/navigation";
 import { getUserOnServer } from "./helperFunctionsServer";
+import {
+  allLanguageFeatures,
+  allLearningModes,
+  allSupportedLanguages,
+  allUsernameSlugs,
+  nextListNumber,
+} from "@/dataForBuild";
 
 const server = process.env.SERVER_URL;
+const environment = process.env.NODE_ENV;
 
 export async function getSupportedLanguages() {
+  if (environment === "production")
+    return allSupportedLanguages as SupportedLanguage[];
   try {
     const response = await fetch(`${server}/settings/supportedLanguages`, {
       next: { revalidate: 60 * 60 * 24 },
@@ -29,6 +39,7 @@ export async function getSupportedLanguages() {
 }
 
 export async function getLearningModes() {
+  if (environment === "production") return allLearningModes as LearningMode[];
   try {
     const response = await fetch(`${server}/settings/learningModes`);
     if (!response.ok) throw new Error(response.statusText);
@@ -40,6 +51,8 @@ export async function getLearningModes() {
 }
 
 export async function getListNumbers() {
+  if (environment === "production")
+    return [...Array(nextListNumber - 1).keys()].map((i) => String(i + 1));
   try {
     const response = await fetch(`${server}/lists/nextListNumber`);
     if (!response.ok) throw new Error(response.statusText);
@@ -71,6 +84,8 @@ export async function getLanguageFeaturesForLanguage(
 }
 
 export async function getAllLanguageFeatures() {
+  if (environment === "production")
+    return allLanguageFeatures as LanguageFeatures[];
   try {
     const response = await fetch(`${server}/settings/allLanguageFeatures`, {
       next: { revalidate: 60 * 60 },
@@ -231,12 +246,14 @@ export async function getListName(listNumber: number) {
 }
 
 export async function getAllUsernameSlugs() {
+  if (environment === "production") return allUsernameSlugs;
+
   try {
     const response = await fetch(`${server}/users/getAllUsernameSlugs`, {
       next: { revalidate: 60 * 60 },
     });
     if (!response.ok) throw new Error(response.statusText);
-    return (await response.json()) as string[];
+    return await response.json();
   } catch (err) {
     console.error(`Error fetching all user ids: ${err}`);
     return [];

@@ -22,9 +22,9 @@ interface ListStoreProps {
 
 export async function generateStaticParams() {
   const supportedLanguagesData = await getSupportedLanguages();
-  if (!supportedLanguagesData)
-    throw new Error("Could not get supported languages");
-  return supportedLanguagesData.map((lang) => ({ language: lang }));
+  return supportedLanguagesData
+    ? supportedLanguagesData.map((lang) => ({ language: lang }))
+    : [];
 }
 
 export default async function ListStore({ params }: ListStoreProps) {
@@ -32,9 +32,7 @@ export default async function ListStore({ params }: ListStoreProps) {
     params?.language as SupportedLanguage
   );
 
-  if (!listsForLanguage) throw new Error("Invalid language");
-
-  const renderedLists = listsForLanguage.map(async (list) => {
+  const renderedLists = listsForLanguage?.map(async (list) => {
     const authorData = await fetchAuthors(list.authors);
     return (
       <ListStoreCard

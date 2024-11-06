@@ -8,22 +8,23 @@ services:
       - NODE_ENV=production
     env_file:
       - ./server/.env
-    ports:
-      - "8000:8000"
     networks:
       - app-network
+    ports:
+      - "8000:8000"
 
   frontend:
     build:
       context: ./client
     environment:
       - SERVER_URL=http://backend:8000
-      - FRONTEND_URL=http://frontend:3000
-      - NEXTAUTH_URL=http://localhost:3000
+      - FRONTEND_URL=http://frontend
+      - NEXTAUTH_URL=http://localhost
+      - NODE_ENV=production
     env_file:
       - ./client/.env.local
     ports:
-      - "3000:3000"
+      - "80:3000"
     networks:
       - app-network
 

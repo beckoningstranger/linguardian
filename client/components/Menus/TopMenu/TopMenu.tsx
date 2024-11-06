@@ -1,4 +1,4 @@
-import { getAllLanguageFeatures, getSupportedLanguages } from "@/lib/fetchData";
+import { getSupportedLanguages } from "@/lib/fetchData";
 import { MobileMenuContextProvider } from "../../../context/MobileMenuContext";
 import HamburgerMenu from "./HamburgerMenu";
 import LanguageSelectorAndUserMenu from "./LanguageSelectorAndUserMenu";
@@ -9,10 +9,7 @@ import TopMiddleNavigation from "./TopMiddleNavigation";
 interface TopMenuProps {}
 
 export default async function TopMenu({}: TopMenuProps) {
-  const [allSupportedLanguages] = await Promise.all([
-    getSupportedLanguages(),
-    getAllLanguageFeatures(),
-  ]);
+  const allSupportedLanguages = await getSupportedLanguages();
 
   return allSupportedLanguages ? (
     <>

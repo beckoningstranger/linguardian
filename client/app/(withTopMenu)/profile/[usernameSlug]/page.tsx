@@ -4,16 +4,16 @@ interface ProfilePageProps {
   params: { usernameSlug: string };
 }
 
-export async function generateMetadata({
-  params: { usernameSlug },
-}: ProfilePageProps) {
-  const user = await getUserByUsernameSlug(usernameSlug);
-  return { title: `${user?.username}'s Profile` };
-}
+// export async function generateMetadata({
+//   params: { usernameSlug },
+// }: ProfilePageProps) {
+//   const user = await getUserByUsernameSlug(usernameSlug);
+//   return { title: `${user?.username}'s Profile` };
+// }
 
-export async function generateStaticParams() {
-  return await getAllUsernameSlugs();
-}
+// export async function generateStaticParams() {
+//   return await getAllUsernameSlugs();
+// }
 
 export default async function ProfilePage({
   params: { usernameSlug },

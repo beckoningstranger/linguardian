@@ -1,11 +1,6 @@
 import LearnAndReview from "@/components/LearningModes/LearnAndReview";
 import NavigateBackButton from "@/components/NavigateBackButton";
-import {
-  getLearningModes,
-  getLearningSessionForList,
-  getListName,
-  getListNumbers,
-} from "@/lib/fetchData";
+import { getLearningSessionForList } from "@/lib/fetchData";
 import { prepareItemsForSession } from "@/lib/helperFunctionsServer";
 import {
   FullyPopulatedList,
@@ -14,26 +9,31 @@ import {
   LearningMode,
   SupportedLanguage,
 } from "@/lib/types";
+import { Metadata } from "next";
 
-export async function generateMetadata({ params }: ReviewPageProps) {
-  const listNumber = parseInt(params.listNumberString);
-  const listName = await getListName(listNumber);
-  return { title: listName };
-}
+// export async function generateMetadata({ params }: ReviewPageProps) {
+//   const listNumber = parseInt(params.listNumberString);
+//   const listName = await getListName(listNumber);
+//   return { title: listName };
+// }
 
-export async function generateStaticParams() {
-  const [learningModes, listNumbers] = await Promise.all([
-    getLearningModes(),
-    getListNumbers(),
-  ]);
+export const metadata: Metadata = {
+  title: "Learn and Review",
+};
 
-  return (learningModes ?? []).flatMap((mode) =>
-    (listNumbers ?? []).map((number) => ({
-      mode: mode,
-      listNumberString: number,
-    }))
-  );
-}
+// export async function generateStaticParams() {
+//   const [learningModes, listNumbers] = await Promise.all([
+//     getLearningModes(),
+//     getListNumbers(),
+//   ]);
+
+//   return (learningModes ?? []).flatMap((mode) =>
+//     (listNumbers ?? []).map((number) => ({
+//       mode: mode,
+//       listNumberString: number,
+//     }))
+//   );
+// }
 
 interface ReviewPageProps {
   params: {

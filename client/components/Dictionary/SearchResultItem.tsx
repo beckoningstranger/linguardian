@@ -12,7 +12,7 @@ export default function SearchResultItem({
 }: SearchResultItemProps) {
   return (
     <div
-      className={`flex items-center gap-1 truncate rounded-md border border-slate-200 px-2 py-2 text-xl`}
+      className={`flex items-center gap-1 rounded-md border border-slate-200 px-2 py-2 text-xl`}
     >
       <Flag
         code={getFlagCode(result.language)}
