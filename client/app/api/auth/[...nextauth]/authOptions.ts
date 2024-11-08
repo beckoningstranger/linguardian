@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import { Account, NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import FaceBookProvider from "next-auth/providers/facebook";
 import GoogleProvider from "next-auth/providers/google";
 
 import { createUser } from "@/lib/actions";
@@ -10,10 +9,8 @@ import { LanguageWithFlagAndName, User } from "@/lib/types";
 
 const GOOGLE_ID = process.env.GOOGLE_ID;
 const GOOGLE_SECRET = process.env.GOOGLE_SECRET;
-const FACEBOOK_ID = process.env.FACEBOOK_ID;
-const FACEBOOK_SECRET = process.env.FACEBOOK_SECRET;
 
-if (!GOOGLE_ID || !GOOGLE_SECRET || !FACEBOOK_ID || !FACEBOOK_SECRET)
+if (!GOOGLE_ID || !GOOGLE_SECRET)
   throw new Error("Error getting environment variables");
 
 const authOptions: NextAuthOptions = {
@@ -41,7 +38,6 @@ const authOptions: NextAuthOptions = {
       clientId: GOOGLE_ID,
       clientSecret: GOOGLE_SECRET,
     }),
-    FaceBookProvider({ clientId: FACEBOOK_ID, clientSecret: FACEBOOK_SECRET }),
   ],
   session: {
     strategy: "jwt",

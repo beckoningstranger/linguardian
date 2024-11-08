@@ -42,5 +42,5 @@ mongosh_connect.sh
 tailwind.config.ts
 server/data/csvUploads*
 server/scripts*
-client/types.ts
 mongoScripts/
+client/dataForBuild.ts

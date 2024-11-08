@@ -31,8 +31,12 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       # Step 5: Build Docker images
+
+      - name: Make script executable
+        run: chmod +x ./deploy.sh
+
       - name: Build Docker images
-        run: docker compose build
+        run: ./deploy.sh
         env:
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           GOOGLE_ID: ${{ secrets.GOOGLE_ID }}
@@ -49,8 +53,8 @@ jobs:
           IMAGE_TAG: $(date +%Y%m%d%H%M%S)
         run: |
           # Tag your images (adjust names if needed)
-          docker tag your-frontend-image-name:latest $ECR_REPOSITORY:frontend-$IMAGE_TAG
-          docker tag your-backend-image-name:latest $ECR_REPOSITORY:backend-$IMAGE_TAG
+          docker tag frontend:latest $ECR_REPOSITORY:frontend-$IMAGE_TAG
+          docker tag backend:latest $ECR_REPOSITORY:backend-$IMAGE_TAG
 
           # Push images to ECR
           docker push $ECR_REPOSITORY:frontend-$IMAGE_TAG
