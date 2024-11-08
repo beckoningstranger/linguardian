@@ -10,4 +10,5 @@ done
 
 echo "Backend is ready. Proceeding with data retrieval..."
 ./client/getDataToBuild.sh http://localhost:8000
-docker compose up frontend --build
+docker compose down
+docker compose build frontend
