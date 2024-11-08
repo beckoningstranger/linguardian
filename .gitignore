@@ -44,3 +44,4 @@ server/data/csvUploads*
 server/scripts*
 mongoScripts/
 client/dataForBuild.ts
+deploy_locally.sh
