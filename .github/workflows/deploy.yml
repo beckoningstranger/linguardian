@@ -3,7 +3,7 @@ name: Deploy to Amazon ECS
 on:
   push:
     branches:
-      - main
+      - test-actions-workflow
 
 jobs:
   deploy:
