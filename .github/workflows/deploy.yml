@@ -32,8 +32,15 @@ jobs:
 
       # Step 5: Build Docker images
       - name: Build Docker images
-        run: |
-          docker-compose -f docker-compose.yml build
+        run: docker compose build
+        env:
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          GOOGLE_ID: ${{ secrets.GOOGLE_ID }}
+          GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
+          FACEBOOK_ID: ${{ secrets.FACEBOOK_ID }}
+          FACEBOOK_SECRET: ${{ secrets.FACEBOOK_SECRET }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+          MONGO_URL: ${{ secrets.MONGO_URL }}
 
       # Step 6: Tag and push images to Amazon ECR
       - name: Tag and push images
