@@ -18,13 +18,14 @@ services:
       context: ./client
     environment:
       - SERVER_URL=http://backend:8000
-      - FRONTEND_URL=http://frontend
-      - NEXTAUTH_URL=http://localhost
+      - FRONTEND_URL=http://frontend:3000
+      - NEXTAUTH_URL=https://www.linguardian.com
+      - NEXT_TELEMETRY_DISABLED=1
       - NODE_ENV=production
+    ports:
+      - "3000:3000"
     env_file:
       - ./client/.env.local
-    ports:
-      - "80:3000"
     networks:
       - app-network
 

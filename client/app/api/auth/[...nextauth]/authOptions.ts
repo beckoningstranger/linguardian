@@ -96,13 +96,17 @@ const authOptions: NextAuthOptions = {
           if (!idExists) {
             if (!account) throw new Error("No account found");
 
-            if (profile && profile.name && profile.email && profile.picture)
+            if (profile && profile.name && profile.email) {
               await createUser({
                 id,
-                username: profile.name,
-                email: profile?.email,
+                // Tacking on these numbers will seem random to users. It gives us a
+                // reasonably high probability that they get a unique username
+                username:
+                  profile.name + account.providerAccountId.slice(-7, -3),
+                email: profile.email,
                 image: profile?.picture,
               });
+            }
           }
         }
         return true;

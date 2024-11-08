@@ -1,6 +1,6 @@
 # Linguardian - Enrich your vocabulary with the power of spaced repetition.
 
-## <a href="https://www.youtube.com/watch?v=1GnSWYvB5uc" target="_blank" rel="noopener">Watch a short demo video on Youtube (in German)</a>
+## <a href="https://www.linguardian.com" target="_blank" rel="noopener">Check it out on www.linguardian.com</a>
 
 This is a project using **Next.js** and an **Express** backend that communicates with **MongoDB**.
 

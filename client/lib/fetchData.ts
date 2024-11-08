@@ -101,11 +101,11 @@ export async function getAllLanguageFeatures() {
 export async function getUserById(userId: string) {
   try {
     const response = await fetch(`${server}/users/get/${userId}`);
-    if (!response.ok) throw new Error(response.statusText);
+    if (!response.ok) throw new Error(await response.json());
     const user: User = await response.json();
     return user;
   } catch (err) {
-    console.error(`Error getting user: ${err}`);
+    console.error(`Error getting user by id ${userId}: ${err}`);
   }
 }
 
@@ -118,7 +118,7 @@ export async function getUserByUsernameSlug(usernameSlug: string) {
     const user: User = await response.json();
     return user;
   } catch (err) {
-    console.error(`Error getting user: ${err}`);
+    console.error(`Error getting user by username slug: ${err}`);
   }
 }
 

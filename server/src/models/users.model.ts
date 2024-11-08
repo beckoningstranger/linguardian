@@ -18,7 +18,7 @@ export async function getUserById(id: string) {
     const response = await Users.findOne<User>({ id: id }, { _id: 0, __v: 0 });
     if (response) return response;
   } catch (err) {
-    console.error(`Error getting user: ${err}`);
+    console.error(`Error getting user by id: ${err}`);
   }
 }
 

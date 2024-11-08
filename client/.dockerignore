@@ -1,7 +1,11 @@
 node_modules
-.next/
+Dockerfile
+README.md
+.dockerignore
+.git
+.next
 dist/
 *.log
-.env
+.env*
 .DS_Store
 coverage/
