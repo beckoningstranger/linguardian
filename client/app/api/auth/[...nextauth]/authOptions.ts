@@ -9,6 +9,7 @@ import { LanguageWithFlagAndName, User } from "@/lib/types";
 
 const GOOGLE_ID = process.env.GOOGLE_ID;
 const GOOGLE_SECRET = process.env.GOOGLE_SECRET;
+console.log(process.env);
 
 if (!GOOGLE_ID || !GOOGLE_SECRET)
   throw new Error("Error getting environment variables");

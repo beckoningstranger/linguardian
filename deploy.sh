@@ -1,5 +1,8 @@
 #!/bin/bash
 ./share_types.sh
+
+echo "MONGO:"$MONGO_URL
+echo "GOOGLE":$GOOGLE_ID
 docker compose up -d backend
 echo "Waiting for the backend to be ready..."
 

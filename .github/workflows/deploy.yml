@@ -41,8 +41,6 @@ jobs:
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           GOOGLE_ID: ${{ secrets.GOOGLE_ID }}
           GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
-          FACEBOOK_ID: ${{ secrets.FACEBOOK_ID }}
-          FACEBOOK_SECRET: ${{ secrets.FACEBOOK_SECRET }}
           NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
           MONGO_URL: ${{ secrets.MONGO_URL }}
 
