@@ -48,8 +48,9 @@ jobs:
       - name: Tag and push images
         env:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-          IMAGE_TAG: $(date +%Y%m%d%H%M%S)
         run: |
+          IMAGE_TAG=$(date +%Y%m%d%H%M%S)
+
           # Tag your images (adjust names if needed)
           docker tag frontend:latest $ECR_REPOSITORY:frontend-$IMAGE_TAG
           docker tag backend:latest $ECR_REPOSITORY:backend-$IMAGE_TAG
