@@ -1,6 +1,7 @@
 #!/bin/bash
 ./share_types.sh
 
+docker compose build backend
 docker compose up -d backend
 echo "Waiting for the backend to be ready..."
 

@@ -11,6 +11,7 @@ services:
       - app-network
     ports:
       - "8000:8000"
+    image: backend:latest
 
   frontend:
     build:
@@ -19,6 +20,7 @@ services:
         - GOOGLE_ID=${GOOGLE_ID}
         - GOOGLE_SECRET=${GOOGLE_SECRET}
         - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+    image: frontend:latest
     environment:
       - NODE_ENV=production
       - SERVER_URL=http://backend:8000
