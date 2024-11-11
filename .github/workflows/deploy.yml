@@ -46,7 +46,7 @@ jobs:
 
       - name: Authenticate Docker to ECR
         run: |
-          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-std
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin
 
       # Step 6: Tag and push images to Amazon ECR
       - name: Tag and push images
