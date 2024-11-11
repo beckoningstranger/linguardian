@@ -44,6 +44,10 @@ jobs:
           NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
           MONGO_URL: ${{ secrets.MONGO_URL }}
 
+      - name: Authenticate Docker to ECR
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-std
+
       # Step 6: Tag and push images to Amazon ECR
       - name: Tag and push images
         env:
@@ -51,11 +55,9 @@ jobs:
         run: |
           IMAGE_TAG=$(date +%Y%m%d%H%M%S)
 
-          # Tag your images (adjust names if needed)
           docker tag frontend:latest $ECR_REPOSITORY:frontend-$IMAGE_TAG
           docker tag backend:latest $ECR_REPOSITORY:backend-$IMAGE_TAG
 
-          # Push images to ECR
           docker push $ECR_REPOSITORY:frontend-$IMAGE_TAG
           docker push $ECR_REPOSITORY:backend-$IMAGE_TAG
 
