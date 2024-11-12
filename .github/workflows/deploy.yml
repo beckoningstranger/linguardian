@@ -69,7 +69,7 @@ jobs:
       - name: Prepare private key to login to AWS EC2 instance
         run: |
           echo "${{ secrets.PEM_FILE }}" > private_key.pem
-          chmode 600 private_key.pen
+          chmod 600 private_key.pen
 
       - name: Bring running containers down, delete images, pull new images and start containers
         run: |
