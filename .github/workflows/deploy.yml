@@ -77,21 +77,11 @@ jobs:
           scp -i private_key.pem -o StrictHostKeyChecking=no ./deploy.sh ubuntu@linguardian.com:~/
           scp -i private_key.pem -o StrictHostKeyChecking=no ./docker-compose.deploy.yml ubuntu@linguardian.com:~/
 
-      # Step 9: Set environment variables on EC2 instance
-      - name: Set environment variables on EC2 instance
+      # Step 9: Set environment variables on EC2 instance, then bring everything down and build it up again
+      - name: Bring running containers down, delete images, pull new images and start containers
         run: |
-          ssh -i private_key.pem -o StrictHostKeyChecking=no ubuntu@linguardian.com << 'EOF'
-            export MONGO_URL="${MONGO_URL}"
-            export AWS_ID="${AWS_ID}"
-            export AWS_REGION="${AWS_REGION}"
-            echo "Environment variables set successfully"
-          EOF
+          ssh -i private_key.pem -o StrictHostKeyChecking=no ubuntu@linguardian.com "bash ~/deploy.sh"
         env:
           MONGO_URL: ${{ secrets.MONGO_URL }}
           AWS_ID: ${{ secrets.AWS_ID }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
-
-      # Step 10: Bring running containers down, delete images, pull new images and start containers
-      - name: Bring running containers down, delete images, pull new images and start containers
-        run: |
-          ssh -i private_key.pem -o StrictHostKeyChecking=no ubuntu@linguardian.com "bash -s" < ./deploy.sh
