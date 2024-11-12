@@ -1,7 +1,7 @@
 services:
 
   backend:
-    image: ${AWS_ID}.dkr.rcr.${AWS_REGION}.amazonaws.com/linguardian:backend-latest
+    image: ${AWS_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/linguardian:backend-latest
     environment:
       - PORT=8000
       - NODE_ENV=production
@@ -12,7 +12,7 @@ services:
       - "8000:8000"
 
   frontend:
-    image: ${AWS_ID}.dkr.rcr.${AWS_REGION}.amazonaws.com/linguardian:frontend-latest
+    image: ${AWS_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/linguardian:frontend-latest
     environment:
       - SERVER_URL=http://backend:8000
       - FRONTEND_URL=http://frontend:3000
