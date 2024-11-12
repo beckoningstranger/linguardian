@@ -53,7 +53,7 @@ jobs:
         env:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
         run: |
-          IMAGE_TAG=$(date +"%Y-%m-%d--%H:%M")
+          IMAGE_TAG=$(date +"%Y-%m-%d--%H.%M")
 
           docker tag frontend:latest $ECR_REPOSITORY:frontend-$IMAGE_TAG
           docker tag frontend:latest $ECR_REPOSITORY:frontend-latest
