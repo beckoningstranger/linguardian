@@ -1,8 +1,7 @@
 services:
 
   backend:
-    build:
-      context: ./server
+    image: ${AWS_ID}.dkr.rcr.${AWS_REGION}.amazonaws.com/linguardian:backend-latest
     environment:
       - PORT=8000
       - NODE_ENV=production
@@ -11,16 +10,9 @@ services:
       - app-network
     ports:
       - "8000:8000"
-    image: backend:latest
 
   frontend:
-    build:
-      context: ./client
-      args:
-        - GOOGLE_ID=${GOOGLE_ID}
-        - GOOGLE_SECRET=${GOOGLE_SECRET}
-        - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-    image: frontend:latest
+    image: ${AWS_ID}.dkr.rcr.${AWS_REGION}.amazonaws.com/linguardian:frontend-latest
     environment:
       - NODE_ENV=production
       - SERVER_URL=http://backend:8000
@@ -35,4 +27,3 @@ services:
 networks:
   app-network:
     driver: bridge
-      

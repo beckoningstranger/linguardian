@@ -1,15 +1,4 @@
-#!/bin/bash
-./share_types.sh
-
-docker compose build backend
-docker compose up -d backend
-echo "Waiting for the backend to be ready..."
-
-until curl -s http://localhost:8000 > /dev/null; do
-  sleep 1 
-done
-
-echo "Backend is ready. Proceeding with data retrieval..."
-./client/getDataToBuild.sh http://localhost:8000
-docker compose down
-docker compose build frontend
+cd ~/linguardian
+docker-compose -f docker-compose.deploy.yml down
+docker rmi 977099010577.dkr.ecr.eu-central-1.amazonaws.com/linguardian:frontend-latest 977099010577.dkr.ecr.eu-central-1.amazonaws.com/linguardian:backend-latest
+docker-compose -f docker-compose.deploy.yml up -d

@@ -33,10 +33,10 @@ jobs:
       # Step 5: Build Docker images
 
       - name: Make script executable
-        run: chmod +x ./deploy.sh
+        run: chmod +x ./build.sh
 
       - name: Build Docker images
-        run: ./deploy.sh
+        run: ./build.sh
         env:
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           GOOGLE_ID: ${{ secrets.GOOGLE_ID }}
@@ -56,12 +56,21 @@ jobs:
           IMAGE_TAG=$(date +%Y%m%d%H%M%S)
 
           docker tag frontend:latest $ECR_REPOSITORY:frontend-$IMAGE_TAG
+          docker tag frontend:latest $ECR_REPOSITORY:frontend-latest
           docker tag backend:latest $ECR_REPOSITORY:backend-$IMAGE_TAG
+          docker tag backend:latest $ECR_REPOSITORY:backend-latest
 
           docker push $ECR_REPOSITORY:frontend-$IMAGE_TAG
+          docker push $ECR_REPOSITORY:frontend-latest
           docker push $ECR_REPOSITORY:backend-$IMAGE_TAG
+          docker push $ECR_REPOSITORY:backend-latest
 
-      # Step 7: Deploy to Amazon ECS
-      - name: Deploy to Amazon ECS
+      # Step 7: Deploy on AWS
+      - name: Prepare private key to login to AWS EC2 instance
         run: |
-          aws ecs update-service --cluster your-ecs-cluster-name --service your-ecs-service-name --force-new-deployment
+          echo "${{ secrets.PEM_FILE }}" > private_key.pem
+          chmode 600 private_key.pen
+
+      - name: Bring running containers down, delete images, pull new images and start containers
+        run: |
+          ssh -i private_key.pem -o StrictHostKeyChecking=no ubuntu@linguardian.com "bash -s" < ./deploy.sh
