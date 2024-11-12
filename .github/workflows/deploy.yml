@@ -65,12 +65,33 @@ jobs:
           docker push $ECR_REPOSITORY:backend-$IMAGE_TAG
           docker push $ECR_REPOSITORY:backend-latest
 
-      # Step 7: Deploy on AWS
+      # Step 7: Prepare connection to AWS EC2 instance
       - name: Prepare private key to login to AWS EC2 instance
         run: |
           echo "${{ secrets.PEM_FILE }}" > private_key.pem
           chmod 600 private_key.pem
 
+      # Step 8: Copy files to AWS needed to bring up frontend and backend
+      - name: Copy files necessary to run frontend and backend
+        run: |
+          scp -i private_key.pem -o StrictHostKeyChecking=no ./deploy.sh ubuntu@linguardian.com:~/
+          scp -i private_key.pem -o StrictHostKeyChecking=no ./docker-compose.deploy.yml ubuntu@linguardian.com:~/
+
+      # Step 9: Set environment variables on EC2 instance
+      - name: Set environment variables on EC2 instance
+        run: |
+          ssh -i private_key.pem -o StrictHostKeyChecking=no ubuntu@linguardian.com << 'EOF'
+            export MONGO_URL="${MONGO_URL}"
+            export AWS_ID="${AWS_ID}"
+            export AWS_REGION="${AWS_REGION}"
+            echo "Environment variables set successfully"
+          EOF
+        env:
+          MONGO_URL: ${{ secrets.MONGO_URL }}
+          AWS_ID: ${{ secrets.AWS_ID }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+
+      # Step 10: Bring running containers down, delete images, pull new images and start containers
       - name: Bring running containers down, delete images, pull new images and start containers
         run: |
           ssh -i private_key.pem -o StrictHostKeyChecking=no ubuntu@linguardian.com "bash -s" < ./deploy.sh

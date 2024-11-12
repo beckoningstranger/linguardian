@@ -14,11 +14,10 @@ services:
   frontend:
     image: ${AWS_ID}.dkr.rcr.${AWS_REGION}.amazonaws.com/linguardian:frontend-latest
     environment:
-      - NODE_ENV=production
       - SERVER_URL=http://backend:8000
       - FRONTEND_URL=http://frontend:3000
       - NEXTAUTH_URL=https://www.linguardian.com
-      - NEXT_TELEMETRY_DISABLED=1
+      - NODE_ENV=production
     ports:
       - "3000:3000"
     networks:

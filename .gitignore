@@ -45,3 +45,4 @@ server/scripts*
 mongoScripts/
 client/dataForBuild.ts
 deploy_locally.sh
+docker-compose.dev.yml
