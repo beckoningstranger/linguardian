@@ -1,5 +1,6 @@
+"use client";
 import { ItemToLearn } from "@/lib/types";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ReviewStatus } from "./LearnAndReview";
 import Button from "../ui/Button";
 
@@ -16,6 +17,17 @@ export default function MultipleChoice({
 }: MultipleChoiceProps) {
   const [reviewStatus, setReviewStatus] = useState<ReviewStatus>("neutral");
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
+
+  const hiddenInput = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (
+      hiddenInput.current &&
+      ("ontouchstart" in window || navigator.maxTouchPoints > 0)
+    ) {
+      hiddenInput.current.setAttribute("readonly", "readonly");
+    }
+  }, []);
 
   useEffect(() => {
     if (reviewStatus !== "neutral") {
@@ -51,7 +63,7 @@ export default function MultipleChoice({
     <div className="grid grid-cols-1 place-items-center items-stretch gap-3">
       {options.map((option, index) => (
         <Button
-          key={index}
+          key={option + index}
           className={calculateStyling(option === selectedOption, reviewStatus)}
           onClick={() => {
             handleClick(option);
@@ -66,6 +78,7 @@ export default function MultipleChoice({
         autoFocus
         className="h-0"
         onKeyDown={(e) => handleKeyDown(e)}
+        ref={hiddenInput}
       />
     </div>
   );

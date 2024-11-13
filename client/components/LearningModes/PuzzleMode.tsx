@@ -28,7 +28,16 @@ export default function PuzzleMode({
   const [inputFieldStyling, setInputFieldStyling] = useState(
     "h-20 w-full rounded-md bg-slate-200 text-center text-xl"
   );
-  const keyListener = useRef<HTMLInputElement>(null);
+  const keyListener = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (
+      keyListener.current &&
+      ("ontouchstart" in window || navigator.maxTouchPoints > 0)
+    ) {
+      keyListener.current.setAttribute("readonly", "readonly");
+    }
+  }, []);
 
   const numberKeys = useMemo(
     () => Array.from({ length: puzzlePieces.length }, (_, i) => String(i + 1)),

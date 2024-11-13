@@ -128,6 +128,7 @@ export async function updateReviewedItems(
         }
       );
     });
+    return true;
   } catch (err) {
     console.error(
       `Error updating reviewed items. Received these ${JSON.stringify(

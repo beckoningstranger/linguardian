@@ -46,7 +46,8 @@ export default function Button({
     props.disabled &&
     "hover:cursor-not-allowed hover:ring-0 hover:ring-offset-0 from-gray-400 to-gray-400 after:absolute after:inset-0 after:rounded-md after:bg-gray-200 after:opacity-50 after:content-['']";
 
-  const noRingStyling = noRing && "hover:ring-0 hover:ring-offset-0";
+  const noRingStyling =
+    noRing && "hover:ring-0 hover:ring-offset-0 focus:ring-0 active:ring-0";
 
   return (
     <HeadlessUiButton
