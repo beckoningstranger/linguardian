@@ -14,7 +14,7 @@ allLearningModes=$(curl -s "$API_URL/settings/learningModes")
 allUsernameSlugs=$(curl -s "$API_URL/users/getAllUsernameSlugs")
 nextListNumber=$(curl -s "$API_URL/lists/nextListNumber")
 
-output_file="./dataForBuild.ts"
+output_file="./client/dataForBuild.ts"
 {
   echo "export const allSupportedLanguages = $allSupportedLanguages;"
   echo "export const allLanguageFeatures = $allLanguageFeatures;"
