@@ -1,10 +1,5 @@
 import "@/app/globals.css";
-import {
-  breeSerif,
-  dancingScript,
-  playfairDisplay,
-  poppins,
-} from "@/lib/fonts";
+import { dancingScript, playfairDisplay, ubuntu, voces } from "@/lib/fonts";
 import type { Metadata } from "next";
 
 import { ReactNode } from "react";
@@ -24,7 +19,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body
-        className={`${dancingScript} ${poppins} ${breeSerif} ${playfairDisplay} font-breeSerif font-light text-lg tracking-wider `}
+        className={`${dancingScript} ${ubuntu} ${playfairDisplay} ${voces} font-ubuntu text-lg`}
       >
         <AuthProvider>{children}</AuthProvider>
         <Toaster position="top-right" reverseOrder={true} />

@@ -1,9 +1,8 @@
 import {
   Dancing_Script,
   Playfair_Display,
-  Poppins,
-  Bree_Serif,
   Voces,
+  Ubuntu,
 } from "next/font/google";
 
 const dancing_init = Dancing_Script({
@@ -19,16 +18,10 @@ const playfair_init = Playfair_Display({
   variable: "--font-playfairDisplay",
 });
 
-const poppins_init = Poppins({
+const ubuntu_init = Ubuntu({
   subsets: ["latin-ext"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: ["300", "400", "500", "700"],
   variable: "--font-poppins",
-});
-
-const bree_init = Bree_Serif({
-  subsets: ["latin-ext"],
-  weight: ["400"],
-  variable: "--font-breeSerif",
 });
 
 const voces_init = Voces({
@@ -37,7 +30,7 @@ const voces_init = Voces({
   variable: "--font-voces",
 });
 
-export const breeSerif = bree_init.variable;
+export const voces = voces_init.variable;
 export const playfairDisplay = playfair_init.variable;
-export const poppins = poppins_init.variable;
+export const ubuntu = ubuntu_init.variable;
 export const dancingScript = dancing_init.variable;

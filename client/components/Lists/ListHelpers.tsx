@@ -52,7 +52,7 @@ export function generateStats(
         allItemIDs.includes(item.id) &&
         !ignoredItemsInList.includes(item.id) &&
         !readyToReview.includes(item) &&
-        item.level > 8
+        item.level >= 8
     ) || [];
 
   const learning =
