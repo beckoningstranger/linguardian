@@ -11,7 +11,7 @@ const config: Config = {
       fontSize: {
         xs: ["14px", { lineHeight: "24px", letterSpacing: "0.03em" }],
       },
-      screens: { tablet: "744px", desktop: "1140px" },
+      screens: { phone: "420px", tablet: "744px", desktop: "1140px" },
       colors: {
         grey: {
           900: "hsl(227,13%,22%)",
@@ -78,8 +78,9 @@ const config: Config = {
         voces: ["var(--font-voces)"],
       },
       animation: {
-        "from-top": "from-top .3s forwards",
+        "from-top": "from-top .2s forwards",
         "from-left": "from-left .3s forwards",
+        "from-here": "from-here .1s forwards",
         "from-right": "from-right .3s forwards",
         "from-bottom": "from-bottom .3s forwards",
       },
@@ -90,8 +91,11 @@ const config: Config = {
         },
         "from-left": {
           "0%": { transform: "translate(-100%)" },
-
           "100%": { transform: "translate(0%)" },
+        },
+        "from-here": {
+          "0%": { transform: "translate(0%, -70%)" },
+          "100%": { transform: "translate(0%, 0%)" },
         },
         "from-right": {
           "0%": { transform: "translate(100%)" },

@@ -17,20 +17,29 @@ export default function SideNavItem({
   href,
   onClick,
 }: SideNavItemProps) {
-  const { setShowSidebar } = useSidebar();
+  const { setShowSidebar, showSidebar } = useSidebar();
   return (
-    <li className="list-none">
+    <li
+      className={`flex select-none list-none justify-center ${
+        showSidebar && "w-screen phone:w-[340px]"
+      }`}
+    >
       <Link
         href={href}
-        className={`my-4 flex select-none justify-center transition-all md:my-0 md:h-14 md:justify-start md:border-none md:p-10 md:pl-6 md:hover:scale-100 md:hover:bg-slate-300`}
         onClick={() => {
           if (onClick) onClick();
           setShowSidebar(false);
         }}
       >
-        <div className="flex w-48 items-center">
-          <div className="flex items-center px-3 text-3xl md:pl-3">{icon}</div>
-          {label && <div className="px-3 text-2xl md:text-xl">{label}</div>}
+        <div
+          className={`flex h-16 w-[340px] items-center pl-1 text-blue-800 hover:bg-blue-50 phone:h-24 tablet:pl-7`}
+        >
+          <div>{icon}</div>
+          {label && (
+            <div className="flex w-full justify-center font-playfair text-2xl font-semibold">
+              {label}
+            </div>
+          )}
         </div>
       </Link>
     </li>

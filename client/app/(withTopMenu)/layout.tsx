@@ -1,7 +1,6 @@
 import { ActiveLanguageProvider } from "@/context/ActiveLanguageContext";
 import { ReactNode } from "react";
 
-import DashboardContainer from "@/components/Dashboard/DashboardContainer";
 import TopMenu from "@/components/Menus/TopMenu/TopMenu";
 import { SidebarContextProvider } from "@/context/SidebarContext";
 
@@ -17,10 +16,10 @@ export default async function LayoutWithTopMenu({ children }: RootLayoutProps) {
           <TopMenu />
         </SidebarContextProvider>
       </ActiveLanguageProvider>
-      <DashboardContainer>
+      <div>
         {children}
         <div id="PortalOutlet" />
-      </DashboardContainer>
+      </div>
     </>
   );
 }

@@ -24,7 +24,7 @@ export default function ListPieChart({ stats }: ListBarChartProps) {
         pie: {
           donut: {
             background: "transparent",
-            size: "70%",
+            size: "80%",
             labels: {
               show: true,
               total: {
@@ -38,8 +38,7 @@ export default function ListPieChart({ stats }: ListBarChartProps) {
           },
         },
       },
-      legend: { position: "bottom" as const, fontSize: "16px" },
-      grid: { padding: { top: 0, bottom: 0, left: -50, right: -50 } },
+      grid: { padding: { top: 0, bottom: 0, left: 0, right: 0 } },
 
       labels: ["Ready to water", "Mature", "Growing", "Seeds left"],
       dataLabels: {
@@ -56,12 +55,13 @@ export default function ListPieChart({ stats }: ListBarChartProps) {
   };
 
   return (
-    <ReactApexChart
-      options={ChartData.options}
-      series={ChartData.series}
-      type="donut"
-      width="100%"
-      height="300"
-    />
+    <div className="">
+      <ReactApexChart
+        options={ChartData.options}
+        series={ChartData.series}
+        type="donut"
+        width="100%"
+      />
+    </div>
   );
 }

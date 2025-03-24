@@ -8,14 +8,12 @@ import Flag from "react-world-flags";
 
 interface LanguageSelectorLinkProps {
   setShowAllLanguageOptions: Function;
-  showAllLanguageOptions: boolean;
   language: LanguageWithFlagAndName;
   currentPath: string;
 }
 
 export default function LanguageSelectorLink({
   setShowAllLanguageOptions,
-  showAllLanguageOptions,
   language,
   currentPath,
 }: LanguageSelectorLinkProps) {
@@ -40,11 +38,7 @@ export default function LanguageSelectorLink({
     >
       <Flag
         code={language.flag}
-        className={`scale-0 transition-all rounded-full object-cover hover:scale-125 w-12 ${
-          showAllLanguageOptions &&
-          "scale-100 h-12 my-2 md:border border-slate-300"
-        }
-`}
+        className={`h-[75px] w-[75px] rounded-full object-cover transition-all hover:scale-125`}
       />
     </Link>
   );

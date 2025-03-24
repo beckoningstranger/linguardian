@@ -6,13 +6,13 @@ This is a project using **Next.js** and an **Express** backend that communicates
 
 On Linguardian users can **learn and review user-generated vocabulary lists** that can be created using the website or by uploading csv-files. Of course they can also pick from the existing list catalogue. After learning the items users wait for a set period of time (the default is 4 hours), after which they are then tested on each of the learned items. If the tests go well, the amount of time between reviews increases, but once they make a mistake, it is reset to the initial 4 hours. This scientifically proven concept is called **spaced repetition**.
 
-Depending the language they are learning, users are also tested on the gender of nouns (for German or French) or the case that is followed by a preposition (German).
+Depending on the language they are learning, users are also tested on the gender of nouns (for German or French) or the case that is followed by a preposition (German).
 
 Uploading learnable items will also be added to a **browsable dictionary** that can be edited and refined. It aims to be as complete as possible, including example sentences, images, recordings, phonetic transcription, etc.
 
 ## Project Status
 
-As of right now, the dictionary, creating and managing lists and learning and reviewing lists have basic functionality, but the experience is unpolished and the design is bare-bones to say the least.
+As of right now, the dictionary, creating and managing lists and learning and reviewing lists have basic functionality, but the experience is unpolished and the design yet to be implemented. I am working on it here: <a href="https://www.figma.com/design/lOeIA9jB6QLTcKTwJVzYj8/Linguardian?node-id=419-572&t=RNUHs0xGzvzMy8u1-1" target="\_blank" rel="noopener">Linguardian Figma File</a>
 
 ## Overview of Languages, Frameworks & Libraries Used
 
@@ -20,7 +20,7 @@ As of right now, the dictionary, creating and managing lists and learning and re
 
 - [Typescript](https://www.typescriptlang.org/) - Strongly typed JavaScript
 - [Git](https://git-scm.com/) - For version control
-- [Figma](https://figma.com) - For creating wireframes and experimenting with page layouts
+- [Figma](https://figma.com) - For creating the design
 - [Zod](https://www.npmjs.com/package/zod) - Schemas for user data validation
 
 ### Front End

@@ -1,7 +1,6 @@
 "use client";
 
 import { useSidebar } from "@/context/SidebarContext";
-import { MouseEventHandler } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 
 interface HamburgerMenuProps {}
@@ -10,11 +9,9 @@ export default function HamburgerMenu({}: HamburgerMenuProps) {
   const { toggleSidebar } = useSidebar();
 
   return (
-    <div
-      className="flex h-20 w-20 items-center justify-center px-4 text-3xl transition-all hover:bg-slate-300"
+    <RxHamburgerMenu
+      className="h-[48px] w-[48px] rounded-lg text-blue-800 hover:bg-grey-100 tablet:h-[72px] tablet:w-[72px] tablet:px-3"
       onClick={toggleSidebar}
-    >
-      <RxHamburgerMenu />
-    </div>
+    />
   );
 }

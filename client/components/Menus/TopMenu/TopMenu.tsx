@@ -1,7 +1,7 @@
 import { getSupportedLanguages } from "@/lib/fetchData";
 import { MobileMenuContextProvider } from "../../../context/MobileMenuContext";
 import HamburgerMenu from "./HamburgerMenu";
-import LanguageSelectorAndUserMenu from "./LanguageSelectorAndUserMenu";
+import LanguageSelectorAndProfileLink from "./LanguageSelectorAndProfileLink";
 import SideBarNavigation from "./Sidebar/SideBarNavigation";
 import TopMenuLogo from "./TopMenuLogo";
 import TopMiddleNavigation from "./TopMiddleNavigation";
@@ -15,14 +15,14 @@ export default async function TopMenu({}: TopMenuProps) {
     <>
       <header>
         <SideBarNavigation />
-        <div className="absolute top-0 flex h-20 w-full select-none items-center justify-between bg-slate-300 bg-opacity-25 text-xl">
-          <div className={"flex items-center"}>
+        <div className="relative flex h-[112px] w-full select-none items-center justify-between bg-white/80 px-1 tablet:px-4">
+          <div className={"flex items-center gap-2"}>
             <HamburgerMenu />
             <TopMenuLogo />
           </div>
           <TopMiddleNavigation />
           <MobileMenuContextProvider>
-            <LanguageSelectorAndUserMenu
+            <LanguageSelectorAndProfileLink
               allSupportedLanguages={allSupportedLanguages}
             />
           </MobileMenuContextProvider>

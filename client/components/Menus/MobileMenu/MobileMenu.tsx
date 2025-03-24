@@ -1,8 +1,8 @@
 "use client";
+import Logo from "@/components/Logo";
 import { useMobileMenu } from "@/context/MobileMenuContext";
-import { MouseEventHandler, ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import LogoWithCloseButton from "../LogoWithCloseButton";
 
 interface MobileMenuProps {
   children: ReactNode;
@@ -45,9 +45,12 @@ export default function MobileMenu({
         }`}
       >
         {mode !== "keyboard" && (
-          <LogoWithCloseButton
-            toggleFunction={toggleMobileMenu as MouseEventHandler}
-          />
+          <div className="pt-4" onClick={() => toggleMobileMenu()}>
+            <div className="flex w-screen cursor-pointer justify-center font-playfair text-xl text-blue-800">
+              Back to
+            </div>
+            <Logo mobileMenu />
+          </div>
         )}
         <div
           className={`h-full  

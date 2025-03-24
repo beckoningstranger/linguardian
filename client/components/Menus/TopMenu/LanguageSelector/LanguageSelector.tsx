@@ -47,7 +47,7 @@ export default function LanguageSelector({
   return (
     <div
       ref={ref as RefObject<HTMLDivElement>}
-      className="z-50 hidden md:block"
+      className="z-50 hidden tablet:block"
     >
       <div>
         <Flag
@@ -57,30 +57,30 @@ export default function LanguageSelector({
               (showAllLanguageOptions) => !showAllLanguageOptions
             )
           }
-          className={`rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125 md:h-[50px] md:w-[50px]`}
+          className={`h-[75px] w-[75px] rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125`}
         />
       </div>
-      <div className={`absolute`}>
-        {allLanguageAndFlagExceptActive.map((lang) => {
-          if (!lang) return;
-          return (
-            <LanguageSelectorLink
-              setShowAllLanguageOptions={setShowAllLanguageOptions}
-              showAllLanguageOptions={showAllLanguageOptions}
-              language={lang}
-              currentPath={currentPath}
-              key={lang.flag}
-            />
-          );
-        })}
-        {showAllLanguageOptions &&
-          allLanguageAndFlagExceptActive.length <
+      {showAllLanguageOptions && (
+        <div className={`absolute mt-4 grid animate-from-here gap-4`}>
+          {allLanguageAndFlagExceptActive.map((lang) => {
+            if (!lang) return;
+            return (
+              <LanguageSelectorLink
+                setShowAllLanguageOptions={setShowAllLanguageOptions}
+                language={lang}
+                currentPath={currentPath}
+                key={lang.flag}
+              />
+            );
+          })}
+          {allLanguageAndFlagExceptActive.length <
             MAX_NUMBER_OF_LANGUAGES_ALLOWED &&
-          moreLanguagesToLearn(
-            amountOfLanguagesUserLearns,
-            amountOfSupportedLanguages
-          ) && <AddNewLanguageOption />}
-      </div>
+            moreLanguagesToLearn(
+              amountOfLanguagesUserLearns,
+              amountOfSupportedLanguages
+            ) && <AddNewLanguageOption />}
+        </div>
+      )}
     </div>
   );
 }

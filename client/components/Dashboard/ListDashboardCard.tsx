@@ -38,49 +38,57 @@ export default function ListDashboardCard({
   const { language, listNumber, name } = list;
 
   return (
-    <div className="relative mx-6 rounded-md bg-slate-200 lg:mx-3 xl:mx-6">
-      <ContextMenu
-        show={showContextMenu}
-        toggleContextMenu={() => setShowContextMenu(false)}
-        moreClasses="absolute top-0 left-0 h-full"
-      >
-        <div className="m-4 flex flex-col">
-          <StopLearningListButton
-            list={{ language: language.code, listNumber, name }}
-          />
-        </div>
-      </ContextMenu>
-      <div className="m-3 flex items-center justify-between">
-        <div
-          className="py-2 pr-2 text-2xl hover:text-white"
-          onClick={() => setShowContextMenu(true)}
-        >
-          <RxDotsVertical />
-        </div>
-        <Link
-          href={paths.listDetailsPath(list.listNumber)}
-          className="w-full pl-2"
-        >
-          <h2 className="text-lg font-semibold">{list.name}</h2>
-        </Link>
+    <div className="w-[336px] overflow-clip rounded-lg">
+      <div className="flex min-h-[88px] items-center justify-center bg-blue-700 py-4 font-playfair text-xl font-semibold text-white">
+        {list.name}
       </div>
-
-      <div className="my-3 md:flex md:w-full md:flex-row md:justify-evenly md:px-2 xl:px-0">
-        <div className="md:hidden">
-          <ListBarChart stats={listStats} />
-        </div>
-        <div className="hidden h-[267px] w-[300px] md:block">
-          {/* These numbers are the exact dimensions of the PieChart */}
-          <ListPieChart stats={listStats} />
-        </div>
-
-        <FlexibleLearningButtons
-          stats={listStats}
-          status={listStatus}
-          listNumber={list.listNumber}
-          unlockedModes={unlockedModes}
-        />
-      </div>
+      <ListPieChart stats={listStats} />
+      <div>Learning Buttons</div>
     </div>
   );
 }
+
+// <div className="relative mx-6 rounded-md bg-slate-200 lg:mx-3 xl:mx-6">
+//   <ContextMenu
+//     show={showContextMenu}
+//     toggleContextMenu={() => setShowContextMenu(false)}
+//     moreClasses="absolute top-0 left-0 h-full"
+//   >
+//     <div className="m-4 flex flex-col">
+//       <StopLearningListButton
+//         list={{ language: language.code, listNumber, name }}
+//       />
+//     </div>
+//   </ContextMenu>
+//   <div className="m-3 flex items-center justify-between">
+//     <div
+//       className="py-2 pr-2 text-2xl hover:text-white"
+//       onClick={() => setShowContextMenu(true)}
+//     >
+//       <RxDotsVertical />
+//     </div>
+//     <Link
+//       href={paths.listDetailsPath(list.listNumber)}
+//       className="w-full pl-2"
+//     >
+//       <h2 className="text-lg font-semibold">{list.name}</h2>
+//     </Link>
+//   </div>
+
+//   <div className="my-3 md:flex md:w-full md:flex-row md:justify-evenly md:px-2 xl:px-0">
+//     <div className="md:hidden">
+//       <ListBarChart stats={listStats} />
+//     </div>
+//     <div className="hidden h-[267px] w-[300px] md:block">
+//       {/* These numbers are the exact dimensions of the PieChart */}
+//       <ListPieChart stats={listStats} />
+//     </div>
+
+//     <FlexibleLearningButtons
+//       stats={listStats}
+//       status={listStatus}
+//       listNumber={list.listNumber}
+//       unlockedModes={unlockedModes}
+//     />
+//   </div>
+// </div>

@@ -9,27 +9,23 @@ interface TopMiddleNavigationProps {}
 
 export default function TopMiddleNavigation({}: TopMiddleNavigationProps) {
   const { activeLanguage } = useActiveLanguage();
+  const linkStyling =
+    "tablet:flex h-20 items-center font-playfair text-3xl decoration-2 font-semibold underline-offset-8 hover:underline text-blue-800";
   if (activeLanguage)
     return (
-      <div className="absolute left-1/2 hidden -translate-x-1/2 md:flex">
+      <div className="absolute left-1/2 hidden -translate-x-1/2 gap-6 tablet:flex">
         <Link
           href={paths.listsLanguagePath(activeLanguage?.code)}
-          className="flex h-20 items-center px-4 hover:bg-slate-300"
+          className={linkStyling}
         >
           Lists
         </Link>
-        <Link
-          href={paths.dictionaryPath()}
-          className="flex h-20 items-center px-4 hover:bg-slate-300"
-        >
+        <Link href={paths.dictionaryPath()} className={linkStyling}>
           Dictionary
         </Link>
-        <Link
-          href={paths.socialPath()}
-          className="flex h-20 items-center px-4 hover:bg-slate-300"
-        >
-          Social
-        </Link>
+        {/* <Link href={paths.socialPath()} className={linkStyling}>
+            Community
+          </Link> */}
       </div>
     );
 }
