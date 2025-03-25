@@ -5,7 +5,6 @@ import FlexibleLearningButtons from "@/components/Lists/FlexibleLearningButtons"
 import ItemBackButton from "@/components/Lists/ItemBackButton";
 import Leaderboard from "@/components/Lists/Leaderboard";
 import ListContainer from "@/components/Lists/ListContainer";
-import { determineListStatus } from "@/components/Lists/ListHelpers";
 import AllLearningButtons from "@/components/Lists/ListOverview/AllLearningButtons";
 import UnitHeader from "@/components/Lists/UnitHeader";
 import { calculateUnitStats } from "@/components/Lists/UnitHelpers";
@@ -164,7 +163,7 @@ export default async function UnitDetailPage({
         <AllLearningButtonsContainer mode="mobile">
           <FlexibleLearningButtons
             stats={stats}
-            status={determineListStatus(stats)}
+            status={"practice"}
             listNumber={listNumber}
             unlockedModes={unlockedModes}
           />

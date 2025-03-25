@@ -1,7 +1,6 @@
 "use client";
 import { LearningMode, ListStats, ListStatus } from "@/lib/types";
 import { useRef, useState } from "react";
-import ContextMenu from "../Menus/ContextMenu";
 import ReviewButton from "../ReviewButton";
 import { AllLearningButtonsContainer } from "./AllLearningButtonsContainer";
 import AllLearningButtons from "./ListOverview/AllLearningButtons";
@@ -66,24 +65,7 @@ export default function FlexibleLearningButtons({
     </div>
   );
 
-  return (
-    <>
-      <ContextMenu
-        show={showAllReviewModes}
-        toggleContextMenu={() => setShowAllReviewModes(false)}
-        moreClasses="absolute bottom-0 right-0 w-full border-slate-300 border-t-4 md:border-t-0 md:border-l-4 h-36"
-      >
-        <AllLearningButtonsContainer mode="dashboard">
-          <AllLearningButtons
-            listNumber={listNumber}
-            unlockedLearningModesForUser={unlockedModes}
-            listStats={stats}
-          />
-        </AllLearningButtonsContainer>
-      </ContextMenu>
-      {renderedButtons}
-    </>
-  );
+  return <>{renderedButtons}</>;
 }
 
 function pickRandomModes(exclude: string[]): LearningMode[] {

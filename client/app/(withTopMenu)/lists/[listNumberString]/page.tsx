@@ -6,7 +6,6 @@ import {
 
 import notFound from "@/app/not-found";
 import ListContainer from "@/components/Lists/ListContainer";
-import { getListStatsAndStatus } from "@/components/Lists/ListHelpers";
 import ChartsLButtonsLeaderboard from "@/components/Lists/ListOverview/ChartsLearningButtonsLeaderBoard";
 import DeleteListButton from "@/components/Lists/ListOverview/DeleteListButton";
 import ListHeader from "@/components/Lists/ListOverview/ListHeader";
@@ -17,6 +16,7 @@ import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import { Metadata } from "next";
 import { Suspense } from "react";
+import { getListStats } from "@/components/Lists/ListHelpers";
 
 // export async function generateMetadata({ params }: ListPageProps) {
 //   const listNumber = parseInt(params.listNumberString);
@@ -61,10 +61,7 @@ export default async function ListPage({
   const userIsAuthor = authors.includes(user.id);
   const unlockedLearningModesForUser = unlockedReviewModes[user.native.code];
   const itemIdsInUnits = units.map((item) => item.item._id.toString());
-  const { listStats, listStatus } = getListStatsAndStatus(
-    itemIdsInUnits,
-    learningDataForLanguage
-  );
+  const listStats = getListStats(itemIdsInUnits, learningDataForLanguage);
 
   return (
     <ListContextProvider
@@ -74,7 +71,7 @@ export default async function ListPage({
       learningDataForLanguage={learningDataForLanguage}
       unlockedLearningModesForUser={unlockedLearningModesForUser}
       listStats={listStats}
-      listStatus={listStatus}
+      listStatus={"practice"}
     >
       <ListContainer>
         <MobileMenuContextProvider>

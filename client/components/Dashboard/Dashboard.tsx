@@ -37,7 +37,7 @@ export default async function Dashboard({
           <ListDashboardCard
             key={listNumber}
             list={listData}
-            unlockedModes={listData.unlockedReviewModes[userNative]}
+            userNative={userNative}
             learningDataForLanguage={learningDataForLanguage}
           />
         );

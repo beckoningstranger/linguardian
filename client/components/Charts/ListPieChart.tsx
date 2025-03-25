@@ -61,6 +61,7 @@ export default function ListPieChart({ stats }: ListBarChartProps) {
         series={ChartData.series}
         type="donut"
         width="100%"
+        className="flex h-[336px] items-center"
       />
     </div>
   );

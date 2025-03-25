@@ -1,9 +1,4 @@
-import {
-  LearnedItem,
-  LearningDataForLanguage,
-  ListStats,
-  ListStatus,
-} from "@/lib/types";
+import { LearnedItem, LearningDataForLanguage, ListStats } from "@/lib/types";
 
 export function calculateListStats(
   allItemObjectIds: string[],
@@ -21,12 +16,6 @@ export function calculateListStats(
     allItemObjectIds,
     learnedItemIdsInList
   );
-}
-
-export function determineListStatus(stats: ListStats): ListStatus {
-  if (stats.readyToReview > 0) return "review";
-  if (stats.readyToReview === 0 && stats.unlearned > 0) return "add";
-  return "practice";
 }
 
 export function generateStats(
@@ -75,7 +64,7 @@ export function generateStats(
   };
 }
 
-export function getListStatsAndStatus(
+export function getListStats(
   itemIdsInUnits: string[],
   learningData: LearningDataForLanguage | undefined
 ) {
@@ -90,6 +79,5 @@ export function getListStatsAndStatus(
     learnedItems,
     ignoredItems
   );
-  const listStatus = determineListStatus(listStats);
-  return { listStats, listStatus };
+  return listStats;
 }
