@@ -8,6 +8,7 @@ import {
   SupportedLanguage,
 } from "@/lib/types";
 import { redirect } from "next/navigation";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 
@@ -29,12 +30,21 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     };
 
   return (
-    <Dashboard
-      language={params?.language as SupportedLanguage}
-      learnedLists={learnedLists[params?.language as SupportedLanguage] || []}
-      populatedLists={lists}
-      learningDataForLanguage={learningDataForLanguage}
-      userNative={user.native.code}
-    />
+    <div className="relative flex min-h-[calc(100vh-112px)] justify-center">
+      <Image
+        src="/backgrounds/DashboardPic.webp"
+        alt="Background Picture showing greenhouses"
+        fill
+        priority
+        className="-z-10 h-auto w-auto object-cover opacity-80"
+      />
+      <Dashboard
+        language={params?.language as SupportedLanguage}
+        learnedLists={learnedLists[params?.language as SupportedLanguage] || []}
+        populatedLists={lists}
+        learningDataForLanguage={learningDataForLanguage}
+        userNative={user.native.code}
+      />
+    </div>
   );
 }

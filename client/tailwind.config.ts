@@ -109,6 +109,20 @@ const config: Config = {
     },
   },
   plugins: [],
+  safelist: [
+    "bg-orange-500",
+    "hover:bg-orange-600",
+    "bg-green-500",
+    "hover:bg-green-600",
+    "bg-brown-500",
+    "hover:bg-brown-600",
+    "bg-blue-500",
+    "hover:bg-blue-600",
+    "bg-magenta-500",
+    "hover:bg-magenta-600",
+    "bg-pink-500",
+    "hover:bg-pink-600",
+  ],
 };
 
 export default config;

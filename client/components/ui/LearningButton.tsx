@@ -29,6 +29,7 @@ export default function LearningButton({
   const buttonConfig = learningButtonConfig.find(
     (config) => config.name === mode
   );
+
   return (
     <div
       className={cn(
@@ -57,7 +58,7 @@ export default function LearningButton({
           )}
           {showLabel && (
             <div
-              className={`flex flex-1 flex-col ${
+              className={`flex flex-1  flex-col ${
                 !showIcon && showExpand ? "pl-6" : ""
               }`}
             >

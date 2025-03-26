@@ -92,7 +92,7 @@ export default function LearningButtonWithExpand({
             <div className="absolute left-0 top-1/2 h-[64px] w-[1px] -translate-y-1/2 bg-grey-200" />
 
             <Image
-              src="/static/icons/ExpandButton.svg"
+              src="/icons/ExpandButton.svg"
               width={35}
               height={35}
               alt="Show more learning modes icon"

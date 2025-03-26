@@ -27,7 +27,7 @@ export default async function Dashboard({
   userNative,
 }: DashboardProps) {
   const renderedLists = (
-    <div>
+    <div className="w-[1106px] px-4 pt-4">
       {learnedLists?.map((listNumber) => {
         const listData = populatedLists.find(
           (list) => list?.listNumber === listNumber
@@ -46,13 +46,13 @@ export default async function Dashboard({
   );
 
   return (
-    <div className="flex justify-center">
+    <>
       {renderedLists}
       <AddNewListOption
         dashboardIsEmpty={learnedLists && learnedLists.length < 1}
         language={language}
       />
-    </div>
+    </>
   );
 }
 
