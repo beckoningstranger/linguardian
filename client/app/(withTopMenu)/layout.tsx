@@ -1,6 +1,7 @@
 import { ActiveLanguageProvider } from "@/context/ActiveLanguageContext";
 import { ReactNode } from "react";
 
+import TopMenu from "@/components/Menus/TopMenu/TopMenu";
 import { SidebarContextProvider } from "@/context/SidebarContext";
 
 interface RootLayoutProps {
@@ -12,10 +13,13 @@ export default async function LayoutWithTopMenu({ children }: RootLayoutProps) {
     <>
       <ActiveLanguageProvider>
         <SidebarContextProvider>
-          {children}
-          <div id="PortalOutlet" />
+          <TopMenu />
         </SidebarContextProvider>
       </ActiveLanguageProvider>
+      <div>
+        {children}
+        <div id="PortalOutlet" />
+      </div>
     </>
   );
 }

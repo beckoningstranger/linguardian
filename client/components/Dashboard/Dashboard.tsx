@@ -1,9 +1,13 @@
+import Link from "next/link";
+
+import paths from "@/lib/paths";
 import {
   LearningDataForLanguage,
   PopulatedList,
   SupportedLanguage,
 } from "@/lib/types";
-import DashboardBottomButtons from "./DashboardBottomButtons";
+import { FaPlus } from "react-icons/fa";
+import Button from "../ui/Button";
 import ListDashboardCard from "./ListDashboardCard";
 
 interface DashboardProps {
@@ -44,10 +48,33 @@ export default async function Dashboard({
   return (
     <>
       {renderedLists}
-      <DashboardBottomButtons
+      <AddNewListOption
         dashboardIsEmpty={learnedLists && learnedLists.length < 1}
         language={language}
       />
     </>
+  );
+}
+
+function AddNewListOption({
+  dashboardIsEmpty,
+  language,
+}: {
+  dashboardIsEmpty: boolean | undefined;
+  language: SupportedLanguage;
+}) {
+  return (
+    <Link
+      href={paths.listsLanguagePath(language)}
+      className={`${dashboardIsEmpty && "animate-pulse"}`}
+    >
+      <Button
+        bottomRightButton
+        intent="icon"
+        aria-label="Add a new list to your dashboard"
+      >
+        <FaPlus className="text-2xl font-semibold text-white" />
+      </Button>
+    </Link>
   );
 }

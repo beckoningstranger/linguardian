@@ -14,8 +14,7 @@ interface LearningButtonProps {
   showIcon?: boolean;
   showLabel?: boolean;
   disabled?: boolean;
-  rounded?: boolean;
-  global?: boolean;
+  bigIcon?: boolean;
 }
 export default function LearningButton({
   mode,
@@ -25,8 +24,7 @@ export default function LearningButton({
   showIcon = false,
   showLabel = false,
   disabled = false,
-  rounded = false,
-  global = false,
+  bigIcon = false,
 }: LearningButtonProps) {
   const buttonConfig = learningButtonConfig.find(
     (config) => config.name === mode
@@ -38,8 +36,7 @@ export default function LearningButton({
         buttonConfig?.color,
         buttonConfig?.hoverColor,
         "flex flex-1 h-[90px] transition-colors duration-200 ease-in-out",
-        disabled && "bg-grey-600",
-        rounded && "rounded-md"
+        disabled && "bg-grey-600"
       )}
     >
       <Link
@@ -54,8 +51,8 @@ export default function LearningButton({
           {showIcon && (
             <Image
               src={buttonConfig?.iconPath || ""}
-              width={showExpand ? 60 : 80}
-              height={showExpand ? 60 : 80}
+              width={showExpand ? 60 : bigIcon ? 90 : 80}
+              height={showExpand ? 60 : bigIcon ? 90 : 80}
               alt={buttonConfig?.label + " icon"}
             />
           )}
@@ -65,9 +62,7 @@ export default function LearningButton({
                 !showIcon && showExpand ? "pl-6" : ""
               }`}
             >
-              <h4>
-                {global ? buttonConfig?.globalLabel : buttonConfig?.label}
-              </h4>
+              <h4>{buttonConfig?.label}</h4>
               <h4>{" (" + itemNumber + " left)"}</h4>
             </div>
           )}

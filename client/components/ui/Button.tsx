@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 
 type ButtonProps = {
   children: ReactNode;
-  intent?: "primary" | "secondary" | "danger" | "success" | "warning";
+  intent?: "primary" | "secondary" | "icon" | "danger" | "success" | "warning";
   color?: "white" | "blue" | "green";
   noRing?: boolean;
   bottomRightButton?: boolean;
@@ -30,6 +30,7 @@ export default function Button({
       intent === "secondary",
     "rounded-md border border-red-500 text-red-500 from-red-500 to-red-700 hover:ring-red-500 hover:text-white":
       intent === "danger",
+    "grid place-items-center h-16 w-16 p-0": intent === "icon",
     "w-full": fullWidth,
     "fixed rounded-full bottom-4 right-4 bg-green-600 from-green-600 to-green-700 hover:ring-green-700 disabled:after:rounded-full":
       bottomRightButton,
@@ -40,7 +41,6 @@ export default function Button({
       color === "white",
     "bg-blue-500 from-blue-500 to-blue-600 hover:ring-blue-500":
       color === "blue",
-    "bg-green-500 text-white rounded-full hover:ring-white": color === "green",
   };
   const disabledStyling =
     props.disabled &&

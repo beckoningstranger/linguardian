@@ -15,7 +15,7 @@ export default async function TopMenu({}: TopMenuProps) {
     <>
       <header>
         <SideBarNavigation />
-        <div className="relative flex h-[112px] w-full select-none items-center justify-between bg-white/50 px-1 tablet:px-4">
+        <div className="relative flex h-[112px] w-full select-none items-center justify-between bg-white/80 px-1 tablet:px-4">
           <div className={"flex items-center gap-2"}>
             <HamburgerMenu />
             <TopMenuLogo />
