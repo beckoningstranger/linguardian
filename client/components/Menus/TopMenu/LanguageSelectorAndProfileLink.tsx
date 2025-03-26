@@ -76,14 +76,14 @@ export default function LanguageSelectorAndProfileLink({
                   alt="User profile image"
                   width={75}
                   height={75}
-                  className="hidden rounded-full transition-transform hover:scale-125 phone:block"
+                  className="hidden rounded-full transition-transform hover:scale-110 phone:block"
                 />
                 <Image
                   src={user.image}
                   alt="User profile image"
                   width={64}
                   height={64}
-                  className="rounded-full transition-transform hover:scale-125 phone:hidden"
+                  className="rounded-full transition-transform hover:scale-110 phone:hidden"
                 />
               </>
             )}

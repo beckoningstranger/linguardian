@@ -16,7 +16,7 @@ export default async function LayoutWithTopMenu({ children }: RootLayoutProps) {
         priority
         className="-z-10 h-auto w-auto object-cover opacity-80"
       />
-      <TopMenu />
+      <TopMenu opacity={50} />
       {children}
     </div>
   );
