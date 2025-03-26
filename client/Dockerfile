@@ -23,7 +23,7 @@ RUN addgroup -S nonroot && adduser -S nonroot -G nonroot
 USER nonroot
 
 COPY --from=builder --chown=nonroot:nonroot /app/.next/standalone .
-COPY --from=builder --chown=nonroot:nonroot /app/app/public ./public
+COPY --from=builder --chown=nonroot:nonroot /app/public ./public
 COPY --from=builder --chown=nonroot:nonroot /app/.next/static ./.next/static
 COPY --from=builder --chown=nonroot:nonroot /app/.env.local .
 

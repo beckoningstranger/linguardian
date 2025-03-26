@@ -8,11 +8,13 @@ interface LearningButtonWithExpandProps {
   listNumber: number;
   unlockedModes: LearningMode[];
   listStats: ListStats;
+  rounded?: boolean;
 }
 export default function LearningButtonWithExpand({
   listNumber,
   unlockedModes,
   listStats,
+  rounded = false,
 }: LearningButtonWithExpandProps) {
   // Show LearnNewWords if there are new words to learn and there is nothing to review
   let recommendedLearningMode = "learn" as LearningMode;
@@ -47,7 +49,8 @@ export default function LearningButtonWithExpand({
         learningButtonConfig.find(
           (config) => config.name === recommendedLearningMode
         )?.hoverColor,
-        "flex h-[90px] transition-colors duration-200 ease-in-out w-full"
+        "flex h-[90px] transition-colors duration-200 ease-in-out w-full",
+        rounded && "rounded-md"
       )}
     >
       <LearningButton

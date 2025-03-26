@@ -41,6 +41,7 @@ export default function Button({
       color === "white",
     "bg-blue-500 from-blue-500 to-blue-600 hover:ring-blue-500":
       color === "blue",
+    "bg-green-500 text-white hover:ring-white": color === "green",
   };
   const disabledStyling =
     props.disabled &&
