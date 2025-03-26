@@ -9,6 +9,7 @@ import {
 } from "@/lib/types";
 import { redirect } from "next/navigation";
 import Image from "next/image";
+import TopMenu from "@/components/Menus/TopMenu/TopMenu";
 
 export const dynamic = "force-dynamic";
 
@@ -30,21 +31,26 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     };
 
   return (
-    <div className="relative flex min-h-[calc(100vh-112px)] justify-center">
-      <Image
+    <>
+      {/* <Image
         src="/backgrounds/DashboardPic.webp"
         alt="Background Picture showing greenhouses"
         fill
         priority
         className="-z-10 h-auto w-auto object-cover opacity-80"
       />
-      <Dashboard
-        language={params?.language as SupportedLanguage}
-        learnedLists={learnedLists[params?.language as SupportedLanguage] || []}
-        populatedLists={lists}
-        learningDataForLanguage={learningDataForLanguage}
-        userNative={user.native.code}
-      />
-    </div>
+      <TopMenu /> */}
+      <div className="flex min-h-[calc(100vh-112px)] justify-center">
+        <Dashboard
+          language={params?.language as SupportedLanguage}
+          learnedLists={
+            learnedLists[params?.language as SupportedLanguage] || []
+          }
+          populatedLists={lists}
+          learningDataForLanguage={learningDataForLanguage}
+          userNative={user.native.code}
+        />
+      </div>
+    </>
   );
 }
