@@ -1,11 +1,12 @@
 import Link from "next/link";
+import { Metadata } from "next";
 
-import ListStoreCard from "@/components/Lists/ListStoreCard";
-import Button from "@/components/ui/Button";
 import { fetchAuthors, getListsByLanguage } from "@/lib/fetchData";
 import paths from "@/lib/paths";
 import { SupportedLanguage } from "@/lib/types";
-import { Metadata } from "next";
+import Button from "@/components/ui/Button";
+import ListStoreCard from "@/components/Lists/ListStoreCard";
+import ListSearch from "@/components/Lists/ListSearch";
 
 export const metadata: Metadata = {
   title: "Lists",
@@ -43,8 +44,9 @@ export default async function ListStore({ params }: ListStoreProps) {
     : null;
 
   return (
-    <>
-      <div className="grid grid-cols-1 justify-center justify-items-center gap-4 py-4 md:grid-cols-2 md:justify-normal lg:grid-cols-3">
+    <div className="flex flex-col">
+      <ListSearch />
+      <div className="flex flex-wrap justify-center gap-4 px-6 py-4 tablet:justify-start tablet:gap-6 desktop:gap-6 desktop:px-14">
         {renderedLists}
       </div>
       <Link href={paths.newListPath(params?.language as SupportedLanguage)}>
@@ -54,6 +56,6 @@ export default async function ListStore({ params }: ListStoreProps) {
           aria-label="Create a new list"
         />
       </Link>
-    </>
+    </div>
   );
 }

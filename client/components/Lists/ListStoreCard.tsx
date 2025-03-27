@@ -1,7 +1,8 @@
-import paths from "@/lib/paths";
-import { PopulatedList } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
+
+import paths from "@/lib/paths";
+import { PopulatedList } from "@/lib/types";
 
 interface ListStoreCardProps {
   authorData: { username: string; usernameSlug: string }[];
@@ -18,7 +19,7 @@ export default function ListStoreCard({
     units,
     image = "/images/ListDefaultImage.webp",
     description = (
-      <h4 className="flex justify-center">No description entered yet...</h4>
+      <div className="flex justify-center">No description entered yet...</div>
     ),
     name: title,
     unitOrder,
@@ -29,14 +30,14 @@ export default function ListStoreCard({
 
   return (
     <Link href={paths.listDetailsPath(listNumber)}>
-      <article className="flex h-[414px] w-[320px] flex-col justify-between overflow-hidden rounded-lg shadow-2xl transition-all hover:scale-105 hover:shadow-xl xl:w-[350px]">
+      <article className="flex h-[414px] w-[320px] flex-col overflow-hidden rounded-lg shadow-2xl transition-all hover:scale-105 hover:shadow-xl phone:w-[350px] tablet:w-[320px]">
         <Image
           src={image}
           alt="Background picture showing the inside of a greenhouse"
           width={320}
           height={160}
           priority
-          className="h-[160px] w-full object-cover"
+          className="h-[160px] w-auto object-cover"
         />
         <div className="flex h-full flex-col gap-2 bg-white px-6 py-4 font-inter">
           <div>
