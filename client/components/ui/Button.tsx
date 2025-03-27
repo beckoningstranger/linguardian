@@ -1,9 +1,10 @@
 import { cn } from "@/lib/helperFunctionsClient";
 import { Button as HeadlessUiButton } from "@headlessui/react";
 import { ReactNode } from "react";
+import { FaPlus } from "react-icons/fa";
 
 type ButtonProps = {
-  children: ReactNode;
+  children?: ReactNode;
   intent?: "primary" | "secondary" | "icon" | "danger" | "success" | "warning";
   color?: "white" | "blue" | "green";
   noRing?: boolean;
@@ -32,7 +33,7 @@ export default function Button({
       intent === "danger",
     "grid place-items-center h-16 w-16 p-0": intent === "icon",
     "w-full": fullWidth,
-    "fixed rounded-full bottom-4 right-4 bg-green-600 from-green-600 to-green-700 hover:ring-green-700 disabled:after:rounded-full":
+    "fixed rounded-full grid h-[90px] w-[90px] place-items-center rounded-full shadow-xl hover:scale-110 bottom-4 right-4 bg-green-600 hover:ring-green-700 disabled:after:rounded-full":
       bottomRightButton,
   };
 
@@ -53,7 +54,7 @@ export default function Button({
   return (
     <HeadlessUiButton
       className={cn(
-        "text-white px-3 relative py-1.5 rounded-md hover:bg-gradient-to-r hover:ring-1 hover:ring-transparent ring-offset-current transition-all active:scale-95 hover:ring-offset-2",
+        "text-white px-3 relative py-1.5 rounded-md hover:bg-gradient-to-r hover:ring-1 hover:ring-transparent ring-offset-current transition-all hover:ring-offset-2",
         styling,
         colorStyling,
         disabledStyling,
@@ -62,6 +63,9 @@ export default function Button({
       )}
       {...remainingProps}
     >
+      {bottomRightButton && (
+        <FaPlus className="text-4xl font-semibold text-white" />
+      )}
       {children}
     </HeadlessUiButton>
   );

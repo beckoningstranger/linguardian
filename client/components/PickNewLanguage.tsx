@@ -57,7 +57,7 @@ export default function PickNewLanguage({ newLanguage }: PickNewLanguageProps) {
     <Button onClick={handleLanguageSelection} disabled={updating}>
       <Flag
         code={newLanguage.flag}
-        className={`my-2 h-24 w-24 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125`}
+        className={`my-2 h-24 w-24 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-110`}
       />
     </Button>
   );

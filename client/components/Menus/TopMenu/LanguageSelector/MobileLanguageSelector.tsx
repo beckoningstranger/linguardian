@@ -51,7 +51,7 @@ export default function MobileLanguageSelector({
             >
               <Flag
                 code={lang.flag}
-                className={`h-24 w-24 rounded-full object-cover shadow-lg transition-all hover:scale-125`}
+                className={`h-24 w-24 rounded-full object-cover shadow-lg transition-all hover:scale-110`}
               />
             </Link>
           );

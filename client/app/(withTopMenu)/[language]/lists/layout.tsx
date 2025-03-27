@@ -10,13 +10,13 @@ export default async function LayoutWithTopMenu({ children }: RootLayoutProps) {
   return (
     <div className="relative">
       <Image
-        src="/backgrounds/DashboardPic.webp"
+        src="/backgrounds/ListStorePic.webp"
         alt="Background Picture showing greenhouses"
         fill
         priority
         className="-z-10 h-auto w-auto object-cover opacity-80"
       />
-      <TopMenu opacity={50} />
+      <TopMenu opacity={80} />
       <div className="flex min-h-[calc(100vh-112px)] justify-center">
         {children}
       </div>

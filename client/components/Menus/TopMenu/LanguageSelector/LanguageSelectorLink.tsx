@@ -38,7 +38,7 @@ export default function LanguageSelectorLink({
     >
       <Flag
         code={language.flag}
-        className={`h-[75px] w-[75px] rounded-full object-cover transition-all hover:scale-125`}
+        className={`h-[75px] w-[75px] rounded-full object-cover transition-all hover:scale-110`}
       />
     </Link>
   );

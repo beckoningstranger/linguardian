@@ -92,7 +92,7 @@ export default function Onboarding({ allLanguageFeatures }: OnboardingProps) {
             <Flag
               code={item.flag}
               key={item.name}
-              className="my-2 h-12 w-12 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125"
+              className="my-2 h-12 w-12 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-110"
             />
             <div className="pl-4">{item.name}</div>
           </div>

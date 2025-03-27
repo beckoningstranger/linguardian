@@ -57,7 +57,7 @@ export default function LanguageSelector({
               (showAllLanguageOptions) => !showAllLanguageOptions
             )
           }
-          className={`h-[75px] w-[75px] rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125`}
+          className={`h-[75px] w-[75px] rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-110`}
         />
       </div>
       {showAllLanguageOptions && (

@@ -1,7 +1,6 @@
 import paths from "@/lib/paths";
 import { SupportedLanguage } from "@/lib/types";
 import Link from "next/link";
-import { FaPlus } from "react-icons/fa";
 import Button from "../ui/Button";
 import LearningButton from "../ui/LearningButton";
 
@@ -49,12 +48,11 @@ function AddNewListOption({
       className={`${dashboardIsEmpty && "animate-pulse"}`}
     >
       <Button
-        className="grid h-[90px] w-[90px] place-items-center rounded-full shadow-xl"
+        className=""
         color="green"
         aria-label="Add a new list to your dashboard"
-      >
-        <FaPlus className="text-4xl font-semibold text-white" />
-      </Button>
+        bottomRightButton
+      />
     </Link>
   );
 }

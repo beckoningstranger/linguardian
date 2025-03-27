@@ -58,8 +58,8 @@ export default function LanguagePicker({
         <Flag
           code={lang.flag}
           key={lang.code}
-          className={`my-2 h-12 w-12 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-125  hover:grayscale-0 ${
-            itemLanguage === lang.code ? "scale-125" : "scale-90 grayscale"
+          className={`my-2 h-12 w-12 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-110  hover:grayscale-0 ${
+            itemLanguage === lang.code ? "scale-110" : "scale-90 grayscale"
           }`}
           onClick={() => {
             if (isNewItem) {
