@@ -14,7 +14,7 @@ export default async function LayoutWithTopMenu({ children }: RootLayoutProps) {
         alt="Background Picture showing greenhouses"
         fill
         priority
-        className="-z-10 h-auto w-auto object-cover opacity-80"
+        className="-z-10 h-auto w-auto object-cover opacity-70"
       />
       <TopMenu opacity={80} />
       <div className="flex min-h-[calc(100vh-112px)] justify-center">

@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       fontSize: {
-        xs: ["14px", { lineHeight: "24px", letterSpacing: "0.03em" }],
+        xs: ["14px", { lineHeight: "135%", letterSpacing: "0.14px" }],
       },
       screens: { phone: "420px", tablet: "744px", desktop: "1140px" },
       colors: {
