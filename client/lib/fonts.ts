@@ -1,8 +1,8 @@
 import {
   Dancing_Script,
+  Inter,
   Playfair_Display,
   Voces,
-  Ubuntu,
 } from "next/font/google";
 
 const dancing_init = Dancing_Script({
@@ -18,10 +18,10 @@ const playfair_init = Playfair_Display({
   variable: "--font-playfairDisplay",
 });
 
-const ubuntu_init = Ubuntu({
+const inter_init = Inter({
   subsets: ["latin-ext"],
   weight: ["300", "400", "500", "700"],
-  variable: "--font-poppins",
+  variable: "--font-inter",
 });
 
 const voces_init = Voces({
@@ -32,5 +32,5 @@ const voces_init = Voces({
 
 export const voces = voces_init.variable;
 export const playfairDisplay = playfair_init.variable;
-export const ubuntu = ubuntu_init.variable;
+export const inter = inter_init.variable;
 export const dancingScript = dancing_init.variable;

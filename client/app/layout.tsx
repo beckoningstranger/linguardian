@@ -1,5 +1,5 @@
 import "@/app/globals.css";
-import { dancingScript, playfairDisplay, ubuntu, voces } from "@/lib/fonts";
+import { dancingScript, playfairDisplay, inter, voces } from "@/lib/fonts";
 import type { Metadata } from "next";
 
 import { ReactNode } from "react";
@@ -19,7 +19,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body
-        className={`${dancingScript} ${ubuntu} ${playfairDisplay} ${voces} font-ubuntu text-lg`}
+        className={`${dancingScript} ${inter} ${playfairDisplay} ${voces} font-inter text-lg`}
       >
         <AuthProvider>{children}</AuthProvider>
         <Toaster position="top-right" reverseOrder={true} />

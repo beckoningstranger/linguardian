@@ -3,6 +3,7 @@ import { SupportedLanguage } from "@/lib/types";
 import Link from "next/link";
 import Button from "../ui/Button";
 import LearningButton from "../ui/LearningButton";
+import { FaPlus } from "react-icons/fa";
 
 interface DashboardBottomButtonsProps {
   language: SupportedLanguage;
@@ -27,32 +28,19 @@ export default function DashboardBottomButtons({
           disabled
         />
       </div>
-      <AddNewListOption
-        dashboardIsEmpty={dashboardIsEmpty}
-        language={language}
-      />
+      <Link
+        href={paths.listsLanguagePath(language)}
+        className={`${dashboardIsEmpty && "animate-pulse"}`}
+      >
+        <Button
+          color="green"
+          intent="icon"
+          aria-label="Add a new list to your dashboard"
+          className="grid h-[90px] w-[90px] place-items-center rounded-full bg-green-500 shadow-xl hover:scale-110 hover:ring-green-700 disabled:after:rounded-full"
+        >
+          <FaPlus className="text-4xl font-semibold text-white" />
+        </Button>
+      </Link>
     </div>
-  );
-}
-
-function AddNewListOption({
-  dashboardIsEmpty,
-  language,
-}: {
-  dashboardIsEmpty: boolean;
-  language: SupportedLanguage;
-}) {
-  return (
-    <Link
-      href={paths.listsLanguagePath(language)}
-      className={`${dashboardIsEmpty && "animate-pulse"}`}
-    >
-      <Button
-        className=""
-        color="green"
-        aria-label="Add a new list to your dashboard"
-        bottomRightButton
-      />
-    </Link>
   );
 }

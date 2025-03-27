@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       fontSize: {
-        xs: ["14px", { lineHeight: "135%", letterSpacing: "0.14px" }],
+        xs: ["14px", { lineHeight: "135%", letterSpacing: "1%" }],
       },
       screens: { phone: "420px", tablet: "744px", desktop: "1140px" },
       colors: {
@@ -74,7 +74,7 @@ const config: Config = {
       fontFamily: {
         dancing: ["var(--font-dancingScript)"],
         playfair: ["var(--font-playfairDisplay)"],
-        ubuntu: ["var(--font-ubuntu)"],
+        inter: ["var(--font-inter)"],
         voces: ["var(--font-voces)"],
       },
       animation: {

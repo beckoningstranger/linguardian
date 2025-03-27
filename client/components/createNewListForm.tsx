@@ -60,8 +60,8 @@ export default function CreateNewListForm({
             message: "Please provide a descriptive list name",
           },
           maxLength: {
-            value: 50,
-            message: "List names can be no longer than 50 characters",
+            value: 55,
+            message: "List names can be no longer than 55 characters",
           },
         })}
         type="text"

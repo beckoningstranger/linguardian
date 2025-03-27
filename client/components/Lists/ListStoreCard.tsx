@@ -29,7 +29,7 @@ export default function ListStoreCard({
 
   return (
     <Link href={paths.listDetailsPath(listNumber)}>
-      <article className="flex h-[400px] w-[320px] flex-col justify-between overflow-hidden rounded-lg shadow-2xl transition-all hover:scale-105 hover:shadow-xl xl:w-[350px]">
+      <article className="flex h-[414px] w-[320px] flex-col justify-between overflow-hidden rounded-lg shadow-2xl transition-all hover:scale-105 hover:shadow-xl xl:w-[350px]">
         <Image
           src={image}
           alt="Background picture showing the inside of a greenhouse"
@@ -38,16 +38,16 @@ export default function ListStoreCard({
           priority
           className="h-[160px] w-full object-cover"
         />
-        <div className="flex h-full flex-col gap-2 bg-white px-6 py-4 font-ubuntu">
-          <div className="gap-1">
-            <h4 className="flex justify-center text-sm">
-              {authorData.map((data) => data.username).join(", ")}
+        <div className="flex h-full flex-col gap-2 bg-white px-6 py-4 font-inter">
+          <div>
+            <h4 className="flex justify-center text-xs">
+              {authorData.map((data) => data.username).join(" & ") + "'s"}
             </h4>
-            <h2 className="flex justify-center font-playfair text-2xl font-semibold">
+            <h2 className="text-center font-playfair text-xl font-semibold">
               {list.name}
             </h2>
           </div>
-          <div className="flex flex-col items-center gap-1 text-sm">
+          <div className="flex flex-col items-center text-xs">
             <h4>{numberOfItems} items</h4>
             <h4>{numberOfUnits} units</h4>
             <h4>{difficulty}</h4>
