@@ -13,16 +13,16 @@ export default function TopMenuLogo({}: TopMenuLogoProps) {
       <div className="relative">
         <Link
           href={paths.dashboardLanguagePath(activeLanguage?.code)}
-          className="hidden h-20 items-center font-dancing text-5xl font-bold text-blue-800 decoration-2 underline-offset-8 transition-all hover:underline desktop:flex"
+          className="hidden h-20 items-center font-script text-llg text-blue-800 decoration-2 underline-offset-8 hover:underline desktop:flex"
         >
           Linguardian
         </Link>
         <Link
           href={paths.dashboardLanguagePath(activeLanguage?.code)}
-          className="relative inline-block w-28 border-b-2 border-transparent font-dancing text-4xl font-semibold text-blue-800 transition-all duration-200 hover:border-blue-800 phone:text-5xl desktop:hidden"
+          className="relative inline-block font-script text-lmd font-semibold text-blue-800 phone:text-llg desktop:hidden"
         >
           <div className="inline">L</div>
-          <div className="absolute bottom-1.5 left-4 text-lg phone:bottom-1 phone:left-5 phone:text-2xl">
+          <div className="absolute bottom-2.5 left-4 border-b-2 border-transparent text-lsm hover:border-blue-800 phone:bottom-5 phone:left-5 tablet:bottom-3 tablet:left-6 tablet:text-lmd">
             inguardian
           </div>
         </Link>

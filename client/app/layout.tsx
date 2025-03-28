@@ -19,7 +19,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body
-        className={`${dancingScript} ${inter} ${playfairDisplay} ${voces} font-inter text-lg`}
+        className={`${dancingScript} ${inter} ${playfairDisplay} ${voces} font-sans`}
       >
         <AuthProvider>{children}</AuthProvider>
         <Toaster position="top-right" reverseOrder={true} />

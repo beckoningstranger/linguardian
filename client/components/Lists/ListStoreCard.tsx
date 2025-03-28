@@ -39,25 +39,25 @@ export default function ListStoreCard({
           priority
           className="h-[160px] w-auto object-cover"
         />
-        <div className="flex h-full flex-col gap-2 bg-white px-6 py-4 font-inter">
+        <div className="flex h-full flex-col gap-2 bg-white px-6 py-4">
           <div>
-            <h4 className="text-center text-xs">
+            <h4 className="text-center text-csmr">
               {authorData.map((data) => data.username).join(" & ") + "'s"}
             </h4>
             <h2
-              className={`h-[56px] text-center font-playfair font-semibold ${
-                title.length > 24 ? "text-xl" : "text-2xl"
+              className={`h-[56px] text-center font-serif ${
+                title.length > 24 ? "text-hsm" : "text-hmd"
               }`}
             >
               {title}
             </h2>
           </div>
-          <div className="text-center text-xs">
+          <div className="text-center text-csmr">
             <h4>{numberOfItems} items</h4>
             <h4>{numberOfUnits} units</h4>
             <h4>{difficulty}</h4>
           </div>
-          <h3 className="text-xs">{description}</h3>
+          <h3 className="text-csmr">{description}</h3>
         </div>
       </article>
     </Link>

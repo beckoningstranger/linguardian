@@ -7,9 +7,44 @@ const config: Config = {
     "./app/**/*.{ts,tsx,mdx}",
   ],
   theme: {
+    fontFamily: {
+      serif: ["var(--font-playfairDisplay)", "serif"],
+      sans: ["var(--font-inter)", "sans-serif"],
+      script: [
+        "var(--font-dancingScript)",
+        "var(--font-playfairDisplay)",
+        "serif",
+      ],
+      IPA: ["var(--font-voces)", "var(--font-inter)", "sans-serif"],
+    },
     extend: {
       fontSize: {
-        xs: ["14px", { lineHeight: "135%", letterSpacing: "1%" }],
+        cxsr: [
+          "12px",
+          { lineHeight: "135%", letterSpacing: "1%", fontWeight: 400 },
+        ],
+        csmr: ["14px", { lineHeight: "135%", fontWeight: 400 }],
+        csmb: ["14px", { lineHeight: "135%", fontWeight: 700 }],
+        cmdr: ["16px", { lineHeight: "135%", fontWeight: 400 }],
+        cmdb: ["16px", { fontWeight: 700 }],
+        clgr: ["20px", { fontWeight: 400 }],
+        clgm: ["20px", { fontWeight: 500 }],
+        clgb: ["20px", { fontWeight: 700 }],
+        cxlr: ["24px", { fontWeight: 400 }],
+        cxlm: ["24px", { fontWeight: 500 }],
+        cxlb: ["24px", { fontWeight: 700 }],
+        c2xlm: ["32px", { fontWeight: 500 }],
+        hxs: ["16px", { fontWeight: 600 }],
+        hsm: ["20px", { fontWeight: 600 }],
+        hmd: ["24px", { fontWeight: 600 }],
+        hlg: ["32px", { fontWeight: 600 }],
+        hlgb: ["32px", { fontWeight: 700 }],
+        hxl: ["36px", { fontWeight: 600 }],
+        h2xl: ["40px", { fontWeight: 600 }],
+        lg: ["20px", {}],
+        lsm: ["16px", { fontWeight: 700 }],
+        lmd: ["32px", { fontWeight: 700 }],
+        llg: ["48px", { fontWeight: 700 }],
       },
       screens: { phone: "420px", tablet: "744px", desktop: "1140px" },
       colors: {
@@ -70,12 +105,6 @@ const config: Config = {
         harvestyellow: "#F7CD54",
         lightblue: "#BEE2EE",
         darkgrey: "#2D4C4D",
-      },
-      fontFamily: {
-        dancing: ["var(--font-dancingScript)"],
-        playfair: ["var(--font-playfairDisplay)"],
-        inter: ["var(--font-inter)"],
-        voces: ["var(--font-voces)"],
       },
       animation: {
         "from-top": "from-top .2s forwards",

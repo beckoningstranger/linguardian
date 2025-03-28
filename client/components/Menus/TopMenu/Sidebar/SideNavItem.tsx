@@ -36,7 +36,7 @@ export default function SideNavItem({
         >
           <div>{icon}</div>
           {label && (
-            <div className="flex w-full justify-center font-playfair text-2xl font-semibold">
+            <div className="flex w-full justify-center font-serif text-2xl font-semibold">
               {label}
             </div>
           )}

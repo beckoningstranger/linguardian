@@ -8,7 +8,7 @@ export default function ListSearch({}: ListSearchProps) {
       <div className="flex items-center">
         <ListSearchInput />
       </div>
-      <div className="text-center font-playfair text-xl font-semibold">
+      <div className="text-center font-serif text-hsm font-semibold">
         Showing Most Popular Textbook Lists for Intermediates
       </div>
     </div>

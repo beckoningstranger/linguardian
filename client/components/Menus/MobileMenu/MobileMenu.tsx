@@ -46,7 +46,7 @@ export default function MobileMenu({
       >
         {mode !== "keyboard" && (
           <div className="pt-4" onClick={() => toggleMobileMenu()}>
-            <div className="flex w-screen cursor-pointer justify-center font-playfair text-xl text-blue-800">
+            <div className="flex w-screen cursor-pointer justify-center font-serif text-xl text-blue-800">
               Back to
             </div>
             <Logo mobileMenu />

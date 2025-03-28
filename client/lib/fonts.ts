@@ -7,20 +7,20 @@ import {
 
 const dancing_init = Dancing_Script({
   subsets: ["latin-ext"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["700"],
   variable: "--font-dancingScript",
 });
 
 const playfair_init = Playfair_Display({
   subsets: ["latin-ext"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["600", "700"],
   style: ["italic", "normal"],
   variable: "--font-playfairDisplay",
 });
 
 const inter_init = Inter({
   subsets: ["latin-ext"],
-  weight: ["300", "400", "500", "700"],
+  weight: ["400", "500", "700"],
   variable: "--font-inter",
 });
 

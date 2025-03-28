@@ -47,7 +47,7 @@ export default function LearningButton({
         className="flex w-full"
       >
         <HeadLessUiButton
-          className="flex h-[90px] w-full items-center justify-center pl-1 font-playfair text-xl font-semibold text-white"
+          className="flex h-[90px] w-full items-center justify-center pl-1 font-serif text-hsm text-white"
           disabled={disabled}
           aria-label={`Start a learning session in ${mode} mode`}
         >

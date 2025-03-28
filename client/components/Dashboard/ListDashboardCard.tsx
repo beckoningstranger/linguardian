@@ -28,7 +28,7 @@ export default function ListDashboardCard({
   return (
     <div className="w-[336px] cursor-pointer overflow-clip rounded-lg bg-white/80 shadow-lg transition-all duration-500 ease-in-out hover:bg-white/90 hover:shadow-2xl">
       <Link href={paths.listDetailsPath(listNumber)}>
-        <div className="flex min-h-[88px] items-center justify-center bg-blue-700 py-4 font-playfair text-xl font-semibold text-white">
+        <div className="flex min-h-[88px] items-center justify-center bg-blue-700 py-4 font-serif text-hmd text-white">
           {name}
         </div>
         <ListPieChart stats={listStats} />
