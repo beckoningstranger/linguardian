@@ -20,7 +20,7 @@ export default async function TopMenu({ opacity = 80 }: TopMenuProps) {
         <SideBarNavigation />
         <div
           className={cn(
-            "relative flex h-[112px] w-full select-none items-center bg-white/80 justify-between px-1 tablet:px-4",
+            "relative flex h-[112px] w-full select-none items-center bg-white/80 justify-between px-1 tablet:pr-4",
             opacity === 50 && "bg-white/50"
           )}
         >

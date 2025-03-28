@@ -19,7 +19,7 @@ export default function ListStoreCard({
     units,
     image = "/images/ListDefaultImage.webp",
     description = (
-      <div className="flex justify-center">No description entered yet...</div>
+      <div className="text-center">No description entered yet...</div>
     ),
     name: title,
     unitOrder,
@@ -41,14 +41,18 @@ export default function ListStoreCard({
         />
         <div className="flex h-full flex-col gap-2 bg-white px-6 py-4 font-inter">
           <div>
-            <h4 className="flex justify-center text-xs">
+            <h4 className="text-center text-xs">
               {authorData.map((data) => data.username).join(" & ") + "'s"}
             </h4>
-            <h2 className="text-center font-playfair text-xl font-semibold">
-              {list.name}
+            <h2
+              className={`h-[56px] text-center font-playfair font-semibold ${
+                title.length > 24 ? "text-xl" : "text-2xl"
+              }`}
+            >
+              {title}
             </h2>
           </div>
-          <div className="flex flex-col items-center text-xs">
+          <div className="text-center text-xs">
             <h4>{numberOfItems} items</h4>
             <h4>{numberOfUnits} units</h4>
             <h4>{difficulty}</h4>
