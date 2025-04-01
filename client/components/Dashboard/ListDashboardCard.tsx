@@ -31,7 +31,9 @@ export default function ListDashboardCard({
         <div className="flex min-h-[88px] items-center justify-center bg-blue-700 py-4 font-serif text-hmd text-white">
           {name}
         </div>
-        <ListPieChart stats={listStats} />
+        <div className="grid h-[336px] place-items-center">
+          <ListPieChart stats={listStats} height={336} />
+        </div>
       </Link>
       <LearningButtonWithExpand
         listNumber={listNumber}

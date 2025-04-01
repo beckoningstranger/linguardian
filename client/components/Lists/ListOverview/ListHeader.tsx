@@ -13,14 +13,13 @@ import CreatedByLine from "./CreatedByLine";
 interface ListHeaderProps {}
 
 export default function ListHeader({}: ListHeaderProps) {
-  const [showDetails, setShowDetails] = useState<boolean>(false);
   const {
     listData: {
       name,
       language,
       listNumber,
-      description,
-      image = "https://picsum.photos/200?grayscale",
+      description = "Dans Ensemble, c’est tout, quatre personnages blessés – Camille, Philibert, Franck et Paulette – trouvent espoir et bonheur en vivant ensemble...",
+      image = "/images/ListDefaultImage.webp",
       units,
     },
     userIsAuthor,
@@ -46,39 +45,45 @@ export default function ListHeader({}: ListHeaderProps) {
 
   return (
     <>
-      <div
-        className="relative flex items-center border-y-2 border-slate-300 sm:hidden"
-        onClick={() => {
-          if (description) setShowDetails(!showDetails);
-        }}
-      >
-        <Image src={image} alt="List image" height={200} width={200} priority />
-        <div className="m-2 flex h-full w-full flex-col justify-center gap-y-2 md:mt-4">
-          {!showDetails &&
-            (userIsAuthor ? (
-              <ChangeListNameOrDescription
-                oldString={name}
-                listNumber={listNumber}
-                listProperty="listName"
-                editStyles="text-center text-xl sm:text-2xl"
-                nonEditStyles="cursor-pointer text-center text-xl sm:text-2xl"
-              />
-            ) : (
-              <h1 className="text-center text-xl sm:text-2xl">{name}</h1>
-            ))}
-          {!userIsLearningThisList && !showDetails && (
-            <h3 className="text-center text-xs">{numberOfItems} items</h3>
+      <div className="relative flex max-h-[150px] gap-2 overflow-hidden bg-white/90 py-1 tablet:col-span-2 tablet:max-h-[200px] tablet:rounded-lg tablet:p-4">
+        <Image
+          src={image}
+          alt="List image"
+          height={200}
+          width={200}
+          priority
+          className="h-[150px] w-[150px] rounded-md tablet:rounded-2xl tablet:shadow-xl"
+        />
+        <div className="flex w-full flex-col gap-2 tablet:my-4">
+          <div className="my-1 leading-[1] tablet:leading-[1.2]">
+            <CreatedByLine authorData={authorData} />
+            <h2 className="font-serif text-hsm tablet:text-hmd">{name}</h2>
+          </div>
+          <h4 className="text-csmr tablet:text-cmdr">{description}</h4>
+        </div>
+        {/* <div className="flex h-full w-full flex-col justify-center gap-2 md:mt-4">
+          {userIsAuthor ? (
+            <ChangeListNameOrDescription
+              oldString={name}
+              listNumber={listNumber}
+              listProperty="listName"
+              editStyles="text-center"
+              nonEditStyles="cursor-pointer text-center"
+            />
+          ) : (
+            <h2 className="text-center">{name}</h2>
           )}
-          {showDetails && (
+          {!userIsLearningThisList && (
+            <h3 className="text-center text-xs">{numberOfItems} items</h3>
+          )} */}
+        {/* {
             <div>
               {userIsAuthor ? (
                 <ChangeListNameOrDescription
                   oldString={description}
                   listNumber={listNumber}
                   listProperty="listDescription"
-                  nonEditStyles={`mx-2 mt-2 max-w-md text-sm ${
-                    authorData && "mb-4"
-                  }`}
+                  nonEditStyles={`mx-2 mt-2 max-w-md ${authorData && "mb-4"}`}
                   editStyles="w-96 text-sm h-24 block"
                 />
               ) : (
@@ -91,13 +96,11 @@ export default function ListHeader({}: ListHeaderProps) {
                 </h3>
               )}
             </div>
-          )}
-          {authorData && !showDetails && (
-            <CreatedByLine authorData={authorData} />
-          )}
-        </div>
+          } */}
+        {/* {authorData && <CreatedByLine authorData={authorData} />} */}
       </div>
-      <div className="hidden sm:block">
+      {/* </div> */}
+      {/* <div className="hidden sm:block">
         <div className="relative m-2 flex items-center justify-center rounded-md bg-slate-100 p-6">
           <Image
             src={image}
@@ -149,7 +152,7 @@ export default function ListHeader({}: ListHeaderProps) {
             {authorData && <CreatedByLine authorData={authorData} />}
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   );
 }
@@ -172,7 +175,7 @@ function ChangeListNameOrDescription({
   const [editMode, setEditMode] = useState(false);
 
   const formattedString = newString?.split("\n").map((paragraph, index) => (
-    <p key={index} className="my-2">
+    <p key={index} className="my-2 font-serif text-xl">
       {paragraph}
     </p>
   ));
@@ -238,7 +241,7 @@ function ChangeListNameOrDescription({
                   setEditMode(false);
                 }
               }}
-              className={editStyles + " text-center w-full"}
+              className={editStyles + " text-center w-full font-serif"}
             />
           ) : (
             <textarea

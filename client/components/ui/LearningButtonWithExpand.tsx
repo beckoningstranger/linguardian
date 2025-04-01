@@ -40,15 +40,22 @@ export default function LearningButtonWithExpand({
     "visual",
   ];
 
+  const bgColor =
+    "bg-" +
+    learningButtonConfig.find(
+      (config) => config.name === recommendedLearningMode
+    )?.color;
+  const hoverColor =
+    "hover:bg-" +
+    learningButtonConfig.find(
+      (config) => config.name === recommendedLearningMode
+    )?.hoverColor;
+
   return (
     <div
       className={cn(
-        learningButtonConfig.find(
-          (config) => config.name === recommendedLearningMode
-        )?.color,
-        learningButtonConfig.find(
-          (config) => config.name === recommendedLearningMode
-        )?.hoverColor,
+        bgColor,
+        hoverColor,
         "flex h-[90px] transition-colors duration-200 ease-in-out w-full",
         rounded && "rounded-md"
       )}
@@ -99,7 +106,7 @@ export default function LearningButtonWithExpand({
               width={35}
               height={35}
               alt="Show more learning modes icon"
-              className="h-[90px] w-auto"
+              className="size-[90px]"
             />
           </div>
         </div>

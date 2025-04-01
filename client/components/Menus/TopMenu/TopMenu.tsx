@@ -8,11 +8,13 @@ import TopMiddleNavigation from "./TopMiddleNavigation";
 import { cn } from "@/lib/helperFunctionsClient";
 
 interface TopMenuProps {
-  opacity?: 50 | 80;
+  opacity?: 50 | 80 | 90;
 }
 
-export default async function TopMenu({ opacity = 80 }: TopMenuProps) {
+export default async function TopMenu({ opacity }: TopMenuProps) {
   const allSupportedLanguages = await getSupportedLanguages();
+
+  const background = opacity ? `bg-white/${opacity}` : "bg-white/80";
 
   return allSupportedLanguages ? (
     <>
@@ -20,8 +22,8 @@ export default async function TopMenu({ opacity = 80 }: TopMenuProps) {
         <SideBarNavigation />
         <div
           className={cn(
-            "relative flex h-[112px] w-full select-none items-center bg-white/80 justify-between px-1 tablet:pr-4",
-            opacity === 50 && "bg-white/50"
+            "relative flex h-[112px] w-full select-none items-center justify-between px-1 tablet:pr-4",
+            background
           )}
         >
           <div className={"flex items-center gap-2"}>

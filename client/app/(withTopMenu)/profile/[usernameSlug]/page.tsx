@@ -1,3 +1,4 @@
+import LearningButton from "@/components/ui/LearningButton";
 import { getAllUsernameSlugs, getUserByUsernameSlug } from "@/lib/fetchData";
 
 interface ProfilePageProps {
@@ -29,6 +30,15 @@ export default async function ProfilePage({
           user?.learnedLanguages?.map((lang) => lang.name)!
         )}.`}
       </h1>
+      <div className="absolute right-0 flex justify-end">
+        <LearningButton
+          mode="context"
+          itemNumber={1}
+          listNumber={1}
+          showIcon
+          rounded
+        />
+      </div>
     </>
   );
 }

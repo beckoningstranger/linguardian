@@ -59,7 +59,7 @@ export default function ListUnits() {
         <Droppable droppableId="units">
           {(provided) => (
             <div
-              className="my-2 flex w-full flex-col gap-y-2"
+              className="my-2 flex w-full flex-col gap-y-2 tablet:m-0"
               ref={provided.innerRef}
               {...provided.droppableProps}
             >

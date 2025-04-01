@@ -9,9 +9,15 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
 
 interface ListBarChartProps {
   stats: ListStats;
+  height?: number;
+  width?: number;
 }
 
-export default function ListPieChart({ stats }: ListBarChartProps) {
+export default function ListPieChart({
+  stats,
+  height,
+  width,
+}: ListBarChartProps) {
   const ChartData = {
     colors: [],
     options: {
@@ -24,7 +30,7 @@ export default function ListPieChart({ stats }: ListBarChartProps) {
         pie: {
           donut: {
             background: "transparent",
-            size: "80%",
+            size: "65%",
             labels: {
               show: true,
               total: {
@@ -44,6 +50,7 @@ export default function ListPieChart({ stats }: ListBarChartProps) {
       dataLabels: {
         enabled: false,
       },
+      legend: { show: false },
     },
     series: [
       stats.readyToReview,
@@ -55,14 +62,12 @@ export default function ListPieChart({ stats }: ListBarChartProps) {
   };
 
   return (
-    <div className="">
-      <ReactApexChart
-        options={ChartData.options}
-        series={ChartData.series}
-        type="donut"
-        width="100%"
-        className="flex h-[336px] items-center"
-      />
-    </div>
+    <ReactApexChart
+      options={ChartData.options}
+      series={ChartData.series}
+      type="donut"
+      height={height}
+      width={width}
+    />
   );
 }

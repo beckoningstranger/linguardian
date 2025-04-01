@@ -52,12 +52,12 @@ export default function ListStoreCard({
               {title}
             </h2>
           </div>
-          <div className="text-center text-csmr">
+          <div className="text-center text-cmdr">
             <h4>{numberOfItems} items</h4>
             <h4>{numberOfUnits} units</h4>
             <h4>{difficulty}</h4>
           </div>
-          <h3 className="text-csmr">{description}</h3>
+          <h3 className="text-cmdr">{description}</h3>
         </div>
       </article>
     </Link>

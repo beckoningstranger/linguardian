@@ -29,12 +29,14 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     };
 
   return (
-    <Dashboard
-      language={params?.language as SupportedLanguage}
-      learnedLists={learnedLists[params?.language as SupportedLanguage] || []}
-      populatedLists={lists}
-      learningDataForLanguage={learningDataForLanguage}
-      userNative={user.native.code}
-    />
+    <div className="flex justify-center">
+      <Dashboard
+        language={params?.language as SupportedLanguage}
+        learnedLists={learnedLists[params?.language as SupportedLanguage] || []}
+        populatedLists={lists}
+        learningDataForLanguage={learningDataForLanguage}
+        userNative={user.native.code}
+      />
+    </div>
   );
 }

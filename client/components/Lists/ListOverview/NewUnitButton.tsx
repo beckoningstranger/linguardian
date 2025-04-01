@@ -56,7 +56,7 @@ export default function NewUnitButton({
         value={unitName}
         onChange={(e) => setUnitName(e.target.value)}
         ref={inputRef}
-        className={`relative flex h-14 w-11/12 items-center justify-center rounded-lg border border-slate-800 py-2 text-center placeholder-black shadow-lg hover:cursor-pointer hover:shadow-2xl ${
+        className={`bg-white/90 flex h-[90px] tablet:my-2 w-full items-center justify-center rounded-lg text-clgm py-2 text-center placeholder-black shadow-lg hover:cursor-pointer hover:shadow-2xl ${
           isActive ? "focus:placeholder-transparent" : ""
         }`}
         placeholder="Add a new unit"

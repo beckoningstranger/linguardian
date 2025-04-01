@@ -79,13 +79,14 @@ export default function StartLearningListButton({}: StartLearningListButtonProps
   if (status === "loading") return <Spinner centered />;
 
   return (
-    <>
+    <div className="col-start-1 row-start-2 tablet:col-span-2 tablet:row-start-2">
       {!userIsLearningThisLanguage && (
         <Button
           intent="primary"
           onClick={startLearningLanguageAndList}
           disabled={updating}
-          className="mx-2 p-4"
+          className="h-16"
+          fullWidth
         >
           Start learning {listLanguage.name} with this list!
         </Button>
@@ -95,11 +96,12 @@ export default function StartLearningListButton({}: StartLearningListButtonProps
           intent="primary"
           onClick={addListToLearnedListsAction}
           disabled={updating}
-          className="mx-2 p-4"
+          fullWidth
+          color="green"
         >
           Start learning this list
         </Button>
       )}
-    </>
+    </div>
   );
 }

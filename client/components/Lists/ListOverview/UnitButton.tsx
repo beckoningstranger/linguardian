@@ -99,21 +99,20 @@ export default function UnitButton({
 
   return (
     <div
-      className={`relative flex h-14 w-11/12 items-center justify-center rounded-lg border border-slate-800 py-2 text-center shadow-lg hover:shadow-2xl`}
+      className={`relative flex h-[90px] w-full items-center justify-center rounded-lg text-center text-cmdb shadow-lg hover:shadow-2xl tablet:text-clgb`}
     >
       <div
-        className={`absolute inset-0 z-0 rounded-lg bg-green-300`}
-        style={{
-          width: fillWidth,
-        }}
+        className={`absolute inset-0 z-0 rounded-lg bg-white/90`}
+        // style={{
+        //   width: fillWidth,
+        // }}
       />
       <div
-        className={`relative z-10 flex items-baseline rounded-lg px-4 py-2 ${
+        className={`z-10 flex flex-col w-full rounded-lg ${
           userIsAuthor ? " cursor-grab active:cursor-grabbing" : ""
         }`}
       >
-        <span
-          className="text-md py-2 pl-4 pr-0"
+        <div
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -137,12 +136,18 @@ export default function UnitButton({
               />
             </form>
           )}
-        </span>
+        </div>
         {!editMode && (
-          <span className="ml-2 text-xs">
+          <div className="text-center text-csmr">
             ({noOfItemsInUnit} {noOfItemsInUnit === 1 ? "item" : "items"})
-          </span>
+          </div>
         )}
+        <div
+          style={{
+            width: fillWidth,
+          }}
+          className="absolute bottom-0 h-2 w-full rounded-b-lg bg-green-300"
+        ></div>
       </div>
       {userIsAuthor && (
         <>

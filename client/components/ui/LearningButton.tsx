@@ -1,10 +1,11 @@
-import { cn } from "@/lib/helperFunctionsClient";
+import Link from "next/link";
+import Image from "next/image";
+import { Button as HeadLessUiButton } from "@headlessui/react";
+
 import learningButtonConfig from "@/lib/learningButtonConfig";
 import paths from "@/lib/paths";
+import { cn } from "@/lib/helperFunctionsClient";
 import { LearningMode } from "@/lib/types";
-import { Button as HeadLessUiButton } from "@headlessui/react";
-import Image from "next/image";
-import Link from "next/link";
 
 interface LearningButtonProps {
   mode: LearningMode;
@@ -32,25 +33,63 @@ export default function LearningButton({
     (config) => config.name === mode
   );
 
+  const bgColor = "bg-" + buttonConfig?.color;
+  const hoverColor = "hover:bg-" + buttonConfig?.hoverColor;
+  const miniLabelBgColor = "bg-" + buttonConfig?.hoverColor;
+
   return (
     <div
+      data-label={buttonConfig?.label}
       className={cn(
-        buttonConfig?.color,
-        buttonConfig?.hoverColor,
-        "flex flex-1 h-[90px] transition-colors duration-200 ease-in-out",
+        bgColor,
+        hoverColor,
+        "flex h-[90px] overflow-hidden duration-800 ease-in-out transition-all text-hsm",
+        showIcon && !showLabel && "w-[90px]",
         disabled && "bg-grey-600 hover:bg-grey-600",
-        rounded && "rounded-md"
+        rounded && "rounded-md",
+        showIcon && !showLabel && "group hover:w-[378px]"
       )}
     >
       <Link
         href={paths.learnListPath(mode, listNumber)}
         className="flex w-full"
       >
+        {showIcon && !showLabel && (
+          <HeadLessUiButton
+            className={cn(
+              "hidden group-hover:flex items-center justify-center px-1 text-white w-[378px]"
+            )}
+            aria-label={`Start a learning session in ${mode} mode`}
+          >
+            <Image
+              src={buttonConfig?.iconPath || ""}
+              width={showExpand ? 60 : 80}
+              height={showExpand ? 60 : 80}
+              alt={buttonConfig?.label + " icon"}
+            />
+            <div className="flex w-[378px] flex-col justify-center font-serif text-hsm">
+              <h4>{buttonConfig?.label}</h4>
+              <h4>({itemNumber} left)</h4>
+            </div>
+          </HeadLessUiButton>
+        )}
         <HeadLessUiButton
-          className="flex h-[90px] w-full items-center justify-center pl-1 font-serif text-hsm text-white"
+          className={cn(
+            "relative flex h-[90px] w-full items-center justify-center px-1 font-serif text-hsm text-white"
+          )}
           disabled={disabled}
           aria-label={`Start a learning session in ${mode} mode`}
         >
+          {!showLabel && (
+            <div
+              className={cn(
+                "text-sans absolute right-0 top-0 text-cmdb font-sans rounded-bl-lg px-2 group-hover:hidden",
+                miniLabelBgColor
+              )}
+            >
+              {itemNumber}
+            </div>
+          )}
           {showIcon && (
             <Image
               src={buttonConfig?.iconPath || ""}
@@ -61,7 +100,7 @@ export default function LearningButton({
           )}
           {showLabel && (
             <div
-              className={`flex flex-1  flex-col ${
+              className={`flex flex-1 flex-col ${
                 !showIcon && showExpand ? "pl-6" : ""
               }`}
             >

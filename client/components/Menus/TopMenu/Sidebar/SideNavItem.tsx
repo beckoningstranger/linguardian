@@ -1,6 +1,7 @@
 "use client";
 
 import { useSidebar } from "@/context/SidebarContext";
+import { cn } from "@/lib/helperFunctionsClient";
 import Link from "next/link";
 import { ReactElement } from "react";
 
@@ -20,9 +21,10 @@ export default function SideNavItem({
   const { setShowSidebar, showSidebar } = useSidebar();
   return (
     <li
-      className={`flex select-none list-none justify-center ${
+      className={cn(
+        "flex select-none list-none justify-center",
         showSidebar && "w-screen phone:w-[340px]"
-      }`}
+      )}
     >
       <Link
         href={href}

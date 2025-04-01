@@ -36,7 +36,7 @@ export default function DashboardBottomButtons({
           color="green"
           intent="icon"
           aria-label="Add a new list to your dashboard"
-          className="grid h-[90px] w-[90px] place-items-center rounded-full bg-green-500 shadow-xl hover:scale-110 hover:ring-green-700 disabled:after:rounded-full"
+          className="grid size-[90px] place-items-center rounded-full bg-green-500 shadow-xl hover:scale-110 hover:ring-green-700 disabled:after:rounded-full"
         >
           <FaPlus className="text-4xl font-semibold text-white" />
         </Button>

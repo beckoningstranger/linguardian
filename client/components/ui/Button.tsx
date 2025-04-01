@@ -32,14 +32,13 @@ export default function Button({
     "rounded-md border border-red-500 text-red-500 from-red-500 to-red-700 hover:ring-red-500 hover:text-white":
       intent === "danger",
     "grid place-items-center h-16 w-16 p-0": intent === "icon",
-    "w-full": fullWidth,
-    "fixed rounded-full grid h-[90px] w-[90px] place-items-center shadow-xl hover:scale-110 bottom-4 right-4 bg-green-500 hover:ring-green-700":
+    "w-full h-16 text-clgm": fullWidth,
+    "fixed rounded-full grid size-[90px] place-items-center shadow-xl hover:scale-110 bottom-4 right-4 bg-green-500 hover:ring-green-700":
       bottomRightButton,
   };
 
   const colorStyling = {
-    "bg-white text-blue-800 from-white to-gray-200 hover:ring-white":
-      color === "white",
+    "bg-white text-blue-800 hover:ring-white": color === "white",
     "bg-blue-500 from-blue-500 to-blue-600 hover:ring-blue-500":
       color === "blue",
     "bg-green-500 text-white hover:ring-white": color === "green",
@@ -63,9 +62,7 @@ export default function Button({
       )}
       {...remainingProps}
     >
-      {bottomRightButton && (
-        <FaPlus className="text-4xl font-semibold text-white" />
-      )}
+      {bottomRightButton && <FaPlus className="font-semibold text-white" />}
       {children}
     </HeadlessUiButton>
   );
