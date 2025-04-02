@@ -32,7 +32,7 @@ export default function ListDashboardCard({
           {name}
         </div>
         <div className="grid h-[336px] place-items-center">
-          <ListPieChart stats={listStats} height={336} />
+          <ListPieChart stats={listStats} height={336} mode="dashboard" />
         </div>
       </Link>
       <LearningButtonWithExpand

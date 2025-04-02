@@ -1,11 +1,9 @@
 "use client";
 
-import ConfirmCancelMobileMenu from "@/components/ConfirmCancelMobileMenu";
-import ConfirmCancelModal from "@/components/ConfirmCancelModal";
-import { useMobileMenu } from "@/context/MobileMenuContext";
+import { useListContext } from "@/context/ListContext";
+import { changeListDetails } from "@/lib/actions";
+import { cn } from "@/lib/helperFunctionsClient";
 import { useOutsideClick } from "@/lib/hooks";
-import { changeListDetails, removeUnitFromList } from "@/lib/actions";
-import { Button } from "@headlessui/react";
 import {
   Dispatch,
   FormEvent,
@@ -15,8 +13,7 @@ import {
   useState,
 } from "react";
 import toast from "react-hot-toast";
-import { FaTrashCan } from "react-icons/fa6";
-import { useListContext } from "@/context/ListContext";
+import DeleteUnitButton from "../DeleteUnitButton";
 
 interface UnitButtonProps {
   learnedItemsPercentage: number;
@@ -61,21 +58,6 @@ export default function UnitButton({
   );
   const fillWidth = `${clampedLearnedItemsPercentage}%`;
 
-  const [showConfirmDeleteModal, setShowConfirmDeleteModel] = useState(false);
-  const { toggleMobileMenu } = useMobileMenu();
-
-  const removeUnitFromListAction = () =>
-    toast.promise(removeUnitFromList(unitName, listNumber), {
-      loading: "Removing this unit...",
-      success: () => {
-        setUnitOrder((prevUnitOrder) =>
-          prevUnitOrder.filter((name) => name !== unitName)
-        );
-        return "Unit removed! ✅";
-      },
-      error: (err) => err.toString(),
-    });
-
   const editUnitNameAction = () => {
     let newUnitOrder = unitOrder.reduce((a, curr) => {
       if (curr === unitName) {
@@ -99,18 +81,16 @@ export default function UnitButton({
 
   return (
     <div
-      className={`relative flex h-[90px] w-full items-center justify-center rounded-lg text-center text-cmdb shadow-lg hover:shadow-2xl tablet:text-clgb`}
+      className={cn(
+        `relative flex h-[90px] w-full items-center rounded-lg bg-white/90 text-center text-cmdb shadow-lg transition-colors duration-300 hover:bg-white tablet:text-clgb`,
+        userIsAuthor && "cursor-grab"
+      )}
     >
       <div
-        className={`absolute inset-0 z-0 rounded-lg bg-white/90`}
-        // style={{
-        //   width: fillWidth,
-        // }}
-      />
-      <div
-        className={`z-10 flex flex-col w-full rounded-lg ${
-          userIsAuthor ? " cursor-grab active:cursor-grabbing" : ""
-        }`}
+        className={cn(
+          "z-10 flex flex-col w-full rounded-lg",
+          userIsAuthor && "cursor-grab active:cursor-grabbing"
+        )}
       >
         <div
           onClick={(e) => {
@@ -118,91 +98,45 @@ export default function UnitButton({
             e.stopPropagation();
             if (userIsAuthor) setEditMode(true);
           }}
+          className="mx-auto cursor-pointer"
         >
-          {!editMode && <span className="cursor-pointer">{unitName}</span>}
-          {editMode && (
-            <form onSubmit={handleSubmit}>
-              <label htmlFor={unitName} className="sr-only">
-                {unitName} - Click to edit
-              </label>
-              <input
-                type="text"
-                id={unitName}
-                value={updatedUnitName}
-                ref={inputRef as RefObject<HTMLInputElement>}
-                onChange={(e) => {
-                  setUpdatedUnitName(e.target.value);
-                }}
-              />
-            </form>
+          {!editMode && <div>{unitName}</div>}
+          {!editMode && (
+            <div className="text-center text-csmr">
+              ({noOfItemsInUnit} {noOfItemsInUnit === 1 ? "item" : "items"})
+            </div>
           )}
         </div>
-        {!editMode && (
-          <div className="text-center text-csmr">
-            ({noOfItemsInUnit} {noOfItemsInUnit === 1 ? "item" : "items"})
-          </div>
+        {editMode && (
+          <form onSubmit={handleSubmit}>
+            <label htmlFor={unitName} className="sr-only">
+              {unitName} - Click to edit
+            </label>
+            <input
+              type="text"
+              id={unitName}
+              value={updatedUnitName}
+              ref={inputRef as RefObject<HTMLInputElement>}
+              onChange={(e) => {
+                setUpdatedUnitName(e.target.value);
+              }}
+            />
+          </form>
         )}
-        <div
-          style={{
-            width: fillWidth,
-          }}
-          className="absolute bottom-0 h-2 w-full rounded-b-lg bg-green-300"
-        ></div>
       </div>
+      <div
+        style={{
+          width: fillWidth,
+        }}
+        className="absolute bottom-0 left-0 h-2 w-full rounded-b-lg bg-green-300"
+      />
       {userIsAuthor && (
-        <>
-          {/* // Mobile screens */}
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              if (noOfItemsInUnit > 0) {
-                if (toggleMobileMenu) toggleMobileMenu();
-              } else {
-                removeUnitFromListAction();
-              }
-            }}
-            className="absolute right-0 top-1/2 -translate-y-1/2 transform p-4 md:hidden"
-            aria-label="Click to delete this unit"
-          >
-            <FaTrashCan className="text-red-500" />
-          </Button>
-          <ConfirmCancelMobileMenu doOnConfirm={removeUnitFromListAction}>
-            <div>
-              This unit contains {noOfItemsInUnit}{" "}
-              {noOfItemsInUnit === 1 ? "item" : "items"}!
-            </div>
-            <div className="mt-8">Are you sure you want to delete it?</div>
-          </ConfirmCancelMobileMenu>
-
-          {/* Bigger screens */}
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              if (noOfItemsInUnit > 0) {
-                setShowConfirmDeleteModel(true);
-              } else {
-                removeUnitFromListAction();
-              }
-            }}
-            className="absolute right-0 hidden md:right-4 md:block"
-            aria-label="Click to delete this unit"
-          >
-            <FaTrashCan className="text-red-500" />
-          </Button>
-          <ConfirmCancelModal
-            title="Confirm unit deletion"
-            isOpen={showConfirmDeleteModal}
-            setIsOpen={setShowConfirmDeleteModel}
-            closeButton={false}
-            doOnConfirm={removeUnitFromListAction}
-          >
-            <div>
-              This unit contains {noOfItemsInUnit}{" "}
-              {noOfItemsInUnit === 1 ? "item" : "items"}!
-            </div>
-            <div className="mt-2">Are you sure you want to delete it?</div>
-          </ConfirmCancelModal>
-        </>
+        <DeleteUnitButton
+          setUnitOrder={setUnitOrder}
+          unitName={unitName}
+          listNumber={listNumber}
+          noOfItemsInUnit={noOfItemsInUnit}
+        />
       )}
     </div>
   );

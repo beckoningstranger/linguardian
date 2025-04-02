@@ -134,7 +134,7 @@ export default async function UnitDetailPage({
           <div className="hidden sm:block">
             <div className="flex">
               <div className="m-2 w-1/2 rounded-md bg-slate-100 py-4">
-                <ListPieChart stats={stats} />
+                <ListPieChart mode="listoverview" stats={stats} />
               </div>
               <div className="m-2 w-1/2 rounded-md bg-slate-100 py-4">
                 <Leaderboard />

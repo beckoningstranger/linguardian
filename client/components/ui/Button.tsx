@@ -38,7 +38,8 @@ export default function Button({
   };
 
   const colorStyling = {
-    "bg-white text-blue-800 hover:ring-white": color === "white",
+    "bg-white/90 text-blue-800 hover:bg-white/100 from-white to-white":
+      color === "white",
     "bg-blue-500 from-blue-500 to-blue-600 hover:ring-blue-500":
       color === "blue",
     "bg-green-500 text-white hover:ring-white": color === "green",
@@ -53,7 +54,7 @@ export default function Button({
   return (
     <HeadlessUiButton
       className={cn(
-        "text-white px-3 relative py-1.5 rounded-md hover:bg-gradient-to-r hover:ring-1 hover:ring-transparent ring-offset-current transition-all hover:ring-offset-2",
+        "text-white relative rounded-md hover:bg-gradient-to-r hover:ring-1 hover:ring-transparent ring-offset-current transition-all hover:ring-offset-2",
         styling,
         colorStyling,
         disabledStyling,

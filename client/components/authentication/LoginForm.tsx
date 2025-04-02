@@ -91,7 +91,7 @@ export default function LoginForm() {
             color="white"
             fullWidth
             noRing
-            className="hover:ring-offset-1"
+            className="h-12"
             onClick={() => {
               setIsSigningIn("google");
               signIn("google", { callbackUrl: paths.signInPath() });
@@ -109,7 +109,7 @@ export default function LoginForm() {
             color="blue"
             fullWidth
             noRing
-            className="hover:ring-offset-1"
+            className="h-12"
             onClick={() => {
               setIsSigningIn("facebook");
               signIn("facebook", { callbackUrl: paths.signInPath() });

@@ -55,7 +55,7 @@ export default function ListUnits() {
 
   return (
     <DragDropContext onDragEnd={handleReorderUnits}>
-      <div>
+      <div className="tablet:col-span-2 desktopxl:col-start-1 desktopxl:row-start-2">
         <Droppable droppableId="units">
           {(provided) => (
             <div
