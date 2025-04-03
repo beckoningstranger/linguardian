@@ -50,7 +50,7 @@ export default function DeleteUnitButton({
             removeUnitFromListAction();
           }
         }}
-        className="grid h-full w-12 place-items-center text-grey-700 hover:text-red-500 tablet:hidden"
+        className="grid h-full w-12 place-items-center text-grey-800 hover:text-red-500 tablet:hidden"
         aria-label="Click to delete this unit"
         noRing
       >
@@ -74,7 +74,7 @@ export default function DeleteUnitButton({
             removeUnitFromListAction();
           }
         }}
-        className="hidden h-full w-16 place-items-center text-grey-700 hover:text-red-500 tablet:grid"
+        className="hidden h-full w-16 place-items-center text-grey-800 hover:text-red-500 tablet:grid"
         aria-label="Click to delete this unit"
         noRing
       >

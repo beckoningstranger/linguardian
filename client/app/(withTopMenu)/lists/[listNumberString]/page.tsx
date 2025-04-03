@@ -17,6 +17,8 @@ import ListUnits from "@/components/Lists/ListOverview/ListUnits";
 import StartLearningListButton from "@/components/Lists/ListOverview/StartLearningListButton";
 import { ListContextProvider } from "@/context/ListContext";
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
+import DeleteListButton from "@/components/Lists/ListOverview/DeleteListButton";
+import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 
 // export async function generateMetadata({ params }: ListPageProps) {
 //   const listNumber = parseInt(params.listNumberString);
@@ -83,7 +85,7 @@ export default async function ListPage({
         <ListOverviewLeftButtons />
         <div
           id="inner-container"
-          className={`grid grid-cols-1 tablet:grid-cols-[340px_340px] ${
+          className={`grid grid-cols-1 tablet:grid-cols-[324px_324px] ${
             userIsLearningThisList
               ? "tablet:grid-rows-[200px_340px]"
               : "tablet:grid-rows-[200px_64px]"
@@ -106,7 +108,4 @@ export default async function ListPage({
   );
 }
 
-// <MobileMenuContextProvider>
-//   <DeleteListButton />
 //   {/* <StopLearningListButton list={{ language, listNumber, name }} /> */}
-// </MobileMenuContextProvider>

@@ -22,7 +22,7 @@ export default function ConfirmCancelModal({
 }: ConfirmCancelModalProps) {
   return (
     <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
-      <div className="fixed z-50 flex items-center justify-center md:inset-x-32 md:inset-y-56">
+      <div className="fixed z-50 flex items-center justify-center tablet:inset-x-32 tablet:inset-y-56">
         {closeButton && (
           <Button
             className="absolute right-8 top-8"

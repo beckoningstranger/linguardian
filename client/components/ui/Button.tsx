@@ -31,7 +31,8 @@ export default function Button({
       intent === "secondary",
     "rounded-md border border-red-500 text-red-500 from-red-500 to-red-700 hover:ring-red-500 hover:text-white":
       intent === "danger",
-    "grid place-items-center h-16 w-16 p-0": intent === "icon",
+    "grid place-items-center p-0 hover:scale-105 active:scale-100":
+      intent === "icon",
     "w-full h-16 text-clgm": fullWidth,
     "fixed rounded-full grid size-[90px] place-items-center shadow-xl hover:scale-110 bottom-4 right-4 bg-green-500 hover:ring-green-700":
       bottomRightButton,
