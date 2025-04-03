@@ -1,10 +1,15 @@
+"use client";
+
 import IconSidebar from "@/components/IconSidebar/IconSidebar";
 import Button from "@/components/ui/Button";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import Image from "next/image";
 import DeleteListButton from "./DeleteListButton";
+import { useListContext } from "@/context/ListContext";
 
 export default function ListOverviewLeftButtons() {
+  const { listData, userIsAuthor } = useListContext();
+
   return (
     <IconSidebar showOn="tablet">
       <Button intent="icon" color="white" noRing className="shadow-xl">
@@ -18,7 +23,7 @@ export default function ListOverviewLeftButtons() {
       </Button>
 
       <MobileMenuContextProvider>
-        <DeleteListButton />
+        <DeleteListButton listData={listData} userIsAuthor={userIsAuthor} />
       </MobileMenuContextProvider>
     </IconSidebar>
   );
