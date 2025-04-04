@@ -6,6 +6,9 @@ import ItemBackButton from "@/components/Lists/ItemBackButton";
 import Leaderboard from "@/components/Lists/Leaderboard";
 import ListContainer from "@/components/Lists/ListContainer";
 import AllLearningButtons from "@/components/Lists/ListOverview/AllLearningButtons";
+import ListOverviewLearningButtons from "@/components/Lists/ListOverview/ListOverviewLearningButtons";
+import ListOverviewLeftButtons from "@/components/Lists/ListOverview/ListOverViewLeftButtons";
+import UnitDetailsLeftButtons from "@/components/Lists/UnitDetailsLeftButtons";
 import UnitHeader from "@/components/Lists/UnitHeader";
 import { calculateUnitStats } from "@/components/Lists/UnitHelpers";
 import UnitItems from "@/components/Lists/UnitItems";
@@ -96,7 +99,7 @@ export default async function UnitDetailPage({
     .filter((unit) => unit.unitName === unitName)
     .map((unitItem) => unitItem.item);
 
-  const userHasAddedThisList = Object.values(learnedLists)
+  const userIsLearningThisList = Object.values(learnedLists)
     .flat()
     ?.includes(listNumber);
   const stats = await calculateUnitStats(
@@ -117,58 +120,82 @@ export default async function UnitDetailPage({
   };
 
   return (
-    <ListContainer>
-      <ItemBackButton path={paths.listDetailsPath(listNumber)} />
-      <UnitHeader
-        unitNumber={unitNumber}
-        unitName={unitName}
-        itemNumber={unitItems.length}
+    <div className="flex justify-center tablet:gap-2 tablet:py-2 desktopxl:grid desktopxl:grid-cols-[100px_1fr_100px]">
+      <UnitDetailsLeftButtons
         listNumber={listNumber}
-        unitCount={listData.unitOrder.length}
+        unitName={unitName}
+        noOfItemsInUnit={unitItems.length}
       />
-      {userHasAddedThisList && (
-        <>
-          <div className="md:hidden">
+      <div
+        className={`grid grid-cols-1 justify-center tablet:gap-2 desktop:grid-rows-[88px_400px] desktopxl:grid-cols-[1fr_400px] desktopxl:grid-rows-[88px]`}
+      >
+        <UnitHeader
+          unitNumber={unitNumber}
+          unitName={unitName}
+          itemNumber={unitItems.length}
+          listNumber={listNumber}
+          unitCount={listData.unitOrder.length}
+        />
+        {userIsLearningThisList && (
+          <>
             <ListBarChart stats={stats} />
-          </div>
-          <div className="hidden sm:block">
-            <div className="flex">
-              <div className="m-2 w-1/2 rounded-md bg-slate-100 py-4">
-                <ListPieChart mode="listoverview" stats={stats} />
-              </div>
-              <div className="m-2 w-1/2 rounded-md bg-slate-100 py-4">
-                <Leaderboard />
-              </div>
+            <div className="hidden grid-cols-[324px_324px] gap-2 tablet:grid desktop:grid-cols-[400px_400px] desktopxl:col-start-2 desktopxl:grid-rows-[400px_400px]">
+              <ListPieChart mode="unitoverview" stats={stats} />
+              <Leaderboard mode="unit" />
             </div>
-            <AllLearningButtonsContainer mode="desktop">
-              <AllLearningButtons
-                listStats={stats}
-                listNumber={listNumber}
-                unlockedLearningModesForUser={unlockedModes}
-                unitNumber={unitNumber}
-              />
-            </AllLearningButtonsContainer>
-          </div>
-        </>
+          </>
+        )}
+        <UnitItems
+          allLearnedItems={learningDataForLanguage.learnedItems}
+          unitItems={unitItems}
+          userNative={userNative}
+          userIsAuthor={listData.authors.includes(userId)}
+          pathToUnit={paths.unitDetailsPath(listNumber, unitNumber)}
+          listAndUnitData={listAndUnitData}
+        />
+      </div>
+      {userIsLearningThisList && (
+        <ListOverviewLearningButtons
+          listNumber={listNumber}
+          unitNumber={unitNumber}
+        />
       )}
-      <UnitItems
-        allLearnedItems={learningDataForLanguage.learnedItems}
-        unitItems={unitItems}
-        userNative={userNative}
-        userIsAuthor={listData.authors.includes(userId)}
-        pathToUnit={paths.unitDetailsPath(listNumber, unitNumber)}
-        listAndUnitData={listAndUnitData}
-      />
-      {userHasAddedThisList && (
-        <AllLearningButtonsContainer mode="mobile">
-          <FlexibleLearningButtons
-            stats={stats}
-            status={"practice"}
-            listNumber={listNumber}
-            unlockedModes={unlockedModes}
-          />
-        </AllLearningButtonsContainer>
-      )}
-    </ListContainer>
+    </div>
   );
 }
+/* <div className="hidden sm:block">
+              <div className="flex">
+                <div className="m-2 w-1/2 rounded-md bg-slate-100 py-4">
+                </div>
+                <div className="m-2 w-1/2 rounded-md bg-slate-100 py-4">
+                </div>
+              </div>
+              <AllLearningButtonsContainer mode="desktop">
+                <AllLearningButtons
+                  listStats={stats}
+                  listNumber={listNumber}
+                  unlockedLearningModesForUser={unlockedModes}
+                  unitNumber={unitNumber}
+                />
+              </AllLearningButtonsContainer>
+            </div> */
+/* <UnitItems
+          allLearnedItems={learningDataForLanguage.learnedItems}
+          unitItems={unitItems}
+          userNative={userNative}
+          userIsAuthor={listData.authors.includes(userId)}
+          pathToUnit={paths.unitDetailsPath(listNumber, unitNumber)}
+          listAndUnitData={listAndUnitData}
+        /> */
+/* {userIsLearningThisList && (
+          <AllLearningButtonsContainer mode="mobile">
+            <FlexibleLearningButtons
+              stats={stats}
+              status={"practice"}
+              listNumber={listNumber}
+              unlockedModes={unlockedModes}
+            />
+          </AllLearningButtonsContainer>
+        )} */
+/* {userIsLearningThisList && <ListOverviewLearningButtons />} */
+// );

@@ -14,6 +14,7 @@ interface ListBarChartProps {
 export default function ListBarChart({ stats }: ListBarChartProps) {
   const ChartData = {
     options: {
+      // legend: { show: false },
       chart: {
         id: "basic-bar",
         stacked: true,
@@ -32,7 +33,7 @@ export default function ListBarChart({ stats }: ListBarChartProps) {
       yaxis: {
         labels: { style: { fontWeight: 800 } },
       },
-      grid: { padding: { top: -30, bottom: -10, left: -5, right: -5 } },
+      grid: { padding: { top: -20, bottom: -20, left: 0, right: 0 } },
       stroke: {
         width: 1,
         colors: ["#fff"],
@@ -65,7 +66,6 @@ export default function ListBarChart({ stats }: ListBarChartProps) {
         series={ChartData.series}
         type="bar"
         height={100}
-        width={"100%"}
       />
     </div>
   );

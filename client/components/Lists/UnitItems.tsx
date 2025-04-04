@@ -73,7 +73,7 @@ export default function UnitItems({
   });
 
   return (
-    <div className="relative grid grid-cols-1 justify-items-center gap-2 p-2 sm:grid-cols-2">
+    <div className="relative col-span-1 col-start-1 grid grid-cols-1 justify-items-center gap-2 sm:grid-cols-2 desktopxl:row-start-2">
       {unitItems.length > 0 && (
         <Button
           color="blue"

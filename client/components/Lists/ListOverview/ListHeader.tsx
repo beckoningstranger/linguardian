@@ -19,6 +19,7 @@ export default function ListHeader({}: ListHeaderProps) {
       language,
       listNumber,
       description = "Dans Ensemble, c’est tout, quatre personnages blessés – Camille, Philibert, Franck et Paulette – trouvent espoir et bonheur en vivant ensemble...",
+      // description = "",
       image = "/images/ListDefaultImage.webp",
       units,
     },
@@ -45,7 +46,7 @@ export default function ListHeader({}: ListHeaderProps) {
 
   return (
     <>
-      <div className="relative flex max-h-[150px] gap-2 overflow-hidden bg-white/90 py-1 tablet:col-span-2 tablet:max-h-[200px] tablet:rounded-lg tablet:p-4">
+      <div className="relative flex max-h-[150px] w-screen gap-2 overflow-hidden bg-white/90 py-1 tablet:col-span-2 tablet:max-h-[200px] tablet:w-auto tablet:rounded-lg tablet:p-4">
         <Image
           src={image}
           alt="List image"

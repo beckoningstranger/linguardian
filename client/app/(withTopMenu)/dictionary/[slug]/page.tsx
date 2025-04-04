@@ -82,7 +82,7 @@ export default async function ItemPage({
           paths.editDictionaryItemPath(item.slug) + `?comingFrom=${comingFrom}`
         }
       >
-        <Button bottomRightButton intent="icon" aria-label="Edit this item">
+        <Button intent="bottomRightButton" aria-label="Edit this item">
           <MdEdit className="h-8 w-8" />
         </Button>
       </Link>

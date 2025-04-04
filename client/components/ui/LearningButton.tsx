@@ -11,6 +11,7 @@ interface LearningButtonProps {
   mode: LearningMode;
   itemNumber: number;
   listNumber: number;
+  unitNumber?: number;
   showExpand?: boolean;
   showIcon?: boolean;
   showLabel?: boolean;
@@ -21,6 +22,7 @@ interface LearningButtonProps {
 export default function LearningButton({
   mode,
   itemNumber,
+  unitNumber,
   listNumber,
   showExpand = false,
   showIcon = false,
@@ -43,7 +45,7 @@ export default function LearningButton({
       className={cn(
         bgColor,
         hoverColor,
-        "flex h-[90px] overflow-hidden duration-800 ease-in-out transition-all text-hsm",
+        "flex h-[90px] w-full overflow-hidden duration-800 ease-in-out transition-all text-hsm",
         showIcon && !showLabel && "w-[90px]",
         disabled && "bg-grey-600 hover:bg-grey-600",
         rounded && "rounded-md",
@@ -51,7 +53,11 @@ export default function LearningButton({
       )}
     >
       <Link
-        href={paths.learnListPath(mode, listNumber)}
+        href={
+          unitNumber
+            ? paths.learnUnitPath(mode, listNumber, unitNumber)
+            : paths.learnListPath(mode, listNumber)
+        }
         className="flex w-full"
       >
         {showIcon && !showLabel && (

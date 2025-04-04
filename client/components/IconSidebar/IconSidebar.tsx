@@ -9,7 +9,7 @@ interface IconSidebarProps {
 export default function IconSidebar({ showOn, children }: IconSidebarProps) {
   const show =
     showOn === "tablet"
-      ? "tablet:flex"
+      ? "tablet:flex items-end"
       : showOn === "desktop"
       ? "desktop:flex"
       : "desktopxl:flex";

@@ -12,7 +12,7 @@ export default function ListOverviewLeftButtons() {
 
   return (
     <IconSidebar showOn="tablet">
-      <Button intent="icon" color="white" noRing className="shadow-xl">
+      <Button intent="icon" color="white" noRing className="shadow-xl" rounded>
         <Image
           src={"/icons/Pen.svg"}
           height={72}

@@ -1,6 +1,8 @@
 import paths from "@/lib/paths";
 import Link from "next/link";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import Button from "../ui/Button";
+import { cn } from "@/lib/helperFunctionsClient";
 
 interface UnitHeaderProps {
   unitName?: string;
@@ -18,34 +20,45 @@ export default function UnitHeader({
   unitCount,
 }: UnitHeaderProps) {
   return (
-    <div className="flex h-20 items-center justify-between border-y-2 border-slate-300 text-xl md:mt-3">
+    <div className="col-span-2 flex w-screen bg-white/90 tablet:w-auto tablet:rounded-lg">
       <Link
         href={paths.unitDetailsPath(listNumber, unitNumber - 1)}
-        className={`grid h-20 w-32 place-items-center text-3xl hover:bg-slate-100 hover:text-4xl hover:scale-90 rounded-md ${
-          unitNumber < 2 ? "pointer-events-none text-gray-400" : ""
-        }`}
         aria-disabled={unitNumber < 2}
-        tabIndex={unitNumber < 2 ? -1 : undefined}
+        className={cn(
+          "h-[88px] w-[88px]",
+          unitNumber < 2 && "cursor-not-allowed pointer-events-none"
+        )}
       >
-        <FaArrowLeft />
+        <Button
+          disabled={unitNumber < 2}
+          noRing
+          color="transparent"
+          intent="icon"
+          className={cn("h-full w-full")}
+        >
+          <FaArrowLeft className="h-11 w-11" />
+        </Button>
       </Link>
-      <div className="flex h-20 w-full flex-col justify-center">
-        <div className="flex items-center justify-center text-xl">
-          {unitName}
-        </div>
-        <div className="flex items-center justify-center text-sm">
-          ({itemNumber} items)
-        </div>
+      <div className="flex flex-1 select-none flex-col justify-center text-center">
+        <div className="text-cxlb">{unitName}</div>
+        <div className="text-cmdr">({itemNumber} items)</div>
       </div>
       <Link
         href={paths.unitDetailsPath(listNumber, unitNumber + 1)}
-        className={`grid h-20 w-32 place-items-center text-3xl hover:bg-slate-100 hover:text-4xl hover:scale-90 rounded-md ${
-          unitNumber > unitCount - 1 ? "pointer-events-none text-gray-400" : ""
-        }`}
         aria-disabled={unitNumber > unitCount - 1}
-        tabIndex={unitNumber > unitCount - 1 ? -1 : undefined}
+        className={cn(
+          "h-[88px] w-[88px]",
+          unitNumber > unitCount - 1 && "cursor-not-allowed pointer-events-none"
+        )}
       >
-        <FaArrowRight />
+        <Button
+          className="h-full w-full"
+          intent="icon"
+          noRing
+          disabled={unitNumber > unitCount - 1}
+        >
+          <FaArrowRight className="h-11 w-11" />
+        </Button>
       </Link>
     </div>
   );

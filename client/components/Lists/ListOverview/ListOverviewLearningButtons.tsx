@@ -1,7 +1,14 @@
 import IconSidebar from "@/components/IconSidebar/IconSidebar";
 import LearningButton from "@/components/ui/LearningButton";
 
-export default function ListOverviewLearningButtons() {
+interface ListOverviewLearningButtonsProps {
+  listNumber: number;
+  unitNumber?: number;
+}
+export default function ListOverviewLearningButtons({
+  listNumber,
+  unitNumber,
+}: ListOverviewLearningButtonsProps) {
   return (
     <IconSidebar showOn="desktop">
       <div className="relative w-[90px]">
@@ -10,43 +17,49 @@ export default function ListOverviewLearningButtons() {
             mode="learn"
             showIcon
             rounded
-            listNumber={1}
+            listNumber={listNumber}
             itemNumber={23}
+            unitNumber={unitNumber}
           />
           <LearningButton
             mode="translation"
             showIcon
             rounded
-            listNumber={1}
+            listNumber={listNumber}
             itemNumber={23}
+            unitNumber={unitNumber}
           />
           <LearningButton
             mode="context"
             showIcon
             rounded
-            listNumber={1}
+            listNumber={listNumber}
             itemNumber={23}
+            unitNumber={unitNumber}
           />
           <LearningButton
             mode="dictionary"
             showIcon
             rounded
-            listNumber={1}
+            listNumber={listNumber}
             itemNumber={23}
+            unitNumber={unitNumber}
           />
           <LearningButton
             mode="spellingBee"
             showIcon
             rounded
-            listNumber={1}
+            listNumber={listNumber}
             itemNumber={23}
+            unitNumber={unitNumber}
           />
           <LearningButton
             mode="visual"
             showIcon
             rounded
-            listNumber={1}
+            listNumber={listNumber}
             itemNumber={23}
+            unitNumber={unitNumber}
           />
         </div>
       </div>

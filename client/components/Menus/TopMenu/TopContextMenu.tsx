@@ -8,6 +8,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import TopContextMenuButton from "./TopContextMenuButton";
+import { HiArrowLeft } from "react-icons/hi";
 
 interface TopContextMenuProps {
   opacity?: 50 | 80 | 90;
@@ -37,11 +38,13 @@ export default function TopContextMenu({
         {unitNumber && (
           <TopContextMenuButton
             label="Back To List Overview"
-            href={"/lists/" + listNumber}
+            mode="back"
+            link={"/lists/" + listNumber}
+            icon={<HiArrowLeft className="h-16 w-16" />}
           />
         )}
         <MobileMenuContextProvider>
-          {listData && (
+          {!unitNumber && listData && (
             <DeleteListButton listData={listData} userIsAuthor={userIsAuthor} />
           )}
         </MobileMenuContextProvider>
@@ -68,7 +71,7 @@ export default function TopContextMenu({
       {contextExpanded && (
         <div
           className={cn(
-            "absolute top-[112px] left-0 z-50 w-screen flex flex-col px-2 py-4 gap-2",
+            "absolute top-[112px] left-0 z-50 w-full flex flex-col px-2 py-4 gap-2",
             `bg-white/${opacity}`
           )}
         >

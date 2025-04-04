@@ -2,6 +2,7 @@
 
 import ConfirmCancelMobileMenu from "@/components/ConfirmCancelMobileMenu";
 import ConfirmCancelModal from "@/components/ConfirmCancelModal";
+import TopContextMenuButton from "@/components/Menus/TopMenu/TopContextMenuButton";
 import Button from "@/components/ui/Button";
 import { useMobileMenu } from "@/context/MobileMenuContext";
 import { removeList } from "@/lib/actions";
@@ -40,19 +41,15 @@ export default function DeleteListButton({
   return (
     <>
       {/* Mobile */}
-      <button
-        className="relative flex h-20 w-full items-center rounded-lg bg-red-500 px-2 text-center text-clgb text-white hover:bg-red-600 tablet:hidden"
-        onClick={() => {
-          toggleMobileMenu();
-        }}
-      >
-        <TbTrash className="h-16 w-16" />
-        <div className="flex w-[calc(100%-144px)] justify-center">
-          Delete this list{" "}
-        </div>
-      </button>
+      <TopContextMenuButton
+        label="Delete this list"
+        onClick={() => toggleMobileMenu()}
+        icon={<TbTrash className="h-16 w-16" />}
+        mode="delete"
+      />
       {/* Desktop */}
       <Button
+        rounded
         intent="icon"
         color="white"
         noRing

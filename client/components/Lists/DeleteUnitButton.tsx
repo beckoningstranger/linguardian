@@ -1,20 +1,23 @@
 "use client";
 
-import { TbTrash } from "react-icons/tb";
-import ConfirmCancelMobileMenu from "../ConfirmCancelMobileMenu";
 import { useMobileMenu } from "@/context/MobileMenuContext";
+import { removeUnitFromList } from "@/lib/actions";
 import { Dispatch, SetStateAction, useState } from "react";
 import toast from "react-hot-toast";
-import { removeUnitFromList } from "@/lib/actions";
-import Button from "../ui/Button";
+import { TbTrash } from "react-icons/tb";
+import ConfirmCancelMobileMenu from "../ConfirmCancelMobileMenu";
 import ConfirmCancelModal from "../ConfirmCancelModal";
-import Image from "next/image";
+import Button from "../ui/Button";
+import { cn } from "@/lib/helperFunctionsClient";
+import { redirect } from "next/navigation";
+import paths from "@/lib/paths";
 
-interface DeleteListButtonProps {
-  setUnitOrder: Dispatch<SetStateAction<string[]>>;
+interface DeleteUnitButtonProps {
+  setUnitOrder?: Dispatch<SetStateAction<string[]>>;
   unitName: string;
   listNumber: number;
   noOfItemsInUnit: number;
+  mode?: "standalone" | "inCard";
 }
 
 export default function DeleteUnitButton({
@@ -22,7 +25,8 @@ export default function DeleteUnitButton({
   unitName,
   listNumber,
   noOfItemsInUnit,
-}: DeleteListButtonProps) {
+  mode,
+}: DeleteUnitButtonProps) {
   const [showConfirmDeleteModal, setShowConfirmDeleteModel] = useState(false);
   const { toggleMobileMenu } = useMobileMenu();
 
@@ -30,16 +34,25 @@ export default function DeleteUnitButton({
     toast.promise(removeUnitFromList(unitName, listNumber), {
       loading: "Removing this unit...",
       success: () => {
-        setUnitOrder((prevUnitOrder) =>
-          prevUnitOrder.filter((name) => name !== unitName)
-        );
+        if (setUnitOrder) {
+          setUnitOrder((prevUnitOrder) =>
+            prevUnitOrder.filter((name) => name !== unitName)
+          );
+        } else {
+          redirect(paths.listDetailsPath(listNumber));
+        }
         return "Unit removed! ✅";
       },
       error: (err) => err.toString(),
     });
 
   return (
-    <>
+    <div
+      className={cn(
+        mode === "standalone" &&
+          "bg-white/90 w-[72px] h-[72px] grid place-items-center rounded-lg hover:bg-white"
+      )}
+    >
       {/* // Mobile screens */}
       <Button
         onClick={(e) => {
@@ -93,6 +106,6 @@ export default function DeleteUnitButton({
         </div>
         <div className="mt-2">Are you sure you want to delete it?</div>
       </ConfirmCancelModal>
-    </>
+    </div>
   );
 }

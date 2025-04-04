@@ -17,8 +17,6 @@ import ListUnits from "@/components/Lists/ListOverview/ListUnits";
 import StartLearningListButton from "@/components/Lists/ListOverview/StartLearningListButton";
 import { ListContextProvider } from "@/context/ListContext";
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
-import DeleteListButton from "@/components/Lists/ListOverview/DeleteListButton";
-import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 
 // export async function generateMetadata({ params }: ListPageProps) {
 //   const listNumber = parseInt(params.listNumberString);
@@ -61,8 +59,7 @@ export default async function ListPage({
   ]);
 
   const userIsAuthor = authors.includes(user.id);
-  const userIsLearningThisList =
-    user.learnedLists[language.code]?.includes(listNumber);
+  const userIsLearningThisList = true; // user.learnedLists[language.code]?.includes(listNumber);
 
   const unlockedLearningModesForUser = unlockedReviewModes[user.native.code];
   const itemIdsInUnits = units.map((item) => item.item._id.toString());
@@ -78,13 +75,9 @@ export default async function ListPage({
       listStats={listStats}
       listStatus={"practice"}
     >
-      <div
-        className="flex justify-center tablet:gap-2 tablet:py-2"
-        id="container"
-      >
+      <div className="flex justify-center tablet:gap-2 tablet:py-2">
         <ListOverviewLeftButtons />
         <div
-          id="inner-container"
           className={`grid grid-cols-1 tablet:grid-cols-[324px_324px] ${
             userIsLearningThisList
               ? "tablet:grid-rows-[200px_340px]"
@@ -92,17 +85,20 @@ export default async function ListPage({
           } tablet:gap-2 desktop:grid-cols-[400px_400px] desktop:grid-rows-[200px_400px] desktopxl:grid-cols-[500px_350px] desktopxl:grid-rows-[200px_200px]`}
         >
           <ListHeader />
-          {!userIsLearningThisList && <StartLearningListButton />}
+          {/* {!userIsLearningThisList && <StartLearningListButton />} */}
+          {/* For mobile, display a start learning button fixed at the bottom, for all other screen sizes display a mortarboard icon in the left buttons list  */}
           {userIsLearningThisList && (
             <>
               <ListBarChart stats={listStats} />
               <ListPieChart mode="listoverview" stats={listStats} />
-              <Leaderboard />
+              <Leaderboard mode="list" />
             </>
           )}
           <ListUnits />
         </div>
-        {userIsLearningThisList && <ListOverviewLearningButtons />}
+        {userIsLearningThisList && (
+          <ListOverviewLearningButtons listNumber={listNumber} />
+        )}
       </div>
     </ListContextProvider>
   );

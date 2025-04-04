@@ -33,12 +33,10 @@ export default function DashboardBottomButtons({
         className={`${dashboardIsEmpty && "animate-pulse"}`}
       >
         <Button
-          color="green"
-          intent="icon"
+          intent="bottomRightButton"
           aria-label="Add a new list to your dashboard"
-          className="grid size-[90px] place-items-center rounded-full bg-green-500 shadow-xl hover:scale-110 hover:ring-green-700 disabled:after:rounded-full"
         >
-          <FaPlus className="text-4xl font-semibold text-white" />
+          <FaPlus className="h-8 w-8 font-semibold text-white" />
         </Button>
       </Link>
     </div>

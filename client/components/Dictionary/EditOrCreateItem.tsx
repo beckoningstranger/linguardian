@@ -164,8 +164,7 @@ export default function EditOrCreateItem({
             )}
           </Button>
           <Button
-            bottomRightButton
-            intent="icon"
+            intent="bottomRightButton"
             className="sm:hidden"
             disabled={isSubmitting || !isDirty || !isValid}
             aria-label="Save your changes"
