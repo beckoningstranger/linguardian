@@ -120,14 +120,14 @@ export default async function UnitDetailPage({
   };
 
   return (
-    <div className="flex justify-center tablet:gap-2 tablet:py-2 desktopxl:grid desktopxl:grid-cols-[100px_1fr_100px]">
+    <div className="flex justify-center tablet:gap-2 tablet:py-2 desktopxl:grid desktopxl:grid-cols-[100px_minmax(0,1600px)_100px]">
       <UnitDetailsLeftButtons
         listNumber={listNumber}
         unitName={unitName}
         noOfItemsInUnit={unitItems.length}
       />
       <div
-        className={`grid grid-cols-1 justify-center tablet:gap-2 desktop:grid-rows-[88px_400px] desktopxl:grid-cols-[1fr_400px] desktopxl:grid-rows-[88px]`}
+        className={`grid grid-cols-1 justify-center tablet:gap-2 desktop:grid-rows-[88px_400px] desktopxl:grid-cols-[minmax(0,1200px)_400px] desktopxl:grid-rows-[88px]`}
       >
         <UnitHeader
           unitNumber={unitNumber}

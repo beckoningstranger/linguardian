@@ -87,7 +87,7 @@ export default function DeleteUnitButton({
             removeUnitFromListAction();
           }
         }}
-        className="hidden h-full w-16 place-items-center text-grey-800 hover:text-red-500 tablet:grid"
+        className="hidden h-full w-16 place-items-center text-grey-800 hover:scale-105 hover:text-red-500 tablet:grid"
         aria-label="Click to delete this unit"
         noRing
       >

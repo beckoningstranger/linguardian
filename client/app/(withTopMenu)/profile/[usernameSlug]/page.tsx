@@ -1,5 +1,4 @@
-import LearningButton from "@/components/ui/LearningButton";
-import { getAllUsernameSlugs, getUserByUsernameSlug } from "@/lib/fetchData";
+import { getUserByUsernameSlug } from "@/lib/fetchData";
 
 interface ProfilePageProps {
   params: { usernameSlug: string };

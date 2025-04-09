@@ -11,6 +11,8 @@ import { ReactNode, createContext, useContext } from "react";
 
 type ListContext = {
   userIsAuthor: boolean;
+  userIsLearningThisList: boolean;
+  userIsLearningListLanguage: boolean;
   listData: PopulatedList;
   authorData: {
     username: string;
@@ -24,6 +26,8 @@ type ListContext = {
 
 const ListContext = createContext<ListContext>({
   userIsAuthor: false,
+  userIsLearningListLanguage: false,
+  userIsLearningThisList: false,
   listData: {} as PopulatedList,
   authorData: [],
   learningDataForLanguage: undefined,
@@ -42,6 +46,8 @@ type ListContextProviderProps = Omit<
 export const ListContextProvider = ({
   children,
   userIsAuthor,
+  userIsLearningListLanguage,
+  userIsLearningThisList,
   listData,
   authorData,
   learningDataForLanguage,
@@ -53,6 +59,8 @@ export const ListContextProvider = ({
     <ListContext.Provider
       value={{
         userIsAuthor,
+        userIsLearningListLanguage,
+        userIsLearningThisList,
         listData,
         authorData,
         learningDataForLanguage,

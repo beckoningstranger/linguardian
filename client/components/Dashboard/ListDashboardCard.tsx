@@ -27,7 +27,7 @@ export default function ListDashboardCard({
   const listIsEmpty = itemIdsInUnits.length > 0;
 
   return (
-    <div className="w-[336px] cursor-pointer overflow-clip rounded-lg bg-white/80 shadow-lg transition-all duration-500 ease-in-out hover:bg-white/90 hover:shadow-2xl">
+    <div className="w-[336px] cursor-pointer overflow-clip rounded-lg bg-white/80 shadow-lg transition-all duration-500 ease-in-out hover:bg-white/90 hover:shadow-2xl tablet:w-[336px]">
       <Link href={paths.listDetailsPath(listNumber)}>
         <div className="flex h-[88px] items-center justify-center bg-blue-700 px-2 text-center font-serif text-hmd text-white">
           {name}
@@ -36,7 +36,7 @@ export default function ListDashboardCard({
           {listIsEmpty ? (
             <ListPieChart stats={listStats} height={336} mode="dashboard" />
           ) : (
-            <div className="px-4 pt-12 text-center font-script text-6xl font-semibold leading-relaxed text-blue-800">
+            <div className="px-4 pt-12 text-center font-serif text-hlgb leading-relaxed text-blue-800">
               Start adding items to your new list!
             </div>
           )}

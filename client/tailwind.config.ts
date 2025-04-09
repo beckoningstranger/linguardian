@@ -23,6 +23,10 @@ const config: Config = {
           "12px",
           { lineHeight: "135%", letterSpacing: "1%", fontWeight: 400 },
         ],
+        cxsb: [
+          "12px",
+          { lineHeight: "135%", letterSpacing: "1%", fontWeight: 700 },
+        ],
         csmr: ["14px", { lineHeight: "135%", fontWeight: 400 }],
         csmb: ["14px", { lineHeight: "135%", fontWeight: 700 }],
         cmdr: ["16px", { lineHeight: "135%", fontWeight: 400 }],

@@ -4,16 +4,14 @@ import { MobileMenuContextProvider } from "../../../context/MobileMenuContext";
 import HamburgerMenu from "./HamburgerMenu";
 import LanguageSelectorAndProfileLink from "./LanguageSelectorAndProfileLink";
 import SideBarNavigation from "./Sidebar/SideBarNavigation";
-import TopContextMenuLoader from "./TopContextMenuLoader";
 import TopMenuLogo from "./TopMenuLogo";
 import TopMiddleNavigation from "./TopMiddleNavigation";
 
 interface TopMenuProps {
   opacity?: 50 | 80 | 90;
-  listNumber?: number;
 }
 
-export default async function TopMenu({ opacity, listNumber }: TopMenuProps) {
+export default async function TopMenu({ opacity }: TopMenuProps) {
   const allSupportedLanguages = await getSupportedLanguages();
   const background = opacity ? `bg-white/${opacity}` : "bg-white/80";
 
@@ -32,7 +30,6 @@ export default async function TopMenu({ opacity, listNumber }: TopMenuProps) {
             <TopMenuLogo />
           </div>
           <TopMiddleNavigation />
-          <TopContextMenuLoader listNumber={listNumber} opacity={opacity} />
           <MobileMenuContextProvider>
             <LanguageSelectorAndProfileLink
               allSupportedLanguages={allSupportedLanguages}

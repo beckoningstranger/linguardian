@@ -66,7 +66,7 @@ export default function Button({
   return (
     <HeadlessUiButton
       className={cn(
-        "text-white relative hover:ring-1 hover:ring-transparent ring-offset-current transition-all hover:ring-offset-2",
+        "text-white relative hover:ring-1 hover:ring-transparent ring-offset-current transition-all duration-800 group hover:ring-offset-2",
         styling,
         roundedStyling,
         colorStyling,
@@ -79,7 +79,9 @@ export default function Button({
       {...remainingProps}
     >
       <div
-        className={cn(intent === "icon" && "hover:scale-105 active:scale-100")}
+        className={cn(
+          intent === "icon" && "group-hover:scale-105 active:scale-100"
+        )}
       >
         {children}
       </div>

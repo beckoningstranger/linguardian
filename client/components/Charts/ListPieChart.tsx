@@ -78,7 +78,7 @@ export default function ListPieChart({
     return (
       <div
         className={cn(
-          "hidden rounded-md bg-white/90 tablet:grid tablet:place-items-center desktopxl:grid desktopxl:size-[400px] desktopxl:place-items-center desktopxl:p-0",
+          "hidden rounded-md bg-white/90 tablet:grid tablet:place-items-center desktopxl:grid desktopxl:size-[400px] shadow-xl desktopxl:place-items-center desktopxl:p-0",
           mode === "listoverview" && "desktopxl:col-start-3 tablet:col-start-1"
         )}
       >

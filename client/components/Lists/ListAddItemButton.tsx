@@ -20,13 +20,15 @@ export default function ListAddItemButton({
       color="blue"
       fullWidth
       intent="icon"
+      rounded
+      noRing
       onClick={() => {
         setShowAddNewItemDialog(true);
       }}
-      className="h-auto"
+      className="min-h-[86px]"
     >
       <div
-        className={`m-1 grid h-12 w-12 place-items-center rounded-full border border-white bg-green-400`}
+        className={`m-1 grid h-16 w-16 place-items-center rounded-full bg-green-400`}
       >
         <FaPlus className="text-2xl font-semibold text-white" />
       </div>

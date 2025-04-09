@@ -4,12 +4,17 @@ import { ReactNode } from "react";
 interface IconSidebarProps {
   showOn: "desktop" | "tablet" | "desktopxl";
   children?: ReactNode;
+  position: "left" | "right";
 }
 
-export default function IconSidebar({ showOn, children }: IconSidebarProps) {
+export default function IconSidebar({
+  showOn,
+  children,
+  position,
+}: IconSidebarProps) {
   const show =
     showOn === "tablet"
-      ? "tablet:flex items-end"
+      ? "tablet:flex"
       : showOn === "desktop"
       ? "desktop:flex"
       : "desktopxl:flex";
@@ -19,7 +24,21 @@ export default function IconSidebar({ showOn, children }: IconSidebarProps) {
       id="IconSidebar"
       className={cn("hidden flex-col rounded-lg gap-2", show)}
     >
-      {children}
+      <div
+        className={cn(
+          "relative",
+          position === "left" ? "w-[72px]" : "w-[90px]"
+        )}
+      >
+        <div
+          className={cn(
+            "absolute flex flex-col gap-2 z-50",
+            position === "left" ? "items-start left-0" : "items-end right-0"
+          )}
+        >
+          {children}
+        </div>
+      </div>
     </div>
   );
 }

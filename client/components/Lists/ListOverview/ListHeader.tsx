@@ -3,8 +3,6 @@
 import { useListContext } from "@/context/ListContext";
 import { changeListDetails } from "@/lib/actions";
 import { useOutsideClick } from "@/lib/hooks";
-import { User } from "@/lib/types";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -25,14 +23,8 @@ export default function ListHeader({}: ListHeaderProps) {
     },
     userIsAuthor,
     authorData,
+    userIsLearningThisList,
   } = useListContext();
-
-  const { data } = useSession();
-  const user = data?.user as User;
-
-  const userIsLearningThisList = user
-    ? user.learnedLists[language.code]?.includes(listNumber)
-    : false;
 
   const numberOfItems = units.length;
 

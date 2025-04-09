@@ -73,7 +73,7 @@ export default function LearningButtonWithExpand({
         showIcon
       />
       {showExpandButton && (
-        <div className="relative flex w-10 items-center justify-center">
+        <div className="relative flex w-12 items-center justify-center">
           <div className="group">
             <div className="absolute bottom-0 right-0 z-50 flex w-[336px] translate-y-[600px] flex-col opacity-0 transition-all duration-500 ease-in-out group-hover:translate-y-0 group-hover:opacity-100">
               {allLearningModes

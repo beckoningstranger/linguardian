@@ -23,7 +23,7 @@ export default async function Dashboard({
   userNative,
 }: DashboardProps) {
   const renderedLists = (
-    <div className="flex max-w-[1126px] flex-col items-center gap-4 px-4 pt-4 tablet:flex-row tablet:flex-wrap tablet:gap-6 desktop:gap-10">
+    <div className="mb-32 flex max-w-[1126px] flex-col items-center gap-4 px-4 pt-4 tablet:flex-row tablet:flex-wrap tablet:gap-6 desktop:gap-10">
       {learnedLists?.map((listNumber) => {
         const listData = populatedLists.find(
           (list) => list?.listNumber === listNumber

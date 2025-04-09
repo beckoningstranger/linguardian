@@ -1,10 +1,10 @@
 import {
   fetchAuthors,
   getLearningDataForLanguage,
+  getListDataForMetadata,
   getPopulatedList,
 } from "@/lib/fetchData";
 
-import { Metadata } from "next";
 import notFound from "@/app/not-found";
 import ListBarChart from "@/components/Charts/ListBarChart";
 import ListPieChart from "@/components/Charts/ListPieChart";
@@ -15,25 +15,27 @@ import ListOverviewLearningButtons from "@/components/Lists/ListOverview/ListOve
 import ListOverviewLeftButtons from "@/components/Lists/ListOverview/ListOverViewLeftButtons";
 import ListUnits from "@/components/Lists/ListOverview/ListUnits";
 import StartLearningListButton from "@/components/Lists/ListOverview/StartLearningListButton";
+import TopContextMenuLoader from "@/components/Menus/TopMenu/TopContextMenuLoader";
 import { ListContextProvider } from "@/context/ListContext";
+import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
 
-// export async function generateMetadata({ params }: ListPageProps) {
-//   const listNumber = parseInt(params.listNumberString);
+export async function generateMetadata({ params }: ListPageProps) {
+  const listNumber = parseInt(params.listNumberString);
 
-//   const listData = await getListDataForMetadata(listNumber, 1);
-//   const { listName, langName, description } = listData;
-//   return {
-//     title: listName,
-//     description: `Learn ${langName} and enrich your vocabulary by memorizing Linguardian's list "${listName}.${
-//       description ? ` ${description}` : ""
-//     }"`,
-//   };
-// }
+  const listData = await getListDataForMetadata(listNumber, 1);
+  const { listName, langName, description } = listData;
+  return {
+    title: listName,
+    description: `Learn ${langName} and enrich your vocabulary by memorizing Linguardian's list "${listName}.${
+      description ? ` ${description}` : ""
+    }"`,
+  };
+}
 
-export const metadata: Metadata = {
-  description: "Enrich your vocabulary by memorizing this list",
-};
+// export const metadata: Metadata = {
+//   description: "Enrich your vocabulary by memorizing this list",
+// };
 
 interface ListPageProps {
   params: {
@@ -59,7 +61,13 @@ export default async function ListPage({
   ]);
 
   const userIsAuthor = authors.includes(user.id);
-  const userIsLearningThisList = true; // user.learnedLists[language.code]?.includes(listNumber);
+  const userIsLearningThisList =
+    user.learnedLists[language.code]?.includes(listNumber);
+
+  const userListsForThisLanguage = user.learnedLists[language.code];
+  const userIsLearningListLanguage =
+    Array.isArray(userListsForThisLanguage) &&
+    userListsForThisLanguage.length > 0;
 
   const unlockedLearningModesForUser = unlockedReviewModes[user.native.code];
   const itemIdsInUnits = units.map((item) => item.item._id.toString());
@@ -68,6 +76,8 @@ export default async function ListPage({
   return (
     <ListContextProvider
       userIsAuthor={userIsAuthor}
+      userIsLearningListLanguage={userIsLearningListLanguage}
+      passedUserIsLearningThisList={userIsLearningThisList || false}
       listData={listData}
       authorData={authorData}
       learningDataForLanguage={learningDataForLanguage}
@@ -78,15 +88,9 @@ export default async function ListPage({
       <div className="flex justify-center tablet:gap-2 tablet:py-2">
         <ListOverviewLeftButtons />
         <div
-          className={`grid grid-cols-1 tablet:grid-cols-[324px_324px] ${
-            userIsLearningThisList
-              ? "tablet:grid-rows-[200px_340px]"
-              : "tablet:grid-rows-[200px_64px]"
-          } tablet:gap-2 desktop:grid-cols-[400px_400px] desktop:grid-rows-[200px_400px] desktopxl:grid-cols-[500px_350px] desktopxl:grid-rows-[200px_200px]`}
+          className={`grid grid-cols-1 tablet:grid-cols-[324px_324px] tablet:grid-rows-[200px_340px] tablet:gap-2 desktop:grid-cols-[400px_400px] desktop:grid-rows-[200px_400px] desktopxl:grid-cols-[500px_350px] desktopxl:grid-rows-[200px_200px]`}
         >
           <ListHeader />
-          {/* {!userIsLearningThisList && <StartLearningListButton />} */}
-          {/* For mobile, display a start learning button fixed at the bottom, for all other screen sizes display a mortarboard icon in the left buttons list  */}
           {userIsLearningThisList && (
             <>
               <ListBarChart stats={listStats} />
@@ -96,12 +100,14 @@ export default async function ListPage({
           )}
           <ListUnits />
         </div>
+        <StartLearningListButton mode="mobile" />
         {userIsLearningThisList && (
           <ListOverviewLearningButtons listNumber={listNumber} />
         )}
       </div>
+      <MobileMenuContextProvider>
+        <TopContextMenuLoader listNumber={listNumber} opacity={90} />
+      </MobileMenuContextProvider>
     </ListContextProvider>
   );
 }
-
-//   {/* <StopLearningListButton list={{ language, listNumber, name }} /> */}

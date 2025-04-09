@@ -1,26 +1,26 @@
+import { cn } from "@/lib/helperFunctionsClient";
+
 interface UnitItemTextProps {
   translations: string | undefined;
   itemName: string | undefined;
-  showTranslations: boolean;
+  showItemTranslation: boolean;
 }
 
 export default function UnitItemText({
   translations,
   itemName,
-  showTranslations,
+  showItemTranslation,
 }: UnitItemTextProps) {
-  const text = showTranslations ? translations : itemName;
+  const text = showItemTranslation ? translations : itemName;
   return (
-    <div
-      className={`${
-        text && text.length > 30
-          ? text.length > 40
-            ? "text-sm"
-            : "text-md"
-          : "text-lg"
-      } font-semibold text-pretty pointer-events-none text-center`}
+    <p
+      className={cn(
+        "font-semibold text-pretty pointer-events-none max-w-[32ch] truncate",
+        text && text.length > 30 ? "text-cmdb leading-tight" : "text-clgb"
+        // text && text.length > 50 && "text-cxsr"
+      )}
     >
       {text}
-    </div>
+    </p>
   );
 }

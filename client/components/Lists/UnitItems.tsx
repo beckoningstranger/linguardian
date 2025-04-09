@@ -1,15 +1,11 @@
-"use client";
-
 import {
   ItemWithPopulatedTranslations,
   LearnedItem,
   ListAndUnitData,
   SupportedLanguage,
 } from "@/lib/types";
-import { useState } from "react";
 import ListAddItemButton from "./ListAddItemButton";
 import UnitItem from "./UnitItem";
-import Button from "../ui/Button";
 
 interface UnitItemsProps {
   unitItems: ItemWithPopulatedTranslations[];
@@ -34,7 +30,6 @@ export default function UnitItems({
   pathToUnit,
   listAndUnitData,
 }: UnitItemsProps) {
-  const [showTranslations, setShowTranslations] = useState<boolean>(false);
   const enrichedItems = unitItems.map((item) => {
     const enrichedItem = item as ItemPlusLearningInfo;
     const foundLearnedItem = allLearnedItems.find(
@@ -60,7 +55,6 @@ export default function UnitItems({
       <UnitItem
         item={item}
         translations={translations}
-        showTranslations={showTranslations}
         key={index}
         pathToUnit={pathToUnit}
         listAndUnitData={listAndUnitData}
@@ -73,17 +67,7 @@ export default function UnitItems({
   });
 
   return (
-    <div className="relative col-span-1 col-start-1 grid grid-cols-1 justify-items-center gap-2 sm:grid-cols-2 desktopxl:row-start-2">
-      {unitItems.length > 0 && (
-        <Button
-          color="blue"
-          fullWidth
-          className="p-4 sm:hidden"
-          onClick={() => setShowTranslations(!showTranslations)}
-        >
-          {showTranslations ? "Tap to show items" : "Tap to show translations"}
-        </Button>
-      )}
+    <div className="relative col-span-1 col-start-1 grid grid-cols-1 justify-items-center gap-2 desktop:grid-cols-2 desktopxl:row-start-2">
       {learnedItems} {unlearnedItems}
       {userIsAuthor && <ListAddItemButton addToThisList={listAndUnitData} />}
     </div>
