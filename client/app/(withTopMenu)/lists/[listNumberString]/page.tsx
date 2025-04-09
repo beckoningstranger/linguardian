@@ -77,7 +77,7 @@ export default async function ListPage({
     <ListContextProvider
       userIsAuthor={userIsAuthor}
       userIsLearningListLanguage={userIsLearningListLanguage}
-      passedUserIsLearningThisList={userIsLearningThisList || false}
+      userIsLearningThisList={userIsLearningThisList || false}
       listData={listData}
       authorData={authorData}
       learningDataForLanguage={learningDataForLanguage}
