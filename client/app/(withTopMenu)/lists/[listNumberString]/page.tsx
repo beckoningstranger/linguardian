@@ -3,6 +3,7 @@ import {
   getLearningDataForLanguage,
   getListDataForMetadata,
   getPopulatedList,
+  getUserById,
 } from "@/lib/fetchData";
 
 import notFound from "@/app/not-found";
@@ -33,10 +34,6 @@ export async function generateMetadata({ params }: ListPageProps) {
   };
 }
 
-// export const metadata: Metadata = {
-//   description: "Enrich your vocabulary by memorizing this list",
-// };
-
 interface ListPageProps {
   params: {
     listNumberString: string;
@@ -48,28 +45,31 @@ export default async function ListPage({
 }: ListPageProps) {
   const listNumber = parseInt(listNumberString);
 
-  const [listData, user] = await Promise.all([
+  const [listData, sessionUser] = await Promise.all([
     getPopulatedList(listNumber),
     getUserOnServer(),
   ]);
   if (!listData) return notFound();
 
+  const user = await getUserById(sessionUser.id);
+
   const { authors, unlockedReviewModes, units, language } = listData;
   const [authorData, learningDataForLanguage] = await Promise.all([
     fetchAuthors(authors),
-    getLearningDataForLanguage(user.id, listData.language.code),
+    getLearningDataForLanguage(sessionUser.id, listData.language.code),
   ]);
 
-  const userIsAuthor = authors.includes(user.id);
+  const userIsAuthor = authors.includes(sessionUser.id);
   const userIsLearningThisList =
-    user.learnedLists[language.code]?.includes(listNumber);
+    user?.learnedLists[language.code]?.includes(listNumber);
 
-  const userListsForThisLanguage = user.learnedLists[language.code];
+  const userListsForThisLanguage = user?.learnedLists[language.code];
   const userIsLearningListLanguage =
     Array.isArray(userListsForThisLanguage) &&
     userListsForThisLanguage.length > 0;
 
-  const unlockedLearningModesForUser = unlockedReviewModes[user.native.code];
+  const unlockedLearningModesForUser =
+    unlockedReviewModes[sessionUser.native.code];
   const itemIdsInUnits = units.map((item) => item.item._id.toString());
   const listStats = getListStats(itemIdsInUnits, learningDataForLanguage);
 

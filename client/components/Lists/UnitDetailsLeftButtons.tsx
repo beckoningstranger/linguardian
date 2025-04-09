@@ -20,7 +20,7 @@ export default function UnitDetailsLeftButtons({
   noOfItemsInUnit,
 }: UnitDetailsLeftButtonsProps) {
   return (
-    <IconSidebar showOn="tablet">
+    <IconSidebar showOn="tablet" position="left">
       <Link href={paths.listDetailsPath(listNumber)}>
         <Button
           intent="icon"
