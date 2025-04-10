@@ -53,7 +53,8 @@ export default function LearningButton({
         bgColor,
         hoverColor,
         "flex h-[90px] w-full overflow-hidden duration-800 ease-in-out transition-all",
-        disabled && "bg-grey-600 hover:bg-grey-600",
+        disabled &&
+          "bg-grey-600 hover:bg-grey-600 pointer-events-none cursor-not-allowed",
         rounded && "rounded-md",
         showIcon && !showLabel && "group w-[90px] hover:w-[378px]"
       )}
@@ -81,7 +82,7 @@ export default function LearningButton({
       )}
       <HeadLessUiButton
         className={cn(
-          "relative flex h-[90px] w-full items-center justify-center px-1 font-serif text-hsm text-white"
+          "relative flex h-[90px] w-full items-center justify-center px-1 font-serif text-white"
         )}
         disabled={disabled}
         aria-label={`Start a learning session in ${mode} mode`}
@@ -106,7 +107,7 @@ export default function LearningButton({
         )}
         {showLabel && (
           <div
-            className={`flex flex-1 flex-col ${
+            className={`flex flex-1 flex-col text-hsm ${
               !showIcon && showExpand ? "pl-6" : ""
             }`}
           >

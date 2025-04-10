@@ -54,7 +54,7 @@ export default function TopContextMenuButton({
   const button = (
     <Button
       className={cn(
-        "relative flex h-20 w-full items-center rounded-lg px-2 text-white tablet:hidden transition-all duration-500",
+        "relative flex h-20  w-full items-center rounded-lg px-2 text-white tablet:hidden transition-all duration-500",
         config[mode].styles,
         disabled && "bg-grey-500 pointer-events-none cursor-not-allowed"
       )}

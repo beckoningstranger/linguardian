@@ -7,60 +7,43 @@ import paths from "@/lib/paths";
 import Image from "next/image";
 import Link from "next/link";
 import DeleteUnitButton from "./DeleteUnitButton";
+import IconSidebarButton from "../IconSidebar/IconSidebarButton";
 
 interface UnitDetailsLeftButtonsProps {
   listNumber: number;
   unitName: string;
+  unitNumber: number;
   noOfItemsInUnit: number;
+  userIsAuthor: boolean;
 }
 
 export default function UnitDetailsLeftButtons({
   listNumber,
   unitName,
+  unitNumber,
   noOfItemsInUnit,
+  userIsAuthor,
 }: UnitDetailsLeftButtonsProps) {
   return (
     <IconSidebar showOn="tablet" position="left">
-      <Link href={paths.listDetailsPath(listNumber)}>
-        <Button
-          intent="icon"
-          color="white"
-          noRing
-          className="shadow-xl"
-          rounded
-        >
-          <Image
-            src={"/icons/ArrowLeft.svg"}
-            height={72}
-            width={72}
-            alt="Back to List Overview Icon"
+      <IconSidebarButton type="back" link={paths.listDetailsPath(listNumber)} />
+      {userIsAuthor && (
+        <>
+          <IconSidebarButton
+            type="edit"
+            label="Edit this unit"
+            link={paths.editUnitPath(listNumber, unitNumber)}
           />
-        </Button>
-      </Link>
-      <div>
-        <Button
-          intent="icon"
-          color="white"
-          noRing
-          className="shadow-xl"
-          rounded
-        >
-          <Image
-            src={"/icons/Pen.svg"}
-            height={72}
-            width={72}
-            alt="Pen Icon to Edit"
-          />
-          {/* <TbPencil className="h-12 w-12 text-grey-800" /> */}
-        </Button>
-      </div>
-      <DeleteUnitButton
-        listNumber={listNumber}
-        unitName={unitName}
-        noOfItemsInUnit={noOfItemsInUnit}
-        mode="standalone"
-      />
-      <MobileMenuContextProvider></MobileMenuContextProvider>
+          <MobileMenuContextProvider>
+            <DeleteUnitButton
+              listNumber={listNumber}
+              unitName={unitName}
+              noOfItemsInUnit={noOfItemsInUnit}
+              mode="desktop"
+            />
+          </MobileMenuContextProvider>
+        </>
+      )}
     </IconSidebar>
   );
 }

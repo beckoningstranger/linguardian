@@ -47,7 +47,7 @@ export default function ListHeader({}: ListHeaderProps) {
           priority
           className="h-[150px] w-[150px] rounded-md tablet:rounded-2xl tablet:shadow-xl"
         />
-        <div className="flex w-full flex-col gap-2 tablet:my-4">
+        <div className="flex w-full flex-col gap-1 phone:gap-2 tablet:my-4">
           <div className="my-1 leading-[1] tablet:leading-[1.2]">
             <CreatedByLine authorData={authorData} />
             <h2 className="font-serif text-hsm tablet:text-hmd">{name}</h2>

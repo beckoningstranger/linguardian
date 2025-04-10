@@ -20,7 +20,7 @@ export default function UnitHeader({
   unitCount,
 }: UnitHeaderProps) {
   return (
-    <div className="col-span-2 flex w-screen bg-white/90 tablet:w-auto tablet:rounded-lg">
+    <div className="flex w-full justify-between bg-white/90 tablet:min-w-[620px] tablet:rounded-lg">
       <Link
         href={paths.unitDetailsPath(listNumber, unitNumber - 1)}
         aria-disabled={unitNumber < 2}
@@ -39,7 +39,7 @@ export default function UnitHeader({
           <FaArrowLeft className="h-11 w-11" />
         </Button>
       </Link>
-      <div className="flex flex-1 select-none flex-col justify-center text-center">
+      <div className="flex select-none flex-col justify-center">
         <div className="text-cxlb">{unitName}</div>
         <div className="text-cmdr">({itemNumber} items)</div>
       </div>

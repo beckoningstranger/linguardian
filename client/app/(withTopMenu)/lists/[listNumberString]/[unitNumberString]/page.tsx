@@ -12,10 +12,13 @@ import UnitDetailsLeftButtons from "@/components/Lists/UnitDetailsLeftButtons";
 import UnitHeader from "@/components/Lists/UnitHeader";
 import { calculateUnitStats } from "@/components/Lists/UnitHelpers";
 import UnitItems from "@/components/Lists/UnitItems";
+import TopContextMenuLoader from "@/components/Menus/TopMenu/TopContextMenuLoader";
+import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import {
   getFullyPopulatedListByListNumber,
   getLearningDataForLanguage,
 } from "@/lib/fetchData";
+import { cn } from "@/lib/helperFunctionsClient";
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
 import { LearningMode, ListAndUnitData } from "@/lib/types";
@@ -102,6 +105,9 @@ export default async function UnitDetailPage({
   const userIsLearningThisList = Object.values(learnedLists)
     .flat()
     ?.includes(listNumber);
+
+  const userIsAuthor = listData.authors.includes(userId);
+
   const stats = await calculateUnitStats(
     unitName,
     learningDataForLanguage,
@@ -120,14 +126,21 @@ export default async function UnitDetailPage({
   };
 
   return (
-    <div className="flex justify-center tablet:gap-2 tablet:py-2 desktopxl:grid desktopxl:grid-cols-[100px_minmax(0,1600px)_100px]">
+    <div className="tablet:flex tablet:justify-center tablet:gap-2 tablet:p-2 desktopxl:grid desktopxl:grid-cols-[100px_minmax(0,1600px)_100px]">
       <UnitDetailsLeftButtons
         listNumber={listNumber}
         unitName={unitName}
+        unitNumber={unitNumber}
         noOfItemsInUnit={unitItems.length}
+        userIsAuthor={userIsAuthor}
       />
       <div
-        className={`grid grid-cols-1 justify-center tablet:gap-2 desktop:grid-rows-[88px_400px] desktopxl:grid-cols-[minmax(0,1200px)_400px] desktopxl:grid-rows-[88px]`}
+        className={cn(
+          "justify-center tablet:gap-2",
+          userIsLearningThisList &&
+            "grid grid-cols-1 desktop:grid-rows-[88px_400px] desktopxl:grid-cols-[minmax(0,1200px)_400px] desktopxl:grid-rows-[88px]",
+          !userIsLearningThisList && "flex flex-1 flex-col"
+        )}
       >
         <UnitHeader
           unitNumber={unitNumber}
@@ -139,7 +152,7 @@ export default async function UnitDetailPage({
         {userIsLearningThisList && (
           <>
             <ListBarChart stats={stats} />
-            <div className="hidden grid-cols-[324px_324px] gap-2 tablet:grid desktop:grid-cols-[400px_400px] desktopxl:col-start-2 desktopxl:grid-rows-[400px_400px]">
+            <div className="hidden grid-cols-[310px_310px] gap-2 tablet:grid desktop:grid-cols-[400px_400px] desktopxl:col-start-2 desktopxl:grid-rows-[400px_400px]">
               <ListPieChart mode="unitoverview" stats={stats} />
               <Leaderboard mode="unit" />
             </div>
@@ -149,6 +162,7 @@ export default async function UnitDetailPage({
           allLearnedItems={learningDataForLanguage.learnedItems}
           unitItems={unitItems}
           userNative={userNative}
+          userIsLearningThisList={userIsLearningThisList}
           userIsAuthor={listData.authors.includes(userId)}
           pathToUnit={paths.unitDetailsPath(listNumber, unitNumber)}
           listAndUnitData={listAndUnitData}
@@ -162,6 +176,9 @@ export default async function UnitDetailPage({
           unitNumber={unitNumber}
         />
       )}
+      <MobileMenuContextProvider>
+        <TopContextMenuLoader listNumber={listNumber} opacity={90} />
+      </MobileMenuContextProvider>
     </div>
   );
 }

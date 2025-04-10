@@ -6,6 +6,7 @@ import {
 } from "@/lib/types";
 import ListAddItemButton from "./ListAddItemButton";
 import UnitItem from "./UnitItem";
+import { cn } from "@/lib/helperFunctionsClient";
 
 interface UnitItemsProps {
   unitItems: ItemWithPopulatedTranslations[];
@@ -14,6 +15,7 @@ interface UnitItemsProps {
   userIsAuthor: boolean;
   pathToUnit: string;
   listAndUnitData: ListAndUnitData;
+  userIsLearningThisList: boolean;
 }
 
 export interface ItemPlusLearningInfo extends ItemWithPopulatedTranslations {
@@ -29,6 +31,7 @@ export default function UnitItems({
   userIsAuthor,
   pathToUnit,
   listAndUnitData,
+  userIsLearningThisList,
 }: UnitItemsProps) {
   const enrichedItems = unitItems.map((item) => {
     const enrichedItem = item as ItemPlusLearningInfo;
@@ -67,7 +70,15 @@ export default function UnitItems({
   });
 
   return (
-    <div className="relative col-span-1 col-start-1 grid grid-cols-1 justify-items-center gap-2 desktop:grid-cols-2 desktopxl:row-start-2">
+    <div
+      className={cn(
+        "mt-2 tablet:mt-0 relative col-span-1 col-start-1 grid justify-items-center gap-2",
+        userIsLearningThisList &&
+          "grid-cols-1 desktop:grid-cols-2 w-full tablet:w-auto desktopxl:row-start-2",
+        !userIsLearningThisList &&
+          "min-w-[340px] min-[900px]:grid-cols-2 desktopxl:grid-cols-3"
+      )}
+    >
       {learnedItems} {unlearnedItems}
       {userIsAuthor && <ListAddItemButton addToThisList={listAndUnitData} />}
     </div>

@@ -87,7 +87,7 @@ export default async function ListPage({
           userIsAuthor={userIsAuthor}
         />
         <div
-          className={`grid grid-cols-1 tablet:grid-cols-[324px_324px] tablet:grid-rows-[200px_340px] tablet:gap-2 desktop:grid-cols-[400px_400px] desktop:grid-rows-[200px_400px] desktopxl:grid-cols-[500px_350px] desktopxl:grid-rows-[200px_200px]`}
+          className={`grid grid-cols-1 tablet:grid-cols-[310px_310px] tablet:grid-rows-[200px_340px] tablet:gap-2 desktop:grid-cols-[400px_400px] desktop:grid-rows-[200px_400px] desktopxl:grid-rows-[200px_200px]`}
         >
           <ListHeader />
           {userIsLearningThisList && (

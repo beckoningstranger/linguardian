@@ -72,7 +72,7 @@ export default function UnitItem({
           </div>
 
           {item.level && (
-            <div className="absolute bottom-2 left-11 flex w-full justify-between text-cxsb text-grey-900 phone:text-csmb">
+            <div className="absolute bottom-2 left-11 flex justify-between text-cxsb text-grey-900 phone:text-csmb">
               Level {item.level}:{" "}
               {currentItemStatus(item.nextReview, item.level)}
             </div>

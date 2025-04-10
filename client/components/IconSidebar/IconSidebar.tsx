@@ -32,7 +32,7 @@ export default function IconSidebar({
       >
         <div
           className={cn(
-            "absolute flex flex-col gap-2 z-50",
+            "absolute flex flex-col gap-2 z-20",
             position === "left" ? "items-start left-0" : "items-end right-0"
           )}
         >

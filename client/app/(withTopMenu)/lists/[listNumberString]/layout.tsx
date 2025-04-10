@@ -11,7 +11,6 @@ export default async function LayoutWithTopMenu({
   children,
   params,
 }: RootLayoutProps) {
-  const listNumber = Number(params.listNumberString);
   return (
     <div className="relative">
       <div className="fixed inset-0 -z-10 bg-[url('/backgrounds/ListDetailsPic16.9.webp')] bg-cover bg-center opacity-80" />

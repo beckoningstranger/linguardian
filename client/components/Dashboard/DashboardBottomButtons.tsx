@@ -14,7 +14,7 @@ export default function DashboardBottomButtons({
   dashboardIsEmpty,
 }: DashboardBottomButtonsProps) {
   return (
-    <div className="absolute bottom-4 flex w-screen justify-between gap-1 tablet:gap-4">
+    <div className="fixed bottom-4 flex w-screen justify-between gap-1 tablet:gap-4">
       <div></div>
       <div className="w-[700px] rounded-lg shadow-xl">
         <LearningButton

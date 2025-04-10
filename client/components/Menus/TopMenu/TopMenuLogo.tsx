@@ -16,6 +16,7 @@ export default function TopMenuLogo({}: TopMenuLogoProps) {
           className="hidden h-20 items-center font-script text-llg text-blue-800 decoration-2 underline-offset-8 hover:underline desktop:flex"
         >
           Linguardian
+          {/* 林果点 (lín guǒ diǎn), 灵果典 (líng guǒ diǎn)*/}
         </Link>
         <Link
           href={paths.dashboardLanguagePath(activeLanguage?.code)}

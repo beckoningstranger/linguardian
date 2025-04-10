@@ -25,8 +25,6 @@ export default function TopContextMenu({
   let showTopContextMenu: boolean = false;
   const [contextExpanded, setContextExpanded] = useState(false);
 
-  if (!userIsAuthor && !userIsLearningList) return null;
-
   let displayTheseElements = <></>;
 
   if (currentBaseUrl.includes("lists/")) {
@@ -34,15 +32,18 @@ export default function TopContextMenu({
     const urlSegments = currentBaseUrl.split("/");
     const listNumber = Number(urlSegments[2]);
     const unitNumber = Number(urlSegments[3]) || false;
+    if (!userIsAuthor && !userIsLearningList && !unitNumber) return null;
 
     displayTheseElements = (
       <div className="flex w-full flex-col gap-2 bg-white px-2 py-4">
         {unitNumber && (
-          <TopContextMenuButton
-            mode="back"
-            link={paths.listDetailsPath(listNumber)}
-            setContextExpanded={setContextExpanded}
-          />
+          <>
+            <TopContextMenuButton
+              mode="back"
+              link={paths.listDetailsPath(listNumber)}
+              setContextExpanded={setContextExpanded}
+            />
+          </>
         )}
         {!unitNumber && (
           <>
