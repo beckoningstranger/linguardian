@@ -81,7 +81,7 @@ export default async function ListPage({
       listStats={listStats}
       listStatus={"practice"}
     >
-      <div className="flex justify-center tablet:gap-2 tablet:py-2">
+      <div className="mb-24 flex justify-center tablet:gap-2 tablet:py-2 desktop:mb-0">
         <ListOverviewLeftButtons
           listNumber={listNumber}
           userIsAuthor={userIsAuthor}
@@ -101,7 +101,11 @@ export default async function ListPage({
         </div>
         <StartLearningListButton mode="mobile" />
         {userIsLearningThisList && (
-          <ListOverviewLearningButtons listNumber={listNumber} />
+          <ListOverviewLearningButtons
+            listNumber={listNumber}
+            listStats={listStats}
+            unlockedModes={unlockedReviewModes[user.native.code]}
+          />
         )}
       </div>
       <MobileMenuContextProvider>

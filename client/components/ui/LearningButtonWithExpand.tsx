@@ -22,6 +22,7 @@ export default function LearningButtonWithExpand({
 
   // If there are no new words to learn exclude LearnNewWords and show random practice mode
   if (listStats.unlearned === 0) excludeModes.push("learn");
+  if (listStats.readyToReview === 0) excludeModes.push("translation");
   if (listStats.readyToReview > 0)
     recommendedLearningMode =
       unlockedModes[Math.floor(Math.random() * unlockedModes.length)];
@@ -56,7 +57,7 @@ export default function LearningButtonWithExpand({
       className={cn(
         bgColor,
         hoverColor,
-        "flex h-[90px] transition-colors duration-200 ease-in-out w-full",
+        "flex h-[90px] transition-colors relative duration-200 ease-in-out w-full",
         rounded && "rounded-md"
       )}
     >
@@ -73,42 +74,41 @@ export default function LearningButtonWithExpand({
         showIcon
       />
       {showExpandButton && (
-        <div className="relative flex w-12 items-center justify-center">
-          <div className="group">
-            <div className="absolute bottom-0 right-0 z-50 flex w-[336px] translate-y-[600px] flex-col opacity-0 transition-all duration-500 ease-in-out group-hover:translate-y-0 group-hover:opacity-100">
-              {allLearningModes
-                .filter(
-                  (m) =>
-                    (!excludeModes.includes(m) && unlockedModes.includes(m)) ||
-                    (m === "learn" && listStats.unlearned > 0)
-                )
-                .map((mode: LearningMode) => (
-                  <LearningButton
-                    key={mode}
-                    mode={mode}
-                    itemNumber={
-                      mode === "learn"
-                        ? listStats.unlearned
-                        : listStats.readyToReview
-                    }
-                    listNumber={listNumber}
-                    showIcon
-                    showLabel
-                  />
-                ))}
-            </div>
-
-            {/* Divider */}
-            <div className="absolute left-0 top-1/2 h-[64px] w-[1px] -translate-y-1/2 bg-grey-200" />
-
-            <Image
-              src="/icons/ExpandButton.svg"
-              width={35}
-              height={35}
-              alt="Show more learning modes icon"
-              className="size-[90px]"
-            />
+        <div className="group flex w-12 items-center justify-center">
+          <div className="absolute bottom-0 right-0 z-50 flex w-full translate-y-[600px] flex-col opacity-0 transition-all duration-500 ease-in-out group-hover:translate-y-0 group-hover:opacity-100">
+            {allLearningModes
+              .filter(
+                (m) =>
+                  (!excludeModes.includes(m) && unlockedModes.includes(m)) ||
+                  (m === "learn" && listStats.unlearned > 0)
+              )
+              .map((mode: LearningMode) => (
+                <LearningButton
+                  key={mode}
+                  mode={mode}
+                  itemNumber={
+                    mode === "learn"
+                      ? listStats.unlearned
+                      : listStats.readyToReview
+                  }
+                  listNumber={listNumber}
+                  showIcon
+                  showLabel
+                />
+              ))}
           </div>
+
+          {/* Divider */}
+          <div className="absolute left-0 top-1/2 h-[64px] w-[1px] -translate-y-1/2 bg-grey-200" />
+
+          <Image
+            src="/icons/ExpandButton.svg"
+            width={35}
+            height={35}
+            alt="Show more learning modes icon"
+            className="size-[90px]"
+          />
+          <div />
         </div>
       )}
     </div>

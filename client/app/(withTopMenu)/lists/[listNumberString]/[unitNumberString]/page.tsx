@@ -156,6 +156,8 @@ export default async function UnitDetailPage({
       </div>
       {userIsLearningThisList && (
         <ListOverviewLearningButtons
+          unlockedModes={unlockedModes}
+          listStats={stats}
           listNumber={listNumber}
           unitNumber={unitNumber}
         />

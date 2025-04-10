@@ -37,7 +37,9 @@ export default function LearningButton({
 
   const bgColor = "bg-" + buttonConfig?.color;
   const hoverColor = "hover:bg-" + buttonConfig?.hoverColor;
-  const miniLabelBgColor = "bg-" + buttonConfig?.hoverColor;
+  const miniLabelBgColor = disabled
+    ? "bg-grey-700"
+    : "bg-" + buttonConfig?.hoverColor;
 
   return (
     <Link
@@ -71,7 +73,9 @@ export default function LearningButton({
           />
           <div className="flex w-[378px] flex-col justify-center font-serif text-hsm">
             <h4>{buttonConfig?.label}</h4>
-            <h4>({itemNumber} left)</h4>
+            <h4>
+              ({itemNumber} {mode === "learn" ? "left" : "ready to review"})
+            </h4>
           </div>
         </HeadLessUiButton>
       )}
