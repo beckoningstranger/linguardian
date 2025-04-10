@@ -3,8 +3,6 @@
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { HiArrowLeft } from "react-icons/hi";
-import { TbPencil } from "react-icons/tb";
 
 import DeleteListButton from "@/components/Lists/ListOverview/DeleteListButton";
 import StopLearningListButton from "@/components/Lists/ListOverview/StopLearningListButton";
@@ -41,10 +39,8 @@ export default function TopContextMenu({
       <div className="flex w-full flex-col gap-2 bg-white px-2 py-4">
         {unitNumber && (
           <TopContextMenuButton
-            label="Back To List Overview"
             mode="back"
             link={paths.listDetailsPath(listNumber)}
-            icon={<HiArrowLeft className="h-16 w-16" />}
             setContextExpanded={setContextExpanded}
           />
         )}
@@ -54,10 +50,8 @@ export default function TopContextMenu({
             {userIsAuthor && (
               <>
                 <TopContextMenuButton
-                  label="Edit this list"
                   mode="edit"
                   link={paths.editListPath(listNumber)}
-                  icon={<TbPencil className="h-16 w-16" />}
                   setContextExpanded={setContextExpanded}
                 />
                 <DeleteListButton mode="mobile" />

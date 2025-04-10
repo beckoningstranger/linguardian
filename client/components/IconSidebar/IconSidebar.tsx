@@ -27,7 +27,7 @@ export default function IconSidebar({
       <div
         className={cn(
           "relative",
-          position === "left" ? "w-[72px]" : "w-[90px]"
+          position === "left" ? "w-[80px]" : "w-[90px]"
         )}
       >
         <div

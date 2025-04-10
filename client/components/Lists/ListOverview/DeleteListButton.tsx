@@ -3,16 +3,15 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { TbTrash } from "react-icons/tb";
 
+import ConfirmCancelMobileMenu from "@/components/ConfirmCancelMobileMenu";
 import ConfirmCancelModal from "@/components/ConfirmCancelModal";
+import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
+import TopContextMenuButton from "@/components/Menus/TopMenu/TopContextMenuButton";
 import { useListContext } from "@/context/ListContext";
 import { useMobileMenu } from "@/context/MobileMenuContext";
 import { removeList } from "@/lib/actions";
 import paths from "@/lib/paths";
-import { Button } from "@headlessui/react";
-import ConfirmCancelMobileMenu from "@/components/ConfirmCancelMobileMenu";
-import TopContextMenuButton from "@/components/Menus/TopMenu/TopContextMenuButton";
 
 interface DeleteListButtonProps {
   mode: "desktop" | "mobile";
@@ -41,18 +40,12 @@ export default function DeleteListButton({ mode }: DeleteListButtonProps) {
   if (mode === "desktop")
     return (
       <>
-        <Button
-          className="duration-800 group flex size-[72px] items-center justify-center rounded-lg bg-white/90 text-grey-800 shadow-xl transition-all ease-in-out hover:w-[300px] hover:bg-red-500 hover:px-4 hover:text-white"
+        <IconSidebarButton
+          type="delete"
           onClick={() => {
             setShowConfirmDeleteModel(true);
           }}
-        >
-          <TbTrash className="h-12 w-12" />
-
-          <div className="hidden w-full justify-center rounded-lg font-serif text-hmd group-hover:flex">
-            Delete this list
-          </div>
-        </Button>
+        />
         <ConfirmCancelModal
           title="Careful! This will delete the entire list"
           isOpen={showConfirmDeleteModal}
@@ -70,11 +63,9 @@ export default function DeleteListButton({ mode }: DeleteListButtonProps) {
     return (
       <>
         <TopContextMenuButton
-          label="Delete this list"
           onClick={() => {
             if (toggleMobileMenu) toggleMobileMenu();
           }}
-          icon={<TbTrash className="h-16 w-16" />}
           mode="delete"
         />
         <ConfirmCancelMobileMenu doOnConfirm={removeListAction}>

@@ -3,14 +3,13 @@
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { ImStop } from "react-icons/im";
 
+import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
 import TopContextMenuButton from "@/components/Menus/TopMenu/TopContextMenuButton";
 import { useListContext } from "@/context/ListContext";
 import { setLearnedLists } from "@/lib/actions";
 import { User } from "@/lib/types";
 import Spinner from "../../Spinner";
-import { Button } from "@headlessui/react";
 
 interface StopLearningListButtonProps {
   mode: "mobile" | "desktop";
@@ -50,7 +49,6 @@ export default function StopLearningListButton({
         error: (err) => err.toString(),
       }
     );
-
     await update({
       ...data,
       user: { ...user, learnedLists: updatedLearnedLists },
@@ -58,31 +56,24 @@ export default function StopLearningListButton({
     setUpdating(false);
   };
 
-  if (status === "loading") return <Spinner centered />;
-
+  if (status === "loading" || updating) return <Spinner centered />;
   if (!userIsLearningThisList) return null;
+
   if (mode === "mobile")
     return (
       <TopContextMenuButton
         onClick={handleRemoveList}
         disabled={updating}
-        label="Stop learning this list"
         mode="stop"
-        icon={<ImStop className="h-16 w-16" />}
       />
     );
 
   if (mode === "desktop")
     return (
-      <Button
-        className="duration-800 group hidden size-[72px] items-center justify-center rounded-lg bg-white/90 text-grey-800 shadow-2xl ring-white transition-all ease-in-out hover:w-[400px] hover:bg-orange-600 hover:px-4 hover:text-white hover:ring-transparent tablet:flex"
+      <IconSidebarButton
+        type="stop"
+        disabled={updating}
         onClick={handleRemoveList}
-      >
-        <ImStop className="h-14 w-14" />
-
-        <div className="hidden w-full justify-center rounded-lg font-serif text-hmd group-hover:flex">
-          Stop learning this list
-        </div>
-      </Button>
+      />
     );
 }

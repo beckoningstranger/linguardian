@@ -9,11 +9,12 @@ import {
   User,
 } from "@/lib/types";
 import { getServerSession } from "next-auth";
-import { getList, getSupportedLanguages } from "./fetchData";
+import { getList, getSupportedLanguages, getUserById } from "./fetchData";
 
 export async function getUserOnServer() {
   const session = await getServerSession(authOptions);
-  return session?.user as User;
+  const user = await getUserById(session?.user.id);
+  return user as User;
 }
 
 export async function getAllUserLanguages() {

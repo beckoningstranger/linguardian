@@ -3,7 +3,6 @@ import {
   getLearningDataForLanguage,
   getListDataForMetadata,
   getPopulatedList,
-  getUserById,
 } from "@/lib/fetchData";
 
 import notFound from "@/app/not-found";
@@ -45,21 +44,19 @@ export default async function ListPage({
 }: ListPageProps) {
   const listNumber = parseInt(listNumberString);
 
-  const [listData, sessionUser] = await Promise.all([
+  const [listData, user] = await Promise.all([
     getPopulatedList(listNumber),
     getUserOnServer(),
   ]);
   if (!listData) return notFound();
 
-  const user = await getUserById(sessionUser.id);
-
   const { authors, unlockedReviewModes, units, language } = listData;
   const [authorData, learningDataForLanguage] = await Promise.all([
     fetchAuthors(authors),
-    getLearningDataForLanguage(sessionUser.id, listData.language.code),
+    getLearningDataForLanguage(user.id, listData.language.code),
   ]);
 
-  const userIsAuthor = authors.includes(sessionUser.id);
+  const userIsAuthor = authors.includes(user.id);
   const userIsLearningThisList =
     user?.learnedLists[language.code]?.includes(listNumber);
 
@@ -68,8 +65,7 @@ export default async function ListPage({
     Array.isArray(userListsForThisLanguage) &&
     userListsForThisLanguage.length > 0;
 
-  const unlockedLearningModesForUser =
-    unlockedReviewModes[sessionUser.native.code];
+  const unlockedLearningModesForUser = unlockedReviewModes[user.native.code];
   const itemIdsInUnits = units.map((item) => item.item._id.toString());
   const listStats = getListStats(itemIdsInUnits, learningDataForLanguage);
 
@@ -86,7 +82,10 @@ export default async function ListPage({
       listStatus={"practice"}
     >
       <div className="flex justify-center tablet:gap-2 tablet:py-2">
-        <ListOverviewLeftButtons />
+        <ListOverviewLeftButtons
+          listNumber={listNumber}
+          userIsAuthor={userIsAuthor}
+        />
         <div
           className={`grid grid-cols-1 tablet:grid-cols-[324px_324px] tablet:grid-rows-[200px_340px] tablet:gap-2 desktop:grid-cols-[400px_400px] desktop:grid-rows-[200px_400px] desktopxl:grid-cols-[500px_350px] desktopxl:grid-rows-[200px_200px]`}
         >

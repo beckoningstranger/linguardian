@@ -1,7 +1,6 @@
 import notFound from "@/app/not-found";
 import { getPopulatedList } from "@/lib/fetchData";
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
-import { PopulatedList, User } from "@/lib/types";
 import TopContextMenu from "./TopContextMenu";
 
 interface TopContextMenuLoaderProps {
@@ -12,26 +11,23 @@ export default async function TopContextMenuLoader({
   listNumber,
   opacity,
 }: TopContextMenuLoaderProps) {
-  let listData: PopulatedList | undefined;
-  let user: User;
-  let userIsAuthor: boolean;
-  let userIsLearningList: boolean;
-
   if (listNumber) {
-    [listData, user] = await Promise.all([
+    const [user, listData] = await Promise.all([
+      await getUserOnServer(),
       getPopulatedList(listNumber),
-      getUserOnServer(),
     ]);
-    userIsAuthor = listData?.authors.includes(user.id) || false;
-    userIsLearningList = Object.values(user.learnedLists)
-      .flat()
-      .includes(listNumber);
-    if (!listData) return notFound();
+
+    if (!listData || !user) return notFound();
+    const userIsAuthor = listData?.authors.includes(user.id) || false;
+
+    const userIsLearningList =
+      user.learnedLists[listData.language.code]?.includes(listNumber);
+
     return (
       <TopContextMenu
         opacity={opacity}
         userIsAuthor={userIsAuthor}
-        userIsLearningList={userIsLearningList}
+        userIsLearningList={userIsLearningList || false}
       />
     );
   }

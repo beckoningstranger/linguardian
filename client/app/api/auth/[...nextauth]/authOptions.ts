@@ -141,8 +141,7 @@ async function addUserDataToToken(token: Token) {
     token.usernameSlug = userData?.usernameSlug;
     token.username = userData.username;
     token.customSRSettings = userData.customSRSettings;
+    token.activeLanguageAndFlag = userData?.learnedLanguages[0];
   }
-  if (token.learnedLanguages)
-    token.activeLanguageAndFlag = token.learnedLanguages[0];
   return token;
 }

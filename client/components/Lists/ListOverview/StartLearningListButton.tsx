@@ -11,6 +11,7 @@ import { useActiveLanguage } from "@/context/ActiveLanguageContext";
 import { useListContext } from "@/context/ListContext";
 import { setLearnedLanguages, setLearnedLists } from "@/lib/actions";
 import { User } from "@/lib/types";
+import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
 
 interface StartLearningListButtonProps {
   mode: "mobile" | "desktop";
@@ -47,7 +48,7 @@ export default function StartLearningListButton({
       setLearnedLists(listNumber, updatedLearnedLists, language.code),
       {
         loading: `Adding "${name}" to your learned lists...`,
-        success: () => `"${name}" has been added to your learned lists! 🎉`,
+        success: `"${name}" has been added to your learned lists! 🎉`,
         error: (err) => err.toString(),
       }
     );
@@ -78,7 +79,7 @@ export default function StartLearningListButton({
     await handleAddListToLearnedLists();
   };
 
-  if (status === "loading") return <Spinner centered />;
+  if (status === "loading" || updating) return <Spinner centered />;
 
   if (mode === "mobile")
     return (
@@ -87,10 +88,10 @@ export default function StartLearningListButton({
           <Button
             onClick={startLearningLanguageAndList}
             disabled={updating}
-            className="absolute bottom-0 flex h-24 w-full items-center bg-green-400 px-2 text-white active:bg-green-500 tablet:px-4 desktop:hidden"
+            className="absolute bottom-0 flex h-24 w-full items-center bg-green-400 px-2 text-white active:bg-green-500 tablet:hidden tablet:px-4"
           >
             <BsMortarboard className="h-16 w-16" />
-            <p className="absolute right-2 flex w-[calc(100vw-80px)] flex-wrap justify-center text-hsm tablet:w-[calc(100vw-16px)] tablet:text-hmd desktop:hidden">
+            <p className="absolute right-2 flex w-[calc(100vw-80px)] flex-wrap justify-center overflow-hidden text-hsm tablet:w-[calc(100vw-16px)] tablet:text-hmd desktop:hidden">
               Start learning {language.name} with this list!
             </p>
           </Button>
@@ -99,7 +100,7 @@ export default function StartLearningListButton({
           <Button
             onClick={handleAddListToLearnedLists}
             disabled={updating}
-            className="absolute bottom-0 flex h-24 w-full items-center bg-green-400 px-2 text-white active:bg-green-500 tablet:px-4 desktop:hidden"
+            className="absolute bottom-0 flex h-24 w-full items-center bg-green-400 px-2 text-white active:bg-green-500 tablet:hidden tablet:px-4"
           >
             <BsMortarboard className="h-16 w-16" />
             <p className="absolute right-2 flex w-[calc(100vw-80px)] flex-wrap justify-center text-hsm tablet:w-[calc(100vw-16px)] tablet:text-hmd desktop:hidden">
@@ -111,32 +112,18 @@ export default function StartLearningListButton({
     );
 
   if (mode === "desktop")
-    return (
-      <>
-        {!userIsLearningListLanguage && (
-          <Button
-            className="duration-800 group hidden size-[72px] items-center justify-center rounded-lg bg-green-400 text-white shadow-2xl ring-white transition-all ease-in-out hover:w-[400px] hover:bg-green-400 hover:px-4 hover:text-white hover:ring-transparent desktop:flex"
-            onClick={startLearningLanguageAndList}
-          >
-            <BsMortarboard className="h-14 w-14" />
-
-            <div className="hidden w-full justify-center rounded-lg font-serif text-hmd group-hover:flex">
-              Start learning {language.name} with this list
-            </div>
-          </Button>
-        )}
-        {userIsLearningListLanguage && (
-          <Button
-            className="duration-800 group hidden size-[72px] items-center justify-center rounded-lg bg-green-400 text-white shadow-2xl ring-white transition-all ease-in-out hover:w-[400px] hover:bg-green-400 hover:px-4 hover:text-white hover:ring-transparent desktop:flex"
-            onClick={handleAddListToLearnedLists}
-          >
-            <BsMortarboard className="h-14 w-14" />
-
-            <div className="hidden w-full justify-center rounded-lg font-serif text-hmd group-hover:flex">
-              Start learning this list
-            </div>
-          </Button>
-        )}
-      </>
+    return !userIsLearningListLanguage ? (
+      <IconSidebarButton
+        label={`Start learning ${language.name} with this list`}
+        type="start"
+        disabled={updating}
+        onClick={startLearningLanguageAndList}
+      />
+    ) : (
+      <IconSidebarButton
+        type="start"
+        disabled={updating}
+        onClick={handleAddListToLearnedLists}
+      />
     );
 }
