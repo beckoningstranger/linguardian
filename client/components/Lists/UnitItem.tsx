@@ -16,7 +16,7 @@ interface UnitItemProps {
   translations: string | undefined;
   pathToUnit: string;
   listAndUnitData: ListAndUnitData;
-  userIsAuthor: boolean;
+  editMode?: boolean;
 }
 
 export default function UnitItem({
@@ -24,7 +24,7 @@ export default function UnitItem({
   translations,
   pathToUnit,
   listAndUnitData,
-  userIsAuthor,
+  editMode,
 }: UnitItemProps) {
   const [showItemTranslation, setShowItemTranslation] =
     useState<boolean>(false);
@@ -36,16 +36,16 @@ export default function UnitItem({
         item.level
       )}`}
     >
-      {/* {userIsAuthor && (
+      {editMode && (
         <MobileMenuContextProvider>
-        <DeleteItemButton
-        listAndUnitData={listAndUnitData}
-        itemId={item._id}
-        itemName={item.name}
-        listName={listAndUnitData.listName}
-        />
+          <DeleteItemButton
+            listAndUnitData={listAndUnitData}
+            itemId={item._id}
+            itemName={item.name}
+            listName={listAndUnitData.listName}
+          />
         </MobileMenuContextProvider>
-        )} */}
+      )}
       <Image
         alt="Translation Icon"
         height={20}
@@ -66,7 +66,14 @@ export default function UnitItem({
               itemName={!showItemTranslation ? item.name : translations}
               showItemTranslation={showItemTranslation}
             />
-            <div className="absolute right-4 top-4 text-csmb text-grey-900">
+            <div
+              className={`text-left absolute top-4 text-csmb text-grey-900 ${
+                editMode ? "right-20" : "right-4"
+              }`}
+            >
+              {item.partOfSpeech === "noun" &&
+                item.gender &&
+                !showItemTranslation && <span>{item.gender} </span>}
               {item.partOfSpeech}
             </div>
           </div>

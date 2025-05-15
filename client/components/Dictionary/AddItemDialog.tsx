@@ -63,7 +63,7 @@ export default function AddItemDialog({
 
   return (
     <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
-      <div className="fixed inset-0 flex items-center justify-center">
+      <div className="fixed inset-0 z-20 flex items-center justify-center">
         <Button className="absolute right-8 top-8">
           <XMarkIcon className="h-8 w-8" />
         </Button>

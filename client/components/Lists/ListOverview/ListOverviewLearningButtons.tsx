@@ -17,7 +17,7 @@ export default function ListOverviewLearningButtons({
 }: ListOverviewLearningButtonsProps) {
   return (
     <>
-      <div className="fixed bottom-0 z-50 flex w-full overflow-hidden tablet:left-1/2 tablet:w-auto tablet:-translate-x-1/2 tablet:transform desktop:hidden">
+      <div className="fixed bottom-0 z-40 flex w-full overflow-hidden tablet:left-1/2 tablet:w-auto tablet:-translate-x-1/2 tablet:transform desktop:hidden">
         <div className="w-full overflow-hidden rounded-t-lg tablet:ml-[86px] tablet:w-[632px]">
           <LearningButtonWithExpand
             unlockedModes={unlockedModes}

@@ -15,9 +15,9 @@ export default function UnitItemText({
   return (
     <p
       className={cn(
-        "font-semibold text-pretty pointer-events-none max-w-[32ch] truncate",
-        text && text.length > 30 ? "text-cmdb leading-tight" : "text-clgb"
-        // text && text.length > 50 && "text-cxsr"
+        "font-semibold text-pretty pointer-events-none max-w-[18ch] phone:max-w-[20ch] tablet:max-w-[42ch] desktop:max-w-[20ch] truncate text-cmdr leading-tight",
+        text && text.length > 40 && "text-cmdb",
+        text && text.length > 60 && "text-csmr"
       )}
     >
       {text}

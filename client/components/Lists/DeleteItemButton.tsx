@@ -6,10 +6,10 @@ import { ListAndUnitData } from "@/lib/types";
 import { Types } from "mongoose";
 import { MouseEventHandler, useState } from "react";
 import toast from "react-hot-toast";
-import { FaTrashCan } from "react-icons/fa6";
 import ConfirmCancelMobileMenu from "../ConfirmCancelMobileMenu";
 import ConfirmCancelModal from "../ConfirmCancelModal";
-import Button from "../ui/Button";
+import { TbTrash } from "react-icons/tb";
+import { Button } from "@headlessui/react";
 
 interface DeleteItemButtonProps {
   listAndUnitData: ListAndUnitData;
@@ -40,14 +40,14 @@ export default function DeleteItemButton({
     <>
       {/* Mobile */}
       <Button
-        intent="icon"
-        className="absolute right-1 text-red-500 md:hidden"
+        className="absolute right-0 grid h-full w-[64px] place-items-center rounded-r-lg text-red-500 transition-all duration-300 hover:bg-red-500 hover:text-white md:hidden"
+        // className="absolute right-1 text-red-500 md:hidden"
         onClick={(e) => {
           e.preventDefault();
           toggleMobileMenu() as MouseEventHandler;
         }}
       >
-        <FaTrashCan className="text-xl" />
+        <TbTrash className="size-8" />
       </Button>
       <ConfirmCancelMobileMenu doOnConfirm={deleteItemAction}>
         <div className="text-2xl">Confirm to delete item from list</div>
@@ -61,14 +61,13 @@ export default function DeleteItemButton({
 
       {/* Desktop */}
       <Button
-        intent="icon"
-        className="absolute right-1 hidden text-red-500 md:block"
+        className="absolute right-0 hidden h-full w-[64px] place-items-center rounded-r-lg text-red-500 transition-all duration-300 hover:bg-red-500 hover:text-white md:grid"
         onClick={async (e) => {
           e.preventDefault();
           setShowConfirmDeleteModel(true);
         }}
       >
-        <FaTrashCan className="text-xl" />
+        <TbTrash className="size-8" />
       </Button>
       <ConfirmCancelModal
         title="Confirm to delete item from list"

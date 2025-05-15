@@ -1,38 +1,44 @@
 "use client";
 
-import { useMobileMenu } from "@/context/MobileMenuContext";
-import { removeUnitFromList } from "@/lib/actions";
+import { redirect } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
 import toast from "react-hot-toast";
 import { TbTrash } from "react-icons/tb";
+
+import { useMobileMenu } from "@/context/MobileMenuContext";
+import { removeUnitFromList } from "@/lib/actions";
+import paths from "@/lib/paths";
 import ConfirmCancelMobileMenu from "../ConfirmCancelMobileMenu";
 import ConfirmCancelModal from "../ConfirmCancelModal";
-import Button from "../ui/Button";
-import { cn } from "@/lib/helperFunctionsClient";
-import { redirect } from "next/navigation";
-import paths from "@/lib/paths";
 import IconSidebarButton from "../IconSidebar/IconSidebarButton";
-import TopContextMenu from "../Menus/TopMenu/TopContextMenu";
 import TopContextMenuButton from "../Menus/TopMenu/TopContextMenuButton";
+import { useUnitContext } from "@/context/UnitContext";
 
 interface DeleteUnitButtonProps {
   setUnitOrder?: Dispatch<SetStateAction<string[]>>;
-  unitName: string;
   listNumber: number;
-  noOfItemsInUnit: number;
   mode?: "desktop" | "mobile" | "inCard";
+  unitName?: string;
+  noOfItemsInUnit?: number;
 }
 
 export default function DeleteUnitButton({
   setUnitOrder,
-  unitName,
   listNumber,
-  noOfItemsInUnit,
   mode,
+  unitName: passedUnitName,
+  noOfItemsInUnit: passedNoOfItemsInUnit,
 }: DeleteUnitButtonProps) {
-  const [showConfirmDeleteModal, setShowConfirmDeleteModel] = useState(false);
+  const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
   const { toggleMobileMenu } = useMobileMenu();
   const [updating, setUpdating] = useState(false);
+
+  const context = useUnitContext();
+  const unitName = passedUnitName ?? context.unitName;
+  const noOfItemsInUnit =
+    passedNoOfItemsInUnit !== undefined
+      ? passedNoOfItemsInUnit
+      : context.noOfItemsInUnit;
 
   const removeUnitFromListAction = () => {
     setUpdating(true);
@@ -44,7 +50,7 @@ export default function DeleteUnitButton({
             prevUnitOrder.filter((name) => name !== unitName)
           );
         } else {
-          redirect(paths.listDetailsPath(listNumber));
+          redirect(paths.editListPath(listNumber));
         }
         return "Unit removed! ✅";
       },
@@ -60,66 +66,73 @@ export default function DeleteUnitButton({
       removeUnitFromListAction();
     }
   };
+
   const handleClickDesktop = () => {
-    if (noOfItemsInUnit > 0) {
-      setShowConfirmDeleteModel(true);
-    } else {
-      removeUnitFromListAction();
-    }
+    setShowConfirmDeleteModal(true);
+    // if (noOfItemsInUnit > 0) {
+    //   setShowConfirmDeleteModal(true);
+    // } else {
+    //   removeUnitFromListAction();
+    // }
   };
 
+  let button;
+
+  if (mode === "inCard")
+    button = (
+      <button
+        className="grid size-full place-items-center"
+        onClick={handleClickDesktop}
+        disabled={updating}
+      >
+        <TbTrash className="z-50 size-8" />
+      </button>
+    );
+
   if (mode === "desktop")
-    return (
-      <>
-        <IconSidebarButton
-          type="delete"
-          label="Delete this unit"
-          disabled={updating}
-          onClick={handleClickDesktop}
-        />
-        <ConfirmCancelModal
-          title="Confirm unit deletion"
-          isOpen={showConfirmDeleteModal}
-          setIsOpen={setShowConfirmDeleteModel}
-          closeButton={false}
-          doOnConfirm={removeUnitFromListAction}
-        >
-          <div>
-            This unit contains {noOfItemsInUnit}{" "}
-            {noOfItemsInUnit === 1 ? "item" : "items"}!
-          </div>
-          <div className="mt-2">Are you sure you want to delete it?</div>
-        </ConfirmCancelModal>
-      </>
+    button = (
+      <IconSidebarButton
+        type="delete"
+        label="Delete this unit"
+        disabled={updating}
+        onClick={handleClickDesktop}
+      />
     );
 
   if (mode === "mobile")
-    return (
-      <>
-        {/* // Mobile screens */}
-        <TopContextMenuButton onClick={handleClickMobile} mode="delete" />
-        <Button
-          onClick={(e) => {
-            e.preventDefault();
-            if (noOfItemsInUnit > 0) {
-              if (toggleMobileMenu) toggleMobileMenu();
-            } else {
-              removeUnitFromListAction();
-            }
-          }}
-          className="grid h-full w-12 place-items-center text-grey-800 hover:text-red-500 tablet:hidden"
-          aria-label="Click to delete this unit"
-          noRing
-        >
-          <TbTrash className="h-8 w-8" />
-        </Button>
-        <ConfirmCancelMobileMenu doOnConfirm={removeUnitFromListAction}>
-          <div>
-            This unit contains {noOfItemsInUnit}{" "}
-            {noOfItemsInUnit === 1 ? "item" : "items"}!
-          </div>
-          <div className="mt-8">Are you sure you want to delete it?</div>
-        </ConfirmCancelMobileMenu>
-      </>
+    button = (
+      <TopContextMenuButton
+        onClick={handleClickMobile}
+        mode="delete"
+        target="unit"
+      />
     );
+
+  const modalText = (
+    <>
+      <div>
+        &quot;{unitName}&quot; contains {noOfItemsInUnit}
+        {noOfItemsInUnit === 1 ? " item" : " items"}!
+      </div>
+      <div className="">Are you sure you want to delete it?</div>
+    </>
+  );
+
+  return (
+    <>
+      {button}
+      <ConfirmCancelModal
+        title="Confirm unit deletion"
+        isOpen={showConfirmDeleteModal}
+        setIsOpen={setShowConfirmDeleteModal}
+        closeButton={false}
+        doOnConfirm={removeUnitFromListAction}
+      >
+        {modalText}
+      </ConfirmCancelModal>
+      <ConfirmCancelMobileMenu doOnConfirm={removeUnitFromListAction}>
+        {modalText}
+      </ConfirmCancelMobileMenu>
+    </>
+  );
 }

@@ -9,6 +9,7 @@ import { TbPencil, TbTrash } from "react-icons/tb";
 interface TopContextMenuButtonProps {
   onClick?: MouseEventHandler;
   mode: "delete" | "back" | "edit" | "stop";
+  target?: "list" | "unit";
   link?: string;
   setContextExpanded?: Dispatch<SetStateAction<boolean>>;
   disabled?: boolean;
@@ -18,6 +19,7 @@ export default function TopContextMenuButton({
   onClick,
   mode,
   link,
+  target = "list",
   disabled,
   setContextExpanded,
 }: TopContextMenuButtonProps) {
@@ -29,12 +31,12 @@ export default function TopContextMenuButton({
   const config = {
     delete: {
       icon: <TbTrash className="size-16" />,
-      label: "Delete this list",
+      label: `Delete this ${target}`,
       styles: "bg-red-500 hover:bg-red-600",
     },
     back: {
       icon: <HiArrowLeft className="size-16" />,
-      label: "Back to list overview",
+      label: `Back to ${target} overview`,
       styles:
         "border-4 border-blue-500 text-blue-500 hover:text-white hover:bg-blue-500",
     },
@@ -46,7 +48,7 @@ export default function TopContextMenuButton({
     },
     edit: {
       icon: <TbPencil className="size-16" />,
-      label: "Edit this list",
+      label: `Edit this ${target}`,
       styles: "bg-yellow-500 hover:bg-yellow-600",
     },
   };

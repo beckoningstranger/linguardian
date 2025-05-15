@@ -5,6 +5,7 @@ import React, {
   PropsWithChildren,
   SetStateAction,
   createContext,
+  useCallback,
   useContext,
   useState,
 } from "react";
@@ -23,9 +24,15 @@ const SidebarContext = createContext<SidebarContext>({
 
 export const SidebarContextProvider = ({ children }: PropsWithChildren) => {
   const [showSidebar, setShowSidebar] = useState(false);
-  const toggleSidebar = () => {
-    setShowSidebar((prev) => !prev);
-  };
+
+  const toggleSidebar = useCallback(() => {
+    setShowSidebar((prev) => {
+      document.body.style.position = prev ? "" : "fixed";
+      document.body.style.width = "100%";
+      document.body.style.overflowY = "scroll";
+      return !prev;
+    });
+  }, []);
 
   return (
     <SidebarContext.Provider

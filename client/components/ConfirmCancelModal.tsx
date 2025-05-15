@@ -1,6 +1,8 @@
+"use client";
+
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import Button from "./ui/Button";
 
 interface ConfirmCancelModalProps {
@@ -31,7 +33,7 @@ export default function ConfirmCancelModal({
             <XMarkIcon className="h-8 w-8" />
           </Button>
         )}
-        <DialogPanel className="relative flex w-full max-w-[calc(100%-2rem)] flex-col gap-2 overflow-y-auto rounded-md border bg-white p-4">
+        <DialogPanel className="relative flex w-full max-w-[calc(100%-2rem)] flex-col gap-2 rounded-md border bg-white p-4">
           <DialogTitle className="mb-4 text-center text-2xl font-bold">
             {title}
           </DialogTitle>

@@ -29,7 +29,7 @@ export default function LearningButtonWithExpand({
 
   excludeModes.push(recommendedLearningMode);
   const showExpandButton: boolean = Boolean(
-    unlockedModes.length - excludeModes.length + 1
+    unlockedModes.length - excludeModes.length + 1 > 0
   );
 
   const allLearningModes: LearningMode[] = [
@@ -99,7 +99,7 @@ export default function LearningButtonWithExpand({
           </div>
 
           {/* Divider */}
-          <div className="absolute left-0 top-1/2 h-[64px] w-[1px] -translate-y-1/2 bg-grey-200" />
+          <div className="absolute right-11 top-1/2 h-[64px] w-[1px] -translate-y-1/2 bg-grey-200" />
 
           <Image
             src="/icons/ExpandButton.svg"

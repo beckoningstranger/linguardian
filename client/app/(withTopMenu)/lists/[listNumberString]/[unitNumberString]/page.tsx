@@ -1,19 +1,16 @@
+import { notFound } from "next/navigation";
+
 import ListBarChart from "@/components/Charts/ListBarChart";
 import ListPieChart from "@/components/Charts/ListPieChart";
-import { AllLearningButtonsContainer } from "@/components/Lists/AllLearningButtonsContainer";
-import FlexibleLearningButtons from "@/components/Lists/FlexibleLearningButtons";
-import ItemBackButton from "@/components/Lists/ItemBackButton";
-import Leaderboard from "@/components/Lists/Leaderboard";
-import ListContainer from "@/components/Lists/ListContainer";
-import AllLearningButtons from "@/components/Lists/ListOverview/AllLearningButtons";
-import ListOverviewLearningButtons from "@/components/Lists/ListOverview/ListOverviewLearningButtons";
-import ListOverviewLeftButtons from "@/components/Lists/ListOverview/ListOverViewLeftButtons";
-import UnitDetailsLeftButtons from "@/components/Lists/UnitDetailsLeftButtons";
-import UnitHeader from "@/components/Lists/UnitHeader";
-import { calculateUnitStats } from "@/components/Lists/UnitHelpers";
-import UnitItems from "@/components/Lists/UnitItems";
 import TopContextMenuLoader from "@/components/Menus/TopMenu/TopContextMenuLoader";
+import ListOverviewLearningButtons from "@/components/Lists/ListOverview/ListOverviewLearningButtons";
+import UnitDetailsLeftButtons from "@/components/Lists/UnitDetailsLeftButtons";
+import { calculateUnitStats } from "@/components/Lists/UnitHelpers";
+import Leaderboard from "@/components/Lists/Leaderboard";
+import UnitHeader from "@/components/Lists/UnitHeader";
+import UnitItems from "@/components/Lists/UnitItems";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
+import { UnitContextProvider } from "@/context/UnitContext";
 import {
   getFullyPopulatedListByListNumber,
   getLearningDataForLanguage,
@@ -22,7 +19,6 @@ import { cn } from "@/lib/helperFunctionsClient";
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
 import { LearningMode, ListAndUnitData } from "@/lib/types";
-import { notFound } from "next/navigation";
 
 // export async function generateMetadata({ params }: UnitDetailPageProps) {
 //   const listNumber = parseInt(params.listNumberString);
@@ -108,7 +104,7 @@ export default async function UnitDetailPage({
 
   const userIsAuthor = listData.authors.includes(userId);
 
-  const stats = await calculateUnitStats(
+  const listStats = await calculateUnitStats(
     unitName,
     learningDataForLanguage,
     listData
@@ -125,96 +121,72 @@ export default async function UnitDetailPage({
     unitNumber: unitNumber,
   };
 
+  // const unlockedLearningModesForUser = listData.unlockedReviewModes[userNative];
+
   return (
-    <div className="tablet:flex tablet:justify-center tablet:gap-2 tablet:p-2 desktopxl:grid desktopxl:grid-cols-[100px_minmax(0,1600px)_100px]">
-      <UnitDetailsLeftButtons
-        listNumber={listNumber}
-        unitName={unitName}
-        unitNumber={unitNumber}
-        noOfItemsInUnit={unitItems.length}
-        userIsAuthor={userIsAuthor}
-      />
-      <div
-        className={cn(
-          "justify-center tablet:gap-2",
-          userIsLearningThisList &&
-            "grid grid-cols-1 desktop:grid-rows-[88px_400px] desktopxl:grid-cols-[minmax(0,1200px)_400px] desktopxl:grid-rows-[88px]",
-          !userIsLearningThisList && "flex flex-1 flex-col"
-        )}
-      >
-        <UnitHeader
-          unitNumber={unitNumber}
-          unitName={unitName}
-          itemNumber={unitItems.length}
+    <UnitContextProvider
+      // userIsAuthor={userIsAuthor}
+      // userIsLearningThisList={userIsLearningThisList || false}
+      // listData={listData}
+      // learningDataForLanguage={learningDataForLanguage}
+      // unlockedLearningModesForUser={unlockedLearningModesForUser}
+      // listStats={listStats}
+      // listStatus={"practice"}
+      unitName={unitName}
+      noOfItemsInUnit={unitItems.length}
+    >
+      <div className="mb-24 tablet:flex tablet:justify-center tablet:gap-2 tablet:p-2 desktopxl:grid desktopxl:grid-cols-[100px_minmax(0,1600px)_100px]">
+        <UnitDetailsLeftButtons
           listNumber={listNumber}
-          unitCount={listData.unitOrder.length}
+          unitNumber={unitNumber}
+          userIsAuthor={userIsAuthor}
         />
+        <div
+          className={cn(
+            "justify-center tablet:gap-2",
+            userIsLearningThisList &&
+              "grid grid-cols-1 desktop:grid-rows-[88px_400px] desktopxl:grid-cols-[minmax(0,1200px)_400px] desktopxl:grid-rows-[88px]",
+            !userIsLearningThisList && "flex flex-1 flex-col"
+          )}
+        >
+          <UnitHeader
+            unitNumber={unitNumber}
+            unitName={unitName}
+            itemNumber={unitItems.length}
+            listNumber={listNumber}
+            unitCount={listData.unitOrder.length}
+          />
+          {userIsLearningThisList && (
+            <>
+              <ListBarChart stats={listStats} />
+              <div className="hidden grid-cols-[310px_310px] gap-2 tablet:grid desktop:grid-cols-[400px_400px] desktopxl:col-start-2 desktopxl:grid-rows-[400px_400px]">
+                <ListPieChart mode="unitoverview" stats={listStats} />
+                <Leaderboard mode="unit" />
+              </div>
+            </>
+          )}
+          <UnitItems
+            allLearnedItems={learningDataForLanguage.learnedItems}
+            unitItems={unitItems}
+            userNative={userNative}
+            userIsLearningThisList={userIsLearningThisList}
+            userIsAuthor={listData.authors.includes(userId)}
+            pathToUnit={paths.unitDetailsPath(listNumber, unitNumber)}
+            listAndUnitData={listAndUnitData}
+          />
+        </div>
         {userIsLearningThisList && (
-          <>
-            <ListBarChart stats={stats} />
-            <div className="hidden grid-cols-[310px_310px] gap-2 tablet:grid desktop:grid-cols-[400px_400px] desktopxl:col-start-2 desktopxl:grid-rows-[400px_400px]">
-              <ListPieChart mode="unitoverview" stats={stats} />
-              <Leaderboard mode="unit" />
-            </div>
-          </>
+          <ListOverviewLearningButtons
+            unlockedModes={unlockedModes}
+            listStats={listStats}
+            listNumber={listNumber}
+            unitNumber={unitNumber}
+          />
         )}
-        <UnitItems
-          allLearnedItems={learningDataForLanguage.learnedItems}
-          unitItems={unitItems}
-          userNative={userNative}
-          userIsLearningThisList={userIsLearningThisList}
-          userIsAuthor={listData.authors.includes(userId)}
-          pathToUnit={paths.unitDetailsPath(listNumber, unitNumber)}
-          listAndUnitData={listAndUnitData}
-        />
+        <MobileMenuContextProvider>
+          <TopContextMenuLoader listNumber={listNumber} opacity={90} />
+        </MobileMenuContextProvider>
       </div>
-      {userIsLearningThisList && (
-        <ListOverviewLearningButtons
-          unlockedModes={unlockedModes}
-          listStats={stats}
-          listNumber={listNumber}
-          unitNumber={unitNumber}
-        />
-      )}
-      <MobileMenuContextProvider>
-        <TopContextMenuLoader listNumber={listNumber} opacity={90} />
-      </MobileMenuContextProvider>
-    </div>
+    </UnitContextProvider>
   );
 }
-/* <div className="hidden sm:block">
-              <div className="flex">
-                <div className="m-2 w-1/2 rounded-md bg-slate-100 py-4">
-                </div>
-                <div className="m-2 w-1/2 rounded-md bg-slate-100 py-4">
-                </div>
-              </div>
-              <AllLearningButtonsContainer mode="desktop">
-                <AllLearningButtons
-                  listStats={stats}
-                  listNumber={listNumber}
-                  unlockedLearningModesForUser={unlockedModes}
-                  unitNumber={unitNumber}
-                />
-              </AllLearningButtonsContainer>
-            </div> */
-/* <UnitItems
-          allLearnedItems={learningDataForLanguage.learnedItems}
-          unitItems={unitItems}
-          userNative={userNative}
-          userIsAuthor={listData.authors.includes(userId)}
-          pathToUnit={paths.unitDetailsPath(listNumber, unitNumber)}
-          listAndUnitData={listAndUnitData}
-        /> */
-/* {userIsLearningThisList && (
-          <AllLearningButtonsContainer mode="mobile">
-            <FlexibleLearningButtons
-              stats={stats}
-              status={"practice"}
-              listNumber={listNumber}
-              unlockedModes={unlockedModes}
-            />
-          </AllLearningButtonsContainer>
-        )} */
-/* {userIsLearningThisList && <ListOverviewLearningButtons />} */
-// );

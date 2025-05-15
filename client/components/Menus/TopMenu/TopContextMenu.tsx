@@ -9,17 +9,21 @@ import StopLearningListButton from "@/components/Lists/ListOverview/StopLearning
 import { cn } from "@/lib/helperFunctionsClient";
 import paths from "@/lib/paths";
 import TopContextMenuButton from "./TopContextMenuButton";
+import DeleteUnitButton from "@/components/Lists/DeleteUnitButton";
+import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 
 interface TopContextMenuProps {
   opacity?: 50 | 80 | 90;
   userIsAuthor: boolean;
   userIsLearningList: boolean;
+  editMode?: boolean;
 }
 
 export default function TopContextMenu({
   opacity,
   userIsAuthor,
   userIsLearningList,
+  editMode,
 }: TopContextMenuProps) {
   const currentBaseUrl = usePathname();
   let showTopContextMenu: boolean = false;
@@ -32,30 +36,67 @@ export default function TopContextMenu({
     const urlSegments = currentBaseUrl.split("/");
     const listNumber = Number(urlSegments[2]);
     const unitNumber = Number(urlSegments[3]) || false;
+
     if (!userIsAuthor && !userIsLearningList && !unitNumber) return null;
 
     displayTheseElements = (
       <div className="flex w-full flex-col gap-2 bg-white px-2 py-4">
         {unitNumber && (
           <>
-            <TopContextMenuButton
-              mode="back"
-              link={paths.listDetailsPath(listNumber)}
-              setContextExpanded={setContextExpanded}
-            />
+            {editMode && (
+              <>
+                <TopContextMenuButton
+                  mode="back"
+                  target="unit"
+                  link={paths.unitDetailsPath(listNumber, unitNumber)}
+                  setContextExpanded={setContextExpanded}
+                />
+                <MobileMenuContextProvider>
+                  <DeleteUnitButton listNumber={listNumber} mode="mobile" />
+                </MobileMenuContextProvider>
+              </>
+            )}
+            {!editMode && (
+              <>
+                <TopContextMenuButton
+                  mode="back"
+                  link={paths.listDetailsPath(listNumber)}
+                  setContextExpanded={setContextExpanded}
+                />
+                <TopContextMenuButton
+                  mode="edit"
+                  target="unit"
+                  setContextExpanded={setContextExpanded}
+                  link={paths.editUnitPath(listNumber, unitNumber)}
+                />
+              </>
+            )}
           </>
         )}
         {!unitNumber && (
           <>
-            {userIsLearningList && <StopLearningListButton mode="mobile" />}
+            {!editMode && userIsLearningList && (
+              <StopLearningListButton mode="mobile" />
+            )}
             {userIsAuthor && (
               <>
-                <TopContextMenuButton
-                  mode="edit"
-                  link={paths.editListPath(listNumber)}
-                  setContextExpanded={setContextExpanded}
-                />
-                <DeleteListButton mode="mobile" />
+                {!editMode && (
+                  <TopContextMenuButton
+                    mode="edit"
+                    link={paths.editListPath(listNumber)}
+                    setContextExpanded={setContextExpanded}
+                  />
+                )}
+                {editMode && (
+                  <>
+                    <TopContextMenuButton
+                      mode="back"
+                      target="list"
+                      link={paths.listDetailsPath(listNumber)}
+                    />
+                    <DeleteListButton mode="mobile" />
+                  </>
+                )}
               </>
             )}
           </>

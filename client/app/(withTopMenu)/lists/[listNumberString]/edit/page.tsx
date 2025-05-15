@@ -1,5 +1,17 @@
 import notFound from "@/app/not-found";
-import { getPopulatedList } from "@/lib/fetchData";
+import { getListStats } from "@/components/Lists/ListHelpers";
+import EditListHeader from "@/components/Lists/ListOverview/EditListHeader";
+import EditListUnits from "@/components/Lists/ListOverview/EditListUnits";
+import ListOverviewLeftButtons from "@/components/Lists/ListOverview/ListOverViewLeftButtons";
+import ListUnits from "@/components/Lists/ListOverview/ListUnits";
+import TopContextMenuLoader from "@/components/Menus/TopMenu/TopContextMenuLoader";
+import { ListContextProvider } from "@/context/ListContext";
+import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
+import {
+  fetchAuthors,
+  getLearningDataForLanguage,
+  getPopulatedList,
+} from "@/lib/fetchData";
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
 import { redirect } from "next/navigation";
@@ -21,10 +33,57 @@ export default async function ListEditPage({
 
   if (!list || !user) return notFound();
 
-  // const authorData = await fetchAuthors(list?.authors)
   const userIsAuthor = list?.authors.includes(user.id);
-
   if (!userIsAuthor) redirect(paths.listDetailsPath(listNumber));
 
-  return <div>Edit me</div>;
+  const { authors, unlockedReviewModes, units, language } = list;
+
+  // This should be fetched immediately when getting the data above, saving time
+  const [authorData, learningDataForLanguage] = await Promise.all([
+    fetchAuthors(authors),
+    getLearningDataForLanguage(user.id, list.language.code),
+  ]);
+
+  const userIsLearningThisList =
+    user?.learnedLists[language.code]?.includes(listNumber);
+
+  const userListsForThisLanguage = user?.learnedLists[language.code];
+  const userIsLearningListLanguage =
+    Array.isArray(userListsForThisLanguage) &&
+    userListsForThisLanguage.length > 0;
+
+  const unlockedLearningModesForUser = unlockedReviewModes[user.native.code];
+  const itemIdsInUnits = units.map((item) => item.item._id.toString());
+  const listStats = getListStats(itemIdsInUnits, learningDataForLanguage);
+
+  return (
+    <ListContextProvider
+      userIsAuthor={userIsAuthor}
+      userIsLearningListLanguage={userIsLearningListLanguage}
+      userIsLearningThisList={userIsLearningThisList || false}
+      listData={list}
+      authorData={authorData}
+      learningDataForLanguage={learningDataForLanguage}
+      unlockedLearningModesForUser={unlockedLearningModesForUser}
+      listStats={listStats}
+      listStatus={"practice"}
+    >
+      <div className="mb-24 flex justify-center tablet:gap-2 tablet:py-2 desktop:mb-0">
+        <ListOverviewLeftButtons
+          listNumber={listNumber}
+          userIsAuthor={userIsAuthor}
+          editMode
+        />
+        <div
+          className={`grid grid-cols-1 tablet:grid-cols-[310px_310px] tablet:grid-rows-[182px_340px] tablet:gap-2 desktop:grid-cols-[400px_400px] desktop:grid-rows-[182px_400px] desktopxl:grid-rows-[182px_200px]`}
+        >
+          <EditListHeader />
+          <EditListUnits />
+        </div>
+      </div>
+      <MobileMenuContextProvider>
+        <TopContextMenuLoader listNumber={listNumber} opacity={90} editMode />
+      </MobileMenuContextProvider>
+    </ListContextProvider>
+  );
 }

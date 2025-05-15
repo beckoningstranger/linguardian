@@ -16,6 +16,7 @@ interface UnitItemsProps {
   pathToUnit: string;
   listAndUnitData: ListAndUnitData;
   userIsLearningThisList: boolean;
+  editMode?: boolean;
 }
 
 export interface ItemPlusLearningInfo extends ItemWithPopulatedTranslations {
@@ -32,6 +33,7 @@ export default function UnitItems({
   pathToUnit,
   listAndUnitData,
   userIsLearningThisList,
+  editMode,
 }: UnitItemsProps) {
   const enrichedItems = unitItems.map((item) => {
     const enrichedItem = item as ItemPlusLearningInfo;
@@ -61,7 +63,7 @@ export default function UnitItems({
         key={index}
         pathToUnit={pathToUnit}
         listAndUnitData={listAndUnitData}
-        userIsAuthor={userIsAuthor}
+        editMode={editMode}
       />
     );
     item.learned
@@ -80,7 +82,9 @@ export default function UnitItems({
       )}
     >
       {learnedItems} {unlearnedItems}
-      {userIsAuthor && <ListAddItemButton addToThisList={listAndUnitData} />}
+      {userIsAuthor && editMode && (
+        <ListAddItemButton addToThisList={listAndUnitData} />
+      )}
     </div>
   );
 }

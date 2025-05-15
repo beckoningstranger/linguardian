@@ -6,10 +6,12 @@ import TopContextMenu from "./TopContextMenu";
 interface TopContextMenuLoaderProps {
   listNumber?: number;
   opacity?: 50 | 80 | 90;
+  editMode?: boolean;
 }
 export default async function TopContextMenuLoader({
   listNumber,
   opacity,
+  editMode,
 }: TopContextMenuLoaderProps) {
   if (listNumber) {
     const [user, listData] = await Promise.all([
@@ -28,6 +30,7 @@ export default async function TopContextMenuLoader({
         opacity={opacity}
         userIsAuthor={userIsAuthor}
         userIsLearningList={userIsLearningList || false}
+        editMode={editMode}
       />
     );
   }

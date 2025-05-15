@@ -21,6 +21,7 @@ import {
   getUserOnServer,
   verifyUserIsAuthorAndGetList,
 } from "./helperFunctionsServer";
+import { parsedItemSchema } from "./validations";
 
 const server = process.env.SERVER_URL;
 
@@ -314,7 +315,7 @@ export async function changeListDetails(listDetails: ListDetails) {
     revalidatePath(paths.listDetailsPath(listDetails.listNumber));
     revalidatePath(paths.listsLanguagePath(list.language.code));
     revalidatePath(paths.dashboardLanguagePath(list.language.code));
-    redirect(paths.listDetailsPath(listDetails.listNumber));
+    redirect(paths.editListPath(listDetails.listNumber));
   }
   throw new Error(await response.json());
 }

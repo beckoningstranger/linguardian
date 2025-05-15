@@ -1,24 +1,39 @@
+"use client";
+
+import Button from "@/components/ui/Button";
+import { cn } from "@/lib/helperFunctionsClient";
+import { useEditUnitName } from "@/lib/hooks/useEditUnitName";
 import paths from "@/lib/paths";
 import Link from "next/link";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import Button from "../ui/Button";
-import { cn } from "@/lib/helperFunctionsClient";
+import EditUnitNameForm from "../EditUnit/EditUnitNameForm";
 
-interface UnitHeaderProps {
+interface EditUnitHeaderProps {
   unitName?: string;
   unitNumber: number;
   itemNumber: number;
   listNumber: number;
-  unitCount: number;
+  unitOrder: string[];
 }
 
-export default function UnitHeader({
+export default function EditUnitHeader({
   unitName = "New Unit",
   unitNumber,
   itemNumber,
   listNumber,
-  unitCount,
-}: UnitHeaderProps) {
+  unitOrder,
+}: EditUnitHeaderProps) {
+  const unitCount = unitOrder.length;
+
+  const {
+    editMode,
+    setEditMode,
+    updatedUnitName,
+    setUpdatedUnitName,
+    handleSubmit,
+    editUnitNameAction,
+  } = useEditUnitName({ unitName, unitOrder, listNumber });
+
   return (
     <div className="flex w-full justify-between bg-white/90 text-center tablet:min-w-[620px] tablet:rounded-lg">
       <Link
@@ -39,10 +54,30 @@ export default function UnitHeader({
           <FaArrowLeft className="h-11 w-11" />
         </Button>
       </Link>
-      <div className="flex select-none flex-col justify-center">
-        <div className="text-cxlb">{unitName}</div>
-        <div className="text-cmdr">({itemNumber} items)</div>
-      </div>
+      {!editMode && (
+        <div className="flex select-none flex-col justify-center">
+          <div
+            className="cursor-pointer text-cxlb"
+            onClick={() => setEditMode(true)}
+          >
+            {unitName}
+          </div>
+          <div className="text-cmdr">({itemNumber} items)</div>
+        </div>
+      )}
+      {editMode && (
+        <div className="flex items-center text-cxlb">
+          <EditUnitNameForm
+            handleSubmit={handleSubmit}
+            unitName={unitName}
+            updatedUnitName={updatedUnitName}
+            editMode={editMode}
+            setEditMode={setEditMode}
+            setUpdatedUnitName={setUpdatedUnitName}
+            editUnitNameAction={editUnitNameAction}
+          />
+        </div>
+      )}
       <Link
         href={paths.unitDetailsPath(listNumber, unitNumber + 1)}
         aria-disabled={unitNumber > unitCount - 1}

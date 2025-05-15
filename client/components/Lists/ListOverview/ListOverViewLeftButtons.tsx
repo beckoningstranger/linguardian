@@ -6,23 +6,42 @@ import DeleteListButton from "./DeleteListButton";
 import StartLearningListButton from "./StartLearningListButton";
 import StopLearningListButton from "./StopLearningListButton";
 
+interface ListOverViewLeftButtonsProps {
+  listNumber: number;
+  userIsAuthor: boolean;
+  editMode?: boolean;
+}
+
 export default function ListOverviewLeftButtons({
   listNumber,
   userIsAuthor,
-}: {
-  listNumber: number;
-  userIsAuthor: boolean;
-}) {
+  editMode,
+}: ListOverViewLeftButtonsProps) {
   return (
     <IconSidebar position="left" showOn="tablet">
-      <StartLearningListButton mode="desktop" />
-      <StopLearningListButton mode="desktop" />
-      {userIsAuthor && (
-        <IconSidebarButton type="edit" link={paths.editListPath(listNumber)} />
+      {!editMode && (
+        <>
+          <StartLearningListButton mode="desktop" />
+          <StopLearningListButton mode="desktop" />
+          {userIsAuthor && (
+            <IconSidebarButton
+              type="edit"
+              link={paths.editListPath(listNumber)}
+            />
+          )}
+        </>
       )}
-      <MobileMenuContextProvider>
-        <DeleteListButton mode="desktop" />
-      </MobileMenuContextProvider>
+      {editMode && (
+        <>
+          <IconSidebarButton
+            type="back"
+            link={paths.listDetailsPath(listNumber)}
+          />
+          <MobileMenuContextProvider>
+            <DeleteListButton mode="desktop" />
+          </MobileMenuContextProvider>
+        </>
+      )}
     </IconSidebar>
   );
 }

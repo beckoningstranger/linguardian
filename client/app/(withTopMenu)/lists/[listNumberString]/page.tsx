@@ -50,7 +50,15 @@ export default async function ListPage({
   ]);
   if (!listData) return notFound();
 
-  const { authors, unlockedReviewModes, units, language } = listData;
+  const {
+    name,
+    description,
+    image,
+    authors,
+    unlockedReviewModes,
+    units,
+    language,
+  } = listData;
   const [authorData, learningDataForLanguage] = await Promise.all([
     fetchAuthors(authors),
     getLearningDataForLanguage(user.id, listData.language.code),
@@ -87,9 +95,14 @@ export default async function ListPage({
           userIsAuthor={userIsAuthor}
         />
         <div
-          className={`grid grid-cols-1 tablet:grid-cols-[310px_310px] tablet:grid-rows-[200px_340px] tablet:gap-2 desktop:grid-cols-[400px_400px] desktop:grid-rows-[200px_400px] desktopxl:grid-rows-[200px_200px]`}
+          className={`grid w-full grid-cols-1 tablet:w-auto tablet:grid-cols-[310px_310px] tablet:grid-rows-[182px_340px] tablet:gap-2 desktop:grid-cols-[400px_400px] desktop:grid-rows-[182px_400px] desktopxl:grid-rows-[182px_200px]`}
         >
-          <ListHeader />
+          <ListHeader
+            name={name}
+            description={description}
+            image={image}
+            authorData={authorData}
+          />
           {userIsLearningThisList && (
             <>
               <ListBarChart stats={listStats} />
@@ -97,7 +110,10 @@ export default async function ListPage({
               <Leaderboard mode="list" />
             </>
           )}
-          <ListUnits />
+          <ListUnits
+            listData={listData}
+            learningDataForLanguage={learningDataForLanguage}
+          />
         </div>
         <StartLearningListButton mode="mobile" />
         {userIsLearningThisList && (
