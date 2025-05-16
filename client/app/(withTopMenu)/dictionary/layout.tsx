@@ -6,11 +6,12 @@ interface LayoutProps {
   children: ReactNode;
 }
 
-export default async function ListLayout({ children }: LayoutProps) {
+export default async function DictionaryLayout({ children }: LayoutProps) {
   return (
     <LayoutWithTopMenu
-      bgPicture="/backgrounds/ListDetailsPic16.9.webp"
-      menuOpacity={90}
+      bgPicture="/backgrounds/DictionaryBackground.webp"
+      menuOpacity={80}
+      backGroundOpacity="opacity-90"
     >
       {children}
     </LayoutWithTopMenu>

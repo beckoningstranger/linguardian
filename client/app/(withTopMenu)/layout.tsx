@@ -9,13 +9,11 @@ interface RootLayoutProps {
 
 export default async function LayoutWithTopMenu({ children }: RootLayoutProps) {
   return (
-    <>
-      <ActiveLanguageProvider>
-        <SidebarContextProvider>
-          {children}
-          <div id="PortalOutlet" />
-        </SidebarContextProvider>
-      </ActiveLanguageProvider>
-    </>
+    <ActiveLanguageProvider>
+      <SidebarContextProvider>
+        {children}
+        <div id="PortalOutlet" />
+      </SidebarContextProvider>
+    </ActiveLanguageProvider>
   );
 }
