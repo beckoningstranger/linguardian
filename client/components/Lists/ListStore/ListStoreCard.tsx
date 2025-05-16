@@ -30,7 +30,7 @@ export default function ListStoreCard({
 
   return (
     <Link href={paths.listDetailsPath(listNumber)}>
-      <article className="flex h-[414px] w-[320px] flex-col overflow-hidden rounded-lg shadow-2xl transition-all hover:scale-105 hover:shadow-xl phone:w-[350px] tablet:w-[320px]">
+      <article className="flex h-[430px] w-[320px] flex-col overflow-hidden rounded-lg shadow-2xl transition-all hover:scale-105 hover:shadow-xl phone:w-[350px] tablet:w-[320px]">
         <Image
           src={image}
           alt="Background picture showing the inside of a greenhouse"
@@ -45,7 +45,7 @@ export default function ListStoreCard({
               {authorData.map((data) => data.username).join(" & ") + "'s"}
             </h4>
             <h2
-              className={`h-[56px] text-center font-serif ${
+              className={`h-[54px] grid place-items-center text-center font-serif leading-tight ${
                 title.length > 24 ? "text-hsm" : "text-hmd"
               }`}
             >
@@ -53,8 +53,9 @@ export default function ListStoreCard({
             </h2>
           </div>
           <div className="text-center text-cmdr">
-            <h4>{numberOfItems} items</h4>
-            <h4>{numberOfUnits} units</h4>
+            <h4>
+              {numberOfItems} items in {numberOfUnits} units
+            </h4>
             <h4>{difficulty}</h4>
           </div>
           <h3 className="text-cmdr">{description}</h3>
