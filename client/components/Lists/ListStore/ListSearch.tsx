@@ -1,4 +1,4 @@
-import ListSearchInput from "../ui/ListSearchInput";
+import ListSearchInput from "../../ui/ListSearchInput";
 
 interface ListSearchProps {}
 

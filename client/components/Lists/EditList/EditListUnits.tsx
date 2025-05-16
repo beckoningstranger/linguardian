@@ -13,7 +13,7 @@ import {
 } from "@hello-pangea/dnd";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import EditUnitButton from "./EditUnitButton";
+import EditUnitButton from "../EditUnit/EditUnitButton";
 import NewUnitButton from "./NewUnitButton";
 
 export default function EditListUnits() {

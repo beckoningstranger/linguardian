@@ -3,8 +3,8 @@
 import { ListAndUnitData } from "@/lib/types";
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
-import AddItemDialog from "../Dictionary/AddItemDialog";
-import Button from "../ui/Button";
+import AddItemDialog from "../../Dictionary/AddItemDialog";
+import Button from "../../ui/Button";
 
 interface ListAddItemButtonProps {
   addToThisList: ListAndUnitData;

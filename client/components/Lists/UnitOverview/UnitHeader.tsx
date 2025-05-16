@@ -1,7 +1,7 @@
 import paths from "@/lib/paths";
 import Link from "next/link";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import Button from "../ui/Button";
+import Button from "../../ui/Button";
 import { cn } from "@/lib/helperFunctionsClient";
 
 interface UnitHeaderProps {

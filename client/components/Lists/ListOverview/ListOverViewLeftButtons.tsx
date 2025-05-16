@@ -2,7 +2,7 @@ import IconSidebar from "@/components/IconSidebar/IconSidebar";
 import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import paths from "@/lib/paths";
-import DeleteListButton from "./DeleteListButton";
+import DeleteListButton from "../EditList/DeleteListButton";
 import StartLearningListButton from "./StartLearningListButton";
 import StopLearningListButton from "./StopLearningListButton";
 

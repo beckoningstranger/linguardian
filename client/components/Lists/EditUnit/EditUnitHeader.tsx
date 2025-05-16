@@ -6,7 +6,7 @@ import { useEditUnitName } from "@/lib/hooks/useEditUnitName";
 import paths from "@/lib/paths";
 import Link from "next/link";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import EditUnitNameForm from "../EditUnit/EditUnitNameForm";
+import EditUnitNameForm from "./EditUnitNameForm";
 
 interface EditUnitHeaderProps {
   unitName?: string;

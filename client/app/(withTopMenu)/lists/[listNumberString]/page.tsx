@@ -8,7 +8,7 @@ import {
 import notFound from "@/app/not-found";
 import ListBarChart from "@/components/Charts/ListBarChart";
 import ListPieChart from "@/components/Charts/ListPieChart";
-import Leaderboard from "@/components/Lists/Leaderboard";
+import Leaderboard from "@/components/Lists/ListOverview/Leaderboard";
 import { getListStats } from "@/components/Lists/ListHelpers";
 import ListHeader from "@/components/Lists/ListOverview/ListHeader";
 import ListOverviewLearningButtons from "@/components/Lists/ListOverview/ListOverviewLearningButtons";

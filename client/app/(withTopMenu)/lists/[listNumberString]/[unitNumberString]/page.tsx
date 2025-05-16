@@ -4,11 +4,11 @@ import ListBarChart from "@/components/Charts/ListBarChart";
 import ListPieChart from "@/components/Charts/ListPieChart";
 import TopContextMenuLoader from "@/components/Menus/TopMenu/TopContextMenuLoader";
 import ListOverviewLearningButtons from "@/components/Lists/ListOverview/ListOverviewLearningButtons";
-import UnitDetailsLeftButtons from "@/components/Lists/UnitDetailsLeftButtons";
+import UnitDetailsLeftButtons from "@/components/Lists/UnitOverview/UnitDetailsLeftButtons";
 import { calculateUnitStats } from "@/components/Lists/UnitHelpers";
-import Leaderboard from "@/components/Lists/Leaderboard";
-import UnitHeader from "@/components/Lists/UnitHeader";
-import UnitItems from "@/components/Lists/UnitItems";
+import Leaderboard from "@/components/Lists/ListOverview/Leaderboard";
+import UnitHeader from "@/components/Lists/UnitOverview/UnitHeader";
+import UnitItems from "@/components/Lists/UnitOverview/UnitItems";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { UnitContextProvider } from "@/context/UnitContext";
 import {

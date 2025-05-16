@@ -1,7 +1,7 @@
 import ItemPageContainer from "@/components/Dictionary/ItemPageContainer";
 import ItemPageDEFTRCO from "@/components/Dictionary/ItemPageDEF-TR-CO";
 import ItemPageMain from "@/components/Dictionary/ItemPageMain";
-import ItemBackButton from "@/components/Lists/ItemBackButton";
+import ItemBackButton from "@/components/Dictionary/ItemBackButton";
 import Button from "@/components/ui/Button";
 import { getPopulatedItemBySlug } from "@/lib/fetchData";
 import { getAllUserLanguages } from "@/lib/helperFunctionsServer";

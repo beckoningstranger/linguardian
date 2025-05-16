@@ -5,8 +5,8 @@ import { fetchAuthors, getListsByLanguage } from "@/lib/fetchData";
 import paths from "@/lib/paths";
 import { SupportedLanguage } from "@/lib/types";
 import Button from "@/components/ui/Button";
-import ListStoreCard from "@/components/Lists/ListStoreCard";
-import ListSearch from "@/components/Lists/ListSearch";
+import ListStoreCard from "@/components/Lists/ListStore/ListStoreCard";
+import ListSearch from "@/components/Lists/ListStore/ListSearch";
 import { FaPlus } from "react-icons/fa";
 
 export const metadata: Metadata = {

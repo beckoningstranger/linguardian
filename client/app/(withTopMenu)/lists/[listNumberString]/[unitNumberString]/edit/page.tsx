@@ -1,7 +1,7 @@
-import EditUnitHeader from "@/components/Lists/ListOverview/EditUnitHeader";
-import UnitDetailsLeftButtons from "@/components/Lists/UnitDetailsLeftButtons";
-import UnitHeader from "@/components/Lists/UnitHeader";
-import UnitItems from "@/components/Lists/UnitItems";
+import EditUnitHeader from "@/components/Lists/EditUnit/EditUnitHeader";
+import UnitDetailsLeftButtons from "@/components/Lists/UnitOverview/UnitDetailsLeftButtons";
+import UnitHeader from "@/components/Lists/UnitOverview/UnitHeader";
+import UnitItems from "@/components/Lists/UnitOverview/UnitItems";
 import TopContextMenuLoader from "@/components/Menus/TopMenu/TopContextMenuLoader";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { UnitContextProvider } from "@/context/UnitContext";

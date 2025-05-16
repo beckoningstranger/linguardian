@@ -4,11 +4,11 @@ import paths from "@/lib/paths";
 import { ListAndUnitData } from "@/lib/types";
 import Link from "next/link";
 import { useState } from "react";
-import DeleteItemButton from "./DeleteItemButton";
+import DeleteItemButton from "../EditUnit/DeleteItemButton";
 import UnitItemText from "./UnitItemText";
 import { ItemPlusLearningInfo } from "./UnitItems";
 import { updateRecentDictionarySearches } from "@/lib/actions";
-import { MobileMenuContextProvider } from "../../context/MobileMenuContext";
+import { MobileMenuContextProvider } from "../../../context/MobileMenuContext";
 import Image from "next/image";
 
 interface UnitItemProps {

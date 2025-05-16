@@ -4,12 +4,12 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-import DeleteListButton from "@/components/Lists/ListOverview/DeleteListButton";
+import DeleteListButton from "@/components/Lists/EditList/DeleteListButton";
 import StopLearningListButton from "@/components/Lists/ListOverview/StopLearningListButton";
 import { cn } from "@/lib/helperFunctionsClient";
 import paths from "@/lib/paths";
 import TopContextMenuButton from "./TopContextMenuButton";
-import DeleteUnitButton from "@/components/Lists/DeleteUnitButton";
+import DeleteUnitButton from "@/components/Lists/EditList/DeleteUnitButton";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 
 interface TopContextMenuProps {

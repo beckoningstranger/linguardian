@@ -1,8 +1,8 @@
 import IconSidebar from "@/components/IconSidebar/IconSidebar";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import paths from "@/lib/paths";
-import IconSidebarButton from "../IconSidebar/IconSidebarButton";
-import DeleteUnitButton from "./DeleteUnitButton";
+import IconSidebarButton from "../../IconSidebar/IconSidebarButton";
+import DeleteUnitButton from "../EditList/DeleteUnitButton";
 
 interface UnitDetailsLeftButtonsProps {
   listNumber: number;

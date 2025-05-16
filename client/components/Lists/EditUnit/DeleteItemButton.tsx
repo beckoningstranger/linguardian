@@ -6,8 +6,8 @@ import { ListAndUnitData } from "@/lib/types";
 import { Types } from "mongoose";
 import { MouseEventHandler, useState } from "react";
 import toast from "react-hot-toast";
-import ConfirmCancelMobileMenu from "../ConfirmCancelMobileMenu";
-import ConfirmCancelModal from "../ConfirmCancelModal";
+import ConfirmCancelMobileMenu from "../../ConfirmCancelMobileMenu";
+import ConfirmCancelModal from "../../ConfirmCancelModal";
 import { TbTrash } from "react-icons/tb";
 import { Button } from "@headlessui/react";
 

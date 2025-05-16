@@ -5,8 +5,8 @@ import { Dispatch, SetStateAction } from "react";
 
 import { useListContext } from "@/context/ListContext";
 import { useEditUnitName } from "@/lib/hooks/useEditUnitName";
-import DeleteUnitButton from "../DeleteUnitButton";
-import EditUnitNameForm from "../EditUnit/EditUnitNameForm";
+import DeleteUnitButton from "../EditList/DeleteUnitButton";
+import EditUnitNameForm from "./EditUnitNameForm";
 
 interface EditUnitButtonProps {
   unitName: string;

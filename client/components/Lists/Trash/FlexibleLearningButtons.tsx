@@ -1,9 +1,9 @@
 "use client";
 import { LearningMode, ListStats, ListStatus } from "@/lib/types";
 import { useRef, useState } from "react";
-import ReviewButton from "../ReviewButton";
-import { AllLearningButtonsContainer } from "./AllLearningButtonsContainer";
-import AllLearningButtons from "./ListOverview/AllLearningButtons";
+import ReviewButton from "../../ReviewButton";
+import { AllLearningButtonsContainer } from "../ListOverview/AllLearningButtonsContainer";
+import AllLearningButtons from "../ListOverview/AllLearningButtons";
 
 interface FlexibleLearningButtonsProps {
   status: ListStatus;

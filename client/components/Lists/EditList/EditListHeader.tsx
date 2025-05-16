@@ -3,7 +3,7 @@
 import { useListContext } from "@/context/ListContext";
 import Image from "next/image";
 import ChangeListNameOrDescription from "./ChangeListNameOrDescription";
-import CreatedByLine from "./CreatedByLine";
+import CreatedByLine from "../ListOverview/CreatedByLine";
 
 interface EditListHeaderProps {}
 

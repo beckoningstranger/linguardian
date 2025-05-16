@@ -1,9 +1,8 @@
 import notFound from "@/app/not-found";
+import EditListHeader from "@/components/Lists/EditList/EditListHeader";
+import EditListUnits from "@/components/Lists/EditList/EditListUnits";
 import { getListStats } from "@/components/Lists/ListHelpers";
-import EditListHeader from "@/components/Lists/ListOverview/EditListHeader";
-import EditListUnits from "@/components/Lists/ListOverview/EditListUnits";
 import ListOverviewLeftButtons from "@/components/Lists/ListOverview/ListOverViewLeftButtons";
-import ListUnits from "@/components/Lists/ListOverview/ListUnits";
 import TopContextMenuLoader from "@/components/Menus/TopMenu/TopContextMenuLoader";
 import { ListContextProvider } from "@/context/ListContext";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";

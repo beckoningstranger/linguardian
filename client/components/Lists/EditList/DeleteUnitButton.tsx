@@ -8,10 +8,10 @@ import { TbTrash } from "react-icons/tb";
 import { useMobileMenu } from "@/context/MobileMenuContext";
 import { removeUnitFromList } from "@/lib/actions";
 import paths from "@/lib/paths";
-import ConfirmCancelMobileMenu from "../ConfirmCancelMobileMenu";
-import ConfirmCancelModal from "../ConfirmCancelModal";
-import IconSidebarButton from "../IconSidebar/IconSidebarButton";
-import TopContextMenuButton from "../Menus/TopMenu/TopContextMenuButton";
+import ConfirmCancelMobileMenu from "../../ConfirmCancelMobileMenu";
+import ConfirmCancelModal from "../../ConfirmCancelModal";
+import IconSidebarButton from "../../IconSidebar/IconSidebarButton";
+import TopContextMenuButton from "../../Menus/TopMenu/TopContextMenuButton";
 import { useUnitContext } from "@/context/UnitContext";
 
 interface DeleteUnitButtonProps {
