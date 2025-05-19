@@ -5,6 +5,7 @@ import paths from "@/lib/paths";
 import { DictionarySearchResult } from "@/lib/types";
 import Link from "next/link";
 import SearchResultItem from "./SearchResultItem";
+import Masonry from "react-responsive-masonry";
 
 interface SearchResultsProps {
   results: DictionarySearchResult[];
@@ -23,7 +24,7 @@ export default function SearchResults({
   doAfterClickOnSearchResult,
 }: SearchResultsProps) {
   return (
-    <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
+    <Masonry columnsCount={3} gutter="8px" sequential>
       {results.map((result) => {
         return result && mode === "searchResultIsLinkToItemPage" ? (
           <Link
@@ -32,6 +33,7 @@ export default function SearchResults({
             onClick={async () =>
               await updateRecentDictionarySearches(result.slug)
             }
+            className="w-full"
           >
             <SearchResultItem getFlagCode={getFlagCode} result={result} />
           </Link>
@@ -47,6 +49,6 @@ export default function SearchResults({
           </div>
         );
       })}
-    </div>
+    </Masonry>
   );
 }
