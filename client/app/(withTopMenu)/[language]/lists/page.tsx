@@ -1,13 +1,17 @@
 import Link from "next/link";
 import { Metadata } from "next";
+import { FaPlus } from "react-icons/fa";
 
-import { fetchAuthors, getListsByLanguage } from "@/lib/fetchData";
+import {
+  fetchAuthors,
+  getLanguageFeaturesForLanguage,
+  getListsByLanguage,
+} from "@/lib/fetchData";
 import paths from "@/lib/paths";
 import { SupportedLanguage } from "@/lib/types";
 import Button from "@/components/ui/Button";
 import ListStoreCard from "@/components/Lists/ListStore/ListStoreCard";
 import ListSearch from "@/components/Lists/ListStore/ListSearch";
-import { FaPlus } from "react-icons/fa";
 
 export const metadata: Metadata = {
   title: "Lists",
@@ -25,9 +29,10 @@ interface ListStoreProps {
 // }
 
 export default async function ListStore({ params }: ListStoreProps) {
-  const listsForLanguage = await getListsByLanguage(
-    params?.language as SupportedLanguage
-  );
+  const [listsForLanguage, languageFeature] = await Promise.all([
+    getListsByLanguage(params?.language as SupportedLanguage),
+    getLanguageFeaturesForLanguage(params?.language as SupportedLanguage),
+  ]);
 
   const renderedLists = listsForLanguage
     ? await Promise.all(
@@ -46,7 +51,7 @@ export default async function ListStore({ params }: ListStoreProps) {
 
   return (
     <div className="flex flex-col">
-      <ListSearch />
+      <ListSearch languageName={languageFeature?.langName} />
       <div className="flex flex-wrap justify-center gap-4 px-6 py-4 tablet:justify-start tablet:gap-6 desktop:gap-6 desktop:px-14">
         {renderedLists}
       </div>

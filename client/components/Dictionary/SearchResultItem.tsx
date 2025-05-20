@@ -1,5 +1,6 @@
-import { DictionarySearchResult } from "@/lib/types";
 import Flag from "react-world-flags";
+
+import { DictionarySearchResult } from "@/lib/types";
 
 interface SearchResultItemProps {
   getFlagCode: Function;
@@ -11,21 +12,19 @@ export default function SearchResultItem({
   result,
 }: SearchResultItemProps) {
   return (
-    <div
-      className={`flex items-center gap-1 rounded-md bg-white/90 px-2 py-2 text-xl`}
-    >
+    <div className="duration-400 relative flex min-h-[110px] w-full flex-col gap-1 rounded-md bg-white/90 px-6 py-4 transition-colors hover:bg-white">
+      <p className="max-w-[340px] font-serif text-hmd leading-tight">
+        {result.name}
+      </p>
+      <p className="font-IPA text-cmdr text-grey-700">
+        {result.IPA && result.IPA.length > 0 ? `/${result.IPA}/` : null}
+      </p>
+      <p className="text-cmdr">{result.partOfSpeech}</p>
       <Flag
         code={getFlagCode(result.language)}
-        className="h-12 w-12 rounded-full object-cover"
+        className="absolute right-2 top-4 size-20 rounded-full object-cover"
       />
-      <div className="ml-2 flex flex-col gap-1">
-        <div className="text-wrap text-sm">{result.name}</div>
-        <div className="text-xs text-slate-300">
-          {result.IPA && result.IPA.length > 0 ? `/${result.IPA}/` : null}
-        </div>
-        <div className="text-xs text-slate-700">{result.partOfSpeech}</div>
-        <div className="text-wrap text-xs">{result.definition}</div>
-      </div>
+      <p className="pt-2">{result.definition}</p>
     </div>
   );
 }

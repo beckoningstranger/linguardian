@@ -11,12 +11,10 @@ export default async function DictionaryPage() {
   ]);
 
   return (
-    <div className="md:mx-12">
-      <Search
-        searchLanguages={allUserLanguages}
-        mode="searchResultIsLinkToItemPage"
-        recentSearches={recentSearches}
-      />
-    </div>
+    <Search
+      searchLanguages={allUserLanguages}
+      mode="searchResultIsLinkToItemPage"
+      recentSearches={recentSearches}
+    />
   );
 }

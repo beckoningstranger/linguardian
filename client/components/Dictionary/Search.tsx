@@ -1,13 +1,14 @@
 "use client";
 
+import Link from "next/link";
+import { useState } from "react";
+
 import {
   DictionarySearchResult,
   LanguageWithFlagAndName,
   ListAndUnitData,
   SupportedLanguage,
 } from "@/lib/types";
-import Link from "next/link";
-import { useState } from "react";
 import { useDebounce } from "use-debounce";
 import RecentSearches from "./RecentSearches";
 import SearchBox from "./SearchBox";
@@ -46,7 +47,7 @@ export default function Search({
   };
 
   return (
-    <div className="mx-1 grid gap-y-1">
+    <>
       <SearchBox
         query={query}
         debouncedQuery={debouncedQuery}
@@ -56,7 +57,7 @@ export default function Search({
         searchLanguages={searchLanguages}
         getFlagCode={getFlagCode}
       />
-      {searchResults && searchResults.length > 0 && (
+      {searchResults?.length > 0 && (
         <SearchResults
           results={searchResults}
           getFlagCode={getFlagCode}
@@ -87,6 +88,6 @@ export default function Search({
             </Link>
           </Button>
         )}
-    </div>
+    </>
   );
 }
