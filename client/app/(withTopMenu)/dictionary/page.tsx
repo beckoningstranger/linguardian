@@ -11,10 +11,12 @@ export default async function DictionaryPage() {
   ]);
 
   return (
-    <Search
-      searchLanguages={allUserLanguages}
-      mode="searchResultIsLinkToItemPage"
-      recentSearches={recentSearches}
-    />
+    <>
+      <Search
+        searchLanguages={allUserLanguages}
+        mode="searchResultIsLinkToItemPage"
+        recentSearches={recentSearches}
+      />
+    </>
   );
 }

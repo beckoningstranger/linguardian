@@ -25,6 +25,7 @@ import {
   ParsedItem,
 } from "./types.js";
 import { parsedItemSchema } from "./validations.js";
+import { siteSettings } from "./siteSettings.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -49,6 +50,12 @@ export async function parseCSV(filename: string, newList: List) {
           normalizedName: normalizeString(data.name),
           slug: slugifyString(data.name, newList.language.code),
           language: newList.language.code,
+          languageName: siteSettings.languageFeatures.find(
+            (lang) => lang.langCode === newList.language.code
+          )?.langName!,
+          flagCode: siteSettings.languageFeatures.find(
+            (lang) => lang.langCode === newList.language.code
+          )?.flagCode!,
           partOfSpeech: data.partOfSpeech,
           case:
             data.case && data.case.length > 0 ? (data.case as Case) : undefined,
@@ -220,6 +227,12 @@ async function harvestItemsWithoutTranslations(
             normalizedName: normalizeString(translation),
             slug: slugifyString(translation, language),
             language: language,
+            languageName: siteSettings.languageFeatures.find(
+              (lang) => lang.langCode === language
+            )?.langName!,
+            flagCode: siteSettings.languageFeatures.find(
+              (lang) => lang.langCode === language
+            )?.flagCode!,
             partOfSpeech: item.partOfSpeech,
             // Add lemma object ids
             lemmas: allFoundLemmaObjectIds,

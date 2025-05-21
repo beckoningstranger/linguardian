@@ -1,14 +1,14 @@
-import ItemPageContainer from "@/components/Dictionary/ItemPageContainer";
+import Link from "next/link";
+
 import ItemPageDEFTRCO from "@/components/Dictionary/ItemPageDEF-TR-CO";
 import ItemPageMain from "@/components/Dictionary/ItemPageMain";
-import ItemBackButton from "@/components/Dictionary/ItemBackButton";
+import IconSidebar from "@/components/IconSidebar/IconSidebar";
+import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
 import Button from "@/components/ui/Button";
 import { getPopulatedItemBySlug } from "@/lib/fetchData";
 import { getAllUserLanguages } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
 import { SlugLanguageObject } from "@/lib/types";
-import Link from "next/link";
-import { MdEdit } from "react-icons/md";
 
 export const metadata = { title: "Dictionary" };
 
@@ -62,30 +62,36 @@ export default async function ItemPage({
     );
 
   return (
-    <ItemPageContainer>
-      <ItemBackButton path={comingFrom} />
-      <ItemPageMain
-        itemName={item.name}
-        partOfSpeech={item.partOfSpeech}
-        gender={item.gender}
-        case={item.case}
-        IPA={item.IPA}
-        pluralForm={item.pluralForm}
-        tags={item.tags}
-      />
-      <ItemPageDEFTRCO
-        definition={item.definition}
-        translations={item.translations}
-      />
-      <Link
-        href={
-          paths.editDictionaryItemPath(item.slug) + `?comingFrom=${comingFrom}`
-        }
-      >
-        <Button intent="bottomRightButton" aria-label="Edit this item">
-          <MdEdit className="h-8 w-8" />
-        </Button>
-      </Link>
-    </ItemPageContainer>
+    <div className="flex tablet:pl-2">
+      <div className="py-2">
+        <IconSidebar position="left" showOn="tablet">
+          <IconSidebarButton
+            type="back"
+            label={comingFrom ? "Back to list" : "Back to dictionary"}
+            link={comingFrom || paths.dictionaryPath()}
+          />
+          <IconSidebarButton
+            type="edit"
+            label="Edit this item"
+            link={paths.editDictionaryItemPath(slug)}
+          />
+        </IconSidebar>
+      </div>
+      <div className="min-h-[calc(100vh-112px)] w-full bg-white/80 px-4 pt-2 tablet:ml-2 tablet:pl-8">
+        <ItemPageMain
+          itemName={item.name}
+          partOfSpeech={item.partOfSpeech}
+          gender={item.gender}
+          case={item.case}
+          IPA={item.IPA}
+          pluralForm={item.pluralForm}
+          tags={item.tags}
+        />
+        <ItemPageDEFTRCO
+          definition={item.definition}
+          translations={item.translations}
+        />
+      </div>
+    </div>
   );
 }

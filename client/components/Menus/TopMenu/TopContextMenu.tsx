@@ -14,9 +14,11 @@ import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 
 interface TopContextMenuProps {
   opacity?: 50 | 80 | 90;
-  userIsAuthor: boolean;
-  userIsLearningList: boolean;
+  userIsAuthor?: boolean;
+  userIsLearningList?: boolean;
   editMode?: boolean;
+  comingFrom?: string;
+  itemSlug?: string;
 }
 
 export default function TopContextMenu({
@@ -24,6 +26,8 @@ export default function TopContextMenu({
   userIsAuthor,
   userIsLearningList,
   editMode,
+  comingFrom,
+  itemSlug,
 }: TopContextMenuProps) {
   const currentBaseUrl = usePathname();
   let showTopContextMenu: boolean = false;
@@ -40,7 +44,7 @@ export default function TopContextMenu({
     if (!userIsAuthor && !userIsLearningList && !unitNumber) return null;
 
     displayTheseElements = (
-      <div className="flex w-full flex-col gap-2 bg-white px-2 py-4">
+      <>
         {unitNumber && (
           <>
             {editMode && (
@@ -101,13 +105,26 @@ export default function TopContextMenu({
             )}
           </>
         )}
-      </div>
+      </>
     );
   }
 
-  if (currentBaseUrl.includes("dictionary/")) {
+  if (currentBaseUrl.includes("dictionary/") && itemSlug) {
     showTopContextMenu = true;
-    displayTheseElements = <div>dictionary</div>;
+    displayTheseElements = (
+      <>
+        <TopContextMenuButton
+          mode="back"
+          target="item"
+          link={comingFrom || paths.dictionaryPath()}
+        />
+        <TopContextMenuButton
+          mode="edit"
+          target="item"
+          link={paths.editDictionaryItemPath(itemSlug)}
+        />
+      </>
+    );
   }
 
   return (
@@ -134,7 +151,9 @@ export default function TopContextMenu({
             `bg-white/${opacity}`
           )}
         >
-          {displayTheseElements}
+          <div className="flex w-full flex-col gap-2 bg-white px-2 py-4">
+            {displayTheseElements}
+          </div>
         </div>
       )}
     </>

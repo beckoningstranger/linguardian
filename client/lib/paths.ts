@@ -6,6 +6,7 @@ const paths = {
     `/${language}/dashboard`,
   dictionaryPath: () => `/dictionary`,
   dictionaryItemPath: (slug: string) => `/dictionary/${slug}`,
+  addItemToDictionaryPath: () => "/dictionary/new",
   editDictionaryItemPath: (slug: string) => `/dictionary/edit/${slug}`,
   editListPath: (listNumber: number) => `/lists/${listNumber}/edit`,
   editUnitPath: (listNumber: number, unitNumber: number) =>

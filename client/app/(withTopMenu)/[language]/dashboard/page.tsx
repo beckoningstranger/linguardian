@@ -1,10 +1,11 @@
+import { redirect } from "next/navigation";
+
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import {
   LearningDataForLanguage,
   PopulatedList,
   SupportedLanguage,
 } from "@/lib/types";
-import { redirect } from "next/navigation";
 import Dashboard from "../../../../components/Dashboard/Dashboard";
 import { getDashboardDataForUser } from "../../../../lib/fetchData";
 import paths from "../../../../lib/paths";

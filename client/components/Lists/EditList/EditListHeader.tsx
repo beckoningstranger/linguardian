@@ -12,7 +12,7 @@ export default function EditListHeader({}: EditListHeaderProps) {
     listData: {
       name,
       listNumber,
-      description = "Dans Ensemble, c’est tout, quatre personnages blessés – Camille, Philibert, Franck et Paulette – trouvent espoir et bonheur en vivant ensemble...",
+      description,
       image = "/images/ListDefaultImage.webp",
       units,
     },

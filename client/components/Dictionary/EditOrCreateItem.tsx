@@ -1,5 +1,16 @@
 "use client";
 
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useState } from "react";
+
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "@headlessui/react";
+import toast from "react-hot-toast";
+import { GiSaveArrow } from "react-icons/gi";
+import { IoArrowBack } from "react-icons/io5";
+
 import { submitItemCreateOrEdit } from "@/lib/actions";
 import { setErrorsFromBackend } from "@/lib/helperFunctionsClient";
 import paths from "@/lib/paths";
@@ -12,15 +23,6 @@ import {
   SupportedLanguage,
 } from "@/lib/types";
 import { itemSchemaWithPopulatedTranslations } from "@/lib/validations";
-import { Input } from "@headlessui/react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import toast from "react-hot-toast";
-import { GiSaveArrow } from "react-icons/gi";
-import { IoArrowBack } from "react-icons/io5";
 import Spinner from "../Spinner";
 import Button from "../ui/Button";
 import ComboBoxWrapper from "./ComboBoxWrapper";
@@ -47,9 +49,16 @@ export default function EditOrCreateItem({
     language:
       addToThisList?.languageWithFlagAndName.code ||
       seperatedUserLanguages.learnedLanguages[0].code,
+
     partOfSpeech: "noun",
     slug: "new-item",
     translations: {},
+    flagCode:
+      addToThisList?.languageWithFlagAndName.flag ||
+      seperatedUserLanguages.learnedLanguages[0].flag,
+    languageName:
+      addToThisList?.languageWithFlagAndName.name ||
+      seperatedUserLanguages.learnedLanguages[0].name,
   },
   allLanguageFeatures,
 }: EditOrCreateItemProps) {
@@ -90,6 +99,8 @@ export default function EditOrCreateItem({
     hasCases,
     tags: langTags,
     ipa,
+    langName,
+    flagCode,
   } = featuresForItemLanguage;
   const {
     control,
@@ -118,6 +129,8 @@ export default function EditOrCreateItem({
   });
 
   const onSubmit = async (data: ItemWithPopulatedTranslations) => {
+    data.languageName = featuresForItemLanguage.langName;
+    data.flagCode = featuresForItemLanguage.flagCode;
     toast.promise(submitItemCreateOrEdit(data, slug, addToThisList), {
       loading: "Updating...",
       success: (result) => {

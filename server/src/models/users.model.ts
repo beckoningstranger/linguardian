@@ -55,12 +55,26 @@ export async function setLearnedLanguagesForUserId(
   learnedLanguages: LanguageWithFlagAndName[]
 ) {
   try {
+    const user = await Users.findOne({ id: userId }).lean();
+
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found.`);
+    }
+
+    const updates: Record<string, any> = {
+      learnedLanguages,
+    };
+
+    learnedLanguages.forEach((lang) => {
+      const key = `learnedLists.${lang.code}`;
+      const alreadyDefined = user.learnedLists?.[lang.code];
+      if (!alreadyDefined) updates[key] = [];
+    });
+
     return await Users.updateOne(
       { id: userId },
       {
-        $set: {
-          learnedLanguages,
-        },
+        $set: updates,
       }
     );
   } catch (err) {
@@ -280,6 +294,7 @@ export async function createUser(registrationData: RegisterSchema) {
       ? await bcrypt.hash(registrationData.password, 10)
       : undefined,
   };
+  console.log(userDataPWEncryptedWithUsernameSlug);
 
   return await Users.create(userDataPWEncryptedWithUsernameSlug);
 }

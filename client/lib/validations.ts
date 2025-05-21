@@ -92,6 +92,8 @@ const itemSchemaWithoutTranslations = z.object({
   name: z.string().max(60, "Item names can be no longer than 60 characters"),
   normalizedName: z.string().max(60),
   language: z.custom<SupportedLanguage>(),
+  languageName: z.string(),
+  flagCode: z.string(),
   partOfSpeech: z.enum([
     "noun",
     "pronoun",

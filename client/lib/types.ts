@@ -210,6 +210,8 @@ export interface DictionarySearchResult {
   IPA?: string[];
   definition?: string[];
   language: SupportedLanguage;
+  languageName: string;
+  flagCode: string;
 }
 
 export interface LanguageWithFlagAndName {

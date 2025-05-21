@@ -1,9 +1,10 @@
 "use client";
-import { createList } from "@/lib/actions";
-import { SupportedLanguage } from "@/lib/types";
-import { Input, Textarea } from "@headlessui/react";
 import { FieldValues, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { Input, Textarea } from "@headlessui/react";
+
+import { createList } from "@/lib/actions";
+import { SupportedLanguage } from "@/lib/types";
 import Button from "./ui/Button";
 
 interface createNewListFormProps {
@@ -36,7 +37,7 @@ export default function CreateNewListForm({
     }
 
     toast.promise(createList(formData), {
-      loading: "Creating a new list, please be patient.",
+      loading: "Creating a new list, please be patient...",
       success: "List created! 🎉",
       error: (error) => error.toString(),
     });
@@ -73,7 +74,7 @@ export default function CreateNewListForm({
         <p className="text-sm text-red-500">{`${errors.listName.message}`}</p>
       )}
       <Textarea
-        {...register("listDescription", {
+        {...register("description", {
           maxLength: {
             value: 500,
             message: "List descriptions can be no longer than 500 characters",

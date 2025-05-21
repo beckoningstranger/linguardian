@@ -1,6 +1,7 @@
 import {
   DictionarySearchResult,
   FullyPopulatedList,
+  ItemWithPopulatedTranslations,
   LanguageFeatures,
   LearningDataForLanguage,
   LearningMode,
@@ -214,7 +215,7 @@ export async function getPopulatedItemBySlug(
     );
     if (!response.ok) throw new Error(response.statusText);
     const responseData = await response.json();
-    return responseData;
+    return responseData as ItemWithPopulatedTranslations;
   } catch (err) {
     console.error(`Error looking up item with slug ${slug}: ${err}`);
   }

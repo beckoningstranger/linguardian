@@ -65,9 +65,10 @@ export default async function ItemPageDEFTRCO({
             type={
               `Translation (` +
               (await getLanguageName(
-                translationItemArrays[index][0].props.href
-                  .split("/")[2]
-                  .slice(0, 2)
+                translationItemArrays[0][0].key?.slice(0, 2)!
+                // translationItemArrays[index][0].props.href
+                //   .split("/")[2]
+                //   .slice(0, 2)
               )) +
               ")"
             }

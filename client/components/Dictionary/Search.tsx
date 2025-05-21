@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { FaPlus } from "react-icons/fa";
 
 import {
   DictionarySearchResult,
@@ -14,6 +15,7 @@ import RecentSearches from "./RecentSearches";
 import SearchBox from "./SearchBox";
 import SearchResults from "./SearchResults";
 import Button from "../ui/Button";
+import paths from "@/lib/paths";
 
 interface SearchProps {
   searchLanguages: LanguageWithFlagAndName[];
@@ -88,6 +90,13 @@ export default function Search({
             </Link>
           </Button>
         )}
+      {searchResults?.length > 0 && (
+        <Link href={paths.addItemToDictionaryPath()}>
+          <Button intent="bottomRightButton">
+            <FaPlus className="h-8 w-8 font-semibold text-white" />
+          </Button>
+        </Link>
+      )}
     </>
   );
 }

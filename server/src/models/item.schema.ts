@@ -16,6 +16,14 @@ const itemSchema = new Schema<Item>({
     type: String,
     required: true,
   },
+  languageName: {
+    type: String,
+    required: true,
+  },
+  flagCode: {
+    type: String,
+    required: true,
+  },
   partOfSpeech: {
     type: String,
     required: true,
