@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@headlessui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { GiSaveArrow } from "react-icons/gi";
 import { IoArrowBack } from "react-icons/io5";
@@ -99,8 +99,6 @@ export default function EditOrCreateItem({
     hasCases,
     tags: langTags,
     ipa,
-    langName,
-    flagCode,
   } = featuresForItemLanguage;
   const {
     control,
@@ -124,6 +122,8 @@ export default function EditOrCreateItem({
       definition,
       tags,
       translations,
+      languageName: "",
+      flagCode: "",
     },
     mode: "onChange",
   });
@@ -143,6 +143,10 @@ export default function EditOrCreateItem({
       error: (err) => err.toString(),
     });
   };
+
+  console.log("submitting", isSubmitting, "dirty?", isDirty, "valid", isValid);
+
+  console.log("errors", Object.keys(errors).length, errors);
 
   return (
     <EditOrCreatePageContainer>
