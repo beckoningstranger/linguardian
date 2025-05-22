@@ -6,7 +6,7 @@ import { PlusCircleIcon } from "@heroicons/react/20/solid";
 import { useEffect, useState } from "react";
 import { FieldErrors, FieldValues } from "react-hook-form";
 import PickMultipleOptions from "./PickMultipleOptions";
-import { FormErrors } from "./FormErrors";
+import { FormErrors } from "../../ui/FormErrors";
 
 interface PickMultipleProps {
   setValue: Function;

@@ -14,8 +14,8 @@ import { useDebounce } from "use-debounce";
 import RecentSearches from "./RecentSearches";
 import SearchBox from "./SearchBox";
 import SearchResults from "./SearchResults";
-import Button from "../ui/Button";
 import paths from "@/lib/paths";
+import Button from "@/components/ui/Button";
 
 interface SearchProps {
   searchLanguages: LanguageWithFlagAndName[];

@@ -1,4 +1,4 @@
-import EditOrCreateItem from "@/components/Dictionary/EditOrCreateItem";
+import EditOrCreateItem from "@/components/Dictionary/EditItemPage/EditOrCreateItem";
 import { getAllLanguageFeatures } from "@/lib/fetchData";
 import { getSeperatedUserLanguages } from "@/lib/helperFunctionsServer";
 

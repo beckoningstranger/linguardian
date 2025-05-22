@@ -23,15 +23,14 @@ import {
   SupportedLanguage,
 } from "@/lib/types";
 import { itemSchemaWithPopulatedTranslations } from "@/lib/validations";
-import Spinner from "../Spinner";
-import Button from "../ui/Button";
-import ComboBoxWrapper from "./ComboBoxWrapper";
-import EditOrCreatePageContainer from "./EditOrCreatePageContainer";
 import LanguagePicker from "./EditOrCreatePageLanguagePicker";
 import EnterMultiple from "./EnterMultiple";
-import { FormErrors } from "./FormErrors";
+import { FormErrors } from "../../ui/FormErrors";
 import ManageTranslations from "./ManageTranslations";
 import PickMultiple from "./PickMultiple";
+import Button from "@/components/ui/Button";
+import Spinner from "@/components/Spinner";
+import ComboBoxWrapper from "./ComboBoxWrapper";
 
 interface EditOrCreateItemProps {
   seperatedUserLanguages: SeperatedUserLanguages;
@@ -149,7 +148,7 @@ export default function EditOrCreateItem({
   console.log("errors", Object.keys(errors).length, errors);
 
   return (
-    <EditOrCreatePageContainer>
+    <div className="my-4 flex h-[calc(100vh-7.5rem)] flex-col gap-y-2 px-4">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="mb-20 flex flex-col gap-x-4 gap-y-2"
@@ -320,7 +319,7 @@ export default function EditOrCreateItem({
           />
         </div>
       </form>
-    </EditOrCreatePageContainer>
+    </div>
   );
 
   function getTranslationsForUserLanguages() {

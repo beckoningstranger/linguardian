@@ -1,4 +1,4 @@
-import Search from "@/components/Dictionary/Search";
+import Search from "@/components/Dictionary/Search/Search";
 import { getRecentDictionarySearches } from "@/lib/fetchData";
 import { getAllUserLanguages } from "@/lib/helperFunctionsServer";
 
@@ -11,12 +11,10 @@ export default async function DictionaryPage() {
   ]);
 
   return (
-    <>
-      <Search
-        searchLanguages={allUserLanguages}
-        mode="searchResultIsLinkToItemPage"
-        recentSearches={recentSearches}
-      />
-    </>
+    <Search
+      searchLanguages={allUserLanguages}
+      mode="searchResultIsLinkToItemPage"
+      recentSearches={recentSearches}
+    />
   );
 }

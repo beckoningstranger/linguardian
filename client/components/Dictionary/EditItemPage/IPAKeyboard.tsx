@@ -4,8 +4,8 @@ import { useMobileMenu } from "@/context/MobileMenuContext";
 import { IPA } from "@/lib/types";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { Dispatch, SetStateAction, useEffect } from "react";
-import MobileMenu from "../Menus/MobileMenu/MobileMenu";
 import IPAKeys from "./IPAKeys";
+import MobileMenu from "@/components/Menus/MobileMenu/MobileMenu";
 
 interface IPAKeyboardProps {
   IPA: IPA;
@@ -42,7 +42,7 @@ export default function IPAKeyboard({
           {IPA?.rare && IPA.rare.length > 0 && <StyledTab label="Rare" />}
           <StyledTab label="Helpers" />
         </TabList>
-        <TabPanels className="h-full px-2 font-voces font-semibold">
+        <TabPanels className="font-voces h-full px-2 font-semibold">
           <PanelWithIPAKeys IPASetOfKeys="consonants" />
           <PanelWithIPAKeys IPASetOfKeys="vowels" />
           {IPA?.rare && IPA.rare.length > 0 && (

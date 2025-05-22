@@ -9,7 +9,6 @@ import { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { FaFacebook } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import { FormErrors } from "../Dictionary/FormErrors";
 import Spinner from "../Spinner";
 import Button from "../ui/Button";
 import {
@@ -17,6 +16,7 @@ import {
   LandingPageFormHeader,
   LandingPageInput,
 } from "./LandingPageComponents";
+import { FormErrors } from "../ui/FormErrors";
 
 export default function LoginForm() {
   const [signInError, setSignInError] = useState("");

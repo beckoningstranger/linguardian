@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useEffect } from "react";
 
 import { findItems } from "@/lib/actions";
 import { DictionarySearchResult, LanguageWithFlagAndName } from "@/lib/types";
-import SearchInput from "../ui/SearchInput";
+import SearchInput from "@/components/ui/SearchInput";
 
 interface SearchBoxProps {
   query: string;

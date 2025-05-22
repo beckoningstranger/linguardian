@@ -1,5 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { Dispatch, SetStateAction } from "react";
+import toast from "react-hot-toast";
+import { XMarkIcon } from "@heroicons/react/20/solid";
+import { Button, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+
 import { addItemToList } from "@/lib/actions";
 import paths from "@/lib/paths";
 import {
@@ -10,13 +17,7 @@ import {
   SupportedLanguage,
   User,
 } from "@/lib/types";
-import { Button, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { XMarkIcon } from "@heroicons/react/20/solid";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { Dispatch, SetStateAction } from "react";
-import toast from "react-hot-toast";
-import Search from "./Search";
+import Search from "../Search/Search";
 
 interface AddItemDialogProps {
   mode: "addAsTranslation" | "addToList";

@@ -5,10 +5,10 @@ import { Button } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/16/solid";
 import { useEffect, useState } from "react";
 import { FieldErrors, FieldValues } from "react-hook-form";
-import { MobileMenuContextProvider } from "../../context/MobileMenuContext";
 import EnterMultipleField from "./EnterMultipleField";
 import IPAKeyboard from "./IPAKeyboard";
-import { FormErrors } from "./FormErrors";
+import { FormErrors } from "../../ui/FormErrors";
+import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 
 interface EnterMultipleProps {
   setValue: Function;

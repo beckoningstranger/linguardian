@@ -33,10 +33,10 @@ export default async function ItemPageDEFTRCO({
       <div key={index} className="text-gray-800">
         Translation {languageName}
         <div className="ml-4">
-          {foundTranslations[languageName]?.map((item) => (
+          {foundTranslations[languageName]?.map((item, index) => (
             <Link
               href={paths.dictionaryItemPath(item.slug)}
-              key={item.normalizedName}
+              key={item.normalizedName + index}
             >
               <div className="text-black hover:underline">{item.name}</div>
             </Link>

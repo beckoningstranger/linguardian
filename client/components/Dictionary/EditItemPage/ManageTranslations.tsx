@@ -12,8 +12,8 @@ import { Types } from "mongoose";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FieldErrors, FieldValues } from "react-hook-form";
 import Flag from "react-world-flags";
+import { FormErrors } from "../../ui/FormErrors";
 import AddItemDialog from "./AddItemDialog";
-import { FormErrors } from "./FormErrors";
 
 interface ManageTranslationsProps {
   item: Omit<ItemWithPopulatedTranslations, "_id">;

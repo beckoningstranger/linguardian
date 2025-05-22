@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import ItemPageDEFTRCO from "@/components/Dictionary/ItemPageDEF-TR-CO";
-import ItemPageMain from "@/components/Dictionary/ItemPageMain";
+import ItemPageDEFTRCO from "@/components/Dictionary/ItemPage/ItemPageDEF-TR-CO";
+import ItemPageMain from "@/components/Dictionary/ItemPage/ItemPageMain";
 import IconSidebar from "@/components/IconSidebar/IconSidebar";
 import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
 import Button from "@/components/ui/Button";
@@ -51,13 +51,13 @@ export default async function ItemPage({
   );
   if (!item)
     return (
-      <div className="grid h-[calc(100vh-90px)] place-items-center">
-        <div className="grid gap-y-6">
-          <div className="text-center text-xl">No item found</div>
-          <Link href={paths.dictionaryPath()}>
-            <Button intent="primary">Back to dictionary</Button>
-          </Link>
-        </div>
+      <div className="top-[112px] w-full bg-white/80 pb-8 text-center text-cxlr">
+        <p>No item found</p>
+        <Link href={paths.dictionaryPath()}>
+          <Button intent="primary" className="mt-4 p-4" rounded>
+            Back to dictionary
+          </Button>
+        </Link>
       </div>
     );
 

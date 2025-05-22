@@ -4,8 +4,8 @@ import { LanguageWithFlagAndName, SupportedLanguage } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { FieldErrors, FieldValues } from "react-hook-form";
 import Flag from "react-world-flags";
+import { FormErrors } from "../../ui/FormErrors";
 import ConfirmLanguageChange from "./ConfirmLanguageChange";
-import { FormErrors } from "./FormErrors";
 
 interface LanguagePickerProps {
   userLanguages: LanguageWithFlagAndName[];

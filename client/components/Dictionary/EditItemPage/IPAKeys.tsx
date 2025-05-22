@@ -1,5 +1,5 @@
+import Button from "@/components/ui/Button";
 import { Dispatch, SetStateAction } from "react";
-import Button from "../ui/Button";
 
 interface IPAKeysProps {
   keys: string[] | undefined;
@@ -20,7 +20,7 @@ export default function IPAKeys({
         {keys.map((key) => (
           <Button
             color="blue"
-            className="grid h-10 w-10 place-items-center font-voces font-light"
+            className="font-voces grid h-10 w-10 place-items-center font-light"
             key={key}
             id={"IPAKeys-" + key} // This is used in useOutsideInputAndKeyboardClick in hooks.ts
             onClick={() => {

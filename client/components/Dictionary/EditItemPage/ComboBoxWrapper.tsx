@@ -1,3 +1,4 @@
+import { Fragment, useState } from "react";
 import {
   Combobox,
   ComboboxButton,
@@ -6,17 +7,15 @@ import {
   ComboboxOptions,
   Transition,
 } from "@headlessui/react";
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { Fragment, useState } from "react";
 import { FieldErrors, FieldValues } from "react-hook-form";
-import { FormErrors } from "./FormErrors";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
-export type ValueType = string | undefined;
+import { FormErrors } from "../../ui/FormErrors";
 
 interface ComboBoxWrapperProps {
   placeholder: string;
   formField: string;
-  value: ValueType;
+  value: string | undefined;
   onChange: any;
   onBlur: any;
   options: string[];
