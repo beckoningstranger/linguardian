@@ -1,7 +1,6 @@
 import Link from "next/link";
 
-import ItemPageDEFTRCO from "@/components/Dictionary/ItemPage/ItemPageDEF-TR-CO";
-import ItemPageMain from "@/components/Dictionary/ItemPage/ItemPageMain";
+import ItemDetails from "@/components/Dictionary/ItemPage/ItemDetails";
 import IconSidebar from "@/components/IconSidebar/IconSidebar";
 import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
 import Button from "@/components/ui/Button";
@@ -78,19 +77,7 @@ export default async function ItemPage({
         </IconSidebar>
       </div>
       <div className="min-h-[calc(100vh-112px)] w-full bg-white/80 px-4 pt-2 tablet:ml-2 tablet:pl-8">
-        <ItemPageMain
-          itemName={item.name}
-          partOfSpeech={item.partOfSpeech}
-          gender={item.gender}
-          case={item.case}
-          IPA={item.IPA}
-          pluralForm={item.pluralForm}
-          tags={item.tags}
-        />
-        <ItemPageDEFTRCO
-          definition={item.definition}
-          translations={item.translations}
-        />
+        <ItemDetails item={item} />
       </div>
     </div>
   );

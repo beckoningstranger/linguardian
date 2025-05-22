@@ -1,20 +1,16 @@
 import Link from "next/link";
 
 import { getAllUserLanguages } from "@/lib/helperFunctionsServer";
-import paths from "@/lib/paths";
 import { Item, SupportedLanguage } from "@/lib/types";
-import ItemPageField from "./ItemPageField";
+import paths from "@/lib/paths";
 
-interface ItemPageDEFTRProps {
-  definition?: string[];
+interface ItemTranslationsProps {
   translations?: Partial<Record<SupportedLanguage, Item[]>>;
 }
 
-export default async function ItemPageDEFTRCO({
-  definition,
+export default async function ItemTranslations({
   translations,
-}: ItemPageDEFTRProps) {
-  const renderedDefinition = <div className="ml-2">{definition}</div>;
+}: ItemTranslationsProps) {
   const allUserLanguages = await getAllUserLanguages();
   const foundTranslations: Partial<Record<string, Item[]>> = {};
 
@@ -46,14 +42,5 @@ export default async function ItemPageDEFTRCO({
     )
   );
 
-  return (
-    <>
-      <div className="ml-2 flex flex-col gap-y-2 sm:ml-8">
-        {definition && definition.length > 0 && (
-          <ItemPageField type="Definition" content={renderedDefinition} />
-        )}
-        {renderedTranslations}
-      </div>
-    </>
-  );
+  return <div>{renderedTranslations}</div>;
 }
