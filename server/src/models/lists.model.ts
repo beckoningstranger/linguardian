@@ -9,7 +9,7 @@ import {
   SupportedLanguage,
 } from "../lib/types.js";
 import Lists from "./list.schema.js";
-import { getSupportedLanguages } from "./settings.model.js";
+import { siteSettings } from "../lib/siteSettings.js";
 
 export async function getList(listNumber: number) {
   try {
@@ -95,43 +95,35 @@ export async function getChapterNameByNumber(
 }
 
 export async function updateUnlockedReviewModes(listId: Types.ObjectId) {
-  const response = (await getPopulatedListByObjectId(listId)) as PopulatedList;
-  const supportedLanguages = await getSupportedLanguages();
-  if (response?.units && supportedLanguages) {
-    // This part checks for translation mode
-    const allTranslationsExist: Partial<Record<SupportedLanguage, boolean>> =
-      {};
-    supportedLanguages.forEach((language) => {
-      // Let's assume it can be unlocked
-      let languageCanBeUnlocked = true;
-      // Check every item for whether if has a translation and part of speech in this language
-      response.units.forEach((unitItem) => {
-        if (unitItem?.item?.translations) {
-          const translations = unitItem.item.translations[language];
+  const { units } = (await getPopulatedListByObjectId(listId)) as PopulatedList;
+  // This part checks for translation mode
+  const allTranslationsExist: Partial<Record<SupportedLanguage, boolean>> = {};
+  siteSettings.supportedLanguages.forEach((language) => {
+    // Let's assume it can be unlocked
+    let languageCanBeUnlocked = true;
+    // Check every item in every unit for whether if has a translation and part of speech in this language
+    units.forEach((item) => {
+      if (item?.item?.translations) {
+        const translations = item.item.translations[language];
 
-          // It it doesn't, we can't unlock translation mode
-          if (translations?.length === 0 || !unitItem.item.partOfSpeech)
-            languageCanBeUnlocked = false;
-        }
-      });
-      if (languageCanBeUnlocked)
-        console.log(`Translation mode for ${language} will be unlocked!`);
-      Object.assign(allTranslationsExist, {
-        [language]: languageCanBeUnlocked,
-      });
-    });
-    Object.entries(allTranslationsExist).map(async (language) => {
-      const [lang, canBeUnlocked] = language;
-      if (canBeUnlocked) {
-        await unlockReviewMode(
-          listId,
-          lang as SupportedLanguage,
-          "translation"
-        );
+        // It it doesn't, we can't unlock translation mode
+        if (translations?.length === 0 || !item.item.partOfSpeech)
+          languageCanBeUnlocked = false;
       }
     });
-    // Need to check for more review modes
-  }
+    if (languageCanBeUnlocked)
+      console.log(`Translation mode for ${language} will be unlocked!`);
+    Object.assign(allTranslationsExist, {
+      [language]: languageCanBeUnlocked,
+    });
+  });
+  Object.entries(allTranslationsExist).map(async (language) => {
+    const [lang, canBeUnlocked] = language;
+    if (canBeUnlocked) {
+      await unlockReviewMode(listId, lang as SupportedLanguage, "translation");
+    }
+  });
+  // Need to check for more review modes
 }
 
 export async function getListNameAndUnitOrder(listNumber: number) {

@@ -8,6 +8,7 @@ import { siteSettings } from "../../lib/siteSettings.js";
 import {
   FullyPopulatedList,
   List,
+  ParsedListInfoFromServer,
   SupportedLanguage,
 } from "../../lib/types.js";
 import {
@@ -57,20 +58,18 @@ export async function httpPostCreateNewList(req: Request, res: Response) {
       unitOrder: [],
       unlockedReviewModes: {},
     };
-
-    const responseObject = {
-      message: {
-        listNumber: newList.listNumber,
-        listLanguage: language,
-      },
+    const responseObject: ParsedListInfoFromServer = {
+      listNumber: newList.listNumber,
+      listLanguage: language,
     };
 
     if (req.file && req.file.size > 0) {
-      const response = await parseCSV(req.file.filename, newList);
+      const { newListId, issues } = await parseCSV(req.file.filename, newList);
+      responseObject.issues = issues;
 
       // Now check whether we can unlock review modes
-      await updateUnlockedReviewModes(response.newListId);
-      if (response) return res.status(201).json(responseObject);
+      await updateUnlockedReviewModes(newListId);
+      if (newListId) return res.status(201).json(responseObject);
       throw new Error("Error creating list");
     } else {
       const response = await createList(newList);

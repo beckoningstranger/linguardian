@@ -10,28 +10,6 @@ export async function setSiteSettings(siteSettings: GlobalSettings) {
   }
 }
 
-export async function getAllSettings() {
-  try {
-    return await Settings.findOne({}, { _id: 0, __v: 0 });
-  } catch (err) {
-    console.error(`Error getting all settings: ${err}`);
-  }
-}
-
-export async function getSupportedLanguages() {
-  try {
-    const response = await Settings.findOne<GlobalSettings>(
-      {},
-      { supportedLanguages: 1, _id: 0 }
-    );
-    if (response) {
-      return response.supportedLanguages;
-    }
-  } catch (err) {
-    console.error(`Error getting supported Languages: ${err}`);
-  }
-}
-
 export async function getLanguageFeatures() {
   try {
     const response = await Settings.findOne<GlobalSettings>(

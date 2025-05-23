@@ -9,6 +9,7 @@ import {
   LearningMode,
   ListAndUnitData,
   ListDetails,
+  ParsedListInfoFromServer,
   RegisterSchema,
   SupportedLanguage,
 } from "@/lib/types";
@@ -21,7 +22,6 @@ import {
   getUserOnServer,
   verifyUserIsAuthorAndGetList,
 } from "./helperFunctionsServer";
-import { parsedItemSchema } from "./validations";
 
 const server = process.env.SERVER_URL;
 
@@ -56,9 +56,10 @@ export async function createList(formData: FormData) {
     });
 
     if (!response.ok) throw new Error(response.statusText);
-    const data = await response.json();
-    newListNumber = data.message.listNumber;
-    newListLanguage = data.message.listLanguage;
+    const { listNumber, listLanguage, issues } =
+      (await response.json()) as ParsedListInfoFromServer;
+    newListNumber = listNumber;
+    newListLanguage = listLanguage;
   } catch (err) {
     console.error(`Error uploading a csv file to create new list: ${err}`);
     return { message: "Something went wrong" };

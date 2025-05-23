@@ -22,7 +22,7 @@ export default function ItemDetails({ item }: ItemDetailsProps) {
         {IPA && IPA.length > 0 && (
           <div className="ml-2 font-IPA text-slate-500">/{IPA.join(", ")}/</div>
         )}
-        {/* <ItemPartOfSpeech gender={gender} partOfSpeech={partOfSpeech} /> */}
+        <ItemPartOfSpeech gender={gender} partOfSpeech={partOfSpeech} />
         {pluralForm && pluralForm.length > 0 && pluralForm[0].length > 0 && (
           <div className="ml-2 mt-1 text-sm">
             {pluralForm.length > 1 ? "plural forms: " : "plural form: "}

@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import { formatZodErrors } from "../../lib/helperFunctions.js";
+import { siteSettings } from "../../lib/siteSettings.js";
 import {
   ItemWithPopulatedTranslations,
   SupportedLanguage,
@@ -13,8 +15,6 @@ import {
   getItemBySlug,
   removeTranslationBySlug,
 } from "../../models/items.model.js";
-import { getSupportedLanguages } from "../../models/settings.model.js";
-import { formatZodErrors } from "../../lib/helperFunctions.js";
 
 export async function httpGetItemBySlug(req: Request, res: Response) {
   const slug = req.params.slug;
@@ -88,9 +88,8 @@ export async function httpEditOrCreateItem(req: Request, res: Response) {
     return res.status(400).json({ errors: formattedErrors });
   }
 
-  const allSupportedLanguages = await getSupportedLanguages();
   const otherAffectedItems: any[] = [];
-  allSupportedLanguages?.map((lang) =>
+  siteSettings.supportedLanguages.map((lang) =>
     validatedItem.translations[lang]?.forEach((item) =>
       otherAffectedItems.push(item)
     )
@@ -111,12 +110,9 @@ export async function httpEditOrCreateItem(req: Request, res: Response) {
 async function updateRelatedItems(
   item: Omit<ItemWithPopulatedTranslations, "_id">
 ) {
-  const allSupportedLanguages = await getSupportedLanguages();
-  if (!allSupportedLanguages)
-    throw new Error("Failed to get all supported languages");
   const oldItem = await getFullyPopulatedItemBySlug(
     item.slug,
-    allSupportedLanguages
+    siteSettings.supportedLanguages
   );
 
   const { added, removed, areEqual } = translationObjectsDiff(oldItem, item);

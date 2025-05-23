@@ -294,7 +294,6 @@ export async function createUser(registrationData: RegisterSchema) {
       ? await bcrypt.hash(registrationData.password, 10)
       : undefined,
   };
-  console.log(userDataPWEncryptedWithUsernameSlug);
 
   return await Users.create(userDataPWEncryptedWithUsernameSlug);
 }

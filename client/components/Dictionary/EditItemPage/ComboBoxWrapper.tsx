@@ -11,6 +11,7 @@ import { FieldErrors, FieldValues } from "react-hook-form";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
 import { FormErrors } from "../../ui/FormErrors";
+import { Case, Gender, PartOfSpeech } from "@/lib/types";
 
 interface ComboBoxWrapperProps {
   placeholder: string;
@@ -18,7 +19,7 @@ interface ComboBoxWrapperProps {
   value: string | undefined;
   onChange: any;
   onBlur: any;
-  options: string[];
+  options: readonly Gender[] | readonly Case[] | readonly PartOfSpeech[];
   errors: FieldErrors<FieldValues>;
 }
 
@@ -39,6 +40,7 @@ export default function ComboBoxWrapper({
       : options.filter((option) => {
           return option.toLowerCase().includes(query.toLowerCase());
         });
+
   return (
     <>
       <Combobox value={value} onChange={onChange}>
@@ -54,7 +56,7 @@ export default function ComboBoxWrapper({
               />
               <div className="mx-1">
                 <ChevronUpDownIcon
-                  className="h-5 w-5 text-gray-400"
+                  className="size-5 text-gray-400"
                   aria-hidden="true"
                 />
               </div>
@@ -100,7 +102,7 @@ export default function ComboBoxWrapper({
                               focus ? "text-white" : "text-orange-600"
                             }`}
                           >
-                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                            <CheckIcon className="size-5" aria-hidden="true" />
                           </span>
                         ) : null}
                       </>

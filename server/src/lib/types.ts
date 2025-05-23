@@ -1,54 +1,20 @@
 import { Types } from "mongoose";
 import { z } from "zod";
 import {
+  allCases,
+  allGenders,
+  allPartsOfSpeech,
+  allTags,
   itemSchemaWithPopulatedTranslations,
   itemSchemaWithTranslations,
   parsedItemSchema,
   registerSchema,
 } from "./validations.js";
 
-export type PartOfSpeech =
-  | "noun"
-  | "pronoun"
-  | "verb"
-  | "adjective"
-  | "adverb"
-  | "preposition"
-  | "conjunction"
-  | "determiner"
-  | "interjection"
-  | "particle"
-  | "phrase";
-
-export type Gender =
-  | "masculine"
-  | "feminine"
-  | "neuter"
-  | "common"
-  | "animate"
-  | "inanimate";
-
-export type Case =
-  | "nominative"
-  | "genitive"
-  | "dative"
-  | "accusative"
-  | "instrumental"
-  | "locative"
-  | "vocative"
-  | "accusative & dative";
-
-export type Tag =
-  | "colloquial"
-  | "archaic"
-  | "obsolete"
-  | "vulgar"
-  | "slang"
-  | "humorous"
-  | "literary"
-  | "transitive"
-  | "intransitive"
-  | "Belgian French";
+export type PartOfSpeech = (typeof allPartsOfSpeech)[number];
+export type Gender = (typeof allGenders)[number];
+export type Case = (typeof allCases)[number];
+export type Tag = (typeof allTags)[number];
 
 export interface sortedTags {
   forAll: Tag[];
@@ -162,7 +128,7 @@ export interface LanguageFeatures {
   hasRomanization: boolean;
   hasTones: boolean;
   ipa: IPA;
-  partsOfSpeech: PartOfSpeech[];
+  partsOfSpeech: readonly PartOfSpeech[];
   tags: sortedTags;
 }
 
@@ -262,4 +228,10 @@ export type PuzzlePieceObject = {
   content: string;
   first: boolean;
   last: boolean;
+};
+
+export type ParsedListInfoFromServer = {
+  listNumber: number;
+  listLanguage: SupportedLanguage;
+  issues?: string[];
 };

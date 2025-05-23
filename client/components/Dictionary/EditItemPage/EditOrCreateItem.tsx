@@ -48,7 +48,6 @@ export default function EditOrCreateItem({
     language:
       addToThisList?.languageWithFlagAndName.code ||
       seperatedUserLanguages.learnedLanguages[0].code,
-
     partOfSpeech: "noun",
     slug: "new-item",
     translations: {},
@@ -230,7 +229,7 @@ export default function EditOrCreateItem({
               .filter((item) => item !== undefined)}
           />
           <div className="text-sm font-semibold">Part of Speech</div>
-          <div className="flex flex-col gap-2 bg-white sm:flex-row">
+          <div className="flex flex-col gap-2 sm:flex-row">
             {watch().partOfSpeech === "noun" && hasGender.length > 0 && (
               <Controller
                 name="gender"

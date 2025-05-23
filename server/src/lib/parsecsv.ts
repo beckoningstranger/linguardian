@@ -11,21 +11,20 @@ import {
   createList,
   getPopulatedListByObjectId,
 } from "../models/lists.model.js";
-import { getSupportedLanguages } from "../models/settings.model.js";
 import { placeholders } from "./constants.js";
 import { normalizeString, slugifyString } from "./helperFunctions.js";
+import { siteSettings } from "./siteSettings.js";
 import {
   Case,
   Gender,
   Item,
   List,
+  ParsedItem,
   PopulatedList,
   SupportedLanguage,
   Tag,
-  ParsedItem,
 } from "./types.js";
 import { parsedItemSchema } from "./validations.js";
-import { siteSettings } from "./siteSettings.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -36,90 +35,95 @@ export async function parseCSV(filename: string, newList: List) {
   const newListId = newUploadedList?._id;
   if (!newListId) throw new Error("Error creating new list");
 
-  return new Promise<{ newListId: Types.ObjectId }>((resolve, reject) => {
-    const issues: string[] = [];
-    const promises: Promise<void>[] = [];
+  return new Promise<{ newListId: Types.ObjectId; issues: string[] }>(
+    (resolve, reject) => {
+      const issues: string[] = [];
+      const promises: Promise<void>[] = [];
 
-    fs.createReadStream(
-      join(__dirname + `../../../data/csvUploads/${filename}`)
-    )
-      .pipe(parse({ columns: true, comment: "#" }))
-      .on("data", async (data) => {
-        let formattedData: ParsedItem = {
-          name: data.name,
-          normalizedName: normalizeString(data.name),
-          slug: slugifyString(data.name, newList.language.code),
-          language: newList.language.code,
-          languageName: siteSettings.languageFeatures.find(
-            (lang) => lang.langCode === newList.language.code
-          )?.langName!,
-          flagCode: siteSettings.languageFeatures.find(
-            (lang) => lang.langCode === newList.language.code
-          )?.flagCode!,
-          partOfSpeech: data.partOfSpeech,
-          case:
-            data.case && data.case.length > 0 ? (data.case as Case) : undefined,
-          gender:
-            data.gender && data.gender.length > 0
-              ? (data.gender as Gender)
-              : undefined,
-          pluralForm:
-            data.pluralForm && data.pluralForm.length > 0
-              ? data.pluralForm?.split(", ")
-              : undefined,
-          tags: data.tags?.split(", ") as Tag[],
-          translations: {
-            DE: data.tDE?.split(", "),
-            FR: data.tFR?.split(", "),
-            EN: data.tEN?.split(", "),
-            CN: data.tCN?.split(", "),
-          },
-          unit: data.unit,
-        };
+      fs.createReadStream(
+        join(__dirname + `../../../data/csvUploads/${filename}`)
+      )
+        .pipe(parse({ columns: true, comment: "#" }))
+        .on("data", async (data) => {
+          let formattedData: ParsedItem = {
+            name: data.name,
+            normalizedName: normalizeString(data.name),
+            slug: slugifyString(data.name, newList.language.code),
+            language: newList.language.code,
+            languageName: siteSettings.languageFeatures.find(
+              (lang) => lang.langCode === newList.language.code
+            )?.langName!,
+            flagCode: siteSettings.languageFeatures.find(
+              (lang) => lang.langCode === newList.language.code
+            )?.flagCode!,
+            partOfSpeech: data.partOfSpeech,
+            case:
+              data.case && data.case.length > 0
+                ? (data.case as Case)
+                : undefined,
+            gender:
+              data.gender && data.gender.length > 0
+                ? (data.gender as Gender)
+                : undefined,
+            pluralForm:
+              data.pluralForm && data.pluralForm.length > 0
+                ? data.pluralForm?.split(", ")
+                : undefined,
+            tags: data.tags?.split(", ") as Tag[],
+            translations: {
+              DE: data.tDE?.split(", "),
+              FR: data.tFR?.split(", "),
+              EN: data.tEN?.split(", "),
+              CN: data.tCN?.split(", "),
+            },
+            unit: data.unit,
+          };
 
-        const {
-          data: validatedData,
-          success,
-          error,
-        } = parsedItemSchema.safeParse(formattedData);
-        if (!validatedData || !success) {
-          error.issues.forEach((issue) => {
-            console.error(`${data.name}: ${issue.path} - ${issue.message}`);
-            issues.push(`${data.name}: ${issue.path} - ${issue.message}`);
+          const {
+            data: validatedData,
+            success,
+            error,
+          } = parsedItemSchema.safeParse(formattedData);
+          if (!validatedData || !success) {
+            error.issues.forEach((issue) => {
+              console.error(`${data.name}: ${issue.path} - ${issue.message}`);
+              issues.push(`${data.name}: ${issue.path} - ${issue.message}`);
+            });
+            return;
+          }
+
+          const processRow = async () => {
+            await getLemmasFromEachItemAndUpload(validatedData);
+
+            // Harvest all possible items from each parsed item
+            const harvestedItems: ParsedItem[] =
+              await harvestItemsWithoutTranslations(validatedData);
+            await uploadItemsWithoutTranslations(harvestedItems);
+
+            await Promise.all([
+              linkItemsToTheirLemmas(harvestedItems),
+              addTranslationsToItems(harvestedItems),
+              addItemsToList(harvestedItems, newListId, newList.language.code),
+            ]);
+          };
+
+          promises.push(processRow());
+        })
+        .on("error", (err) => {
+          console.error("Error while parsing csv file", err);
+          reject(err);
+        })
+        .on("end", async () => {
+          await Promise.allSettled(promises);
+          await defineUnitOrder(newListId);
+          console.log("ISSUES", issues);
+          resolve({
+            newListId,
+            issues,
           });
-          return;
-        }
-
-        const processRow = async () => {
-          await getLemmasFromEachItemAndUpload(validatedData);
-
-          // Harvest all possible items from each parsed item
-          const harvestedItems: ParsedItem[] =
-            await harvestItemsWithoutTranslations(validatedData);
-          await uploadItemsWithoutTranslations(harvestedItems);
-
-          await Promise.all([
-            linkItemsToTheirLemmas(harvestedItems),
-            addTranslationsToItems(harvestedItems),
-            addItemsToList(harvestedItems, newListId, newList.language.code),
-          ]);
-        };
-
-        promises.push(processRow());
-      })
-      .on("error", (err) => {
-        console.error("Error while parsing csv file", err);
-        reject(err);
-      })
-      .on("end", async () => {
-        await Promise.allSettled(promises);
-        await defineUnitOrder(newListId);
-        console.log("ISSUES", issues);
-        resolve({
-          newListId,
         });
-      });
-  });
+    }
+  );
 }
 
 interface LemmaItem {
@@ -281,14 +285,12 @@ async function addTranslationsToItems(
   harvestedItems: ParsedItem[]
 ): Promise<void> {
   // We iterate over every translation of every item
-  const supportedLanguages = await getSupportedLanguages();
-  if (!supportedLanguages) throw new Error("Failed to get supported languages");
   const filteredItems: ParsedItem[] = harvestedItems.map((item) => {
     return {
       ...item,
       translations: filterOutUndefinedTranslations(
         item.translations,
-        supportedLanguages
+        siteSettings.supportedLanguages
       ),
     };
   });

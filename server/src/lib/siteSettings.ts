@@ -1,5 +1,4 @@
 import {
-  PartOfSpeech,
   sortedTags,
   Tag,
   type GlobalSettings,
@@ -8,6 +7,7 @@ import {
   type SRSettings,
   type SupportedLanguage,
 } from "./types.js";
+import { allPartsOfSpeech } from "./validations.js";
 
 export const allTags: sortedTags = {
   forAll: [
@@ -26,20 +26,6 @@ const frenchTags = {
   ...allTags,
   forAll: [...allTags.forAll, "Belgian French" as Tag],
 };
-
-const allPartsOfSpeech: PartOfSpeech[] = [
-  "noun",
-  "pronoun",
-  "verb",
-  "adjective",
-  "adverb",
-  "preposition",
-  "conjunction",
-  "determiner",
-  "interjection",
-  "particle",
-  "phrase",
-];
 
 const languageFeatures: LanguageFeatures[] = [
   {

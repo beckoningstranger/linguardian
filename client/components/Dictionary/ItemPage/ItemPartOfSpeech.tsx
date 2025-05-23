@@ -1,7 +1,7 @@
 import { Gender, PartOfSpeech, Tag } from "@/lib/types";
 
 interface ItemPartOfSpeechProps {
-  gender?: Gender[];
+  gender?: Gender;
   partOfSpeech: PartOfSpeech;
 }
 

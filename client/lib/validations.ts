@@ -1,6 +1,63 @@
 import { Types } from "mongoose";
 import { z } from "zod";
+
 import { Item, SupportedLanguage } from "./types.js";
+
+export const allTags = [
+  "colloquial",
+  "archaic",
+  "obsolete",
+  "vulgar",
+  "slang",
+  "humorous",
+  "literary",
+  "transitive",
+  "intransitive",
+  "Belgian French",
+  "Wechselpräposition",
+] as const;
+
+export const tagSchema = z.enum(allTags);
+
+export const allGenders = [
+  "masculine",
+  "feminine",
+  "neuter",
+  "common",
+  "animate",
+  "inanimate",
+] as const;
+
+export const genderSchema = z.enum(allGenders);
+
+export const allPartsOfSpeech = [
+  "noun",
+  "pronoun",
+  "verb",
+  "adjective",
+  "adverb",
+  "preposition",
+  "conjunction",
+  "determiner",
+  "interjection",
+  "particle",
+  "phrase",
+] as const;
+
+export const partOfSpeechSchema = z.enum(allPartsOfSpeech);
+
+export const allCases = [
+  "nominative",
+  "genitive",
+  "dative",
+  "accusative",
+  "instrumental",
+  "locative",
+  "vocative",
+  "accusative & dative",
+] as const;
+
+export const casesSchema = z.enum(allCases);
 
 const emailSchema = z
   .string()
@@ -94,19 +151,7 @@ const itemSchemaWithoutTranslations = z.object({
   language: z.custom<SupportedLanguage>(),
   languageName: z.string(),
   flagCode: z.string(),
-  partOfSpeech: z.enum([
-    "noun",
-    "pronoun",
-    "verb",
-    "adjective",
-    "adverb",
-    "preposition",
-    "conjunction",
-    "determiner",
-    "interjection",
-    "particle",
-    "phrase",
-  ]),
+  partOfSpeech: partOfSpeechSchema,
   lemmas: ObjectIdSchema.array().optional(),
   definition: z
     .array(
@@ -115,29 +160,15 @@ const itemSchemaWithoutTranslations = z.object({
         .max(300, "Item definitions can be no longer than 300 characters")
     )
     .optional(),
-  gender: z
-    .enum(["masculine", "feminine", "neuter", "common", "animate", "inanimate"])
-    .optional(),
+  gender: genderSchema.optional(),
   pluralForm: z
     .array(
       z.string().max(65, "Plural forms can be no longer than 65 characters")
     )
-
     .max(2, "There can be no more than 2 different plural forms")
     .optional(),
   slug: z.string().max(65),
-  case: z
-    .enum([
-      "nominative",
-      "genitive",
-      "dative",
-      "accusative",
-      "instrumental",
-      "locative",
-      "vocative",
-      "accusative & dative",
-    ])
-    .optional(),
+  case: casesSchema.optional(),
   audio: z
     .array(
       z
@@ -166,19 +197,7 @@ const itemSchemaWithoutTranslations = z.object({
         .max(50, "IPA transcriptions can be no longer than 50 characters")
     )
     .optional(),
-  tags: z
-    .enum([
-      "archaic",
-      "obsolete",
-      "vulgar",
-      "slang",
-      "humorous",
-      "literary",
-      "transitive",
-      "intransitive",
-      "colloquial",
-      "Belgian French",
-    ])
+  tags: tagSchema
     .array()
     .max(5, "Each item can receive a maximum of 5 tags")
     .optional(),
