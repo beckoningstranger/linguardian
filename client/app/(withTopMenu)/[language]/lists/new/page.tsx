@@ -1,8 +1,9 @@
-import CreateNewListForm from "@/components/createNewListForm";
-import { getLanguageFeaturesForLanguage } from "@/lib/fetchData";
-import { getUserOnServer } from "@/lib/helperFunctionsServer";
-import { SupportedLanguage } from "@/lib/types";
 import { Metadata } from "next";
+
+import CreateNewListForm from "@/components/createNewListForm";
+import { getUserOnServer } from "@/lib/helperFunctionsServer";
+import { siteSettings } from "@/lib/siteSettings";
+import { SupportedLanguage } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Upload a new list",
@@ -16,8 +17,8 @@ export default async function CreateList({
   params: { language },
 }: CreateListProps) {
   const user = await getUserOnServer();
-  const languageFeaturesForLanguage = await getLanguageFeaturesForLanguage(
-    language
+  const languageFeaturesForLanguage = siteSettings.languageFeatures.find(
+    (lang) => lang.langCode === language
   );
 
   return (

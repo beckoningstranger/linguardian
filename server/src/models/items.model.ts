@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import { normalizeString, slugifyString } from "../lib/helperFunctions.js";
+import { siteSettings } from "../lib/siteSettings.js";
 import {
   Item,
   ItemWithPopulatedTranslations,
@@ -8,7 +9,6 @@ import {
   Tag,
 } from "../lib/types.js";
 import Items from "./item.schema.js";
-import { getLanguageFeaturesForLanguage } from "./settings.model.js";
 
 export async function getItemBySlug(slug: string) {
   return await Items.findOne({ slug });
@@ -140,7 +140,9 @@ async function filterOutInvalidTags(
   language: SupportedLanguage
 ) {
   if (!tagArray) return [];
-  const languageFeatures = await getLanguageFeaturesForLanguage(language);
+  const languageFeatures = siteSettings.languageFeatures.find(
+    (lang) => lang.langCode === language
+  );
   const validTags = languageFeatures?.tags.forAll
     .concat(languageFeatures.tags[partOfSpeech])
     .filter((item) => item !== undefined);

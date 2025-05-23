@@ -1,5 +1,4 @@
 import Onboarding from "@/components/Onboarding/Onboarding";
-import { getAllLanguageFeatures } from "@/lib/fetchData";
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
@@ -9,12 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default async function Welcome() {
-  const [user, allLanguageFeatures] = await Promise.all([
-    getUserOnServer(),
-    getAllLanguageFeatures(),
-  ]);
+  const [user] = await Promise.all([getUserOnServer()]);
 
-  if (!user || !allLanguageFeatures) throw new Error("Error fetching data");
+  if (!user) throw new Error("Could not fetch user");
 
   if (user.native && user.learnedLanguages && user.learnedLanguages?.length > 0)
     redirect("/");
@@ -25,7 +21,7 @@ export default async function Welcome() {
         <h1 className="absolute left-0 top-0 flex h-32 w-full items-center justify-center px-1 font-script text-3xl font-bold tracking-wide sm:text-6xl">
           Welcome to Linguardian!
         </h1>
-        <Onboarding allLanguageFeatures={allLanguageFeatures} />
+        <Onboarding />
       </div>
     </div>
   );

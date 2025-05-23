@@ -116,7 +116,6 @@ export async function parseCSV(filename: string, newList: List) {
         .on("end", async () => {
           await Promise.allSettled(promises);
           await defineUnitOrder(newListId);
-          console.log("ISSUES", issues);
           resolve({
             newListId,
             issues,

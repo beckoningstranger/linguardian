@@ -1,7 +1,7 @@
 import NoMoreLanguagesToLearn from "@/components/NoMoreLanguagesToLearn";
 import PickNewLanguage from "@/components/PickNewLanguage";
-import { getAllLanguageFeatures } from "@/lib/fetchData";
 import { getAllUserLanguages } from "@/lib/helperFunctionsServer";
+import { siteSettings } from "@/lib/siteSettings";
 import { LanguageWithFlagAndName } from "@/lib/types";
 import { Metadata } from "next";
 
@@ -10,12 +10,9 @@ export const metadata: Metadata = {
 };
 
 export default async function AddNewLanguageToLearn() {
-  const [allLanguageFeatures, allUserLanguages] = await Promise.all([
-    getAllLanguageFeatures(),
-    getAllUserLanguages(),
-  ]);
+  const [allUserLanguages] = await Promise.all([getAllUserLanguages()]);
 
-  const allAvailableLanguageFeatures = allLanguageFeatures?.filter(
+  const allAvailableLanguageFeatures = siteSettings.languageFeatures?.filter(
     ({ langCode }) =>
       !allUserLanguages.map((lang) => lang.code).includes(langCode)
   );

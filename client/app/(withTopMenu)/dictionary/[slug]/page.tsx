@@ -12,12 +12,11 @@ import { SlugLanguageObject } from "@/lib/types";
 export const metadata = { title: "Dictionary" };
 
 // export async function generateStaticParams() {
-//   const supportedLanguages = await getSupportedLanguages();
 //   let allSlugs: { slug: string }[] = [];
-//   const promises = supportedLanguages?.map((lang: SupportedLanguage) =>
+//   const promises = siteSettings.supportedLanguages.map((lang: SupportedLanguage) =>
 //     getAllSlugsForLanguage(lang)
 //   );
-//
+
 //   if (promises) {
 //     const resolvedPromises = await Promise.all(promises);
 //     if (resolvedPromises)

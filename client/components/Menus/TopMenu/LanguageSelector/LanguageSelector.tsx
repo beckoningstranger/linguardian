@@ -6,24 +6,23 @@ import Flag from "react-world-flags";
 
 import { MAX_NUMBER_OF_LANGUAGES_ALLOWED } from "@/lib/constants";
 import { useOutsideClick } from "@/lib/hooks";
-import { LanguageWithFlagAndName, SupportedLanguage, User } from "@/lib/types";
+import { siteSettings } from "@/lib/siteSettings";
+import { LanguageWithFlagAndName, User } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import AddNewLanguageOption from "./AddNewLanguageOption";
 import LanguageSelectorLink from "./LanguageSelectorLink";
 
 interface LanguageSelectorProps {
   activeLanguage: LanguageWithFlagAndName;
-  allSupportedLanguages: SupportedLanguage[];
 }
 
 export default function LanguageSelector({
   activeLanguage,
-  allSupportedLanguages,
 }: LanguageSelectorProps) {
   const user = useSession().data?.user as User;
   const [showAllLanguageOptions, setShowAllLanguageOptions] = useState(false);
   const currentPath = usePathname();
-  const amountOfSupportedLanguages = allSupportedLanguages.length;
+  const amountOfSupportedLanguages = siteSettings.supportedLanguages.length;
 
   const allLanguagesAndFlagsUserIsLearning = user?.learnedLanguages || [];
 

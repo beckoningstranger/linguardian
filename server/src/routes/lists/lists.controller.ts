@@ -29,7 +29,6 @@ import {
   removeUnitFromList,
   updateUnlockedReviewModes,
 } from "../../models/lists.model.js";
-import { getLanguageFeaturesForLanguage } from "../../models/settings.model.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -65,6 +64,7 @@ export async function httpPostCreateNewList(req: Request, res: Response) {
 
     if (req.file && req.file.size > 0) {
       const { newListId, issues } = await parseCSV(req.file.filename, newList);
+      console.log("Issues encountered while parsing CSV file", issues);
       responseObject.issues = issues;
 
       // Now check whether we can unlock review modes
@@ -151,13 +151,14 @@ export async function httpGetListDataForMetadata(req: Request, res: Response) {
   if (!list) return res.status(404).json();
 
   const { name, unitOrder, language, description } = list;
-  const languageFeatures = await getLanguageFeaturesForLanguage(language.code);
-  if (!languageFeatures) return res.status(404).json();
+  const languageFeatures = siteSettings.languageFeatures.find(
+    (lang) => lang.langCode === language.code
+  );
 
   return res.status(200).json({
     listName: name,
     unitName: unitOrder[unitNumber - 1],
-    langName: languageFeatures.langName,
+    langName: languageFeatures?.langName,
     description,
   });
 }

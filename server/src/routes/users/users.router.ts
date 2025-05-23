@@ -49,6 +49,7 @@ usersRouter.get(
 );
 
 usersRouter.get("/getLearningDataForUser/:userId", httpGetLearningDataForUser);
+
 usersRouter.get(
   "/getLearningDataForLanguage/:userId/:language",
   httpGetLearningDataForLanguage

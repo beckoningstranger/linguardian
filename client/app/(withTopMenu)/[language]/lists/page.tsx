@@ -1,17 +1,14 @@
-import Link from "next/link";
 import { Metadata } from "next";
+import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 
-import {
-  fetchAuthors,
-  getLanguageFeaturesForLanguage,
-  getListsByLanguage,
-} from "@/lib/fetchData";
-import paths from "@/lib/paths";
-import { SupportedLanguage } from "@/lib/types";
-import Button from "@/components/ui/Button";
-import ListStoreCard from "@/components/Lists/ListStore/ListStoreCard";
 import ListSearch from "@/components/Lists/ListStore/ListSearch";
+import ListStoreCard from "@/components/Lists/ListStore/ListStoreCard";
+import Button from "@/components/ui/Button";
+import { fetchAuthors, getListsByLanguage } from "@/lib/fetchData";
+import paths from "@/lib/paths";
+import { siteSettings } from "@/lib/siteSettings";
+import { SupportedLanguage } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Lists",
@@ -22,16 +19,12 @@ interface ListStoreProps {
 }
 
 // export async function generateStaticParams() {
-//   const supportedLanguagesData = await getSupportedLanguages();
-//   return supportedLanguagesData
-//     ? supportedLanguagesData.map((lang) => ({ language: lang }))
-//     : [];
+//   return siteSettings.supportedLanguages.map((lang) => ({ language: lang }));
 // }
 
 export default async function ListStore({ params }: ListStoreProps) {
-  const [listsForLanguage, languageFeature] = await Promise.all([
+  const [listsForLanguage] = await Promise.all([
     getListsByLanguage(params?.language as SupportedLanguage),
-    getLanguageFeaturesForLanguage(params?.language as SupportedLanguage),
   ]);
 
   const renderedLists = listsForLanguage
@@ -48,6 +41,10 @@ export default async function ListStore({ params }: ListStoreProps) {
         })
       )
     : null;
+
+  const languageFeature = siteSettings.languageFeatures.find(
+    (lang) => lang.langCode === params?.language
+  );
 
   return (
     <div className="flex flex-col">

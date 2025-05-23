@@ -3,6 +3,7 @@ import learningButtonConfig from "@/lib/learningButtonConfig";
 import { LearningMode, ListStats } from "@/lib/types";
 import Image from "next/image";
 import LearningButton from "./LearningButton";
+import { siteSettings } from "@/lib/siteSettings";
 
 interface LearningButtonWithExpandProps {
   listNumber: number;
@@ -31,15 +32,6 @@ export default function LearningButtonWithExpand({
   const showExpandButton: boolean = Boolean(
     unlockedModes.length - excludeModes.length + 1 > 0
   );
-
-  const allLearningModes: LearningMode[] = [
-    "learn",
-    "translation",
-    "context",
-    "dictionary",
-    "spellingBee",
-    "visual",
-  ];
 
   const bgColor =
     "bg-" +
@@ -76,7 +68,7 @@ export default function LearningButtonWithExpand({
       {showExpandButton && (
         <div className="group flex w-12 items-center justify-center">
           <div className="absolute bottom-0 right-0 z-50 flex w-full translate-y-[600px] flex-col opacity-0 transition-all duration-500 ease-in-out group-hover:translate-y-0 group-hover:opacity-100">
-            {allLearningModes
+            {siteSettings.learningModes
               .filter(
                 (m) =>
                   (!excludeModes.includes(m) && unlockedModes.includes(m)) ||

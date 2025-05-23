@@ -11,31 +11,30 @@ import toast from "react-hot-toast";
 import { GiSaveArrow } from "react-icons/gi";
 import { IoArrowBack } from "react-icons/io5";
 
+import Spinner from "@/components/Spinner";
+import Button from "@/components/ui/Button";
 import { submitItemCreateOrEdit } from "@/lib/actions";
 import { setErrorsFromBackend } from "@/lib/helperFunctionsClient";
 import paths from "@/lib/paths";
+import { siteSettings } from "@/lib/siteSettings";
 import {
   Item,
   ItemWithPopulatedTranslations,
-  LanguageFeatures,
   ListAndUnitData,
   SeperatedUserLanguages,
   SupportedLanguage,
 } from "@/lib/types";
 import { itemSchemaWithPopulatedTranslations } from "@/lib/validations";
+import { FormErrors } from "../../ui/FormErrors";
+import ComboBoxWrapper from "./ComboBoxWrapper";
 import LanguagePicker from "./EditOrCreatePageLanguagePicker";
 import EnterMultiple from "./EnterMultiple";
-import { FormErrors } from "../../ui/FormErrors";
 import ManageTranslations from "./ManageTranslations";
 import PickMultiple from "./PickMultiple";
-import Button from "@/components/ui/Button";
-import Spinner from "@/components/Spinner";
-import ComboBoxWrapper from "./ComboBoxWrapper";
 
 interface EditOrCreateItemProps {
   seperatedUserLanguages: SeperatedUserLanguages;
   item?: Omit<ItemWithPopulatedTranslations, "_id">;
-  allLanguageFeatures: LanguageFeatures[];
   addToThisList?: ListAndUnitData;
 }
 
@@ -58,7 +57,6 @@ export default function EditOrCreateItem({
       addToThisList?.languageWithFlagAndName.name ||
       seperatedUserLanguages.learnedLanguages[0].name,
   },
-  allLanguageFeatures,
 }: EditOrCreateItemProps) {
   const allUserLanguages = [
     seperatedUserLanguages.native,
@@ -85,7 +83,7 @@ export default function EditOrCreateItem({
 
   const [itemLanguage, setItemLanguage] = useState(language);
 
-  const featuresForItemLanguage = allLanguageFeatures.find(
+  const featuresForItemLanguage = siteSettings.languageFeatures.find(
     (lang) => lang.langCode === itemLanguage
   );
   if (!featuresForItemLanguage)
@@ -141,10 +139,6 @@ export default function EditOrCreateItem({
       error: (err) => err.toString(),
     });
   };
-
-  console.log("submitting", isSubmitting, "dirty?", isDirty, "valid", isValid);
-
-  console.log("errors", Object.keys(errors).length, errors);
 
   return (
     <div className="my-4 flex h-[calc(100vh-7.5rem)] flex-col gap-y-2 px-4">
