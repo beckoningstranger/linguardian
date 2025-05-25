@@ -4,9 +4,8 @@
   "description": "",
   "main": "server.ts",
   "scripts": {
-    "start": "node --import ./loader.mjs src/server.ts",
-    "watch-compiler": "npx tsc --watch --noEmit --preserveWatchOutput",
-    "dev": "nodemon"
+    "start": "tsx src/server.ts",
+    "dev": "concurrently \"tsx watch src/server.ts\" \"tsc --noEmit --watch\""
   },
   "author": "",
   "license": "ISC",
@@ -19,7 +18,7 @@
     "helmet": "^8.0.0",
     "mongoose": "^8.1.3",
     "morgan": "^1.10.0",
-    "multer": "^1.4.5-lts.1",
+    "multer": "^2.0.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -31,8 +30,8 @@
     "@types/morgan": "^1.9.9",
     "@types/multer": "^1.4.11",
     "@types/node": "^20.11.20",
-    "nodemon": "^3.1.0",
-    "ts-node": "^10.9.2",
+    "concurrently": "^9.1.2",
+    "tsx": "^4.19.4",
     "typescript": "^5.3.3"
   },
   "type": "module"

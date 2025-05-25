@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import { normalizeString, slugifyString } from "../lib/helperFunctions.js";
+import { siteSettings } from "../lib/siteSettings.js";
 import {
   Item,
   ItemWithPopulatedTranslations,
@@ -8,7 +9,6 @@ import {
   Tag,
 } from "../lib/types.js";
 import Items from "./item.schema.js";
-import { getLanguageFeaturesForLanguage } from "./settings.model.js";
 
 export async function getItemBySlug(slug: string) {
   return await Items.findOne({ slug });
@@ -45,10 +45,7 @@ export async function getFullyPopulatedItemBySlug(
 }
 
 export async function getAllSlugsForLanguage(language: SupportedLanguage) {
-  return await Items.find(
-    { language: language },
-    { slug: 1, language: 1, _id: 0 }
-  );
+  return await Items.find({ language: language }).select("slug language -_id");
 }
 
 export async function findItemsByName(
@@ -56,21 +53,11 @@ export async function findItemsByName(
   query: string
 ) {
   const normalizedLowerCaseQuery = normalizeString(query);
-  return await Items.find(
-    {
-      normalizedName: { $regex: normalizedLowerCaseQuery },
-      language: { $in: languages },
-    },
-    {
-      _id: 1,
-      normalizedName: 1,
-      name: 1,
-      slug: 1,
-      partOfSpeech: 1,
-      IPA: 1,
-      definition: 1,
-      language: 1,
-    }
+  return await Items.find({
+    normalizedName: { $regex: normalizedLowerCaseQuery },
+    language: { $in: languages },
+  }).select(
+    "_id normalizedName name slug partOfSpeech IPA definition language"
   );
 }
 
@@ -140,7 +127,9 @@ async function filterOutInvalidTags(
   language: SupportedLanguage
 ) {
   if (!tagArray) return [];
-  const languageFeatures = await getLanguageFeaturesForLanguage(language);
+  const languageFeatures = siteSettings.languageFeatures.find(
+    (lang) => lang.langCode === language
+  );
   const validTags = languageFeatures?.tags.forAll
     .concat(languageFeatures.tags[partOfSpeech])
     .filter((item) => item !== undefined);

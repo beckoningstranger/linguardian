@@ -1,5 +1,5 @@
 #!/bin/bash
-./share_types.sh
+./share_files.sh
 
 docker compose -f docker-compose.build.yml build backend
 docker compose -f docker-compose.build.yml up -d backend

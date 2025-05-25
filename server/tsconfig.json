@@ -8,6 +8,10 @@
     "target": "ESNext",
     "esModuleInterop": true,
     "outDir": "dist",
-    "strict": true
+    "strict": true,
+    "rootDir": "src",
+    "noEmit": false,
+    "resolveJsonModule": true,
+    "types": ["node"]
   }
 }

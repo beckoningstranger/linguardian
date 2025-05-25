@@ -1,9 +1,10 @@
 import EditOrCreateItem from "@/components/Dictionary/EditItemPage/EditOrCreateItem";
-import { getAllLanguageFeatures, getList } from "@/lib/fetchData";
+import { getList } from "@/lib/fetchData";
 import {
   getAllUserLanguages,
   getSeperatedUserLanguages,
 } from "@/lib/helperFunctionsServer";
+import { siteSettings } from "@/lib/siteSettings";
 import { ListAndUnitData } from "@/lib/types";
 
 interface NewItemPageProps {
@@ -15,26 +16,20 @@ export default async function NewItemPage({
 }: NewItemPageProps) {
   const decodedUnitName = decodeURIComponent(unitName);
 
-  const [
-    allUserLanguages,
-    seperatedUserLanguages,
-    listData,
-    allLanguageFeatures,
-  ] = await Promise.all([
-    getAllUserLanguages(),
-    getSeperatedUserLanguages(),
-    getList(Number(listNumber)),
-    getAllLanguageFeatures(),
-  ]);
+  const [allUserLanguages, seperatedUserLanguages, listData] =
+    await Promise.all([
+      getAllUserLanguages(),
+      getSeperatedUserLanguages(),
+      getList(Number(listNumber)),
+    ]);
 
-  if (!listData || !allUserLanguages || !allLanguageFeatures)
-    throw new Error("Failed to get data");
+  if (!listData || !allUserLanguages) throw new Error("Failed to get data");
 
   const listAndUnitData: ListAndUnitData = {
     languageWithFlagAndName: {
       code: listData.language.code,
       flag: listData.language.flag,
-      name: allLanguageFeatures.find(
+      name: siteSettings.languageFeatures.find(
         (lang) => lang.flagCode === listData.language.flag
       )?.langName!,
     },
@@ -52,7 +47,6 @@ export default async function NewItemPage({
 
   return (
     <EditOrCreateItem
-      allLanguageFeatures={allLanguageFeatures}
       seperatedUserLanguages={seperatedUserLanguages}
       addToThisList={listAndUnitData}
     />

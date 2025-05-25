@@ -2,61 +2,16 @@ import { Types } from "mongoose";
 import { z } from "zod";
 
 import { Item, SupportedLanguage } from "./types.js";
-
-export const allTags = [
-  "colloquial",
-  "archaic",
-  "obsolete",
-  "vulgar",
-  "slang",
-  "humorous",
-  "literary",
-  "transitive",
-  "intransitive",
-  "Belgian French",
-  "Wechselpräposition",
-] as const;
+import {
+  allCases,
+  allGenders,
+  allPartsOfSpeech,
+  allTags,
+} from "./siteSettings.js";
 
 export const tagSchema = z.enum(allTags);
-
-export const allGenders = [
-  "masculine",
-  "feminine",
-  "neuter",
-  "common",
-  "animate",
-  "inanimate",
-] as const;
-
 export const genderSchema = z.enum(allGenders);
-
-export const allPartsOfSpeech = [
-  "noun",
-  "pronoun",
-  "verb",
-  "adjective",
-  "adverb",
-  "preposition",
-  "conjunction",
-  "determiner",
-  "interjection",
-  "particle",
-  "phrase",
-] as const;
-
 export const partOfSpeechSchema = z.enum(allPartsOfSpeech);
-
-export const allCases = [
-  "nominative",
-  "genitive",
-  "dative",
-  "accusative",
-  "instrumental",
-  "locative",
-  "vocative",
-  "accusative & dative",
-] as const;
-
 export const casesSchema = z.enum(allCases);
 
 const emailSchema = z

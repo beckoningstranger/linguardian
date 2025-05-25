@@ -5,11 +5,10 @@ import {
   LanguageWithFlagAndName,
   LearningMode,
   SeperatedUserLanguages,
-  SupportedLanguage,
   User,
 } from "@/lib/types";
 import { getServerSession } from "next-auth";
-import { getList, getSupportedLanguages, getUserById } from "./fetchData";
+import { getList, getUserById } from "./fetchData";
 
 export async function getUserOnServer() {
   const session = await getServerSession(authOptions);
@@ -28,15 +27,6 @@ export async function getSeperatedUserLanguages() {
     native: user.native,
     learnedLanguages: user.learnedLanguages,
   } as SeperatedUserLanguages;
-}
-
-export async function checkPassedLanguageAsync(
-  passedLanguage: string | undefined
-) {
-  const supportedLanguages = await getSupportedLanguages();
-  if (!supportedLanguages) throw new Error(`Could not get supported languages`);
-  if (!supportedLanguages.includes(passedLanguage as SupportedLanguage))
-    throw new Error(`${passedLanguage} is not a valid language`);
 }
 
 export async function getUserAndVerifyUserIsLoggedIn(errorMessage: string) {

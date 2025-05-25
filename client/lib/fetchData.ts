@@ -1,8 +1,8 @@
+import { allUsernameSlugs, nextListNumber } from "@/dataForBuild";
 import {
   DictionarySearchResult,
   FullyPopulatedList,
   ItemWithPopulatedTranslations,
-  LanguageFeatures,
   LearningDataForLanguage,
   LearningMode,
   List,
@@ -13,43 +13,9 @@ import {
 } from "@/lib/types";
 import { notFound } from "next/navigation";
 import { getUserOnServer } from "./helperFunctionsServer";
-import {
-  allLanguageFeatures,
-  allLearningModes,
-  allSupportedLanguages,
-  allUsernameSlugs,
-  nextListNumber,
-} from "@/dataForBuild";
 
 const server = process.env.SERVER_URL;
 const environment = process.env.NODE_ENV;
-
-export async function getSupportedLanguages() {
-  if (environment === "production")
-    return allSupportedLanguages as SupportedLanguage[];
-  try {
-    const response = await fetch(`${server}/settings/supportedLanguages`, {
-      next: { revalidate: 60 * 60 * 24 },
-    });
-    if (!response.ok) throw new Error(response.statusText);
-    const supportedLanguages: SupportedLanguage[] = await response.json();
-    return supportedLanguages;
-  } catch (err) {
-    console.error(`Error getting supported languages: ${err}`);
-  }
-}
-
-export async function getLearningModes() {
-  if (environment === "production") return allLearningModes as LearningMode[];
-  try {
-    const response = await fetch(`${server}/settings/learningModes`);
-    if (!response.ok) throw new Error(response.statusText);
-    const learningModes: LearningMode[] = await response.json();
-    return learningModes;
-  } catch (err) {
-    console.error(`Error getting learning modes: ${err}`);
-  }
-}
 
 export async function getListNumbers() {
   if (environment === "production")
@@ -64,38 +30,6 @@ export async function getListNumbers() {
     return listNumbers;
   } catch (err) {
     console.error(`Error getting latest list number: ${err}`);
-  }
-}
-
-export async function getLanguageFeaturesForLanguage(
-  language: SupportedLanguage
-) {
-  try {
-    const response = await fetch(
-      `${server}/settings/languageFeatures/${language}`
-    );
-    if (!response.ok) throw new Error(response.statusText);
-    const languageFeatures: LanguageFeatures = await response.json();
-    return languageFeatures;
-  } catch (err) {
-    console.error(
-      `Error getting language features for language ${language}: ${err}`
-    );
-  }
-}
-
-export async function getAllLanguageFeatures() {
-  if (environment === "production")
-    return allLanguageFeatures as LanguageFeatures[];
-  try {
-    const response = await fetch(`${server}/settings/allLanguageFeatures`, {
-      next: { revalidate: 60 * 60 },
-    });
-    if (!response.ok) throw new Error(response.statusText);
-    const allLanguageFeatures: LanguageFeatures[] = await response.json();
-    return allLanguageFeatures;
-  } catch (err) {
-    console.error(`Error getting all language features: ${err}`);
   }
 }
 

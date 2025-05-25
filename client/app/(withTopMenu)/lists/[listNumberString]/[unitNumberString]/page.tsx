@@ -121,20 +121,8 @@ export default async function UnitDetailPage({
     unitNumber: unitNumber,
   };
 
-  // const unlockedLearningModesForUser = listData.unlockedReviewModes[userNative];
-
   return (
-    <UnitContextProvider
-      // userIsAuthor={userIsAuthor}
-      // userIsLearningThisList={userIsLearningThisList || false}
-      // listData={listData}
-      // learningDataForLanguage={learningDataForLanguage}
-      // unlockedLearningModesForUser={unlockedLearningModesForUser}
-      // listStats={listStats}
-      // listStatus={"practice"}
-      unitName={unitName}
-      noOfItemsInUnit={unitItems.length}
-    >
+    <UnitContextProvider unitName={unitName} noOfItemsInUnit={unitItems.length}>
       <div className="mb-24 tablet:flex tablet:justify-center tablet:gap-2 tablet:p-2 desktopxl:grid desktopxl:grid-cols-[100px_minmax(0,1600px)_100px]">
         <UnitDetailsLeftButtons
           listNumber={listNumber}

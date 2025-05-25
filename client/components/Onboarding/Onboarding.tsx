@@ -1,17 +1,14 @@
 "use client";
 
-import { LanguageFeatures, LanguageWithFlagAndName } from "@/lib/types";
+import { siteSettings } from "@/lib/siteSettings";
+import { LanguageWithFlagAndName } from "@/lib/types";
 import { ListboxOption } from "@headlessui/react";
 import { MouseEventHandler, useState } from "react";
 import Flag from "react-world-flags";
 import LanguagePicker from "./LanguagePicker";
 import OnboardingSubmitButton from "./OnboardingSubmitButton";
 
-interface OnboardingProps {
-  allLanguageFeatures: LanguageFeatures[];
-}
-
-export default function Onboarding({ allLanguageFeatures }: OnboardingProps) {
+export default function Onboarding() {
   const [userNative, setUserNative] = useState<LanguageWithFlagAndName | null>(
     null
   );
@@ -20,7 +17,7 @@ export default function Onboarding({ allLanguageFeatures }: OnboardingProps) {
   const [step, setStep] = useState<number>(1);
 
   const allLanguagesAndFlags: LanguageWithFlagAndName[] =
-    allLanguageFeatures.map((lang) => ({
+    siteSettings.languageFeatures.map((lang) => ({
       code: lang.langCode,
       flag: lang.flagCode,
       name: lang.langName,

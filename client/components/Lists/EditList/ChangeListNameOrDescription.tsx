@@ -20,19 +20,19 @@ export default function ChangeListNameOrDescription({
   editStyling,
   nonEditStyling,
 }: ChangeListNameOrDescriptionProps) {
-  const [newString, setNewString] = useState(oldString);
+  const [newString, setNewString] = useState(oldString || "");
   const [editMode, setEditMode] = useState(false);
 
-  // const formattedString = newString
-  //   ?.split("\n")
-  //   .map((paragraph, index) => <p key={index}>{paragraph}</p>);
-
   const changeIt = () => {
-    if (newString !== oldString)
+    if (newString === oldString) return;
+    if (
+      (listProperty === "listName" && newString.length > 5) ||
+      listProperty === "listDescription"
+    ) {
       toast.promise(
         changeListDetails({
           listNumber: listNumber,
-          [listProperty]: newString,
+          [listProperty]: newString?.trim(),
         }),
         {
           loading: "Loading...",
@@ -42,6 +42,9 @@ export default function ChangeListNameOrDescription({
           error: (err) => err.toString(),
         }
       );
+    } else {
+      setNewString(oldString || "");
+    }
   };
 
   const inputRef = useOutsideClick(() => {
@@ -84,7 +87,7 @@ export default function ChangeListNameOrDescription({
               placeholder="Enter a new title for this list"
               onKeyDown={(e) => {
                 if (e.key === "Escape") {
-                  setNewString(oldString);
+                  setNewString(oldString || "");
                   setEditMode(false);
                 }
               }}
@@ -96,11 +99,11 @@ export default function ChangeListNameOrDescription({
               ref={inputRef as React.RefObject<HTMLTextAreaElement>}
               value={newString}
               onChange={(e) => setNewString(e.target.value)}
-              name="title"
-              placeholder="Enter a new title for this list"
+              name="description"
+              placeholder="Enter a description for this list..."
               onKeyDown={(e) => {
                 if (e.key === "Escape") {
-                  setNewString(oldString);
+                  setNewString(oldString || "");
                   setEditMode(false);
                 }
               }}
@@ -119,7 +122,9 @@ export default function ChangeListNameOrDescription({
             inputRef.current?.focus();
           }}
         >
-          {newString}
+          {newString && newString?.length > 0
+            ? newString
+            : "Enter a list description"}
         </div>
       )}
     </>

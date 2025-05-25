@@ -41,7 +41,7 @@ export default function EditListHeader({}: EditListHeaderProps) {
             oldString={name}
             listNumber={listNumber}
             listProperty="listName"
-            editStyling="font-serif text-hsm tablet:text-hmd w-full"
+            editStyling="font-serif text-hsm p-1 w-full"
             nonEditStyling="font-serif text-hsm tablet:text-hmd hover:cursor-pointer "
           />
         </div>
@@ -49,7 +49,7 @@ export default function EditListHeader({}: EditListHeaderProps) {
           oldString={description}
           listNumber={listNumber}
           listProperty="listDescription"
-          editStyling="flex text-csmr tablet:text-cmdr flex-1 w-full resize-none overflow-hidden h-20"
+          editStyling="flex text-csmr p-1 flex-1 w-full resize-none overflow-hidden h-20"
           nonEditStyling="text-csmr tablet:text-cmdr w-full hover:cursor-pointer"
         />
       </div>

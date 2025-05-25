@@ -1,15 +1,17 @@
 import { Types } from "mongoose";
 import { z } from "zod";
 import {
-  allCases,
-  allGenders,
-  allPartsOfSpeech,
-  allTags,
   itemSchemaWithPopulatedTranslations,
   itemSchemaWithTranslations,
   parsedItemSchema,
   registerSchema,
 } from "./validations.js";
+import {
+  allCases,
+  allGenders,
+  allPartsOfSpeech,
+  allTags,
+} from "./siteSettings.js";
 
 export type PartOfSpeech = (typeof allPartsOfSpeech)[number];
 export type Gender = (typeof allGenders)[number];

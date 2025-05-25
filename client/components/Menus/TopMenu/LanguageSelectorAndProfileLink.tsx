@@ -1,34 +1,29 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { MouseEventHandler } from "react";
 import Flag from "react-world-flags";
 
 import { useActiveLanguage } from "@/context/ActiveLanguageContext";
 import paths from "@/lib/paths";
-import { SupportedLanguage, User } from "@/lib/types";
+import { siteSettings } from "@/lib/siteSettings";
+import { User } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import { useMobileMenu } from "../../../context/MobileMenuContext";
 import MobileMenu from "../MobileMenu/MobileMenu";
 import LanguageSelector from "./LanguageSelector/LanguageSelector";
 import MobileLanguageSelector from "./LanguageSelector/MobileLanguageSelector";
 
-interface LanguageSelectorAndProfileLinkProps {
-  allSupportedLanguages: SupportedLanguage[];
-}
-
-export default function LanguageSelectorAndProfileLink({
-  allSupportedLanguages,
-}: LanguageSelectorAndProfileLinkProps) {
+export default function LanguageSelectorAndProfileLink() {
   const { toggleMobileMenu } = useMobileMenu();
   const currentBaseUrl = usePathname();
   const { activeLanguage } = useActiveLanguage();
   const user = useSession().data?.user as User;
 
   const showLanguageSelectorOnlyOn: string[] = [];
-  allSupportedLanguages.forEach((lang) => {
+  siteSettings.supportedLanguages.forEach((lang) => {
     ["dashboard", "dictionary", "lists", "lists/new"].forEach((entry) =>
       showLanguageSelectorOnlyOn.push("/" + lang + "/" + entry)
     );
@@ -52,9 +47,7 @@ export default function LanguageSelectorAndProfileLink({
             onClick={toggleMobileMenu as MouseEventHandler}
           />
           <MobileMenu fromDirection="animate-from-top">
-            <MobileLanguageSelector
-              allSupportedLanguages={allSupportedLanguages}
-            />
+            <MobileLanguageSelector />
           </MobileMenu>
         </div>
         <div className="flex items-center justify-evenly gap-4">
@@ -63,10 +56,7 @@ export default function LanguageSelectorAndProfileLink({
               !showLanguageSelectorOnlyOn.includes(currentBaseUrl) && "hidden"
             } z-50`}
           >
-            <LanguageSelector
-              activeLanguage={activeLanguage}
-              allSupportedLanguages={allSupportedLanguages}
-            />
+            <LanguageSelector activeLanguage={activeLanguage} />
           </div>
           <Link href={paths.profilePath(user.usernameSlug)}>
             {user?.image && (

@@ -1,6 +1,7 @@
+import { redirect } from "next/navigation";
+
 import EditUnitHeader from "@/components/Lists/EditUnit/EditUnitHeader";
 import UnitDetailsLeftButtons from "@/components/Lists/UnitOverview/UnitDetailsLeftButtons";
-import UnitHeader from "@/components/Lists/UnitOverview/UnitHeader";
 import UnitItems from "@/components/Lists/UnitOverview/UnitItems";
 import TopContextMenuLoader from "@/components/Menus/TopMenu/TopContextMenuLoader";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
@@ -13,7 +14,6 @@ import {
 import { getUserOnServer } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
 import { ListAndUnitData } from "@/lib/types";
-import { redirect } from "next/navigation";
 
 interface UnitEditPageProps {
   params: {

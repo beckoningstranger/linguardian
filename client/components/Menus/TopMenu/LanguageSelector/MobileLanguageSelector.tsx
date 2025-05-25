@@ -6,23 +6,18 @@ import Flag from "react-world-flags";
 
 import { useActiveLanguage } from "@/context/ActiveLanguageContext";
 import { useMobileMenu } from "@/context/MobileMenuContext";
-import { User, SupportedLanguage } from "@/lib/types";
+import { siteSettings } from "@/lib/siteSettings";
+import { User } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import AddNewLanguageOption from "./AddNewLanguageOption";
 import { moreLanguagesToLearn } from "./LanguageSelector";
 import { calculateNewPath } from "./LanguageSelectorLink";
 
-interface MobileLanguageSelectorProps {
-  allSupportedLanguages: SupportedLanguage[];
-}
-
-export default function MobileLanguageSelector({
-  allSupportedLanguages,
-}: MobileLanguageSelectorProps) {
+export default function MobileLanguageSelector() {
   const { setActiveLanguage } = useActiveLanguage();
   const { toggleMobileMenu } = useMobileMenu();
   const currentPath = usePathname();
-  const amountOfSupportedLanguages = allSupportedLanguages.length;
+  const amountOfSupportedLanguages = siteSettings.supportedLanguages.length;
   const { data, update } = useSession();
   const user = data?.user as User;
 
