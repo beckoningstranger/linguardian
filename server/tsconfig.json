@@ -11,7 +11,6 @@
     "strict": true,
     "rootDir": "src",
     "noEmit": false,
-    "resolveJsonModule": true,
-    "types": ["node"]
+    "resolveJsonModule": true
   }
 }
