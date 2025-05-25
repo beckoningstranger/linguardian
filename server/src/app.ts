@@ -3,7 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 
-import api from "./routes/api.js";
+import api from "./routes/api";
 
 const app = express();
 const FRONTEND_URL = process.env.FRONTEND;

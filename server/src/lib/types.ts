@@ -5,13 +5,13 @@ import {
   itemSchemaWithTranslations,
   parsedItemSchema,
   registerSchema,
-} from "./validations.js";
+} from "./validations";
 import {
   allCases,
   allGenders,
   allPartsOfSpeech,
   allTags,
-} from "./siteSettings.js";
+} from "./siteSettings";
 
 export type PartOfSpeech = (typeof allPartsOfSpeech)[number];
 export type Gender = (typeof allGenders)[number];

@@ -6,7 +6,7 @@ import {
   type LearningMode,
   type SRSettings,
   type SupportedLanguage,
-} from "./types.js";
+} from "./types";
 
 export const allTags = [
   "colloquial",

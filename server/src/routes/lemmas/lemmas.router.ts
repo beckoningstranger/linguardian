@@ -2,7 +2,7 @@ import express from "express";
 import {
   httpGetAllItemsForLemma,
   httpGetAllLemmasForLanguage,
-} from "./lemmas.controller.js";
+} from "./lemmas.controller";
 
 export const lemmasRouter = express.Router();
 

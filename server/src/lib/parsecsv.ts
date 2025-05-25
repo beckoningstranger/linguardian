@@ -11,9 +11,9 @@ import {
   createList,
   getPopulatedListByObjectId,
 } from "../models/lists.model.js";
-import { placeholders } from "./constants.js";
-import { normalizeString, slugifyString } from "./helperFunctions.js";
-import { siteSettings } from "./siteSettings.js";
+import { placeholders } from "./constants";
+import { normalizeString, slugifyString } from "./helperFunctions";
+import { siteSettings } from "./siteSettings";
 import {
   Case,
   Gender,
@@ -23,8 +23,8 @@ import {
   PopulatedList,
   SupportedLanguage,
   Tag,
-} from "./types.js";
-import { parsedItemSchema } from "./validations.js";
+} from "./types";
+import { parsedItemSchema } from "./validations";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

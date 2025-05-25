@@ -1,5 +1,5 @@
 import { ZodFormattedError } from "zod";
-import { SupportedLanguage } from "./types.js";
+import { SupportedLanguage } from "./types";
 
 export function slugifyString(
   string: string,

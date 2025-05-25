@@ -5,7 +5,7 @@ import {
   httpGetAllSlugsForLanguage,
   httpGetFullyPopulatedItemBySlug,
   httpGetItemBySlug,
-} from "./items.controller.js";
+} from "./items.controller";
 
 export const itemsRouter = express.Router();
 

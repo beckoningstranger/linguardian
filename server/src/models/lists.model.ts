@@ -8,7 +8,7 @@ import {
   PopulatedList,
   SupportedLanguage,
 } from "../lib/types.js";
-import Lists from "./list.schema.js";
+import Lists from "./list.schema";
 import { siteSettings } from "../lib/siteSettings.js";
 
 export async function getList(listNumber: number) {

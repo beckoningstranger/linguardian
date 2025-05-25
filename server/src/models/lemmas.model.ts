@@ -1,5 +1,5 @@
 import { SupportedLanguage } from "../lib/types.js";
-import Lemmas from "./lemma.schema.js";
+import Lemmas from "./lemma.schema";
 
 export async function getAllItemsForLemma(
   lemma: string,

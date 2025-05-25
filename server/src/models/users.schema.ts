@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
 import { siteSettings } from "../lib/siteSettings.js";
 import { SupportedLanguage, User } from "../lib/types.js";
-import { languageWithFlagAndNameSchema } from "./helperSchemas.js";
+import { languageWithFlagAndNameSchema } from "./helperSchemas";
 
 const supportedLanguages = siteSettings.supportedLanguages;
 

@@ -1,6 +1,6 @@
 import { createServer } from "http";
-import app from "./app.js";
-import { mongoConnect } from "./lib/mongo.js";
+import app from "./app";
+import { mongoConnect } from "./lib/mongo";
 
 const PORT = process.env.PORT || 8000;
 const server = createServer(app);

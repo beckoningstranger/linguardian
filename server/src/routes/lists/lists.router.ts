@@ -17,7 +17,7 @@ import {
   httpRemoveItemFromList,
   httpRemoveList,
   httpRemoveUnitFromList,
-} from "./lists.controller.js";
+} from "./lists.controller";
 
 export const listsRouter = express.Router();
 

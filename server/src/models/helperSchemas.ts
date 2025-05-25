@@ -1,5 +1,5 @@
 import { Schema } from "mongoose";
-import { LanguageWithFlagAndName } from "../lib/types.js";
+import { LanguageWithFlagAndName } from "../lib/types";
 
 export const languageWithFlagAndNameSchema =
   new Schema<LanguageWithFlagAndName>({

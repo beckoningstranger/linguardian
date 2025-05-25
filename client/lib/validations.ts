@@ -1,13 +1,13 @@
 import { Types } from "mongoose";
 import { z } from "zod";
 
-import { Item, SupportedLanguage } from "./types.js";
+import { Item, SupportedLanguage } from "./types";
 import {
   allCases,
   allGenders,
   allPartsOfSpeech,
   allTags,
-} from "./siteSettings.js";
+} from "./siteSettings";
 
 export const tagSchema = z.enum(allTags);
 export const genderSchema = z.enum(allGenders);

@@ -1,6 +1,6 @@
 import { List } from "../lib/types.js";
 import { model, Schema } from "mongoose";
-import { languageWithFlagAndNameSchema } from "./helperSchemas.js";
+import { languageWithFlagAndNameSchema } from "./helperSchemas";
 
 const listSchema = new Schema<List>({
   name: {

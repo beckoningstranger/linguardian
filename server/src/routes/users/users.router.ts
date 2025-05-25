@@ -19,7 +19,7 @@ import {
   httpSetLearnedListsForUserId,
   httpSetNativeLanguageForUserId,
   httpUpdateLearnedItems,
-} from "./users.controller.js";
+} from "./users.controller";
 
 export const usersRouter = express.Router();
 

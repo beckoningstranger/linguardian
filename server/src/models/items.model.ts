@@ -8,7 +8,7 @@ import {
   SupportedLanguage,
   Tag,
 } from "../lib/types.js";
-import Items from "./item.schema.js";
+import Items from "./item.schema";
 
 export async function getItemBySlug(slug: string) {
   return await Items.findOne({ slug });

@@ -10,8 +10,8 @@ import {
   SupportedLanguage,
   User,
 } from "../lib/types.js";
-import Items from "./item.schema.js";
-import Users from "./users.schema.js";
+import Items from "./item.schema";
+import Users from "./users.schema";
 
 export async function getUserById(id: string) {
   try {

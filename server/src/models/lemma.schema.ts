@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 import { Lemma } from "../lib/types.js";
-import Item from "./item.schema.js";
+import Item from "./item.schema";
 
 const lemmaSchema = new Schema<Lemma>({
   name: { type: String, required: true },
