@@ -8,6 +8,8 @@ import { getPopulatedItemBySlug } from "@/lib/fetchData";
 import { getAllUserLanguages } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
 import { SlugLanguageObject } from "@/lib/types";
+import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
+import TopContextMenuLoader from "@/components/Menus/TopMenu/TopContextMenuLoader";
 
 export const metadata = { title: "Dictionary" };
 
@@ -60,24 +62,25 @@ export default async function ItemPage({
     );
 
   return (
-    <div className="flex tablet:pl-2">
-      <div className="py-2">
-        <IconSidebar position="left" showOn="tablet">
-          <IconSidebarButton
-            type="back"
-            label={comingFrom ? "Back to list" : "Back to dictionary"}
-            link={comingFrom || paths.dictionaryPath()}
-          />
-          <IconSidebarButton
-            type="edit"
-            label="Edit this item"
-            link={paths.editDictionaryItemPath(slug)}
-          />
-        </IconSidebar>
-      </div>
-      <div className="min-h-[calc(100vh-112px)] w-full bg-white/80 px-4 pt-2 tablet:ml-2 tablet:pl-8">
-        <ItemDetails item={item} />
-      </div>
+    <div className="flex">
+      <IconSidebar position="left" showOn="tablet">
+        <IconSidebarButton
+          type="back"
+          label={comingFrom ? "Back to list" : "Back to dictionary"}
+          link={comingFrom || paths.dictionaryPath()}
+        />
+        <IconSidebarButton
+          type="edit"
+          label="Edit this item"
+          link={paths.editDictionaryItemPath(slug)}
+        />
+      </IconSidebar>
+      {/* <div className="min-h-[calc(100vh-112px)] w-full bg-white/80 px-4 pt-2 tablet:ml-2 tablet:pl-8"> */}
+      <ItemDetails item={item} />
+      {/* </div> */}
+      <MobileMenuContextProvider>
+        <TopContextMenuLoader itemSlug={item.slug} opacity={90} />
+      </MobileMenuContextProvider>
     </div>
   );
 }

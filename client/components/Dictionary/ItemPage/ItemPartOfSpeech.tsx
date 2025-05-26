@@ -10,7 +10,7 @@ export default function ItemPartOfSpeech({
   partOfSpeech,
 }: ItemPartOfSpeechProps) {
   return (
-    <div className="flex gap-x-1">
+    <div className="flex gap-x-1 text-cxlb">
       <span>{gender}</span>
       <span>{partOfSpeech}</span>
     </div>

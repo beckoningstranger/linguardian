@@ -22,7 +22,7 @@ export default function IconSidebar({
   return (
     <div
       id="IconSidebar"
-      className={cn("hidden flex-col rounded-lg gap-2", show)}
+      className={cn("hidden flex-col rounded-lg gap-2 m-2", show)}
     >
       <div
         className={cn(

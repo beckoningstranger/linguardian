@@ -67,6 +67,7 @@ export default function LanguageSelectorAndProfileLink() {
                   width={75}
                   height={75}
                   className="hidden rounded-full transition-transform hover:scale-110 phone:block"
+                  priority
                 />
                 <Image
                   src={user.image}
@@ -74,6 +75,7 @@ export default function LanguageSelectorAndProfileLink() {
                   width={64}
                   height={64}
                   className="rounded-full transition-transform hover:scale-110 phone:hidden"
+                  priority
                 />
               </>
             )}

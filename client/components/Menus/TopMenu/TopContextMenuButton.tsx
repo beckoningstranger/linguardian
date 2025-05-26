@@ -27,9 +27,14 @@ export default function TopContextMenuButton({
     if (setContextExpanded) setContextExpanded(false);
     onClick?.(e);
   };
+  console.log("button", link);
 
   const backTo =
-    target !== "item" ? target + " overview" : link ? "list" : "dictionary";
+    target !== "item"
+      ? target + " overview"
+      : link && !link.includes("dictionary")
+      ? "list"
+      : "dictionary";
 
   const config = {
     delete: {

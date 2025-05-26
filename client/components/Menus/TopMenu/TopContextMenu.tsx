@@ -142,6 +142,7 @@ export default function TopContextMenu({
           width={90}
           src={"/icons/Context.svg"}
           onClick={() => setContextExpanded((prev) => !prev)}
+          priority
         />
       </div>
       {contextExpanded && (

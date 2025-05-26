@@ -24,7 +24,7 @@ export async function getFullyPopulatedItemBySlug(
 ) {
   const paths = userLanguages.map((lang) => ({
     path: "translations." + lang,
-    select: `name language slug languageName`,
+    select: `name language slug languageName flagCode`,
   }));
   const item = (await Items.findOne({ slug }).populate(paths).exec()) as Omit<
     Item,

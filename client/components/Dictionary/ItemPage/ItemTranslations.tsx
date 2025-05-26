@@ -1,8 +1,10 @@
 import Link from "next/link";
+import Flag from "react-world-flags";
 
-import { getAllUserLanguages } from "@/lib/helperFunctionsServer";
-import { Item, SupportedLanguage } from "@/lib/types";
 import paths from "@/lib/paths";
+import { siteSettings } from "@/lib/siteSettings";
+import { Item, SupportedLanguage } from "@/lib/types";
+import { getAllUserLanguages } from "@/lib/helperFunctionsServer";
 
 interface ItemTranslationsProps {
   translations?: Partial<Record<SupportedLanguage, Item[]>>;
@@ -11,36 +13,31 @@ interface ItemTranslationsProps {
 export default async function ItemTranslations({
   translations,
 }: ItemTranslationsProps) {
-  const allUserLanguages = await getAllUserLanguages();
-  const foundTranslations: Partial<Record<string, Item[]>> = {};
+  if (!translations) return null;
 
-  allUserLanguages.forEach((lang) => {
-    if (!translations || !translations[lang.code]) return;
+  const displayedTranslationLanguages =
+    (await getAllUserLanguages()).map((lang) => lang.code) ||
+    siteSettings.supportedLanguages;
 
-    translations[lang.code]?.forEach((item) => {
-      if (!foundTranslations[item.languageName])
-        foundTranslations[item.languageName] = [];
-      foundTranslations[item.languageName]?.push(item);
-    });
-  });
-
-  const renderedTranslations = Object.keys(foundTranslations).map(
-    (languageName, index) => (
-      <div key={index} className="text-gray-800">
-        Translation {languageName}
-        <div className="ml-4">
-          {foundTranslations[languageName]?.map((item, index) => (
-            <Link
-              href={paths.dictionaryItemPath(item.slug)}
-              key={item.normalizedName + index}
-            >
-              <div className="text-black hover:underline">{item.name}</div>
-            </Link>
-          ))}
-        </div>
-      </div>
-    )
-  );
-
-  return <div>{renderedTranslations}</div>;
+  return displayedTranslationLanguages.map((lang) => (
+    <div
+      key={lang}
+      className="grid grid-cols-1 gap-2 tablet:grid-cols-2 desktop:grid-cols-3"
+    >
+      {translations[lang] &&
+        translations[lang].map((translation) => (
+          <Link
+            href={paths.dictionaryItemPath(translation.slug)}
+            key={translation.slug}
+            className="flex items-center gap-x-2 hover:underline"
+          >
+            <Flag
+              code={translation.flagCode}
+              className="size-10 rounded-full object-cover"
+            />
+            {translation.name}
+          </Link>
+        ))}
+    </div>
+  ));
 }

@@ -72,14 +72,14 @@ export default async function UnitEditPage({
 
   return (
     <UnitContextProvider unitName={unitName} noOfItemsInUnit={unitItems.length}>
-      <div className="mb-24 tablet:flex tablet:justify-center tablet:gap-2 tablet:p-2 desktopxl:grid desktopxl:grid-cols-[100px_minmax(0,1600px)]">
+      <div className="mb-24 tablet:flex tablet:justify-center desktopxl:grid desktopxl:grid-cols-[100px_minmax(0,1600px)]">
         <UnitDetailsLeftButtons
           listNumber={listNumber}
           unitNumber={unitNumber}
           userIsAuthor={userIsAuthor}
           editMode
         />
-        <div className="flex flex-1 flex-col justify-center tablet:gap-2">
+        <div className="flex flex-1 flex-col justify-center tablet:my-2 tablet:gap-2">
           <EditUnitHeader
             unitNumber={unitNumber}
             unitName={unitName}

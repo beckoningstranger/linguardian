@@ -123,7 +123,7 @@ export default async function UnitDetailPage({
 
   return (
     <UnitContextProvider unitName={unitName} noOfItemsInUnit={unitItems.length}>
-      <div className="mb-24 tablet:flex tablet:justify-center tablet:gap-2 tablet:p-2 desktopxl:grid desktopxl:grid-cols-[100px_minmax(0,1600px)_100px]">
+      <div className="mb-24 tablet:flex tablet:justify-center desktopxl:grid desktopxl:grid-cols-[100px_minmax(0,1600px)_100px]">
         <UnitDetailsLeftButtons
           listNumber={listNumber}
           unitNumber={unitNumber}
@@ -133,7 +133,7 @@ export default async function UnitDetailPage({
           className={cn(
             "justify-center tablet:gap-2",
             userIsLearningThisList &&
-              "grid grid-cols-1 desktop:grid-rows-[88px_400px] desktopxl:grid-cols-[minmax(0,1200px)_400px] desktopxl:grid-rows-[88px]",
+              "grid grid-cols-1 tablet:my-2 desktop:grid-rows-[88px_400px] desktopxl:grid-cols-[minmax(0,1200px)_400px] desktopxl:grid-rows-[88px]",
             !userIsLearningThisList && "flex flex-1 flex-col"
           )}
         >

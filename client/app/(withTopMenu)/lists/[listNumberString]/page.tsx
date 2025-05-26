@@ -62,6 +62,7 @@ export default async function ListPage({
   const [authorData, learningDataForLanguage] = await Promise.all([
     fetchAuthors(authors),
     getLearningDataForLanguage(user.id, listData.language.code),
+    // This should be combined with the backend call above into a single call
   ]);
 
   const userIsAuthor = authors.includes(user.id);
@@ -89,13 +90,13 @@ export default async function ListPage({
       listStats={listStats}
       listStatus={"practice"}
     >
-      <div className="mb-24 flex justify-center tablet:gap-2 tablet:py-2 desktop:mb-0">
+      <div className="mb-24 flex justify-center desktop:mb-0">
         <ListOverviewLeftButtons
           listNumber={listNumber}
           userIsAuthor={userIsAuthor}
         />
         <div
-          className={`grid w-full grid-cols-1 tablet:w-auto tablet:grid-cols-[310px_310px] tablet:grid-rows-[182px_340px] tablet:gap-2 desktop:grid-cols-[400px_400px] desktop:grid-rows-[182px_400px] desktopxl:grid-rows-[182px_200px]`}
+          className={`grid w-full grid-cols-1 tablet:my-2 tablet:w-auto tablet:grid-cols-[310px_310px] tablet:grid-rows-[182px_340px] tablet:gap-2 desktop:grid-cols-[400px_400px] desktop:grid-rows-[182px_400px] desktopxl:grid-rows-[182px_200px]`}
         >
           <ListHeader
             name={name}
