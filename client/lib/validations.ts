@@ -80,26 +80,6 @@ const ObjectIdSchema = z.custom<Types.ObjectId>(
   }
 );
 
-// type ItemSchema = {
-//   name: string;
-//   normalizedName: string;
-//   language: SupportedLanguage;
-//   partOfSpeech: PartOfSpeech;
-//   lemmas?: Types.ObjectId[];
-//   definition?: string[];
-//   gender?: Gender;
-//   pluralForm?: string[];
-//   slug: string;
-//   case?: Case;
-//   audio?: string[];
-//   pics?: string[];
-//   vids?: string[];
-//   IPA?: string[];
-//   tags?: Tag[];
-//   relevance?: Types.ObjectId;
-//   collocations?: Types.ObjectId;
-// };
-
 const itemSchemaWithoutTranslations = z.object({
   name: z.string().max(60, "Item names can be no longer than 60 characters"),
   normalizedName: z.string().max(60),
@@ -109,11 +89,8 @@ const itemSchemaWithoutTranslations = z.object({
   partOfSpeech: partOfSpeechSchema,
   lemmas: ObjectIdSchema.array().optional(),
   definition: z
-    .array(
-      z
-        .string()
-        .max(300, "Item definitions can be no longer than 300 characters")
-    )
+    .string()
+    .max(300, "Item definitions can be no longer than 300 characters")
     .optional(),
   gender: genderSchema.optional(),
   pluralForm: z
@@ -155,6 +132,14 @@ const itemSchemaWithoutTranslations = z.object({
   tags: tagSchema
     .array()
     .max(5, "Each item can receive a maximum of 5 tags")
+    .optional(),
+  context: z
+    .array(
+      z.object({
+        item: z.string(),
+        author: z.string(),
+      })
+    )
     .optional(),
   relevance: ObjectIdSchema.optional(),
   collocations: ObjectIdSchema.optional(),

@@ -14,6 +14,7 @@ export default async function ItemDetails({ item }: ItemDetailsProps) {
     name,
     tags,
     gender,
+    definition,
     partOfSpeech,
     IPA,
     pluralForm,
@@ -46,7 +47,7 @@ export default async function ItemDetails({ item }: ItemDetailsProps) {
         )}
         {itemCase && <div className="text-cxlb">followed by {itemCase}</div>}
       </div>
-      <ItemSection title="Definition">{item.definition}</ItemSection>
+      {definition && <ItemSection title="Definition">{definition}</ItemSection>}
       <ItemSection title="Translations">
         <ItemTranslations translations={translations} />
       </ItemSection>

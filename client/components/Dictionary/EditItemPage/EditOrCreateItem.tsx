@@ -31,6 +31,7 @@ import LanguagePicker from "./EditOrCreatePageLanguagePicker";
 import EnterMultiple from "./EnterMultiple";
 import ManageTranslations from "./ManageTranslations";
 import PickMultiple from "./PickMultiple";
+import EnterDefinition from "./EnterDefinition";
 
 interface EditOrCreateItemProps {
   seperatedUserLanguages: SeperatedUserLanguages;
@@ -50,6 +51,7 @@ export default function EditOrCreateItem({
     partOfSpeech: "noun",
     slug: "new-item",
     translations: {},
+    context: [],
     flagCode:
       addToThisList?.languageWithFlagAndName.flag ||
       seperatedUserLanguages.learnedLanguages[0].flag,
@@ -71,6 +73,7 @@ export default function EditOrCreateItem({
     normalizedName,
     definition,
     gender,
+    context,
     pluralForm,
     translations,
     case: Case,
@@ -114,6 +117,7 @@ export default function EditOrCreateItem({
       case: Case,
       pluralForm,
       IPA,
+      context,
       normalizedName,
       definition,
       tags,
@@ -293,14 +297,12 @@ export default function EditOrCreateItem({
             mode="IPA"
             IPA={ipa}
           />
-          <EnterMultiple
+          <EnterDefinition
             setValue={setValue}
-            formField="definition"
             initialValue={watch().definition}
-            label={{ singular: "Definition", plural: "Definitions" }}
             errors={errors}
-            mode="longstrings"
           />
+
           <ManageTranslations
             item={item}
             itemLanguage={watch().language}

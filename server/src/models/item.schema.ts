@@ -37,7 +37,7 @@ const itemSchema = new Schema<Item>(
       },
     ],
     definition: {
-      type: [String],
+      type: String,
     },
     translations: {
       DE: [
@@ -65,6 +65,12 @@ const itemSchema = new Schema<Item>(
         },
       ],
     },
+    context: [
+      {
+        item: { type: String, required: true },
+        author: { type: String, required: true },
+      },
+    ],
     gender: {
       type: String,
     },
