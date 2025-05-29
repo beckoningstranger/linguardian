@@ -78,7 +78,6 @@ export default function EnterDefinition({
                 }}
                 errors={errors}
                 minusButtonAction={() => {
-                  console.log("Click");
                   setDefinition("");
                   setShowInputField(false);
                 }}

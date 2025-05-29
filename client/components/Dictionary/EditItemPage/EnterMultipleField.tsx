@@ -12,6 +12,7 @@ interface EnterMultipleFieldProps {
   placeholder: string;
   activeField: string | null;
   setActiveField: Function;
+  errors: FieldErrors<FieldValues>;
 }
 
 export default function EnterMultipleField({
@@ -21,6 +22,7 @@ export default function EnterMultipleField({
   placeholder,
   activeField,
   setActiveField,
+  errors,
 }: EnterMultipleFieldProps) {
   const ref = useOutsideInputAndKeyboardClick(blur);
   const [value, setValue] = useState(array[parseInt(identifier.slice(-1))]);
@@ -47,7 +49,7 @@ export default function EnterMultipleField({
         minusButtonAction={() => setValue("")}
         label={placeholder}
         noFloatingLabel
-        errors={{} as FieldErrors<FieldValues>} // LOOK HERE, WE NEED TO PASS ERRORS
+        errors={errors}
         ref={ref as RefObject<HTMLInputElement>}
         type="text"
         placeholder={placeholder}

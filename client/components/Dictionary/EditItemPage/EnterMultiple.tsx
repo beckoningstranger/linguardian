@@ -76,6 +76,7 @@ export default function EnterMultiple({
                 placeholder={label.singular}
                 activeField={activeField}
                 setActiveField={setActiveField}
+                errors={errors}
               />
             ))}
           </div>
