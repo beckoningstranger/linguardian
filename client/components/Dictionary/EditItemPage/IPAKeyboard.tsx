@@ -67,16 +67,15 @@ export default function IPAKeyboard({
   }: {
     IPASetOfKeys: "vowels" | "consonants" | "rare" | "helperSymbols";
   }) {
-    if (activeField)
-      return (
-        <TabPanel>
-          <IPAKeys
-            keys={IPA[IPASetOfKeys]}
-            arrayIndex={parseInt(activeField.slice(-1))}
-            array={array}
-            setArray={setArray}
-          />
-        </TabPanel>
-      );
+    return (
+      <TabPanel>
+        <IPAKeys
+          keys={IPA[IPASetOfKeys]}
+          arrayIndex={parseInt(activeField!.slice(-1))}
+          array={array}
+          setArray={setArray}
+        />
+      </TabPanel>
+    );
   }
 }

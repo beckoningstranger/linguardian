@@ -77,6 +77,7 @@ export default function EnterMultiple({
                 activeField={activeField}
                 setActiveField={setActiveField}
                 errors={errors}
+                formField={formField}
               />
             ))}
           </div>

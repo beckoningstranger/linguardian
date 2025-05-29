@@ -13,6 +13,7 @@ interface EnterMultipleFieldProps {
   activeField: string | null;
   setActiveField: Function;
   errors: FieldErrors<FieldValues>;
+  formField: string;
 }
 
 export default function EnterMultipleField({
@@ -23,6 +24,7 @@ export default function EnterMultipleField({
   activeField,
   setActiveField,
   errors,
+  formField,
 }: EnterMultipleFieldProps) {
   const ref = useOutsideInputAndKeyboardClick(blur);
   const [value, setValue] = useState(array[parseInt(identifier.slice(-1))]);
@@ -54,7 +56,7 @@ export default function EnterMultipleField({
         type="text"
         placeholder={placeholder}
         spellCheck={false}
-        id={identifier}
+        id={formField}
         onChange={(e) => {
           setValue(e.target.value);
         }}

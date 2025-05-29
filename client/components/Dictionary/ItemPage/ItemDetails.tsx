@@ -37,7 +37,7 @@ export default async function ItemDetails({ item }: ItemDetailsProps) {
         {/* <ItemTags tags={tags} /> */}
         {IPA && IPA.length > 0 && (
           <div className="font-IPA text-cxlb text-grey-800">
-            /{IPA.join("/, /")}/
+            /{IPA.join("/ /")}/
           </div>
         )}
         <ItemPartOfSpeech gender={gender} partOfSpeech={partOfSpeech} />

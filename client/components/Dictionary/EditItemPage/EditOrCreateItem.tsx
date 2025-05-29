@@ -189,19 +189,21 @@ export default function EditOrCreateItem({
           name="name"
           control={control}
           render={({ field: { onChange, onBlur } }) => (
-            <StyledInput
-              label="Item name"
-              onChange={onChange}
-              onBlur={onBlur}
-              id="name"
-              defaultValue={itemName}
-              placeholder="Item name"
-              autoFocus={isNewItem}
-              errors={errors}
-            />
+            <div className="grid gap-2">
+              <StyledInput
+                label="Item name"
+                onChange={onChange}
+                onBlur={onBlur}
+                id="name"
+                defaultValue={itemName}
+                placeholder="Item name"
+                autoFocus={isNewItem}
+                errors={errors}
+              />
+              <FormErrors field="name" errors={errors} />
+            </div>
           )}
         />
-        <FormErrors field="name" errors={errors} />
 
         <LanguagePicker
           userLanguages={allUserLanguages}
