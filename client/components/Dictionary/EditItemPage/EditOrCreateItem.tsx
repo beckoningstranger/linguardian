@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
@@ -9,8 +8,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { GiSaveArrow } from "react-icons/gi";
-import { IoArrowBack } from "react-icons/io5";
 
+import IconSidebar from "@/components/IconSidebar/IconSidebar";
+import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
 import Spinner from "@/components/Spinner";
 import Button from "@/components/ui/Button";
 import { submitItemCreateOrEdit } from "@/lib/actions";
@@ -28,21 +28,23 @@ import { itemSchemaWithPopulatedTranslations } from "@/lib/validations";
 import { FormErrors } from "../../ui/FormErrors";
 import ComboBoxWrapper from "./ComboBoxWrapper";
 import LanguagePicker from "./EditOrCreatePageLanguagePicker";
+import EnterContextItems from "./EnterContextItems";
+import EnterDefinition from "./EnterDefinition";
 import EnterMultiple from "./EnterMultiple";
 import ManageTranslations from "./ManageTranslations";
 import PickMultiple from "./PickMultiple";
-import EnterDefinition from "./EnterDefinition";
-import EnterContextItems from "./EnterContextItems";
 
 interface EditOrCreateItemProps {
   seperatedUserLanguages: SeperatedUserLanguages;
   item?: Omit<ItemWithPopulatedTranslations, "_id">;
   addToThisList?: ListAndUnitData;
+  comingFrom?: string;
 }
 
 export default function EditOrCreateItem({
   seperatedUserLanguages,
   addToThisList,
+  comingFrom,
   item = {
     name: "",
     normalizedName: "",
@@ -82,8 +84,7 @@ export default function EditOrCreateItem({
     tags,
     translations,
   } = item;
-
-  const mode = item.slug !== "new-item" ? "Edit" : "Create";
+  const isNewItem = slug === "new-item";
 
   const [itemLanguage, setItemLanguage] = useState(language);
 
@@ -147,50 +148,43 @@ export default function EditOrCreateItem({
   };
 
   return (
-    <div className="my-4 flex h-[calc(100vh-7.5rem)] flex-col gap-y-2 px-4">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="mb-20 flex flex-col gap-x-4 gap-y-2"
-      >
-        <div className="flex w-full justify-stretch gap-x-2">
-          {slug !== "new-item" && (
-            <Button
-              intent="icon"
-              className="h-12 w-12 border-2 border-black text-slate-800"
-            >
-              <Link href={paths.dictionaryItemPath(slug)}>
-                <IoArrowBack className="h-8 w-8" />
-              </Link>
-            </Button>
-          )}
-          <div className="flex h-12 flex-1 items-center justify-center rounded-md bg-red-400 uppercase">
-            {mode} mode
-          </div>
-          <Button
-            intent="primary"
-            className="hidden place-items-center sm:grid"
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="mb-20 flex h-[calc(100vh-7.5rem)]"
+    >
+      {!isNewItem && (
+        <IconSidebar position="left" showOn="tablet">
+          <IconSidebarButton
+            mode="back"
+            label="Back to item overview"
+            link={
+              comingFrom
+                ? `${paths.dictionaryItemPath(slug)}?comingFrom=${comingFrom}`
+                : paths.dictionaryItemPath(slug)
+            }
+          />
+          <IconSidebarButton
+            mode="save"
+            label="Save your changes"
             disabled={isSubmitting || !isDirty || !isValid}
             type="submit"
-          >
-            {isSubmitting ? (
-              <Spinner size="mini" />
-            ) : (
-              <span className="hidden sm:block">Save Changes</span>
-            )}
-          </Button>
-          <Button
-            intent="bottomRightButton"
-            className="sm:hidden"
-            disabled={isSubmitting || !isDirty || !isValid}
-            aria-label="Save your changes"
-          >
-            {isSubmitting ? (
-              <Spinner size="mini" />
-            ) : (
-              <GiSaveArrow className="h-8 w-8" />
-            )}
-          </Button>
-        </div>
+          />
+        </IconSidebar>
+      )}
+      <div className="w-full bg-white/90 px-2 tablet:px-8 tablet:py-4">
+        <Button
+          intent="bottomRightButton"
+          className="tablet:hidden"
+          disabled={isSubmitting || !isDirty || !isValid}
+          aria-label="Save your changes"
+          type="submit"
+        >
+          {isSubmitting ? (
+            <Spinner size="mini" />
+          ) : (
+            <GiSaveArrow className="h-8 w-8" />
+          )}
+        </Button>
         <Controller
           name="name"
           control={control}
@@ -201,7 +195,7 @@ export default function EditOrCreateItem({
               defaultValue={itemName}
               placeholder="Item name"
               className="text-3xl font-bold focus:px-2"
-              autoFocus
+              autoFocus={isNewItem}
             />
           )}
         />
@@ -319,8 +313,8 @@ export default function EditOrCreateItem({
             seperatedUserLanguages={seperatedUserLanguages}
           />
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   );
 
   function getTranslationsForUserLanguages() {

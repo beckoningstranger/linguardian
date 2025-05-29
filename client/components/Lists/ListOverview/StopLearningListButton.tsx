@@ -71,7 +71,7 @@ export default function StopLearningListButton({
   if (mode === "desktop")
     return (
       <IconSidebarButton
-        type="stop"
+        mode="stop"
         disabled={updating}
         onClick={handleRemoveList}
       />

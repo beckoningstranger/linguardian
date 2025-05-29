@@ -1,26 +1,28 @@
-import { cn } from "@/lib/helperFunctionsClient";
-import { Button } from "@headlessui/react";
 import Link from "next/link";
-import { MouseEventHandler } from "react";
+import React, { MouseEventHandler } from "react";
+import { Button } from "@headlessui/react";
 import { BsMortarboard } from "react-icons/bs";
 import { FaArrowLeft } from "react-icons/fa6";
+import { GiSaveArrow } from "react-icons/gi";
 import { ImStop } from "react-icons/im";
 import { TbPencil, TbTrash } from "react-icons/tb";
 
-interface IconSidebarButtonProps {
-  type: "start" | "stop" | "delete" | "edit" | "back";
-  disabled?: boolean;
+import { cn } from "@/lib/helperFunctionsClient";
+
+type IconSidebarButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  mode: "start" | "stop" | "delete" | "edit" | "back" | "save";
   onClick?: MouseEventHandler;
   link?: string;
   label?: string;
-}
+};
 
 export default function IconSidebarButton({
-  type,
+  mode,
   disabled,
   onClick,
   link,
   label,
+  ...props
 }: IconSidebarButtonProps) {
   const config = {
     delete: {
@@ -48,23 +50,31 @@ export default function IconSidebarButton({
       label: "Back to list overview",
       styles: "hover:bg-blue-500",
     },
+    save: {
+      icon: <GiSaveArrow className="size-14" />,
+      label: "Save your changes",
+      styles:
+        "bg-green-400 text-white hidden tablet:flex disabled:bg-white/90 disabled:text-grey-500",
+    },
   };
 
   const button = (
     <Button
       className={cn(
-        "transition-all duration-800 ease-in-out bg-white/90 items-center gap-4 hover:text-white shadow-xl rounded-md flex w-[80px] group hover:w-[500px]",
-        config[type].styles
+        "transition-all duration-800 ease-in-out bg-white/90 items-center gap-4 hover:text-white shadow-xl rounded-md flex  group ",
+        disabled ? "w-[80px]" : "w-[80px] hover:w-[500px]",
+        config[mode].styles
       )}
       disabled={disabled}
       onClick={onClick}
-      aria-label={label || config[type].label}
+      aria-label={label || config[mode].label}
+      {...props}
     >
       <div id="icon" className="h-20 w-20 p-3">
-        {config[type].icon}
+        {config[mode].icon}
       </div>
       <div className="duration-800 hidden h-20 w-full items-center justify-center truncate pr-4 font-serif text-hmd text-white transition-all ease-in-out group-hover:flex">
-        {label || config[type].label}
+        {label || config[mode].label}
       </div>
     </Button>
   );

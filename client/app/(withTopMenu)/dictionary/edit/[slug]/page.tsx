@@ -18,7 +18,12 @@ interface EditPageProps {
 
 export const metadata: Metadata = { title: "Edit an item" };
 
-export default async function EditPage({ params: { slug } }: EditPageProps) {
+export default async function EditPage({
+  params: { slug },
+  searchParams: { comingFrom },
+}: EditPageProps) {
+  // This needs its own background picture. Instead of the hands just holding a book, it should be the same thing but writing in the book.
+
   const [allUserLanguages, seperatedUserLanguages] = await Promise.all([
     getAllUserLanguages(),
     getSeperatedUserLanguages(),
@@ -35,6 +40,7 @@ export default async function EditPage({ params: { slug } }: EditPageProps) {
     <EditOrCreateItem
       item={item}
       seperatedUserLanguages={seperatedUserLanguages}
+      comingFrom={comingFrom}
     />
   );
 }

@@ -115,13 +115,13 @@ export default function StartLearningListButton({
     return !userIsLearningListLanguage ? (
       <IconSidebarButton
         label={`Start learning ${language.name} with this list`}
-        type="start"
+        mode="start"
         disabled={updating}
         onClick={startLearningLanguageAndList}
       />
     ) : (
       <IconSidebarButton
-        type="start"
+        mode="start"
         disabled={updating}
         onClick={handleAddListToLearnedLists}
       />

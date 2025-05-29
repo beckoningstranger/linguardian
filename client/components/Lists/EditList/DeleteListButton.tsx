@@ -41,7 +41,7 @@ export default function DeleteListButton({ mode }: DeleteListButtonProps) {
     return (
       <>
         <IconSidebarButton
-          type="delete"
+          mode="delete"
           onClick={() => {
             setShowConfirmDeleteModel(true);
           }}

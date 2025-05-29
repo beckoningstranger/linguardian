@@ -21,7 +21,7 @@ export default function UnitDetailsLeftButtons({
     <IconSidebar showOn="tablet" position="left">
       {!editMode && (
         <IconSidebarButton
-          type="back"
+          mode="back"
           link={paths.listDetailsPath(listNumber)}
         />
       )}
@@ -29,14 +29,14 @@ export default function UnitDetailsLeftButtons({
         <>
           {editMode && (
             <IconSidebarButton
-              type="back"
+              mode="back"
               label="Back to unit overview"
               link={paths.unitDetailsPath(listNumber, unitNumber)}
             />
           )}
           {!editMode && (
             <IconSidebarButton
-              type="edit"
+              mode="edit"
               label="Edit this unit"
               link={paths.editUnitPath(listNumber, unitNumber)}
             />

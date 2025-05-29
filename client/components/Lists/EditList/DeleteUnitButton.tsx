@@ -92,7 +92,7 @@ export default function DeleteUnitButton({
   if (mode === "desktop")
     button = (
       <IconSidebarButton
-        type="delete"
+        mode="delete"
         label="Delete this unit"
         disabled={updating}
         onClick={handleClickDesktop}

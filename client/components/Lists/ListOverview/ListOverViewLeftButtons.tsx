@@ -25,7 +25,7 @@ export default function ListOverviewLeftButtons({
           <StopLearningListButton mode="desktop" />
           {userIsAuthor && (
             <IconSidebarButton
-              type="edit"
+              mode="edit"
               link={paths.editListPath(listNumber)}
             />
           )}
@@ -34,7 +34,7 @@ export default function ListOverviewLeftButtons({
       {editMode && (
         <>
           <IconSidebarButton
-            type="back"
+            mode="back"
             link={paths.listDetailsPath(listNumber)}
           />
           <MobileMenuContextProvider>

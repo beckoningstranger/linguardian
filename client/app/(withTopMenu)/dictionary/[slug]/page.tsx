@@ -71,12 +71,12 @@ export default async function ItemPage({
     <div className="flex">
       <IconSidebar position="left" showOn="tablet">
         <IconSidebarButton
-          type="back"
+          mode="back"
           label={comingFrom ? "Back to list" : "Back to dictionary"}
           link={comingFrom || paths.dictionaryPath()}
         />
         <IconSidebarButton
-          type="edit"
+          mode="edit"
           label="Edit this item"
           link={paths.editDictionaryItemPath(slug)}
         />
