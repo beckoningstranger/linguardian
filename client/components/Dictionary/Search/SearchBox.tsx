@@ -52,7 +52,7 @@ export default function SearchBox({
   }, [debouncedQuery, query, setSearchResults, searchLanguages]);
 
   return (
-    <div className="relative flex justify-stretch bg-white/80 px-1 pt-4 tablet:px-4">
+    <div className="relative flex justify-stretch bg-white/90 px-1 pt-4 tablet:px-4">
       <SearchInput
         label="Search all of your languages..."
         query={query}

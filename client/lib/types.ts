@@ -176,7 +176,7 @@ export interface DictionarySearchResult {
   slug: string;
   partOfSpeech: PartOfSpeech;
   IPA?: string[];
-  definition?: string[];
+  definition?: string;
   language: SupportedLanguage;
   languageName: string;
   flagCode: string;
@@ -236,4 +236,10 @@ export type ParsedListInfoFromServer = {
   listNumber: number;
   listLanguage: SupportedLanguage;
   issues?: string[];
+};
+
+export type ContextItem = {
+  text: string;
+  author: string;
+  takenFrom?: string;
 };

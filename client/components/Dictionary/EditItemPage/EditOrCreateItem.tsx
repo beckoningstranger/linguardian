@@ -32,6 +32,7 @@ import EnterMultiple from "./EnterMultiple";
 import ManageTranslations from "./ManageTranslations";
 import PickMultiple from "./PickMultiple";
 import EnterDefinition from "./EnterDefinition";
+import EnterContextItems from "./EnterContextItems";
 
 interface EditOrCreateItemProps {
   seperatedUserLanguages: SeperatedUserLanguages;
@@ -67,19 +68,19 @@ export default function EditOrCreateItem({
   const initialName = useSearchParams().get("initialName");
   if (item.name === "" && initialName) item.name = initialName;
   const {
-    name: itemName,
-    partOfSpeech,
-    language,
-    normalizedName,
+    case: Case,
+    context,
     definition,
     gender,
-    context,
-    pluralForm,
-    translations,
-    case: Case,
     IPA,
+    language,
+    name: itemName,
+    normalizedName,
+    partOfSpeech,
+    pluralForm,
     slug,
     tags,
+    translations,
   } = item;
 
   const mode = item.slug !== "new-item" ? "Edit" : "Create";
@@ -109,21 +110,21 @@ export default function EditOrCreateItem({
   } = useForm<ItemWithPopulatedTranslations>({
     resolver: zodResolver(itemSchemaWithPopulatedTranslations),
     defaultValues: {
-      name: itemName,
-      gender,
-      partOfSpeech,
-      slug,
-      language: itemLanguage,
       case: Case,
-      pluralForm,
-      IPA,
       context,
-      normalizedName,
       definition,
+      flagCode: "",
+      gender,
+      IPA,
+      language: itemLanguage,
+      languageName: "",
+      name: itemName,
+      normalizedName,
+      partOfSpeech,
+      pluralForm,
+      slug,
       tags,
       translations,
-      languageName: "",
-      flagCode: "",
     },
     mode: "onChange",
   });
@@ -131,6 +132,7 @@ export default function EditOrCreateItem({
   const onSubmit = async (data: ItemWithPopulatedTranslations) => {
     data.languageName = featuresForItemLanguage.langName;
     data.flagCode = featuresForItemLanguage.flagCode;
+
     toast.promise(submitItemCreateOrEdit(data, slug, addToThisList), {
       loading: "Updating...",
       success: (result) => {
@@ -302,7 +304,11 @@ export default function EditOrCreateItem({
             initialValue={watch().definition}
             errors={errors}
           />
-
+          <EnterContextItems
+            setValue={setValue}
+            initialValue={watch().context}
+            errors={errors}
+          />
           <ManageTranslations
             item={item}
             itemLanguage={watch().language}

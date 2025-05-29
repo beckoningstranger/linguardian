@@ -27,7 +27,7 @@ export function useOutsideClick(callback: Function, condition: boolean = true) {
 }
 
 export function useOutsideInputAndKeyboardClick(callback: Function) {
-  const ref = useRef<HTMLInputElement>(null);
+  const ref = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: Event) => {

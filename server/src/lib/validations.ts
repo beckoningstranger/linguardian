@@ -90,7 +90,7 @@ const itemSchemaWithoutTranslations = z.object({
   lemmas: ObjectIdSchema.array().optional(),
   definition: z
     .string()
-    .max(300, "Item definitions can be no longer than 300 characters")
+    .max(300, "Item definitions can be no longer than 250 characters")
     .optional(),
   gender: genderSchema.optional(),
   pluralForm: z
@@ -136,8 +136,14 @@ const itemSchemaWithoutTranslations = z.object({
   context: z
     .array(
       z.object({
-        item: z.string(),
+        text: z
+          .string()
+          .max(150, "Context items can be no longer than 150 characters"),
         author: z.string(),
+        takenFrom: z
+          .string()
+          .max(50, "Make it 50 characters or shorter")
+          .optional(),
       })
     )
     .optional(),

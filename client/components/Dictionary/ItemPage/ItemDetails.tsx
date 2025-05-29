@@ -4,6 +4,7 @@ import { ItemWithPopulatedTranslations } from "@/lib/types";
 import ItemPartOfSpeech from "./ItemPartOfSpeech";
 import ItemSection from "./ItemSection";
 import ItemTranslations from "./ItemTranslations";
+import ItemContext from "./ItemContext";
 
 interface ItemDetailsProps {
   item: ItemWithPopulatedTranslations;
@@ -13,6 +14,7 @@ export default async function ItemDetails({ item }: ItemDetailsProps) {
   const {
     name,
     tags,
+    context,
     gender,
     definition,
     partOfSpeech,
@@ -24,7 +26,7 @@ export default async function ItemDetails({ item }: ItemDetailsProps) {
   } = item;
 
   return (
-    <div className="flex min-h-[calc(100vh-112px)] w-full flex-col gap-y-2 bg-white/80 px-4 tablet:p-2">
+    <div className="flex min-h-[calc(100vh-112px)] w-full flex-col gap-y-2 bg-white/90 px-2 phone:py-2 tablet:px-8">
       <div id="flagAndName" className="flex items-center gap-x-2">
         <Flag code={flagCode} className="size-14 rounded-full object-cover" />
         <h1 id="itemName" className="font-serif text-hlg">
@@ -35,7 +37,7 @@ export default async function ItemDetails({ item }: ItemDetailsProps) {
         {/* <ItemTags tags={tags} /> */}
         {IPA && IPA.length > 0 && (
           <div className="font-IPA text-cxlb text-grey-800">
-            /{IPA.join(", ")}/
+            /{IPA.join("/, /")}/
           </div>
         )}
         <ItemPartOfSpeech gender={gender} partOfSpeech={partOfSpeech} />
@@ -47,11 +49,11 @@ export default async function ItemDetails({ item }: ItemDetailsProps) {
         )}
         {itemCase && <div className="text-cxlb">followed by {itemCase}</div>}
       </div>
-      {definition && <ItemSection title="Definition">{definition}</ItemSection>}
-      <ItemSection title="Translations">
+      <div className="mt-4 flex flex-col gap-y-8">
+        <ItemSection title="Definition">{definition}</ItemSection>
         <ItemTranslations translations={translations} />
-      </ItemSection>
-      {/* <ItemSection title="Used in context">asdf</ItemSection> */}
+        <ItemContext context={context} />
+      </div>
     </div>
   );
 }

@@ -27,7 +27,6 @@ export default function TopContextMenuButton({
     if (setContextExpanded) setContextExpanded(false);
     onClick?.(e);
   };
-  console.log("button", link);
 
   const backTo =
     target !== "item"

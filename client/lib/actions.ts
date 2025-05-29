@@ -327,6 +327,7 @@ export async function setLearnedLanguages(
   const user = await getUserAndVerifyUserIsLoggedIn(
     "You need to be logged in to do this!"
   );
+
   const response = await fetch(`${server}/users/setLearnedLanguagesForUserId`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },

@@ -61,11 +61,19 @@ export async function setLearnedLanguagesForUserId(
       throw new Error(`User with ID ${userId} not found.`);
     }
 
+    const seenLanguages = new Set();
+    const uniqueLearnedLanguages = learnedLanguages.filter((lang) => {
+      if (seenLanguages.has(lang.code)) return false;
+      seenLanguages.add(lang.code);
+      return true;
+    });
+
     const updates: Record<string, any> = {
-      learnedLanguages,
+      learnedLanguages: uniqueLearnedLanguages,
     };
 
-    learnedLanguages.forEach((lang) => {
+    // Make sure there is a learnedLists entry for each learned language
+    uniqueLearnedLanguages.forEach((lang) => {
       const key = `learnedLists.${lang.code}`;
       const alreadyDefined = user.learnedLists?.[lang.code];
       if (!alreadyDefined) updates[key] = [];

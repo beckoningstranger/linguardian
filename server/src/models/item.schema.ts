@@ -67,8 +67,9 @@ const itemSchema = new Schema<Item>(
     },
     context: [
       {
-        item: { type: String, required: true },
+        text: { type: String, required: true },
         author: { type: String, required: true },
+        takenFrom: { type: String },
       },
     ],
     gender: {

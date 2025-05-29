@@ -4,9 +4,9 @@ import mongoose from "mongoose";
 const MONGO_URL = process.env.MONGO_URL;
 
 async function mongoConnect() {
-  mongoose.connection.once("open", () => {
-    console.log("MongoDB connection ready!");
-  });
+  mongoose.connection.once("open", () =>
+    console.log("MongoDB connection ready!")
+  );
   mongoose.connection.on("error", (err: MongooseError) => {
     console.error(err);
   });

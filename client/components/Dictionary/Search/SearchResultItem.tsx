@@ -12,7 +12,7 @@ export default function SearchResultItem({
   result,
 }: SearchResultItemProps) {
   return (
-    <div className="duration-400 relative flex min-h-[110px] w-full flex-col gap-1 rounded-md bg-white/90 px-6 py-4 transition-colors hover:bg-white">
+    <div className="relative flex min-h-[110px] w-full flex-col gap-1 rounded-md bg-white/90 px-6 py-4 transition-colors duration-500 hover:bg-white">
       <p className="max-w-[340px] font-serif text-hmd leading-tight">
         {result.name}
       </p>
@@ -22,7 +22,7 @@ export default function SearchResultItem({
       <p className="text-cmdr">{result.partOfSpeech}</p>
       <Flag
         code={getFlagCode(result.language)}
-        className="absolute right-2 top-4 size-20 rounded-full object-cover"
+        className="absolute right-2 top-4 size-16 rounded-full object-cover"
       />
       <p className="pt-2">{result.definition}</p>
     </div>

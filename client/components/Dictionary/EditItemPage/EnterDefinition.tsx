@@ -57,7 +57,7 @@ export default function EnterDefinition({
             <div className="relative flex w-full flex-wrap items-center">
               <Textarea
                 ref={ref as RefObject<HTMLInputElement>}
-                className="font-voces h-36 w-full text-wrap rounded-md border py-2 pl-2 pr-10 shadow-md tablet:h-20 desktop:h-14"
+                className="h-36 w-full resize-none overflow-hidden text-wrap rounded-md border py-2 pl-2 pr-10 shadow-md tablet:h-20 desktop:h-14"
                 spellCheck={false}
                 onChange={(e) => {
                   setDefinition(e.target.value);
@@ -70,9 +70,7 @@ export default function EnterDefinition({
                     case "Escape":
                     case "Enter":
                     case "Tab":
-                      blur();
-                      console.log("KEY HIT");
-                      break;
+                      handleBlur();
                   }
                 }}
               />
@@ -91,7 +89,7 @@ export default function EnterDefinition({
     </>
   );
 
-  function blur() {
+  function handleBlur() {
     if (definition === "") {
       setDefinition("");
       setShowInputField(false);

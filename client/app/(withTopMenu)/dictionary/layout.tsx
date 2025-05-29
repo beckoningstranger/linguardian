@@ -10,7 +10,7 @@ export default async function DictionaryLayout({ children }: LayoutProps) {
   return (
     <LayoutWithTopMenu
       bgPicture="/backgrounds/DictionaryBackground.webp"
-      menuOpacity={80}
+      menuOpacity={90}
       backGroundOpacity="opacity-90"
     >
       {children}

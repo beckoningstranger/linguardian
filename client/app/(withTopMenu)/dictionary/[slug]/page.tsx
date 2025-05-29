@@ -3,31 +3,37 @@ import Link from "next/link";
 import ItemDetails from "@/components/Dictionary/ItemPage/ItemDetails";
 import IconSidebar from "@/components/IconSidebar/IconSidebar";
 import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
+import TopContextMenuLoader from "@/components/Menus/TopMenu/TopContextMenuLoader";
 import Button from "@/components/ui/Button";
+import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { getPopulatedItemBySlug } from "@/lib/fetchData";
 import { getAllUserLanguages } from "@/lib/helperFunctionsServer";
 import paths from "@/lib/paths";
 import { SlugLanguageObject } from "@/lib/types";
-import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
-import TopContextMenuLoader from "@/components/Menus/TopMenu/TopContextMenuLoader";
 
-export const metadata = { title: "Dictionary" };
+export const metadata = {
+  title: "Dictionary",
+  description: "Look up words for all the languages you learn and know",
+};
 
 // export async function generateStaticParams() {
+//   // If this is to work, we have to get data from the API during getDataToBuild and then read it from there, not through fetchData,
+//   // because the frontend can't query the backend during build afaik, it's in a different container
 //   let allSlugs: { slug: string }[] = [];
-//   const promises = siteSettings.supportedLanguages.map((lang: SupportedLanguage) =>
-//     getAllSlugsForLanguage(lang)
+//   const allSlugsForAllLanguagesPromises = siteSettings.supportedLanguages.map(
+//     (lang) => getAllSlugsForLanguage(lang)
 //   );
 
-//   if (promises) {
-//     const resolvedPromises = await Promise.all(promises);
-//     if (resolvedPromises)
-//       resolvedPromises.forEach((language) =>
-//         language?.forEach((item) => {
-//           allSlugs.push(item);
+//   if (allSlugsForAllLanguagesPromises) {
+//     const allSlugsForAllLanguages = await Promise.all(
+//       allSlugsForAllLanguagesPromises
+//     );
+//     if (allSlugsForAllLanguages)
+//       allSlugsForAllLanguages.forEach((language) =>
+//         language?.forEach((slug) => {
+//           allSlugs.push(slug);
 //         })
 //       );
-
 //     return allSlugs;
 //   } else {
 //     return [];
@@ -75,9 +81,7 @@ export default async function ItemPage({
           link={paths.editDictionaryItemPath(slug)}
         />
       </IconSidebar>
-      {/* <div className="min-h-[calc(100vh-112px)] w-full bg-white/80 px-4 pt-2 tablet:ml-2 tablet:pl-8"> */}
       <ItemDetails item={item} />
-      {/* </div> */}
       <MobileMenuContextProvider>
         <TopContextMenuLoader itemSlug={item.slug} opacity={90} />
       </MobileMenuContextProvider>
