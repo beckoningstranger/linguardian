@@ -10,9 +10,26 @@ import {
 } from "./siteSettings";
 
 export const tagSchema = z.enum(allTags);
-export const genderSchema = z.enum(allGenders);
-export const partOfSpeechSchema = z.enum(allPartsOfSpeech);
-export const casesSchema = z.enum(allCases);
+export const genderSchema = z.preprocess(
+  (val) => (val === "" || val == null ? undefined : val),
+  z.enum(allGenders, {
+    errorMap: () => ({ message: "Please select a noun gender" }),
+  })
+);
+export const partOfSpeechSchema = z.preprocess(
+  (val) => (val === "" || val == null ? undefined : val),
+  z.enum(allPartsOfSpeech, {
+    errorMap: () => ({ message: "Please select a part of speech" }),
+  })
+);
+export const casesSchema = z.preprocess(
+  (val) => (val === "" || val == null ? undefined : val),
+  z.enum(allCases, {
+    errorMap: () => ({
+      message: "Please select the case that follows this preposition",
+    }),
+  })
+);
 
 const emailSchema = z
   .string()
@@ -81,7 +98,10 @@ const ObjectIdSchema = z.custom<Types.ObjectId>(
 );
 
 const itemSchemaWithoutTranslations = z.object({
-  name: z.string().max(60, "Item names can be no longer than 60 characters"),
+  name: z
+    .string()
+    .nonempty("Please enter an item name")
+    .max(60, "Item names can be no longer than 60 characters"),
   normalizedName: z.string().max(60),
   language: z.custom<SupportedLanguage>(),
   languageName: z.string(),

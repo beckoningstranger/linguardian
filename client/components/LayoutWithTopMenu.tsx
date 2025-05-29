@@ -14,7 +14,6 @@ export default function LayoutWithTopMenu({
   backGroundOpacity = "opacity-80",
   bgPicture,
 }: LayoutWithTopMenuProps) {
-  const bgOpacityClass = "opacity-" + backGroundOpacity;
   return (
     <>
       <div

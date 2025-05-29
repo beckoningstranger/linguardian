@@ -3,7 +3,6 @@
 import { useOutsideInputAndKeyboardClick } from "@/lib/hooks";
 import { ContextItem } from "@/lib/types";
 import { Input, Textarea } from "@headlessui/react";
-import { MinusCircleIcon } from "@heroicons/react/20/solid";
 import {
   Dispatch,
   RefObject,
@@ -11,6 +10,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import MinusIcon from "./MinusIcon";
 
 interface EnterContextItemsFieldProps {
   contextItems: ContextItem[];
@@ -45,6 +45,17 @@ export default function EnterContextItemsField({
       );
     });
 
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    switch (e.key) {
+      case "Tab":
+      case "Enter":
+      case "Escape":
+        handleBlur();
+    }
+  };
+
   return (
     <div className="relative flex items-center gap-2">
       <Textarea
@@ -61,19 +72,12 @@ export default function EnterContextItemsField({
           setActiveField(index);
         }}
         autoFocus={itemText === "" ? true : false}
-        onKeyDown={(e) => {
-          switch (e.key) {
-            case "Tab":
-            case "Enter":
-            case "Escape":
-              handleBlur();
-          }
-        }}
+        onKeyDown={handleKeyDown}
       />
       <Input
         ref={takenFromRef as RefObject<HTMLInputElement>}
         type="text"
-        className="w-full rounded-md border p-2 shadow-md"
+        className="size-full rounded-md border shadow-md"
         spellCheck={false}
         id={"contextItem" + index}
         onChange={(e) => setItemTakenFrom(e.target.value)}
@@ -82,22 +86,9 @@ export default function EnterContextItemsField({
         onFocus={() => {
           setActiveField(index);
         }}
-        onKeyDown={(e) => {
-          switch (e.key) {
-            case "Enter":
-            case "Tab":
-            case "Escape":
-              handleBlur();
-          }
-        }}
+        onKeyDown={handleKeyDown}
       />
-
-      <MinusCircleIcon
-        className="absolute right-1 h-5 w-5 text-red-500"
-        onClick={() => {
-          removeItem();
-        }}
-      />
+      <MinusIcon onClick={() => removeItem()} />
     </div>
   );
 

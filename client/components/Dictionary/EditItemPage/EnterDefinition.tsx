@@ -1,11 +1,12 @@
 "use client";
 
-import { useOutsideInputAndKeyboardClick } from "@/lib/hooks";
-import { Button, Textarea } from "@headlessui/react";
+import StyledTextarea from "@/components/ui/StyledTextArea";
+import { Button } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/16/solid";
-import { MinusCircleIcon } from "@heroicons/react/20/solid";
 import { RefObject, useEffect, useState } from "react";
 import { FieldErrors, FieldValues } from "react-hook-form";
+
+import { useOutsideInputAndKeyboardClick } from "@/lib/hooks";
 import { FormErrors } from "../../ui/FormErrors";
 
 interface EnterDefinitionProps {
@@ -25,7 +26,7 @@ export default function EnterDefinition({
   const [showInputField, setShowInputField] = useState<boolean>(
     (initialValue && initialValue?.length > 0) || false
   );
-  const ref = useOutsideInputAndKeyboardClick(blur);
+  const ref = useOutsideInputAndKeyboardClick(handleBlur);
 
   useEffect(() => {
     setValue("definition", definition, {
@@ -55,9 +56,11 @@ export default function EnterDefinition({
           </Button>
           {showInputField && (
             <div className="relative flex w-full flex-wrap items-center">
-              <Textarea
-                ref={ref as RefObject<HTMLInputElement>}
-                className="h-36 w-full resize-none overflow-hidden text-wrap rounded-md border py-2 pl-2 pr-10 shadow-md tablet:h-20 desktop:h-14"
+              <StyledTextarea
+                noFloatingLabel
+                label="Definition"
+                id="definition"
+                ref={ref as RefObject<HTMLTextAreaElement>}
                 spellCheck={false}
                 onChange={(e) => {
                   setDefinition(e.target.value);
@@ -73,10 +76,9 @@ export default function EnterDefinition({
                       handleBlur();
                   }
                 }}
-              />
-              <MinusCircleIcon
-                className="absolute right-1 h-5 w-5 text-red-500"
-                onClick={() => {
+                errors={errors}
+                minusButtonAction={() => {
+                  console.log("Click");
                   setDefinition("");
                   setShowInputField(false);
                 }}

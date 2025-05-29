@@ -6,14 +6,16 @@ import {
   SeperatedUserLanguages,
   SupportedLanguage,
 } from "@/lib/types";
-import { Button } from "@headlessui/react";
-import { MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/20/solid";
-import { Types } from "mongoose";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Types } from "mongoose";
 import { FieldErrors, FieldValues } from "react-hook-form";
 import Flag from "react-world-flags";
+import { Button } from "@headlessui/react";
+import { PlusCircleIcon } from "@heroicons/react/20/solid";
+
 import { FormErrors } from "../../ui/FormErrors";
 import AddItemDialog from "./AddItemDialog";
+import MinusIcon from "./MinusIcon";
 
 interface ManageTranslationsProps {
   item: Omit<ItemWithPopulatedTranslations, "_id">;
@@ -58,19 +60,19 @@ export default function ManageTranslations({
     seperatedUserLanguages.learnedLanguages,
   ]);
 
-  const renderedTranslations = Object.values(translations).map((x) =>
-    x.map((translation) => (
+  const renderedTranslations = Object.values(translations).map((language) =>
+    language.map((translation) => (
       <div
         key={translation.slug}
-        className="flex items-center justify-center gap-2 rounded-md border py-2 pl-3 shadow-md"
+        className="relative flex w-[200px] items-center gap-2 rounded-md border bg-white py-2 pl-3 shadow-md"
       >
         <Flag
           code={translation.language}
           className="h-6 w-6 rounded-full object-cover"
         />
         <span>{translation.name}</span>
-        <span
-          className="flex h-6 w-6 items-center justify-center"
+
+        <MinusIcon
           onClick={() =>
             removeTranslationById(
               translations,
@@ -78,9 +80,7 @@ export default function ManageTranslations({
               setTranslations
             )
           }
-        >
-          <MinusCircleIcon className="h-5 w-5 text-red-500" />
-        </span>
+        />
       </div>
     ))
   );

@@ -3,7 +3,6 @@
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-import { Input } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -13,6 +12,7 @@ import IconSidebar from "@/components/IconSidebar/IconSidebar";
 import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
 import Spinner from "@/components/Spinner";
 import Button from "@/components/ui/Button";
+import StyledInput from "@/components/ui/StyledInput";
 import { submitItemCreateOrEdit } from "@/lib/actions";
 import { setErrorsFromBackend } from "@/lib/helperFunctionsClient";
 import paths from "@/lib/paths";
@@ -150,10 +150,10 @@ export default function EditOrCreateItem({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="mb-20 flex h-[calc(100vh-7.5rem)]"
+      className="mb-20 flex min-h-[calc(100vh-112px)]"
     >
-      {!isNewItem && (
-        <IconSidebar position="left" showOn="tablet">
+      <IconSidebar position="left" showOn="tablet">
+        {!isNewItem && (
           <IconSidebarButton
             mode="back"
             label="Back to item overview"
@@ -163,15 +163,15 @@ export default function EditOrCreateItem({
                 : paths.dictionaryItemPath(slug)
             }
           />
-          <IconSidebarButton
-            mode="save"
-            label="Save your changes"
-            disabled={isSubmitting || !isDirty || !isValid}
-            type="submit"
-          />
-        </IconSidebar>
-      )}
-      <div className="w-full bg-white/90 px-2 tablet:px-8 tablet:py-4">
+        )}
+        <IconSidebarButton
+          mode="save"
+          label="Save your changes"
+          disabled={isSubmitting || !isDirty || !isValid}
+          type="submit"
+        />
+      </IconSidebar>
+      <div className="w-full bg-white/90 px-4 py-6">
         <Button
           intent="bottomRightButton"
           className="tablet:hidden"
@@ -189,13 +189,15 @@ export default function EditOrCreateItem({
           name="name"
           control={control}
           render={({ field: { onChange, onBlur } }) => (
-            <Input
+            <StyledInput
+              label="Item name"
               onChange={onChange}
               onBlur={onBlur}
+              id="name"
               defaultValue={itemName}
               placeholder="Item name"
-              className="text-3xl font-bold focus:px-2"
               autoFocus={isNewItem}
+              errors={errors}
             />
           )}
         />
@@ -211,7 +213,7 @@ export default function EditOrCreateItem({
           staticFlag={addToThisList?.languageWithFlagAndName.flag}
         />
 
-        <div className="ml-4 flex flex-col justify-center gap-3">
+        <div className="flex flex-col justify-center gap-3">
           <PickMultiple
             setValue={setValue}
             formField="tags"

@@ -35,7 +35,6 @@ export default function EnterContextItems({
   }, [contextItems, setValue]);
 
   const userId = useUserOnClient().id;
-  console.log("items", contextItems);
 
   return (
     <>

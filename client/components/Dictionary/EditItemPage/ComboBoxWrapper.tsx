@@ -44,11 +44,11 @@ export default function ComboBoxWrapper({
   return (
     <>
       <Combobox value={value} onChange={onChange}>
-        <div className="relative rounded-md border">
+        <div className="relative rounded-md border border-grey-500 bg-white text-left text-csmr shadow-md focus-within:border-black focus-within:outline-none">
           <div className="relative cursor-default rounded-lg bg-white text-left shadow-md sm:text-sm">
             <ComboboxButton className="flex w-full items-center">
               <ComboboxInput
-                className={`w-full rounded-l-md py-2 pl-3 pr-10 text-sm text-gray-900 focus:outline-[10px] focus:outline-black sm:w-40`}
+                className={`w-full rounded-l-md border-none py-2 pl-3 pr-10 text-sm text-gray-900 outline-none sm:w-40`}
                 onChange={(event) => setQuery(event.target.value)}
                 displayValue={(option: string) => option}
                 placeholder={placeholder}
@@ -64,12 +64,12 @@ export default function ComboBoxWrapper({
           </div>
           <Transition
             as={Fragment}
-            leave="transition ease-in duration-100"
+            leave="transition ease-in duration-400"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
             afterLeave={() => setQuery("")}
           >
-            <ComboboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border-b border-b-black bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+            <ComboboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg phone:text-csmr">
               {filteredOptions.length === 0 && query !== "" ? (
                 <div className="relative cursor-default select-none px-4 py-2 text-red-500">
                   No valid option found

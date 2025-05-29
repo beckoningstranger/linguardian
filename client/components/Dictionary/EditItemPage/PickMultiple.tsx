@@ -47,7 +47,7 @@ export default function PickMultiple({
 
   return (
     <>
-      <div className="flex flex-col gap-2 text-sm sm:gap-x-1">
+      <div className="flex flex-col gap-2 text-csmr phone:gap-x-1">
         <>
           <Button
             className="flex w-32 items-center gap-1"
@@ -63,7 +63,7 @@ export default function PickMultiple({
               <PlusCircleIcon className="flex h-full w-5 items-center text-green-400" />
             </>
           </Button>
-          <div className={`flex w-full flex-wrap gap-x-2 sm:items-center`}>
+          <div className={`flex w-full flex-wrap gap-x-2 phone:items-center`}>
             {array.map((option, index) => (
               <PickMultipleOptions
                 key={label.singular + "-" + option + index}

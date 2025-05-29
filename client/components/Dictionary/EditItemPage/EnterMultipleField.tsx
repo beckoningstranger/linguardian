@@ -1,9 +1,9 @@
 "use client";
 
+import StyledInput from "@/components/ui/StyledInput";
 import { useOutsideInputAndKeyboardClick } from "@/lib/hooks";
-import { Input } from "@headlessui/react";
-import { MinusCircleIcon } from "@heroicons/react/20/solid";
 import { RefObject, useEffect, useState } from "react";
+import { FieldErrors, FieldValues } from "react-hook-form";
 
 interface EnterMultipleFieldProps {
   array: string[];
@@ -42,17 +42,20 @@ export default function EnterMultipleField({
   }, [value, identifier, array, setArray]);
 
   return (
-    <div className="relative flex items-center">
-      <Input
+    <div className="relative w-[45ch]">
+      <StyledInput
+        minusButtonAction={() => setValue("")}
+        label={placeholder}
+        noFloatingLabel
+        errors={{} as FieldErrors<FieldValues>} // LOOK HERE, WE NEED TO PASS ERRORS
         ref={ref as RefObject<HTMLInputElement>}
         type="text"
-        className="w-full rounded-md border p-2 shadow-md"
+        placeholder={placeholder}
         spellCheck={false}
         id={identifier}
         onChange={(e) => {
           setValue(e.target.value);
         }}
-        placeholder={placeholder}
         value={value}
         onFocus={() => {
           setActiveField("field" + identifier);
@@ -66,12 +69,6 @@ export default function EnterMultipleField({
               blur();
               break;
           }
-        }}
-      />
-      <MinusCircleIcon
-        className="absolute right-1 h-5 w-5 text-red-500"
-        onClick={() => {
-          setValue("");
         }}
       />
     </div>

@@ -1,9 +1,10 @@
 "use client";
 
-import { LanguageWithFlagAndName, SupportedLanguage } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { FieldErrors, FieldValues } from "react-hook-form";
 import Flag from "react-world-flags";
+
+import { LanguageWithFlagAndName, SupportedLanguage } from "@/lib/types";
 import { FormErrors } from "../../ui/FormErrors";
 import ConfirmLanguageChange from "./ConfirmLanguageChange";
 
@@ -44,16 +45,14 @@ export default function LanguagePicker({
 
   if (staticFlag)
     return (
-      <div className="ml-4 flex w-full justify-evenly gap-4 rounded-md text-center sm:justify-start">
-        <Flag
-          code={staticFlag}
-          className="my-2 h-12 w-12 rounded-full border-2 border-slate-300 object-cover"
-        />
-      </div>
+      <Flag
+        code={staticFlag}
+        className="my-2 h-12 w-12 rounded-full border-2 border-slate-300 object-cover"
+      />
     );
 
   return (
-    <div className="ml-4 flex w-full justify-evenly gap-4 rounded-md text-center sm:justify-start">
+    <div className="flex gap-4">
       {allUserLanguages.map((lang) => (
         <Flag
           code={lang.flag}
