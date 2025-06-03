@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
+import { useDebounce } from "use-debounce";
 
 import {
   DictionarySearchResult,
@@ -10,7 +11,6 @@ import {
   ListAndUnitData,
   SupportedLanguage,
 } from "@/lib/types";
-import { useDebounce } from "use-debounce";
 import RecentSearches from "./RecentSearches";
 import SearchBox from "./SearchBox";
 import SearchResults from "./SearchResults";
@@ -39,7 +39,6 @@ export default function Search({
   const [searchResults, setSearchResults] = useState<DictionarySearchResult[]>(
     []
   );
-  useState(false);
 
   const getFlagCode = (langCode: SupportedLanguage) => {
     return searchLanguages.reduce((a, curr) => {

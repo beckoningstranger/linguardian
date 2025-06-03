@@ -57,7 +57,7 @@ export async function findItemsByName(
     normalizedName: { $regex: normalizedLowerCaseQuery },
     language: { $in: languages },
   }).select(
-    "_id normalizedName name slug partOfSpeech IPA definition language"
+    "_id normalizedName name slug partOfSpeech IPA definition language gender"
   );
 }
 

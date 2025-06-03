@@ -21,7 +21,9 @@ export default function SearchResultItem({
           ? `/${result.IPA.join("/ /")}/`
           : null}
       </p>
-      <p className="text-cmdr">{result.partOfSpeech}</p>
+      <p className="text-cmdr">
+        {result.gender} {result.partOfSpeech}
+      </p>
       <Flag
         code={getFlagCode(result.language)}
         className="absolute right-2 top-4 size-16 rounded-full object-cover"

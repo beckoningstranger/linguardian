@@ -180,6 +180,7 @@ export interface DictionarySearchResult {
   language: SupportedLanguage;
   languageName: string;
   flagCode: string;
+  gender?: Gender;
 }
 
 export interface LanguageWithFlagAndName {
