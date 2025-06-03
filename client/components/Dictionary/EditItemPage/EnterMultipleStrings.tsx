@@ -34,6 +34,13 @@ export default function EnterMultipleStrings({
     });
   }, [array, setValue, formField]);
 
+  const faultyFields: number[] = [];
+  if (Array.isArray(errors[formField])) {
+    errors[formField].map((item, index) => {
+      if (item && typeof item.message === "string") faultyFields.push(index);
+    });
+  }
+
   const renderFields = () =>
     array.map((value, index) => (
       <EnterMultipleStringsField
@@ -42,7 +49,7 @@ export default function EnterMultipleStrings({
         array={array}
         setArray={setArray}
         placeholder={label.singular}
-        errors={errors}
+        hasErrors={faultyFields.includes(index)}
         formField={formField}
       />
     ));

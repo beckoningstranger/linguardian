@@ -31,6 +31,12 @@ export const casesSchema = z.preprocess(
   })
 );
 
+const singleWordRegex = /^[\p{L}]+$/u;
+const sentenceRegex = /^[\p{L}\s!?¿()':.,-]+$/u;
+const sentenceRegexMessage =
+  "Only letters, spaces, and basic punctuation (!?¿()':.,-) are allowed";
+const ipaRegex = /^[\p{L}\p{M}\p{S}ˈˌː‿\s]+$/u;
+
 const emailSchema = z
   .string()
   .email()
@@ -101,6 +107,7 @@ const itemSchemaWithoutTranslations = z.object({
   name: z
     .string()
     .nonempty("Please enter an item name")
+    .regex(sentenceRegex, sentenceRegexMessage)
     .max(60, "Item names can be no longer than 60 characters"),
   normalizedName: z.string().max(60),
   language: z.custom<SupportedLanguage>(),
@@ -110,12 +117,19 @@ const itemSchemaWithoutTranslations = z.object({
   lemmas: ObjectIdSchema.array().optional(),
   definition: z
     .string()
+    .regex(sentenceRegex, sentenceRegexMessage)
     .max(300, "Item definitions can be no longer than 250 characters")
-    .optional(),
+    .optional()
+    .refine((val) => val === undefined || val.length >= 25, {
+      message: "Item definitions should be at least 25 characters long",
+    }),
   gender: genderSchema.optional(),
   pluralForm: z
     .array(
-      z.string().max(65, "Plural forms can be no longer than 65 characters")
+      z
+        .string()
+        .max(65, "Plural forms can be no longer than 65 characters")
+        .regex(singleWordRegex, "Only letters are allowed")
     )
     .max(2, "There can be no more than 2 different plural forms")
     .optional(),
@@ -146,6 +160,7 @@ const itemSchemaWithoutTranslations = z.object({
     .array(
       z
         .string()
+        .regex(ipaRegex, "Only valid IPA characters and spaces are allowed.")
         .max(50, "IPA transcriptions can be no longer than 50 characters")
     )
     .optional(),
@@ -158,11 +173,14 @@ const itemSchemaWithoutTranslations = z.object({
       z.object({
         text: z
           .string()
+          .regex(sentenceRegex, sentenceRegexMessage + " for context items")
+          .min(25, "Context items should be at least 25 characters long")
           .max(150, "Context items can be no longer than 150 characters"),
         author: z.string(),
         takenFrom: z
           .string()
-          .max(50, "Make it 50 characters or shorter")
+          .regex(sentenceRegex, sentenceRegexMessage + " for context sources")
+          .max(50, "Make your source 50 characters or shorter")
           .optional(),
       })
     )
@@ -170,28 +188,6 @@ const itemSchemaWithoutTranslations = z.object({
   relevance: ObjectIdSchema.optional(),
   collocations: ObjectIdSchema.optional(),
 });
-// .refine(
-//   (data: ItemSchema): data is ItemSchema => {
-//     const langFeatures = siteSettings.languageFeatures.find(
-//       (lang) => lang.langCode === data.language
-//     );
-
-//     const additionalCharacters = "";
-//     const languageSpecificCharacters =
-//       langFeatures?.requiresHelperKeys.join("") || "";
-
-//     const [regex] = createRegexWithMessage({
-//       characters: (languageSpecificCharacters || "") + additionalCharacters,
-//     });
-
-//     // Assuming we're sure definition (as an example) is an array of strings
-//     return data.definition?.every((string) => regex.test(string)) ?? false;
-//   },
-//   {
-//     message: "BOOM",
-//     path: ["definition"],
-//   }
-// );
 
 const parsedItemSpecificSchema = z.object({
   translations: z

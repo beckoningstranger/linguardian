@@ -1,7 +1,6 @@
 "use client";
 
 import { Dispatch, RefObject, SetStateAction, useState } from "react";
-import { FieldErrors, FieldValues } from "react-hook-form";
 
 import StyledInput from "@/components/ui/StyledInput";
 import { useOutsideClickWithExceptions } from "@/lib/hooks";
@@ -11,7 +10,7 @@ interface EnterMultipleStringsFieldProps {
   setArray: Dispatch<SetStateAction<string[]>>;
   index: number;
   placeholder: string;
-  errors: FieldErrors<FieldValues>;
+  hasErrors?: boolean;
   formField: string;
 }
 
@@ -20,7 +19,7 @@ export default function EnterMultipleStringsField({
   setArray,
   index,
   placeholder,
-  errors,
+  hasErrors = false,
   formField,
 }: EnterMultipleStringsFieldProps) {
   const ref = useOutsideClickWithExceptions(handleBlur);
@@ -49,7 +48,6 @@ export default function EnterMultipleStringsField({
         minusButtonAction={deleteValue}
         label={placeholder}
         noFloatingLabel
-        errors={errors}
         type="text"
         placeholder={placeholder}
         spellCheck={false}
@@ -57,6 +55,7 @@ export default function EnterMultipleStringsField({
         onChange={(e) => setValue(e.target.value)}
         value={value}
         autoFocus={value === ""}
+        hasErrors={hasErrors}
         onKeyDown={(e) => {
           switch (e.key) {
             case "Escape":

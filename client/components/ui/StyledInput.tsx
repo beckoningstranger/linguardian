@@ -1,6 +1,5 @@
 import React, { forwardRef, MouseEventHandler } from "react";
 import { Field, Input, Label } from "@headlessui/react";
-import { FieldErrors, FieldValues } from "react-hook-form";
 
 import { cn } from "@/lib/helperFunctionsClient";
 import MinusIcon from "../Dictionary/EditItemPage/MinusIcon";
@@ -10,7 +9,7 @@ type StyledInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   optional?: boolean;
   id: string;
   noFloatingLabel?: boolean;
-  errors: FieldErrors<FieldValues>;
+  hasErrors?: boolean;
   minusButtonAction?: MouseEventHandler;
 };
 
@@ -21,7 +20,7 @@ const StyledInput = forwardRef<HTMLInputElement, StyledInputProps>(
       optional,
       id,
       noFloatingLabel = false,
-      errors,
+      hasErrors = false,
       minusButtonAction,
       name,
       className,
@@ -29,8 +28,6 @@ const StyledInput = forwardRef<HTMLInputElement, StyledInputProps>(
     },
     ref
   ) => {
-    const hasErrors = !!errors[id];
-
     return (
       <Field
         className={cn(

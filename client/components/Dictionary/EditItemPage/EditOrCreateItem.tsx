@@ -199,7 +199,7 @@ export default function EditOrCreateItem({
                 defaultValue={itemName}
                 placeholder="Item name"
                 autoFocus={isNewItem}
-                errors={errors}
+                hasErrors={!!errors["name"]}
               />
               <FormErrors field="name" errors={errors} />
             </div>

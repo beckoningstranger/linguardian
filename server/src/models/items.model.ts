@@ -78,6 +78,7 @@ export async function editOrCreateBySlug(
     normalizedName: normalizeString(item.name),
     gender: item.partOfSpeech === "noun" ? item.gender : undefined,
     case: item.partOfSpeech === "preposition" ? item.case : undefined,
+    definition: item.definition || undefined,
     pluralForm:
       item.partOfSpeech === "noun" || item.partOfSpeech === "adjective"
         ? item.pluralForm && item.pluralForm.length > 0

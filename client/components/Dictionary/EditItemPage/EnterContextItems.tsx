@@ -78,7 +78,11 @@ export default function EnterContextItems({
               />
             ))}
           </div>
-          <FormErrors field="context" errors={errors} />
+          <FormErrors
+            field="context"
+            errors={errors}
+            nested={["takenFrom", "text"]}
+          />
         </>
       </div>
     </>

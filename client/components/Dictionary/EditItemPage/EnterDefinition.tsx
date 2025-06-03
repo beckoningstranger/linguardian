@@ -27,7 +27,7 @@ export default function EnterDefinition({
   );
 
   useEffect(() => {
-    setValue("definition", definition, {
+    setValue("definition", definition === "" ? undefined : definition, {
       shouldDirty: true,
       shouldTouch: true,
       shouldValidate: true,

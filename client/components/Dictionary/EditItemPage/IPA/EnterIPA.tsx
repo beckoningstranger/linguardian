@@ -37,6 +37,13 @@ export default function EnterIPA({
     });
   }, [array, setValue]);
 
+  const faultyFields: number[] = [];
+  if (Array.isArray(errors["IPA"])) {
+    errors["IPA"].map((item, index) => {
+      if (item && typeof item.message === "string") faultyFields.push(index);
+    });
+  }
+
   const renderFields = () =>
     array.map((value, index) => (
       <EnterIPAField
@@ -45,7 +52,7 @@ export default function EnterIPA({
         array={array}
         setArray={setArray}
         placeholder={label.singular}
-        errors={errors}
+        hasErrors={faultyFields.includes(index)}
         activeField={activeField}
         setActiveField={setActiveField}
       />

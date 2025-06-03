@@ -9,14 +9,13 @@ import {
   useEffect,
   useState,
 } from "react";
-import { FieldErrors, FieldValues } from "react-hook-form";
 
 interface EnterIPAFieldProps {
   array: string[];
   setArray: Dispatch<SetStateAction<string[]>>;
   index: number;
   placeholder: string;
-  errors: FieldErrors<FieldValues>;
+  hasErrors: boolean;
   activeField: number | null;
   setActiveField: Dispatch<SetStateAction<number | null>>;
 }
@@ -26,7 +25,7 @@ export default function EnterIPAField({
   setArray,
   index,
   placeholder,
-  errors,
+  hasErrors,
   activeField,
   setActiveField,
 }: EnterIPAFieldProps) {
@@ -66,7 +65,7 @@ export default function EnterIPAField({
         id={"IPA-" + value}
         label={placeholder}
         noFloatingLabel
-        errors={errors}
+        hasErrors={hasErrors}
         type="text"
         placeholder={placeholder}
         spellCheck={false}
