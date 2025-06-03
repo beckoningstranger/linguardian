@@ -5,7 +5,7 @@ import { RefObject, useState } from "react";
 import Flag from "react-world-flags";
 
 import { MAX_NUMBER_OF_LANGUAGES_ALLOWED } from "@/lib/constants";
-import { useOutsideClick } from "@/lib/hooks";
+import { useOutsideClickWithExceptions } from "@/lib/hooks";
 import { siteSettings } from "@/lib/siteSettings";
 import { LanguageWithFlagAndName, User } from "@/lib/types";
 import { useSession } from "next-auth/react";
@@ -35,7 +35,7 @@ export default function LanguageSelector({
       (lang) => lang.code !== activeLanguage.code
     );
 
-  const ref = useOutsideClick(
+  const ref = useOutsideClickWithExceptions(
     () =>
       setShowAllLanguageOptions(
         (showAllLanguageOptions) => !showAllLanguageOptions

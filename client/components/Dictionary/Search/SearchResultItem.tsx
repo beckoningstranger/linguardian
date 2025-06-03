@@ -17,7 +17,9 @@ export default function SearchResultItem({
         {result.name}
       </p>
       <p className="font-IPA text-cmdr text-grey-700">
-        {result.IPA && result.IPA.length > 0 ? `/${result.IPA}/` : null}
+        {result.IPA && result.IPA.length > 0
+          ? `/${result.IPA.join("/ /")}/`
+          : null}
       </p>
       <p className="text-cmdr">{result.partOfSpeech}</p>
       <Flag

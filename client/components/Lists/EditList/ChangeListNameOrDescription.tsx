@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 import { changeListDetails } from "@/lib/actions";
-import { useOutsideClick } from "@/lib/hooks";
+import { useOutsideClickWithExceptions } from "@/lib/hooks";
 import { Input, Textarea } from "@headlessui/react";
 
 interface ChangeListNameOrDescriptionProps {
@@ -47,7 +47,7 @@ export default function ChangeListNameOrDescription({
     }
   };
 
-  const inputRef = useOutsideClick(() => {
+  const inputRef = useOutsideClickWithExceptions(() => {
     setEditMode(false);
     changeIt();
   });

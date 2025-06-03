@@ -20,10 +20,11 @@ const StyledInput = forwardRef<HTMLInputElement, StyledInputProps>(
       label,
       optional,
       id,
+      noFloatingLabel = false,
+      errors,
       minusButtonAction,
       name,
-      errors,
-      noFloatingLabel = false,
+      className,
       ...props
     },
     ref
@@ -34,7 +35,8 @@ const StyledInput = forwardRef<HTMLInputElement, StyledInputProps>(
       <Field
         className={cn(
           "relative flex w-full flex-col items-center rounded-md border border-grey-500 bg-white  focus-within:border-black focus-within:outline-none",
-          hasErrors && "border-red-500 focus-within:border-red-500"
+          hasErrors && "border-red-500 focus-within:border-red-500",
+          className
         )}
       >
         <Input

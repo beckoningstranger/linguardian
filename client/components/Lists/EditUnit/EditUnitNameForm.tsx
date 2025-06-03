@@ -1,6 +1,6 @@
 "use client";
 
-import { useOutsideClick } from "@/lib/hooks";
+import { useOutsideClickWithExceptions } from "@/lib/hooks";
 import {
   Dispatch,
   FormEventHandler,
@@ -28,7 +28,7 @@ export default function EditUnitNameForm({
   setEditMode,
   editUnitNameAction,
 }: EditUnitNameFormProps) {
-  const inputRef = useOutsideClick(() => {
+  const inputRef = useOutsideClickWithExceptions(() => {
     setEditMode(false);
     if (updatedUnitName !== unitName) editUnitNameAction();
   });

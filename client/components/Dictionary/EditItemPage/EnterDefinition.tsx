@@ -1,12 +1,11 @@
 "use client";
 
-import StyledTextarea from "@/components/ui/StyledTextArea";
+import { useEffect, useState } from "react";
+import { FieldErrors, FieldValues } from "react-hook-form";
 import { Button } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/16/solid";
-import { RefObject, useEffect, useState } from "react";
-import { FieldErrors, FieldValues } from "react-hook-form";
 
-import { useOutsideInputAndKeyboardClick } from "@/lib/hooks";
+import StyledTextarea from "@/components/ui/StyledTextArea";
 import { FormErrors } from "../../ui/FormErrors";
 
 interface EnterDefinitionProps {
@@ -26,7 +25,6 @@ export default function EnterDefinition({
   const [showInputField, setShowInputField] = useState<boolean>(
     (initialValue && initialValue?.length > 0) || false
   );
-  const ref = useOutsideInputAndKeyboardClick(handleBlur);
 
   useEffect(() => {
     setValue("definition", definition, {
@@ -60,7 +58,6 @@ export default function EnterDefinition({
                 noFloatingLabel
                 label="Definition"
                 id="definition"
-                ref={ref as RefObject<HTMLTextAreaElement>}
                 spellCheck={false}
                 onChange={(e) => {
                   setDefinition(e.target.value);
@@ -69,18 +66,10 @@ export default function EnterDefinition({
                 value={definition}
                 autoFocus={definition === "" ? true : false}
                 onKeyDown={(e) => {
-                  switch (e.key) {
-                    case "Escape":
-                    case "Enter":
-                    case "Tab":
-                      handleBlur();
-                  }
+                  if (e.key === "Escape") deleteField();
                 }}
                 errors={errors}
-                minusButtonAction={() => {
-                  setDefinition("");
-                  setShowInputField(false);
-                }}
+                minusButtonAction={deleteField}
               />
             </div>
           )}
@@ -90,14 +79,8 @@ export default function EnterDefinition({
     </>
   );
 
-  function handleBlur() {
-    if (definition === "") {
-      setDefinition("");
-      setShowInputField(false);
-
-      if (ref.current) ref.current.blur();
-      return;
-    }
-    if (ref.current) ref.current.blur();
+  function deleteField() {
+    setDefinition("");
+    setShowInputField(false);
   }
 }

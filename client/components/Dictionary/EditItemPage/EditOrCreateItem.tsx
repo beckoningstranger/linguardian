@@ -30,9 +30,10 @@ import ComboBoxWrapper from "./ComboBoxWrapper";
 import LanguagePicker from "./EditOrCreatePageLanguagePicker";
 import EnterContextItems from "./EnterContextItems";
 import EnterDefinition from "./EnterDefinition";
-import EnterMultiple from "./EnterMultiple";
+import EnterMultipleStrings from "./EnterMultipleStrings";
 import ManageTranslations from "./ManageTranslations";
 import PickMultiple from "./PickMultiple";
+import EnterIPA from "./IPA/EnterIPA";
 
 interface EditOrCreateItemProps {
   seperatedUserLanguages: SeperatedUserLanguages;
@@ -279,22 +280,19 @@ export default function EditOrCreateItem({
             )}
           </div>
           {watch().partOfSpeech === "noun" && (
-            <EnterMultiple
+            <EnterMultipleStrings
               setValue={setValue}
               formField="pluralForm"
               initialValue={watch().pluralForm}
               label={{ singular: "Plural Form", plural: "Plural Forms" }}
               errors={errors}
-              mode="strings"
             />
           )}
-          <EnterMultiple
+          <EnterIPA
             setValue={setValue}
-            formField="IPA"
             initialValue={watch().IPA}
             label={{ singular: "IPA", plural: "IPA" }}
             errors={errors}
-            mode="IPA"
             IPA={ipa}
           />
           <EnterDefinition

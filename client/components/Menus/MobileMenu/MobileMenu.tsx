@@ -1,6 +1,7 @@
 "use client";
 import Logo from "@/components/Logo";
 import { useMobileMenu } from "@/context/MobileMenuContext";
+import { cn } from "@/lib/helperFunctionsClient";
 import { ReactNode, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
@@ -38,11 +39,13 @@ export default function MobileMenu({
   if (showMobileMenu && toggleMobileMenu && ref.current) {
     return createPortal(
       <div
-        className={`fixed w-full z-50 overflow-hidden backdrop-blur-xl ${fromDirection} ${
+        className={cn(
+          "fixed w-full z-50 overflow-hidden backdrop-blur-xl",
+          fromDirection,
           mode === "keyboard"
-            ? "bottom-0 h-1/3 border-t border-t-black"
+            ? "IPAKeyboard bottom-0 h-1/3 border-t border-t-black"
             : "top-0 h-full"
-        }`}
+        )}
       >
         {mode !== "keyboard" && (
           <div className="pt-4" onClick={() => toggleMobileMenu()}>

@@ -22,10 +22,10 @@ export default function IPAKeys({
             color="blue"
             className="font-voces grid h-10 w-10 place-items-center font-light"
             key={key}
-            id={"IPAKeys-" + key} // This is used in useOutsideInputAndKeyboardClick in hooks.ts
             onClick={() => {
-              array[arrayIndex] = array[arrayIndex] + key;
-              setArray(array.slice());
+              const newArray = [...array];
+              newArray[arrayIndex] = array[arrayIndex] + key;
+              setArray(newArray);
             }}
           >
             {key}

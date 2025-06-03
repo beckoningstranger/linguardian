@@ -1,8 +1,5 @@
 "use client";
 
-import { useOutsideInputAndKeyboardClick } from "@/lib/hooks";
-import { ContextItem } from "@/lib/types";
-import { Input, Textarea } from "@headlessui/react";
 import {
   Dispatch,
   RefObject,
@@ -10,6 +7,10 @@ import {
   useEffect,
   useState,
 } from "react";
+import { Input, Textarea } from "@headlessui/react";
+
+import { ContextItem } from "@/lib/types";
+import { useOutsideClickWithExceptions } from "@/lib/hooks";
 import MinusIcon from "./MinusIcon";
 
 interface EnterContextItemsFieldProps {
@@ -27,8 +28,8 @@ export default function EnterContextItemsField({
   activeField,
   setActiveField,
 }: EnterContextItemsFieldProps) {
-  const textRef = useOutsideInputAndKeyboardClick(handleBlur);
-  const takenFromRef = useOutsideInputAndKeyboardClick(handleBlur);
+  const textRef = useOutsideClickWithExceptions(handleBlur);
+  const takenFromRef = useOutsideClickWithExceptions(handleBlur);
   const initialItem = contextItems[index];
 
   const [itemText, setItemText] = useState(initialItem.text);
@@ -62,7 +63,7 @@ export default function EnterContextItemsField({
         ref={textRef as RefObject<HTMLTextAreaElement>}
         className="w-full rounded-md border p-2 shadow-md"
         spellCheck={false}
-        id={"contextItem" + index}
+        id={"contextItemTakenFrom" + index}
         value={itemText}
         onChange={(e) => {
           setItemText(e.target.value);

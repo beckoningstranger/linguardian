@@ -2,7 +2,7 @@
 
 import { useActiveLanguage } from "@/context/ActiveLanguageContext";
 import { useSidebar } from "@/context/SidebarContext";
-import { useOutsideClick } from "@/lib/hooks";
+import { useOutsideClickWithExceptions } from "@/lib/hooks";
 import paths from "@/lib/paths";
 import { User } from "@/lib/types";
 import { signOut, useSession } from "next-auth/react";
@@ -22,7 +22,7 @@ interface SideBarNavigationProps {}
 export default function SideBarNavigation({}: SideBarNavigationProps) {
   const { toggleSidebar, showSidebar } = useSidebar();
   const { activeLanguage } = useActiveLanguage();
-  const ref = useOutsideClick(toggleSidebar, showSidebar);
+  const ref = useOutsideClickWithExceptions(toggleSidebar, showSidebar);
   const user = useSession().data?.user as User;
 
   return (
