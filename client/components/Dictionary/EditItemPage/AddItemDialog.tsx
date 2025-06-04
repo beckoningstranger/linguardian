@@ -1,13 +1,13 @@
 "use client";
 
+import { Button, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import { XMarkIcon } from "@heroicons/react/20/solid";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { Dispatch, SetStateAction } from "react";
 import toast from "react-hot-toast";
-import { XMarkIcon } from "@heroicons/react/20/solid";
-import { Button, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 
 import { addItemToList } from "@/lib/actions";
+import useUserOnClient from "@/lib/hooks/useUserOnClient";
 import paths from "@/lib/paths";
 import {
   DictionarySearchResult,
@@ -15,7 +15,6 @@ import {
   ItemWithPopulatedTranslations,
   ListAndUnitData,
   SupportedLanguage,
-  User,
 } from "@/lib/types";
 import Search from "../Search/Search";
 
@@ -43,8 +42,7 @@ export default function AddItemDialog({
   listAndUnitData,
 }: AddItemDialogProps) {
   const router = useRouter();
-  const { data } = useSession();
-  const user = data?.user as User;
+  const user = useUserOnClient();
   const allUserLanguagesWithFlags = user
     ? [user.native, user.learnedLanguages].flat()
     : [];

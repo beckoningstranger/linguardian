@@ -139,6 +139,7 @@ export interface GlobalSettings {
   supportedLanguages: SupportedLanguage[];
   languageFeatures: LanguageFeatures[];
   defaultSRSettings: SRSettings;
+  showLanguageSelectorOnlyOn: string[];
 }
 
 export interface LearnedItem {

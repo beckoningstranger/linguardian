@@ -3,7 +3,7 @@
 import { Dispatch, RefObject, SetStateAction, useState } from "react";
 
 import StyledInput from "@/components/ui/StyledInput";
-import { useOutsideClickWithExceptions } from "@/lib/hooks";
+import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 
 interface EnterMultipleStringsFieldProps {
   array: string[];
@@ -22,7 +22,7 @@ export default function EnterMultipleStringsField({
   hasErrors = false,
   formField,
 }: EnterMultipleStringsFieldProps) {
-  const ref = useOutsideClickWithExceptions(handleBlur);
+  const ref = useOutsideClick(handleBlur);
   const [value, setValue] = useState(array[index]);
 
   function handleBlur() {

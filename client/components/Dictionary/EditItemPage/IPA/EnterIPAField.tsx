@@ -1,7 +1,7 @@
 "use client";
 
 import StyledInput from "@/components/ui/StyledInput";
-import { useOutsideClickWithExceptions } from "@/lib/hooks";
+import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 import {
   Dispatch,
   RefObject,
@@ -29,7 +29,7 @@ export default function EnterIPAField({
   activeField,
   setActiveField,
 }: EnterIPAFieldProps) {
-  const ref = useOutsideClickWithExceptions(handleBlur, true, [
+  const ref = useOutsideClick(handleBlur, true, [
     ".IPAKeyboard",
     ".IPAInputField",
     ".IPAPlusButton",

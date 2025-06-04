@@ -4,22 +4,19 @@ import { usePathname } from "next/navigation";
 import { RefObject, useState } from "react";
 import Flag from "react-world-flags";
 
+import { useActiveLanguage } from "@/context/ActiveLanguageContext";
 import { MAX_NUMBER_OF_LANGUAGES_ALLOWED } from "@/lib/constants";
-import { useOutsideClickWithExceptions } from "@/lib/hooks";
+import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
+import useUserOnClient from "@/lib/hooks/useUserOnClient";
 import { siteSettings } from "@/lib/siteSettings";
-import { LanguageWithFlagAndName, User } from "@/lib/types";
-import { useSession } from "next-auth/react";
 import AddNewLanguageOption from "./AddNewLanguageOption";
 import LanguageSelectorLink from "./LanguageSelectorLink";
 
-interface LanguageSelectorProps {
-  activeLanguage: LanguageWithFlagAndName;
-}
+export default function LanguageSelector() {
+  const currentBaseUrl = usePathname();
+  const { activeLanguage } = useActiveLanguage();
 
-export default function LanguageSelector({
-  activeLanguage,
-}: LanguageSelectorProps) {
-  const user = useSession().data?.user as User;
+  const user = useUserOnClient();
   const [showAllLanguageOptions, setShowAllLanguageOptions] = useState(false);
   const currentPath = usePathname();
   const amountOfSupportedLanguages = siteSettings.supportedLanguages.length;
@@ -32,10 +29,10 @@ export default function LanguageSelector({
 
   const allLanguageAndFlagExceptActive =
     allLanguagesAndFlagsUserIsLearning.filter(
-      (lang) => lang.code !== activeLanguage.code
+      (lang) => lang.code !== activeLanguage?.code
     );
 
-  const ref = useOutsideClickWithExceptions(
+  const ref = useOutsideClick(
     () =>
       setShowAllLanguageOptions(
         (showAllLanguageOptions) => !showAllLanguageOptions
@@ -43,6 +40,8 @@ export default function LanguageSelector({
     showAllLanguageOptions
   );
 
+  if (!siteSettings.showLanguageSelectorOnlyOn.includes(currentBaseUrl))
+    return null;
   return (
     <div
       ref={ref as RefObject<HTMLDivElement>}
@@ -50,7 +49,7 @@ export default function LanguageSelector({
     >
       <div>
         <Flag
-          code={activeLanguage.flag}
+          code={activeLanguage?.flag}
           onClick={() =>
             setShowAllLanguageOptions(
               (showAllLanguageOptions) => !showAllLanguageOptions

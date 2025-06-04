@@ -2,19 +2,17 @@
 
 import { Button } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/20/solid";
-import { Dispatch, RefObject, SetStateAction, useRef, useState } from "react";
+import { Dispatch, RefObject, SetStateAction, useState } from "react";
 
 import StyledInput from "@/components/ui/StyledInput";
 import StyledTextarea from "@/components/ui/StyledTextArea";
-import { useOutsideClickWithExceptions } from "@/lib/hooks";
+import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 import { ContextItem } from "@/lib/types";
 
 interface EnterContextItemsFieldProps {
   contextItems: ContextItem[];
   setContextItems: Dispatch<SetStateAction<ContextItem[]>>;
   index: number;
-  // activeField: null | number;
-  // setActiveField: Dispatch<SetStateAction<number | null>>;
   hasError?: boolean;
   faultyFields: {
     index: number;
@@ -27,11 +25,9 @@ export default function EnterContextItemsField({
   contextItems,
   setContextItems,
   index,
-  // activeField,
-  // setActiveField,
   faultyFields,
 }: EnterContextItemsFieldProps) {
-  const containerRef = useOutsideClickWithExceptions(handleBlur);
+  const containerRef = useOutsideClick(handleBlur);
 
   const initialItem = contextItems[index];
 
@@ -65,7 +61,6 @@ export default function EnterContextItemsField({
         label="The item used in context"
         noFloatingLabel
         minusButtonAction={() => removeItem()}
-        // ref={textRef}
         className="w-full rounded-md p-2 shadow-md outline-none"
         spellCheck={false}
         id={"contextItemText" + index}
@@ -81,10 +76,7 @@ export default function EnterContextItemsField({
       {!showSource && (
         <Button
           className="flex w-48 items-center justify-center gap-2 rounded-md bg-green-400 text-white"
-          onClick={() => {
-            setShowSource(true);
-            // takenFromRef?.current?.focus();
-          }}
+          onClick={() => setShowSource(true)}
         >
           <PlusCircleIcon className="size-8" />
           <p className="text-cmdb">Add a source</p>
@@ -96,7 +88,6 @@ export default function EnterContextItemsField({
             !!faultyFields.find((error) => error.index === index)?.takenFrom
           }
           label="Context Source"
-          // ref={takenFromRef}
           type="text"
           className="max-w-[400px] rounded-md border shadow-md"
           spellCheck={false}
@@ -141,8 +132,5 @@ export default function EnterContextItemsField({
       });
       setContextItems(uniqueItemsWithoutEmptyOnes);
     }
-
-    // setActiveField(null);
-    return;
   }
 }

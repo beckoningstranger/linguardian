@@ -16,7 +16,7 @@ export default function DashboardBottomButtons({
   return (
     <div className="fixed bottom-4 flex w-screen justify-between gap-1 tablet:gap-4">
       <div></div>
-      <div className="w-[700px] rounded-lg shadow-xl">
+      <div className="mr-32 w-[700px] rounded-lg shadow-xl tablet:mr-24 desktop:m-0">
         <LearningButton
           global
           listNumber={1}

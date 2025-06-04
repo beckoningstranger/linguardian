@@ -14,7 +14,10 @@ export default function TopMiddleNavigation({}: TopMiddleNavigationProps) {
 
   if (activeLanguage)
     return (
-      <div className="absolute left-1/2 hidden -translate-x-1/2 gap-6 tablet:flex">
+      <div
+        className="absolute left-1/2 hidden -translate-x-1/2 gap-6 tablet:flex"
+        id="TopMiddleNavigation"
+      >
         <Link
           href={paths.listsLanguagePath(activeLanguage?.code)}
           className={linkStyling}

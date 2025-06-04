@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-export function useOutsideClickWithExceptions(
+export function useOutsideClick(
   callback: () => void,
   condition: boolean = true,
   exceptionSelectors: string[] = []

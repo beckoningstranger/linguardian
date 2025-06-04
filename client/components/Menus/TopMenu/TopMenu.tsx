@@ -14,15 +14,16 @@ export default async function TopMenu({ opacity }: TopMenuProps) {
   const background = opacity ? `bg-white/${opacity}` : "bg-white/80";
 
   return (
-    <header>
+    <header id="TopMenu">
       <SideBarNavigation />
       <div
+        id="TopMenuMain"
         className={cn(
-          "relative flex h-[112px] w-full select-none items-center justify-between tablet:pr-4",
+          "relative flex h-[112px] w-full select-none items-center justify-between",
           background
         )}
       >
-        <div className={"flex items-center gap-2"}>
+        <div className={"flex items-center gap-2"} id="HamburgerMenu|Logo">
           <HamburgerMenu />
           <TopMenuLogo />
         </div>

@@ -23,7 +23,10 @@ export default async function Dashboard({
   userNative,
 }: DashboardProps) {
   const renderedLists = (
-    <div className="mb-32 flex max-w-[1126px] flex-col items-center gap-4 px-4 pt-4 tablet:flex-row tablet:flex-wrap tablet:gap-6 desktop:gap-10">
+    <div
+      id="lists"
+      className="mb-32 flex max-w-[1126px] flex-col items-center justify-center gap-4 px-4 pt-4 tablet:flex-row tablet:flex-wrap tablet:gap-6 desktop:gap-10"
+    >
       {learnedLists?.map((listNumber) => {
         const listData = populatedLists.find(
           (list) => list?.listNumber === listNumber
@@ -42,12 +45,12 @@ export default async function Dashboard({
   );
 
   return (
-    <>
+    <div id="dashboard">
       {renderedLists}
       <DashboardBottomButtons
         dashboardIsEmpty={learnedLists && learnedLists.length < 1}
         language={language}
       />
-    </>
+    </div>
   );
 }

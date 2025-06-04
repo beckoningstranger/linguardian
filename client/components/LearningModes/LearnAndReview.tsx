@@ -2,6 +2,7 @@
 
 import { updateLearnedItems } from "@/lib/actions";
 import { arrayShuffle } from "@/lib/helperFunctionsClient";
+import useUserOnClient from "@/lib/hooks/useUserOnClient";
 import {
   ItemForServer,
   ItemToLearn,
@@ -9,9 +10,7 @@ import {
   LearningMode,
   PuzzlePieceObject,
   SupportedLanguage,
-  User,
 } from "@/lib/types";
-import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import ItemPresentation from "./ItemPresentation";
@@ -38,8 +37,7 @@ export default function LearnAndReview({
   allItemStringsInList,
   mode,
 }: LearnAndReviewProps) {
-  const { data } = useSession();
-  const user = data?.user as User;
+  const user = useUserOnClient();
   const [itemsToLearn, setItemsToLearn] = useState<ItemToLearn[]>(items);
   const [activeItem, setActiveItem] = useState<ItemToLearn>(items[0]);
   const [learnedItems, setLearnedItems] = useState<ItemToLearn[]>([]);

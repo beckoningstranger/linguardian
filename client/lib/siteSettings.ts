@@ -384,9 +384,17 @@ const supportedLanguages: SupportedLanguage[] = [
   "CN",
 ] as const;
 
+const showLanguageSelectorOnlyOn: string[] = supportedLanguages.flatMap(
+  (lang) =>
+    ["dashboard", "dictionary", "lists", "lists/new"].map(
+      (entry) => `/${lang}/${entry}`
+    )
+);
+
 export const siteSettings: GlobalSettings = {
   languageFeatures,
   learningModes,
   supportedLanguages,
   defaultSRSettings,
+  showLanguageSelectorOnlyOn,
 };
