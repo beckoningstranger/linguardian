@@ -50,7 +50,8 @@ export default function LanguageSelectorAndProfileLink() {
             <MobileLanguageSelector />
           </MobileMenu>
         </div>
-        <div className="flex items-center justify-evenly gap-4">
+
+        <div className="flex items-center justify-evenly gap-4 pr-1">
           <div
             className={`${
               !showLanguageSelectorOnlyOn.includes(currentBaseUrl) && "hidden"

@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { GiSaveArrow } from "react-icons/gi";
 
@@ -12,7 +12,6 @@ import IconSidebar from "@/components/IconSidebar/IconSidebar";
 import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
 import Spinner from "@/components/Spinner";
 import Button from "@/components/ui/Button";
-import StyledInput from "@/components/ui/StyledInput";
 import { submitItemCreateOrEdit } from "@/lib/actions";
 import { setErrorsFromBackend } from "@/lib/helperFunctionsClient";
 import paths from "@/lib/paths";
@@ -25,15 +24,15 @@ import {
   SupportedLanguage,
 } from "@/lib/types";
 import { itemSchemaWithPopulatedTranslations } from "@/lib/validations";
-import { FormErrors } from "../../ui/FormErrors";
-import ComboBoxWrapper from "./ComboBoxWrapper";
+import EditItemName from "./EditItemName";
 import LanguagePicker from "./EditOrCreatePageLanguagePicker";
+import EditPartOfSpeechGenderAndCase from "./EditPartOfSpeechGenderAndCase";
 import EnterContextItems from "./EnterContextItems";
 import EnterDefinition from "./EnterDefinition";
 import EnterMultipleStrings from "./EnterMultipleStrings";
+import EnterIPA from "./IPA/EnterIPA";
 import ManageTranslations from "./ManageTranslations";
 import PickMultiple from "./PickMultiple";
-import EnterIPA from "./IPA/EnterIPA";
 
 interface EditOrCreateItemProps {
   seperatedUserLanguages: SeperatedUserLanguages;
@@ -89,19 +88,18 @@ export default function EditOrCreateItem({
 
   const [itemLanguage, setItemLanguage] = useState(language);
 
-  const featuresForItemLanguage = siteSettings.languageFeatures.find(
-    (lang) => lang.langCode === itemLanguage
-  );
-  if (!featuresForItemLanguage)
-    throw new Error("Item language features not found");
-
   const {
+    langName,
+    flagCode,
     partsOfSpeech,
     hasGender,
     hasCases,
     tags: langTags,
     ipa,
-  } = featuresForItemLanguage;
+  } = siteSettings.languageFeatures.find(
+    (lang) => lang.langCode === itemLanguage
+  )!;
+
   const {
     control,
     handleSubmit,
@@ -132,8 +130,8 @@ export default function EditOrCreateItem({
   });
 
   const onSubmit = async (data: ItemWithPopulatedTranslations) => {
-    data.languageName = featuresForItemLanguage.langName;
-    data.flagCode = featuresForItemLanguage.flagCode;
+    data.languageName = langName;
+    data.flagCode = flagCode;
 
     toast.promise(submitItemCreateOrEdit(data, slug, addToThisList), {
       loading: "Updating...",
@@ -172,38 +170,12 @@ export default function EditOrCreateItem({
           type="submit"
         />
       </IconSidebar>
-      <div className="w-full bg-white/90 px-4 py-6">
-        <Button
-          intent="bottomRightButton"
-          className="tablet:hidden"
-          disabled={isSubmitting || !isDirty || !isValid}
-          aria-label="Save your changes"
-          type="submit"
-        >
-          {isSubmitting ? (
-            <Spinner size="mini" />
-          ) : (
-            <GiSaveArrow className="h-8 w-8" />
-          )}
-        </Button>
-        <Controller
-          name="name"
+      <div id="container" className="grid w-full gap-3 bg-white/90 px-4 py-6">
+        <EditItemName
+          itemName={itemName}
+          errors={errors}
           control={control}
-          render={({ field: { onChange, onBlur } }) => (
-            <div className="grid gap-2">
-              <StyledInput
-                label="Item name"
-                onChange={onChange}
-                onBlur={onBlur}
-                id="name"
-                defaultValue={itemName}
-                placeholder="Item name"
-                autoFocus={isNewItem}
-                hasErrors={!!errors["name"]}
-              />
-              <FormErrors field="name" errors={errors} />
-            </div>
-          )}
+          isNewItem={isNewItem}
         />
 
         <LanguagePicker
@@ -216,105 +188,70 @@ export default function EditOrCreateItem({
           staticFlag={addToThisList?.languageWithFlagAndName.flag}
         />
 
-        <div className="flex flex-col justify-center gap-3">
-          <PickMultiple
+        <PickMultiple
+          setValue={setValue}
+          formField="tags"
+          initialValue={watch().tags}
+          label={{ singular: "Tag", plural: "Tags" }}
+          errors={errors}
+          options={langTags.forAll
+            .concat(langTags[watch().partOfSpeech])
+            .filter((item) => item !== undefined)}
+        />
+        <EditPartOfSpeechGenderAndCase
+          watch={watch}
+          control={control}
+          errors={errors}
+          itemLanguage={itemLanguage}
+        />
+        {watch().partOfSpeech === "noun" && (
+          <EnterMultipleStrings
             setValue={setValue}
-            formField="tags"
-            initialValue={watch().tags}
-            label={{ singular: "Tag", plural: "Tags" }}
+            formField="pluralForm"
+            initialValue={watch().pluralForm}
+            label={{ singular: "Plural Form", plural: "Plural Forms" }}
             errors={errors}
-            options={langTags.forAll
-              .concat(langTags[watch().partOfSpeech])
-              .filter((item) => item !== undefined)}
           />
-          <div className="text-sm font-semibold">Part of Speech</div>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            {watch().partOfSpeech === "noun" && hasGender.length > 0 && (
-              <Controller
-                name="gender"
-                control={control}
-                render={({ field: { onChange, value, onBlur } }) => (
-                  <ComboBoxWrapper
-                    placeholder="Noun gender"
-                    value={value ? value : ""}
-                    onChange={onChange}
-                    formField="gender"
-                    onBlur={onBlur}
-                    options={hasGender}
-                    errors={errors}
-                  />
-                )}
-              />
-            )}
-            <Controller
-              name="partOfSpeech"
-              control={control}
-              render={({ field: { onChange, value, onBlur } }) => (
-                <ComboBoxWrapper
-                  placeholder="Part of Speech"
-                  formField="partOfSpeech"
-                  value={value}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  options={partsOfSpeech}
-                  errors={errors}
-                />
-              )}
-            />
-            {watch().partOfSpeech === "preposition" && hasCases.length > 0 && (
-              <Controller
-                name="case"
-                control={control}
-                render={({ field: { onChange, value, onBlur } }) => (
-                  <ComboBoxWrapper
-                    placeholder="Case after preposition"
-                    value={value ? value : ""}
-                    formField="case"
-                    onChange={onChange}
-                    onBlur={onBlur}
-                    options={hasCases}
-                    errors={errors}
-                  />
-                )}
-              />
-            )}
-          </div>
-          {watch().partOfSpeech === "noun" && (
-            <EnterMultipleStrings
-              setValue={setValue}
-              formField="pluralForm"
-              initialValue={watch().pluralForm}
-              label={{ singular: "Plural Form", plural: "Plural Forms" }}
-              errors={errors}
-            />
+        )}
+        <EnterIPA
+          setValue={setValue}
+          initialValue={watch().IPA}
+          label={{ singular: "IPA", plural: "IPA" }}
+          errors={errors}
+          IPA={ipa}
+        />
+        <EnterDefinition
+          setValue={setValue}
+          initialValue={watch().definition}
+          errors={errors}
+        />
+        <EnterContextItems
+          setValue={setValue}
+          initialValue={watch().context}
+          errors={errors}
+        />
+        <ManageTranslations
+          item={item}
+          itemLanguage={watch().language}
+          setValue={setValue}
+          errors={errors}
+          allTranslations={watch().translations}
+          visibleTranslations={getTranslationsForUserLanguages()}
+          seperatedUserLanguages={seperatedUserLanguages}
+        />
+        <Button
+          intent="bottomRightButton"
+          className="z-10 tablet:hidden"
+          disabled={isSubmitting || !isDirty || !isValid}
+          aria-label="Save your changes"
+          type="submit"
+        >
+          {isSubmitting ? (
+            <Spinner size="mini" />
+          ) : (
+            <GiSaveArrow className="h-8 w-8" />
           )}
-          <EnterIPA
-            setValue={setValue}
-            initialValue={watch().IPA}
-            label={{ singular: "IPA", plural: "IPA" }}
-            errors={errors}
-            IPA={ipa}
-          />
-          <EnterDefinition
-            setValue={setValue}
-            initialValue={watch().definition}
-            errors={errors}
-          />
-          <EnterContextItems
-            setValue={setValue}
-            initialValue={watch().context}
-            errors={errors}
-          />
-          <ManageTranslations
-            item={item}
-            itemLanguage={watch().language}
-            setValue={setValue}
-            errors={errors}
-            allTranslations={watch().translations}
-            visibleTranslations={getTranslationsForUserLanguages()}
-            seperatedUserLanguages={seperatedUserLanguages}
-          />
-        </div>
+        </Button>
       </div>
     </form>
   );

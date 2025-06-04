@@ -52,7 +52,7 @@ export default function LanguagePicker({
     );
 
   return (
-    <div className="flex gap-4">
+    <div id="languagePicker" className="flex gap-4">
       {allUserLanguages.map((lang) => (
         <Flag
           code={lang.flag}

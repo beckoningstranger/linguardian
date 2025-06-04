@@ -59,7 +59,7 @@ export default function EnterIPA({
     ));
 
   return (
-    <>
+    <div id="IPA">
       <div className="flex flex-col gap-2 text-sm sm:gap-x-1">
         <Button
           className="IPAPlusButton flex w-32 items-center gap-1"
@@ -92,6 +92,6 @@ export default function EnterIPA({
           activeField={activeField}
         />
       </MobileMenuContextProvider>
-    </>
+    </div>
   );
 }

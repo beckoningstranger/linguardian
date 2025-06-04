@@ -47,7 +47,7 @@ export default function PickMultiple({
   }, [array, setValue, formField, placeholder]);
 
   return (
-    <>
+    <div id={formField}>
       <div className="flex flex-col gap-2 text-csmr phone:gap-x-1">
         <>
           <Button
@@ -79,6 +79,6 @@ export default function PickMultiple({
         </>
       </div>
       <FormErrors field={formField} errors={errors} />
-    </>
+    </div>
   );
 }

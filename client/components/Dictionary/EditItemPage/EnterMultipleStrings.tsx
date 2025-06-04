@@ -55,31 +55,29 @@ export default function EnterMultipleStrings({
     ));
 
   return (
-    <>
-      <div className="flex flex-col gap-2 text-sm sm:gap-x-1">
-        <Button
-          className="flex w-32 items-center gap-1"
-          onClick={(e) => {
-            e.preventDefault();
-            setArray([...array, ""]);
-          }}
-        >
-          <>
-            <p className="flex h-full items-center font-semibold capitalize">
-              {array.length > 1 ? (
-                <span>{label.plural}</span>
-              ) : (
-                <span>{label.singular}</span>
-              )}
-            </p>
-            <PlusCircleIcon className="flex size-5 items-center text-green-400" />
-          </>
-        </Button>
-        <div className="flex w-full flex-col flex-wrap gap-2 sm:flex-row sm:items-center">
-          {renderFields()}
-        </div>
-        <FormErrors field={formField} errors={errors} />
+    <div id={formField} className="flex flex-col gap-2 text-sm sm:gap-x-1">
+      <Button
+        className="flex w-32 items-center gap-1"
+        onClick={(e) => {
+          e.preventDefault();
+          setArray([...array, ""]);
+        }}
+      >
+        <>
+          <p className="flex h-full items-center font-semibold capitalize">
+            {array.length > 1 ? (
+              <span>{label.plural}</span>
+            ) : (
+              <span>{label.singular}</span>
+            )}
+          </p>
+          <PlusCircleIcon className="flex size-5 items-center text-green-400" />
+        </>
+      </Button>
+      <div className="flex w-full flex-col flex-wrap gap-2 sm:flex-row sm:items-center">
+        {renderFields()}
       </div>
-    </>
+      <FormErrors field={formField} errors={errors} />
+    </div>
   );
 }

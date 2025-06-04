@@ -1,43 +1,43 @@
 "use client";
 
-import {
-  Dispatch,
-  RefObject,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
-import { Input, Textarea } from "@headlessui/react";
+import { Button } from "@headlessui/react";
+import { PlusCircleIcon } from "@heroicons/react/20/solid";
+import { Dispatch, RefObject, SetStateAction, useRef, useState } from "react";
 
-import { ContextItem } from "@/lib/types";
+import StyledInput from "@/components/ui/StyledInput";
+import StyledTextarea from "@/components/ui/StyledTextArea";
 import { useOutsideClickWithExceptions } from "@/lib/hooks";
-import MinusIcon from "./MinusIcon";
+import { ContextItem } from "@/lib/types";
 
 interface EnterContextItemsFieldProps {
   contextItems: ContextItem[];
   setContextItems: Dispatch<SetStateAction<ContextItem[]>>;
   index: number;
-  activeField: null | number;
-  setActiveField: Dispatch<SetStateAction<number | null>>;
+  // activeField: null | number;
+  // setActiveField: Dispatch<SetStateAction<number | null>>;
+  hasError?: boolean;
+  faultyFields: {
+    index: number;
+    text?: string;
+    takenFrom?: string;
+  }[];
 }
 
 export default function EnterContextItemsField({
   contextItems,
   setContextItems,
   index,
-  activeField,
-  setActiveField,
+  // activeField,
+  // setActiveField,
+  faultyFields,
 }: EnterContextItemsFieldProps) {
-  const textRef = useOutsideClickWithExceptions(handleBlur);
-  const takenFromRef = useOutsideClickWithExceptions(handleBlur);
+  const containerRef = useOutsideClickWithExceptions(handleBlur);
+
   const initialItem = contextItems[index];
 
   const [itemText, setItemText] = useState(initialItem.text);
   const [itemTakenFrom, setItemTakenFrom] = useState(initialItem.takenFrom);
-
-  useEffect(() => {
-    if (activeField && activeField === index) textRef.current?.focus();
-  }, [activeField, index, textRef]);
+  const [showSource, setShowSource] = useState(!!initialItem.takenFrom);
 
   const removeItem = () =>
     setContextItems((prev) => {
@@ -56,40 +56,62 @@ export default function EnterContextItemsField({
         handleBlur();
     }
   };
-
   return (
-    <div className="relative flex items-center gap-2">
-      <Textarea
-        ref={textRef as RefObject<HTMLTextAreaElement>}
-        className="w-full rounded-md border p-2 shadow-md"
+    <div
+      ref={containerRef as RefObject<HTMLDivElement>}
+      className="relative flex items-stretch gap-2"
+    >
+      <StyledTextarea
+        label="The item used in context"
+        noFloatingLabel
+        minusButtonAction={() => removeItem()}
+        // ref={textRef}
+        className="w-full rounded-md p-2 shadow-md outline-none"
         spellCheck={false}
-        id={"contextItemTakenFrom" + index}
+        id={"contextItemText" + index}
         value={itemText}
         onChange={(e) => {
           setItemText(e.target.value);
         }}
         placeholder="Show how this item is used in context..."
-        onFocus={() => {
-          setActiveField(index);
-        }}
-        autoFocus={itemText === "" ? true : false}
+        autoFocus={itemText === ""}
         onKeyDown={handleKeyDown}
+        hasErrors={!!faultyFields.find((error) => error.index === index)?.text}
       />
-      <Input
-        ref={takenFromRef as RefObject<HTMLInputElement>}
-        type="text"
-        className="size-full rounded-md border shadow-md"
-        spellCheck={false}
-        id={"contextItem" + index}
-        onChange={(e) => setItemTakenFrom(e.target.value)}
-        placeholder="Where is this from? Leave empty if you came up with it."
-        value={itemTakenFrom}
-        onFocus={() => {
-          setActiveField(index);
-        }}
-        onKeyDown={handleKeyDown}
-      />
-      <MinusIcon onClick={() => removeItem()} />
+      {!showSource && (
+        <Button
+          className="flex w-48 items-center justify-center gap-2 rounded-md bg-green-400 text-white"
+          onClick={() => {
+            setShowSource(true);
+            // takenFromRef?.current?.focus();
+          }}
+        >
+          <PlusCircleIcon className="size-8" />
+          <p className="text-cmdb">Add a source</p>
+        </Button>
+      )}
+      {showSource && (
+        <StyledInput
+          hasErrors={
+            !!faultyFields.find((error) => error.index === index)?.takenFrom
+          }
+          label="Context Source"
+          // ref={takenFromRef}
+          type="text"
+          className="max-w-[400px] rounded-md border shadow-md"
+          spellCheck={false}
+          id={"contextItemTakenfrom" + index}
+          onChange={(e) => setItemTakenFrom(e.target.value)}
+          placeholder="Where is this from? Leave empty if you came up with it."
+          value={itemTakenFrom}
+          autoFocus={itemTakenFrom === ""}
+          onKeyDown={handleKeyDown}
+          minusButtonAction={() => {
+            setItemTakenFrom("");
+            setShowSource(false);
+          }}
+        />
+      )}
     </div>
   );
 
@@ -120,9 +142,7 @@ export default function EnterContextItemsField({
       setContextItems(uniqueItemsWithoutEmptyOnes);
     }
 
-    setActiveField(null);
-    textRef.current?.blur();
-    takenFromRef.current?.blur();
+    // setActiveField(null);
     return;
   }
 }

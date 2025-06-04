@@ -35,48 +35,46 @@ export default function EnterDefinition({
   }, [definition, setValue]);
 
   return (
-    <>
-      <div className="flex flex-col gap-2 text-sm sm:gap-x-1">
-        <>
-          <Button
-            className="flex w-32 items-center gap-1"
-            onClick={(e) => {
-              e.preventDefault();
-              setShowInputField(true);
-            }}
-          >
-            <>
-              <p className="flex h-full items-center font-semibold capitalize">
-                Definition
-              </p>
-              <PlusCircleIcon className="flex h-full w-5 items-center text-green-400" />
-            </>
-          </Button>
-          {showInputField && (
-            <div className="relative flex w-full flex-wrap items-center">
-              <StyledTextarea
-                noFloatingLabel
-                label="Definition"
-                id="definition"
-                spellCheck={false}
-                onChange={(e) => {
-                  setDefinition(e.target.value);
-                }}
-                placeholder="Enter a definition"
-                value={definition}
-                autoFocus={definition === "" ? true : false}
-                onKeyDown={(e) => {
-                  if (e.key === "Escape") deleteField();
-                }}
-                errors={errors}
-                minusButtonAction={deleteField}
-              />
-            </div>
-          )}
-          <FormErrors field="definition" errors={errors} />
-        </>
-      </div>
-    </>
+    <div id="definition" className="flex flex-col gap-2 text-sm sm:gap-x-1">
+      <>
+        <Button
+          className="flex w-32 items-center gap-1"
+          onClick={(e) => {
+            e.preventDefault();
+            setShowInputField(true);
+          }}
+        >
+          <>
+            <p className="flex h-full items-center font-semibold capitalize">
+              Definition
+            </p>
+            <PlusCircleIcon className="flex h-full w-5 items-center text-green-400" />
+          </>
+        </Button>
+        {showInputField && (
+          <div className="relative flex w-full flex-wrap items-center">
+            <StyledTextarea
+              noFloatingLabel
+              label="Definition"
+              id="definition"
+              spellCheck={false}
+              onChange={(e) => {
+                setDefinition(e.target.value);
+              }}
+              placeholder="Enter a definition"
+              value={definition}
+              autoFocus={definition === "" ? true : false}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") deleteField();
+              }}
+              minusButtonAction={deleteField}
+              hasErrors={!!errors["definition"]}
+            />
+          </div>
+        )}
+        <FormErrors field="definition" errors={errors} />
+      </>
+    </div>
   );
 
   function deleteField() {

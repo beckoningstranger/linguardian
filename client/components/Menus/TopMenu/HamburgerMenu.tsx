@@ -10,7 +10,7 @@ export default function HamburgerMenu({}: HamburgerMenuProps) {
 
   return !showSidebar ? (
     <RxHamburgerMenu
-      className="h-[48px] w-[48px] rounded-lg text-blue-800 hover:bg-blue-100/60 tablet:h-[72px] tablet:w-[72px] tablet:px-3"
+      className="h-[48px] w-[48px] rounded-lg pl-1 text-blue-800 hover:bg-blue-100/60 tablet:h-[72px] tablet:w-[72px] tablet:px-3"
       onClick={toggleSidebar}
     />
   ) : (

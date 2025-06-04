@@ -86,7 +86,7 @@ export default function ManageTranslations({
   );
 
   return (
-    <>
+    <div id="translations">
       <div className="flex flex-col gap-2 text-sm">
         <Button
           className="flex w-32 items-center gap-1"
@@ -116,7 +116,7 @@ export default function ManageTranslations({
         setTranslations={setTranslations}
         mode="addAsTranslation"
       />
-    </>
+    </div>
   );
 }
 

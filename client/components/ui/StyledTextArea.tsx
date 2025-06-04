@@ -1,6 +1,5 @@
+import { Field, Label, Textarea } from "@headlessui/react";
 import { forwardRef, TextareaHTMLAttributes } from "react";
-import { FieldErrors, FieldValues } from "react-hook-form";
-import { Field, Textarea, Label } from "@headlessui/react";
 
 import { cn } from "@/lib/helperFunctionsClient";
 import MinusIcon from "../Dictionary/EditItemPage/MinusIcon";
@@ -10,7 +9,7 @@ type StyledTextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   optional?: boolean;
   id: string;
   noFloatingLabel?: boolean;
-  errors: FieldErrors<FieldValues>;
+  hasErrors?: boolean;
   minusButtonAction: Function;
 };
 
@@ -19,7 +18,7 @@ const StyledTextarea = forwardRef<HTMLTextAreaElement, StyledTextareaProps>(
     {
       label,
       noFloatingLabel = false,
-      errors,
+      hasErrors = false,
       minusButtonAction,
       optional = false,
       id,
@@ -28,8 +27,6 @@ const StyledTextarea = forwardRef<HTMLTextAreaElement, StyledTextareaProps>(
     },
     ref
   ) => {
-    const hasErrors = !!errors[id];
-
     return (
       <Field
         className={cn(

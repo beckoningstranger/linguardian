@@ -179,8 +179,14 @@ const itemSchemaWithoutTranslations = z.object({
         author: z.string(),
         takenFrom: z
           .string()
-          .regex(sentenceRegex, sentenceRegexMessage + " for context sources")
-          .max(50, "Make your source 50 characters or shorter")
+          .regex(
+            new RegExp(
+              sentenceRegex.source.replace("+", "*"),
+              sentenceRegex.flags
+            ), // allow empty string
+            sentenceRegexMessage + " for context sources"
+          )
+          .max(50, "If you provide a source, make it 50 characters or shorter")
           .optional(),
       })
     )
