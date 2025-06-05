@@ -7,7 +7,7 @@ export default function ItemPluralForms({ pluralForm }: ItemPluralFormsProps) {
   return (
     <>
       {pluralForm && pluralForm.length > 0 && pluralForm[0].length > 0 && (
-        <div className="text-cxlb">
+        <div className="text-clgm">
           {pluralForm.length > 1 ? "plural forms: " : "plural form: "}
           {pluralForm.join(", ")}
         </div>

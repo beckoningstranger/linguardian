@@ -57,8 +57,8 @@ export default async function ItemPage({
   );
   if (!item)
     return (
-      <div className="top-[112px] w-full bg-white/80 pb-8 text-center text-cxlr">
-        <p>No item found</p>
+      <div className="top-[112px] w-full bg-white/90 py-8 text-center text-cxlr">
+        <p>Sorry, no item found</p>
         <Link href={paths.dictionaryPath()}>
           <Button intent="primary" className="mt-4 p-4" rounded>
             Back to dictionary
@@ -68,7 +68,7 @@ export default async function ItemPage({
     );
 
   return (
-    <>
+    <div className="flex">
       <IconSidebar position="left" showOn="tablet">
         <IconSidebarButton
           mode="back"
@@ -81,12 +81,10 @@ export default async function ItemPage({
           link={paths.editDictionaryItemPath(slug)}
         />
       </IconSidebar>
-      <div className="bottom-0 left-[96px] right-0 top-[112px] min-h-[calc(100vh-112px)] overflow-y-auto tablet:absolute">
-        <ItemDetails item={item} />
-      </div>
+      <ItemDetails item={item} />
       <MobileMenuContextProvider>
         <TopContextMenuLoader itemSlug={item.slug} />
       </MobileMenuContextProvider>
-    </>
+    </div>
   );
 }

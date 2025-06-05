@@ -61,7 +61,7 @@ export default function EnterContextItemsField({
         label="The item used in context"
         noFloatingLabel
         minusButtonAction={() => removeItem()}
-        className="w-full rounded-md p-2 shadow-md outline-none"
+        className="w-full rounded-md p-2 pr-12 shadow-md outline-none"
         spellCheck={false}
         id={"contextItemText" + index}
         value={itemText}

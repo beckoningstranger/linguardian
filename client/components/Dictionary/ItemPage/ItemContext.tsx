@@ -13,12 +13,12 @@ export default function ItemContext({ context }: ItemContextProps) {
           {context?.map((contextItem) => (
             <div
               key={contextItem.author + contextItem.text}
-              className="relative w-fit text-clgr leading-tight desktop:text-cxlm"
+              className="relative w-fit text-clgr leading-tight"
             >
               {contextItem.text}
-              <div className="absolute -bottom-4 -right-4 text-csmr text-grey-800">
+              <span className="whitespace-nowrap pl-2 text-csmr text-grey-800">
                 - {contextItem.takenFrom || contextItem.author}
-              </div>
+              </span>
             </div>
           ))}
         </div>
