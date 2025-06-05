@@ -60,7 +60,10 @@ export default function ListBarChart({ stats }: ListBarChartProps) {
   };
 
   return (
-    <div className="grid max-h-[120px] bg-white/90 py-4 tablet:hidden">
+    <div
+      id="ListBarChart"
+      className="grid max-h-[120px] bg-white/90 py-4 tablet:hidden"
+    >
       <ReactApexChart
         options={ChartData.options}
         series={ChartData.series}

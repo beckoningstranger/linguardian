@@ -22,8 +22,8 @@ export default function ListUnits({
   );
 
   return (
-    <div className="tablet:col-span-2 desktopxl:row-start-2">
-      <div className="my-2 flex w-full flex-col gap-y-2 tablet:m-0">
+    <div className="tablet:col-span-2 desktopxl:row-start-2" id="listUnits">
+      <div className="my-2 flex w-full flex-col gap-y-2 tablet:m-0 tablet:pb-24 desktop:pb-2">
         {unitOrder?.map((unitName, index) => {
           const { noOfItemsInUnit, fillWidth } = getUnitInformation(
             units,

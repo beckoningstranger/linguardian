@@ -19,7 +19,7 @@ export default async function TopMenu({ opacity }: TopMenuProps) {
       <div
         id="TopMenuMain"
         className={cn(
-          "relative flex h-[112px] w-full select-none items-center justify-between",
+          "fixed top-0 z-10 left-0 flex h-[112px] w-full select-none items-center justify-between",
           background
         )}
       >

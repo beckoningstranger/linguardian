@@ -25,7 +25,10 @@ export default function SearchResults({
   doAfterClickOnSearchResult,
 }: SearchResultsProps) {
   return (
-    <div className="px-1 py-2 tablet:p-2 desktop:p-4">
+    <div
+      className="w-full overflow-y-auto px-1 py-2 tablet:p-2 desktop:p-4"
+      id="SearchResults"
+    >
       <ResponsiveMasonry columnsCountBreakPoints={{ 0: 1, 744: 2, 1140: 3 }}>
         <Masonry gutter="8px" sequential>
           {results.map((result) => {

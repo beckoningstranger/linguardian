@@ -17,11 +17,13 @@ export default function LayoutWithTopMenu({
   return (
     <>
       <div
-        className={`fixed inset-0 -z-10 bg-cover bg-center ${backGroundOpacity}`}
+        className={`absolute inset-0 -z-10 bg-cover bg-center ${backGroundOpacity}`}
         style={{ backgroundImage: `url(${bgPicture})` }}
       />
       <TopMenu opacity={menuOpacity} />
-      <div className="flex min-h-[calc(100vh-112px)] flex-col">{children}</div>
+      <div className="absolute inset-0 top-[112px] h-[calc(100vh-112px)] overflow-y-auto">
+        {children}
+      </div>
     </>
   );
 }

@@ -68,7 +68,7 @@ export default async function ItemPage({
     );
 
   return (
-    <div className="flex">
+    <>
       <IconSidebar position="left" showOn="tablet">
         <IconSidebarButton
           mode="back"
@@ -81,10 +81,12 @@ export default async function ItemPage({
           link={paths.editDictionaryItemPath(slug)}
         />
       </IconSidebar>
-      <ItemDetails item={item} />
+      <div className="bottom-0 left-[96px] right-0 top-[112px] min-h-[calc(100vh-112px)] overflow-y-auto tablet:absolute">
+        <ItemDetails item={item} />
+      </div>
       <MobileMenuContextProvider>
-        <TopContextMenuLoader itemSlug={item.slug} opacity={90} />
+        <TopContextMenuLoader itemSlug={item.slug} />
       </MobileMenuContextProvider>
-    </div>
+    </>
   );
 }

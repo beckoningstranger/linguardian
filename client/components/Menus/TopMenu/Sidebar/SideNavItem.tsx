@@ -34,7 +34,7 @@ export default function SideNavItem({
         }}
       >
         <div
-          className={`flex h-16 w-[340px] items-center pl-1 text-blue-800 hover:bg-blue-100/60 phone:h-24 tablet:pl-7`}
+          className={`flex h-16 w-[340px] items-center pl-8 text-blue-800 hover:bg-blue-100/60 phone:h-24`}
         >
           <div>{icon}</div>
           {label && (

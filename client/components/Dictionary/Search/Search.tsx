@@ -48,7 +48,7 @@ export default function Search({
   };
 
   return (
-    <>
+    <div id="Search">
       <SearchBox
         query={query}
         debouncedQuery={debouncedQuery}
@@ -77,7 +77,10 @@ export default function Search({
       {searchResults.length === 0 &&
         debouncedQuery.length > 0 &&
         mode !== "searchResultIsTranslation" && (
-          <Button intent="primary" className="p-3">
+          <Button
+            intent="primary"
+            className="left-2 top-2 w-[calc(100vw-24px)] rounded-md py-4"
+          >
             <Link
               href={
                 listData
@@ -96,6 +99,6 @@ export default function Search({
           </Button>
         </Link>
       )}
-    </>
+    </div>
   );
 }

@@ -7,6 +7,7 @@ interface SearchInputProps {
   optional?: boolean;
   query: string;
   setQuery: Dispatch<SetStateAction<string>>;
+  searchResultsNumber?: number;
 }
 
 export default function SearchInput({
@@ -14,6 +15,7 @@ export default function SearchInput({
   optional = false,
   query,
   setQuery,
+  searchResultsNumber,
 }: SearchInputProps) {
   return (
     <Field className="relative flex w-full flex-col items-center border-none bg-transparent bg-white">
@@ -28,7 +30,7 @@ export default function SearchInput({
       />
       <Label
         htmlFor="Search"
-        className="absolute -top-6 left-0 text-base text-grey-800 transition-all duration-75 peer-placeholder-shown:top-3 peer-placeholder-shown:px-4 peer-placeholder-shown:text-cmdr peer-placeholder-shown:text-grey-800"
+        className="absolute -top-6 left-0 text-base text-grey-800 transition-all duration-75 peer-placeholder-shown:pointer-events-none peer-placeholder-shown:top-3 peer-placeholder-shown:px-4 peer-placeholder-shown:text-cmdr peer-placeholder-shown:text-grey-800"
       >
         {label}
       </Label>
@@ -37,6 +39,12 @@ export default function SearchInput({
           Optional
         </div>
       )}
+      <p className="absolute right-24 top-3 text-csmr text-slate-500">
+        {searchResultsNumber && searchResultsNumber > 0
+          ? searchResultsNumber
+          : "No"}
+        <span> results</span>
+      </p>
       <Image
         src={"/icons/Sort.svg"}
         width={32}

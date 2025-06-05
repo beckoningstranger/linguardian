@@ -72,7 +72,7 @@ export default async function UnitEditPage({
 
   return (
     <UnitContextProvider unitName={unitName} noOfItemsInUnit={unitItems.length}>
-      <div className="mb-24 tablet:flex tablet:justify-center desktopxl:grid desktopxl:grid-cols-[100px_minmax(0,1600px)]">
+      <div className="pb-4 tablet:flex tablet:justify-center desktopxl:grid desktopxl:grid-cols-[100px_minmax(0,1600px)]">
         <UnitDetailsLeftButtons
           listNumber={listNumber}
           unitNumber={unitNumber}
@@ -100,7 +100,7 @@ export default async function UnitEditPage({
           />
         </div>
         <MobileMenuContextProvider>
-          <TopContextMenuLoader listNumber={listNumber} opacity={90} editMode />
+          <TopContextMenuLoader listNumber={listNumber} editMode />
         </MobileMenuContextProvider>
       </div>
     </UnitContextProvider>

@@ -30,7 +30,7 @@ export default function SideBarNavigation({}: SideBarNavigationProps) {
     <nav
       id="SidebarNavigation"
       className={cn(
-        "absolute top-[112px] z-50 flex h-[calc(100vh-112px)] flex-col justify-between bg-white/90 shadow-xl transition-all",
+        "absolute top-[112px] z-50 flex h-[calc(100vh-112px)] flex-col justify-between bg-white shadow-xl transition-all",
         !showSidebar && "-translate-x-[2660px]"
       )}
       ref={ref}

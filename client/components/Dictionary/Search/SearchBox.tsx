@@ -52,20 +52,16 @@ export default function SearchBox({
   }, [debouncedQuery, query, setSearchResults, searchLanguages]);
 
   return (
-    <div className="relative flex justify-stretch bg-white/90 px-1 pt-4 tablet:px-4">
+    <div
+      className="flex justify-stretch bg-white/90 px-4 pb-2 pt-6"
+      id="SearchBox"
+    >
       <SearchInput
         label="Search all of your languages..."
         query={query}
         setQuery={setQuery}
+        searchResultsNumber={searchResults.length}
       />
-
-      <div className="absolute right-28 top-7 text-csmr text-slate-500">
-        {searchResults.length && searchResults.length > 0 ? (
-          <div>{searchResults.length} results</div>
-        ) : (
-          <div>{debouncedQuery.length > 1 ? "No results" : ""}</div>
-        )}
-      </div>
     </div>
   );
 }

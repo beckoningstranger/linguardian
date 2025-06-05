@@ -86,6 +86,7 @@ export default function StartLearningListButton({
       <>
         {!userIsLearningListLanguage && (
           <Button
+            id="startLearningButtonMobile"
             onClick={startLearningLanguageAndList}
             disabled={updating}
             className="absolute bottom-0 flex h-24 w-full items-center bg-green-400 px-2 text-white active:bg-green-500 tablet:hidden tablet:px-4"
@@ -114,6 +115,7 @@ export default function StartLearningListButton({
   if (mode === "desktop")
     return !userIsLearningListLanguage ? (
       <IconSidebarButton
+        id="startLearningButtonDesktop"
         label={`Start learning ${language.name} with this list`}
         mode="start"
         disabled={updating}

@@ -1,7 +1,6 @@
 import { cn } from "@/lib/helperFunctionsClient";
 import { Button as HeadlessUiButton } from "@headlessui/react";
 import { ReactNode } from "react";
-import { FaPlus } from "react-icons/fa";
 
 type ButtonProps = {
   children?: ReactNode;
@@ -78,11 +77,7 @@ export default function Button({
       aria-disabled={props.disabled}
       {...remainingProps}
     >
-      <div
-        className={cn(
-          intent === "icon" && "group-hover:scale-105 active:scale-100"
-        )}
-      >
+      <div className={cn(intent === "icon" && "active:scale-100")}>
         {children}
       </div>
     </HeadlessUiButton>

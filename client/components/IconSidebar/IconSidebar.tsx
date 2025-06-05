@@ -21,19 +21,14 @@ export default function IconSidebar({
 
   return (
     <div
-      id="IconSidebar"
-      className={cn("hidden flex-col z-20 rounded-lg gap-2 m-2", show)}
+      id={`IconSidebar-` + position}
+      className={cn(
+        "hidden flex-col z-20 rounded-lg gap-2 m-2",
+        show,
+        position === "left" ? "items-start w-[80px]" : "items-end w-[90px]"
+      )}
     >
-      <div className={position === "left" ? "w-[80px]" : "w-[90px]"}>
-        <div
-          className={cn(
-            "flex flex-col gap-2",
-            position === "left" ? "items-start" : "items-end"
-          )}
-        >
-          {children}
-        </div>
-      </div>
+      {children}
     </div>
   );
 }

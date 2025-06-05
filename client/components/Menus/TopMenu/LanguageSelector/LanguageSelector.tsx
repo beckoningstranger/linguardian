@@ -47,17 +47,16 @@ export default function LanguageSelector() {
       ref={ref as RefObject<HTMLDivElement>}
       className="z-50 hidden tablet:block"
     >
-      <div>
-        <Flag
-          code={activeLanguage?.flag}
-          onClick={() =>
-            setShowAllLanguageOptions(
-              (showAllLanguageOptions) => !showAllLanguageOptions
-            )
-          }
-          className={`h-[75px] w-[75px] rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-110`}
-        />
-      </div>
+      <Flag
+        code={activeLanguage?.flag}
+        onClick={() =>
+          setShowAllLanguageOptions(
+            (showAllLanguageOptions) => !showAllLanguageOptions
+          )
+        }
+        className={`size-[75px] rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-110`}
+      />
+
       {showAllLanguageOptions && (
         <div className={`absolute mt-4 grid animate-from-here gap-4`}>
           {allLanguageAndFlagExceptActive.map((lang) => {

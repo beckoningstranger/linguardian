@@ -1,8 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-html {
-    /* overflow-y: visible !important; */
-    padding-right: 0 !important;
-}

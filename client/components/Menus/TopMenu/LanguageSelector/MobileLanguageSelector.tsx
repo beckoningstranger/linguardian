@@ -32,7 +32,7 @@ export default function MobileLanguageSelector() {
       user.learnedLanguages
     ).length;
     return (
-      <>
+      <div id="MobileLanguageSelector">
         <Flag
           code={activeLanguage?.flag}
           className={
@@ -73,7 +73,7 @@ export default function MobileLanguageSelector() {
               ) && <AddNewLanguageOption />}
           </div>
         </MobileMenu>
-      </>
+      </div>
     );
   }
 }

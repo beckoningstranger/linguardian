@@ -45,13 +45,13 @@ export default function TopContextMenuButton({
       icon: <HiArrowLeft className="size-16" />,
       label: `Back to ${backTo}`,
       styles:
-        "border-4 border-blue-500 text-blue-500 hover:text-white hover:bg-blue-500",
+        "border-4 border-blue-500 text-blue-500 bg-white hover:text-white hover:bg-blue-500",
     },
     stop: {
       icon: <ImStop className="size-16" />,
       label: "Stop learning this list",
       styles:
-        "border-orange-600 border-4 text-orange-600 bg-white hover:text-white hover:bg-orange-600",
+        "border-orange-600 border-2 text-orange-600 bg-white hover:text-white hover:bg-orange-600",
     },
     edit: {
       icon: <TbPencil className="size-16" />,
@@ -63,7 +63,7 @@ export default function TopContextMenuButton({
   const button = (
     <Button
       className={cn(
-        "relative flex h-20  w-full items-center rounded-lg px-2 text-white tablet:hidden transition-all duration-500",
+        "relative flex h-20 w-full items-center rounded-lg px-2 text-white tablet:hidden transition-all duration-500",
         config[mode].styles,
         disabled && "bg-grey-500 pointer-events-none cursor-not-allowed"
       )}

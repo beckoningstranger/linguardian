@@ -2,18 +2,17 @@
 
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { RefObject, useState } from "react";
 
 import DeleteListButton from "@/components/Lists/EditList/DeleteListButton";
+import DeleteUnitButton from "@/components/Lists/EditList/DeleteUnitButton";
 import StopLearningListButton from "@/components/Lists/ListOverview/StopLearningListButton";
-import { cn } from "@/lib/helperFunctionsClient";
+import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
+import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 import paths from "@/lib/paths";
 import TopContextMenuButton from "./TopContextMenuButton";
-import DeleteUnitButton from "@/components/Lists/EditList/DeleteUnitButton";
-import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 
 interface TopContextMenuProps {
-  opacity?: 50 | 80 | 90;
   userIsAuthor?: boolean;
   userIsLearningList?: boolean;
   editMode?: boolean;
@@ -22,13 +21,13 @@ interface TopContextMenuProps {
 }
 
 export default function TopContextMenu({
-  opacity,
   userIsAuthor,
   userIsLearningList,
   editMode,
   comingFrom,
   itemSlug,
 }: TopContextMenuProps) {
+  const ref = useOutsideClick(() => setContextExpanded(false));
   const currentBaseUrl = usePathname();
   let showTopContextMenu: boolean = false;
   const [contextExpanded, setContextExpanded] = useState(false);
@@ -128,14 +127,12 @@ export default function TopContextMenu({
   }
 
   return (
-    <>
-      <div
-        className={
-          showTopContextMenu
-            ? "tablet:hidden z-50 absolute top-[0px] h-[112px] left-1/2 -translate-x-1/2 justify-center flex flex-col"
-            : "hidden"
-        }
-      >
+    <div
+      id="TopContextMenu"
+      ref={ref as RefObject<HTMLDivElement>}
+      className={showTopContextMenu ? "tablet:hidden" : "hidden"}
+    >
+      <div className="fixed inset-x-64 top-0 z-10 grid h-[112px] place-items-center">
         <Image
           alt="Context Menu"
           height={90}
@@ -146,17 +143,10 @@ export default function TopContextMenu({
         />
       </div>
       {contextExpanded && (
-        <div
-          className={cn(
-            "absolute top-[112px] h-0 transition-all left-0 z-50 w-full",
-            `bg-white/${opacity}`
-          )}
-        >
-          <div className="flex w-full flex-col gap-2 bg-white px-2 py-4">
-            {displayTheseElements}
-          </div>
+        <div className="fixed inset-x-0 top-[112px] grid w-full gap-2 px-2 py-4 backdrop-blur transition-all">
+          {displayTheseElements}
         </div>
       )}
-    </>
+    </div>
   );
 }

@@ -22,7 +22,10 @@ export default function ListHeader({
     .map((paragraph, index) => <p key={index}>{paragraph}</p>);
 
   return (
-    <div className="relative flex gap-2 overflow-hidden bg-white/90 py-1 tablet:col-span-2 tablet:w-auto tablet:rounded-lg tablet:p-4">
+    <div
+      id="ListHeader"
+      className="relative flex gap-2 overflow-hidden bg-white/90 py-1 tablet:col-span-2 tablet:w-auto tablet:rounded-lg tablet:p-4"
+    >
       <Image
         src={image || "/images/ListDefaultImage.webp"}
         alt="List image"

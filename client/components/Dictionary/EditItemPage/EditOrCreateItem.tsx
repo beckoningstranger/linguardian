@@ -147,10 +147,7 @@ export default function EditOrCreateItem({
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="mb-20 flex min-h-[calc(100vh-112px)]"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="flex h-full">
       <IconSidebar position="left" showOn="tablet">
         {!isNewItem && (
           <IconSidebarButton
@@ -170,88 +167,90 @@ export default function EditOrCreateItem({
           type="submit"
         />
       </IconSidebar>
-      <div id="container" className="grid w-full gap-3 bg-white/90 px-4 py-6">
-        <EditItemName
-          itemName={itemName}
-          errors={errors}
-          control={control}
-          isNewItem={isNewItem}
-        />
+      <div className="fixed bottom-0 left-0 right-0 top-[112px] min-h-[calc(100vh-112px)] overflow-y-auto bg-white/90 tablet:left-[96px]">
+        <div id="container" className="grid size-full gap-3 px-4 py-6">
+          <EditItemName
+            itemName={itemName}
+            errors={errors}
+            control={control}
+            isNewItem={isNewItem}
+          />
 
-        <LanguagePicker
-          userLanguages={allUserLanguages}
-          setValue={setValue}
-          itemLanguage={itemLanguage}
-          isNewItem={item.slug === "new-item"}
-          setItemLanguage={setItemLanguage}
-          errors={errors}
-          staticFlag={addToThisList?.languageWithFlagAndName.flag}
-        />
-
-        <PickMultiple
-          setValue={setValue}
-          formField="tags"
-          initialValue={watch().tags}
-          label={{ singular: "Tag", plural: "Tags" }}
-          errors={errors}
-          options={langTags.forAll
-            .concat(langTags[watch().partOfSpeech])
-            .filter((item) => item !== undefined)}
-        />
-        <EditPartOfSpeechGenderAndCase
-          watch={watch}
-          control={control}
-          errors={errors}
-          itemLanguage={itemLanguage}
-        />
-        {watch().partOfSpeech === "noun" && (
-          <EnterMultipleStrings
+          <LanguagePicker
+            userLanguages={allUserLanguages}
             setValue={setValue}
-            formField="pluralForm"
-            initialValue={watch().pluralForm}
-            label={{ singular: "Plural Form", plural: "Plural Forms" }}
+            itemLanguage={itemLanguage}
+            isNewItem={item.slug === "new-item"}
+            setItemLanguage={setItemLanguage}
+            errors={errors}
+            staticFlag={addToThisList?.languageWithFlagAndName.flag}
+          />
+
+          <PickMultiple
+            setValue={setValue}
+            formField="tags"
+            initialValue={watch().tags}
+            label={{ singular: "Tag", plural: "Tags" }}
+            errors={errors}
+            options={langTags.forAll
+              .concat(langTags[watch().partOfSpeech])
+              .filter((item) => item !== undefined)}
+          />
+          <EditPartOfSpeechGenderAndCase
+            watch={watch}
+            control={control}
+            errors={errors}
+            itemLanguage={itemLanguage}
+          />
+          {watch().partOfSpeech === "noun" && (
+            <EnterMultipleStrings
+              setValue={setValue}
+              formField="pluralForm"
+              initialValue={watch().pluralForm}
+              label={{ singular: "Plural Form", plural: "Plural Forms" }}
+              errors={errors}
+            />
+          )}
+          <EnterIPA
+            setValue={setValue}
+            initialValue={watch().IPA}
+            label={{ singular: "IPA", plural: "IPA" }}
+            errors={errors}
+            IPA={ipa}
+          />
+          <EnterDefinition
+            setValue={setValue}
+            initialValue={watch().definition}
             errors={errors}
           />
-        )}
-        <EnterIPA
-          setValue={setValue}
-          initialValue={watch().IPA}
-          label={{ singular: "IPA", plural: "IPA" }}
-          errors={errors}
-          IPA={ipa}
-        />
-        <EnterDefinition
-          setValue={setValue}
-          initialValue={watch().definition}
-          errors={errors}
-        />
-        <EnterContextItems
-          setValue={setValue}
-          initialValue={watch().context}
-          errors={errors}
-        />
-        <ManageTranslations
-          item={item}
-          itemLanguage={watch().language}
-          setValue={setValue}
-          errors={errors}
-          allTranslations={watch().translations}
-          visibleTranslations={getTranslationsForUserLanguages()}
-          seperatedUserLanguages={seperatedUserLanguages}
-        />
-        <Button
-          intent="bottomRightButton"
-          className="z-10 tablet:hidden"
-          disabled={isSubmitting || !isDirty || !isValid}
-          aria-label="Save your changes"
-          type="submit"
-        >
-          {isSubmitting ? (
-            <Spinner size="mini" />
-          ) : (
-            <GiSaveArrow className="h-8 w-8" />
-          )}
-        </Button>
+          <EnterContextItems
+            setValue={setValue}
+            initialValue={watch().context}
+            errors={errors}
+          />
+          <ManageTranslations
+            item={item}
+            itemLanguage={watch().language}
+            setValue={setValue}
+            errors={errors}
+            allTranslations={watch().translations}
+            visibleTranslations={getTranslationsForUserLanguages()}
+            seperatedUserLanguages={seperatedUserLanguages}
+          />
+          <Button
+            intent="bottomRightButton"
+            className="z-10 tablet:hidden"
+            disabled={isSubmitting || !isDirty || !isValid}
+            aria-label="Save your changes"
+            type="submit"
+          >
+            {isSubmitting ? (
+              <Spinner size="mini" />
+            ) : (
+              <GiSaveArrow className="h-8 w-8" />
+            )}
+          </Button>
+        </div>
       </div>
     </form>
   );

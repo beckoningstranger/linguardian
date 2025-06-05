@@ -90,13 +90,14 @@ export default async function ListPage({
       listStats={listStats}
       listStatus={"practice"}
     >
-      <div className="mb-24 flex justify-center desktop:mb-0">
+      <div className="bottom-0 flex w-full justify-center overflow-y-auto tablet:fixed tablet:top-[112px] tablet:pb-4">
         <ListOverviewLeftButtons
           listNumber={listNumber}
           userIsAuthor={userIsAuthor}
         />
         <div
           className={`grid w-full grid-cols-1 tablet:my-2 tablet:w-auto tablet:grid-cols-[310px_310px] tablet:grid-rows-[182px_340px] tablet:gap-2 desktop:grid-cols-[400px_400px] desktop:grid-rows-[182px_400px] desktopxl:grid-rows-[182px_200px]`}
+          id="listOverviewMain"
         >
           <ListHeader
             name={name}
@@ -126,7 +127,7 @@ export default async function ListPage({
         )}
       </div>
       <MobileMenuContextProvider>
-        <TopContextMenuLoader listNumber={listNumber} opacity={90} />
+        <TopContextMenuLoader listNumber={listNumber} />
       </MobileMenuContextProvider>
     </ListContextProvider>
   );
