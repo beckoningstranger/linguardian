@@ -38,7 +38,7 @@ export default function Button({
     "hover:bg-gradient-to-r border border-red-500 text-red-500 from-red-500 to-red-700 hover:ring-red-500 hover:text-white":
       intent === "danger",
     "grid place-items-center p-0 text-grey-800": intent === "icon",
-    "fixed rounded-full grid size-[90px] place-items-center shadow-xl bottom-4 right-4 bg-green-500 hover:ring-green-700 hover:scale-105 active:scale-100":
+    "fixed rounded-full grid size-[90px] place-items-center shadow-xl bottom-4 right-8 bg-green-500 hover:ring-green-700 hover:scale-105 active:scale-100":
       intent === "bottomRightButton",
     "w-full h-16 text-clgm": fullWidth,
   };
