@@ -15,9 +15,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import ItemPresentation from "./ItemPresentation";
 import ItemPrompt from "./ItemPrompt";
+import LearningHeader from "./LearningHeader";
 import MultipleChoice from "./MultipleChoice";
 import PuzzleMode from "./PuzzleMode";
-import TopBar from "./TopBar";
 import TypeSolution from "./TypeSolution";
 
 interface LearnAndReviewProps {
@@ -26,6 +26,7 @@ interface LearnAndReviewProps {
   targetLanguageFeatures: LanguageFeatures;
   allItemStringsInList: string[];
   mode: LearningMode;
+  from: "dashboard" | number;
 }
 
 export type ReviewStatus = "neutral" | "correct" | "incorrect";
@@ -36,6 +37,7 @@ export default function LearnAndReview({
   targetLanguageFeatures,
   allItemStringsInList,
   mode,
+  from,
 }: LearnAndReviewProps) {
   const user = useUserOnClient();
   const [itemsToLearn, setItemsToLearn] = useState<ItemToLearn[]>(items);
@@ -122,11 +124,13 @@ export default function LearnAndReview({
 
   return sessionEnd ? null : (
     <div className="grid place-items-center">
-      <TopBar
+      <LearningHeader
+        listLanguage={targetLanguageFeatures.langCode}
         listName={listName}
         itemsInProgress={learnedItems.length}
         totalItems={itemsToLearn.length + learnedItems.length}
         mode={mode}
+        from={from}
       />
       <div className="mt-3 flex w-[95%] flex-col gap-3">
         {!itemPresentation && (

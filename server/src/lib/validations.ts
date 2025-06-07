@@ -129,7 +129,7 @@ const itemSchemaWithoutTranslations = z.object({
       z
         .string()
         .max(65, "Plural forms can be no longer than 65 characters")
-        .regex(singleWordRegex, "Only letters are allowed")
+        .regex(sentenceRegex, sentenceRegexMessage)
     )
     .max(2, "There can be no more than 2 different plural forms")
     .optional(),

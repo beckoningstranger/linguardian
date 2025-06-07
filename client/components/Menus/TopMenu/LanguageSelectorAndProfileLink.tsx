@@ -25,7 +25,7 @@ export default function LanguageSelectorAndProfileLink() {
             width="75"
             height="75"
             alt="User profile image"
-            className="rounded-full transition-transform hover:scale-110"
+            className="size-[64px] rounded-full transition-transform hover:scale-110 tablet:size-[75px]"
             priority
           />
         )}

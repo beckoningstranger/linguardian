@@ -2,16 +2,17 @@
 
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction } from "react";
 import Button from "./ui/Button";
 
 interface ConfirmCancelModalProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   closeButton?: boolean;
   doOnConfirm: Function;
-  title: string;
+  title?: string;
+  message?: string;
 }
 
 export default function ConfirmCancelModal({
@@ -33,12 +34,14 @@ export default function ConfirmCancelModal({
             <XMarkIcon className="h-8 w-8" />
           </Button>
         )}
-        <DialogPanel className="relative flex w-full max-w-[calc(100%-2rem)] flex-col gap-2 rounded-md border bg-white p-4">
-          <DialogTitle className="mb-4 text-center text-2xl font-bold">
-            {title}
-          </DialogTitle>
+        <DialogPanel className="relative flex w-full max-w-[calc(100%-2rem)] flex-col gap-2 rounded-md border border-grey-500 bg-white px-4 py-8 shadow-lg">
+          {title && (
+            <DialogTitle className="text-center text-2xl font-bold">
+              {title}
+            </DialogTitle>
+          )}
           <div className="flex flex-col gap-5 text-lg">
-            <div className="relative mx-12 rounded-md text-center text-lg font-semibold">
+            <div className="relative rounded-md text-center text-lg font-semibold">
               {children}
             </div>
             <div className="flex w-full gap-5">

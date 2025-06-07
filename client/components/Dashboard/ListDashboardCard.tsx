@@ -47,6 +47,7 @@ export default function ListDashboardCard({
           listNumber={listNumber}
           unlockedModes={unlockedReviewModes[userNative]}
           listStats={listStats}
+          from="dashboard"
         />
       ) : (
         <div className="h-[90px]" />

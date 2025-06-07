@@ -41,7 +41,6 @@ export default function DeleteItemButton({
       {/* Mobile */}
       <Button
         className="absolute right-0 grid h-full w-[64px] place-items-center rounded-r-lg text-red-500 transition-all duration-300 hover:bg-red-500 hover:text-white md:hidden"
-        // className="absolute right-1 text-red-500 md:hidden"
         onClick={(e) => {
           e.preventDefault();
           toggleMobileMenu() as MouseEventHandler;

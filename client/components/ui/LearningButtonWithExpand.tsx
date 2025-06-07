@@ -10,12 +10,14 @@ interface LearningButtonWithExpandProps {
   unlockedModes: LearningMode[];
   listStats: ListStats;
   rounded?: boolean;
+  from: "dashboard" | number;
 }
 export default function LearningButtonWithExpand({
   listNumber,
   unlockedModes,
   listStats,
   rounded = false,
+  from,
 }: LearningButtonWithExpandProps) {
   // Show LearnNewWords if there are new words to learn and there is nothing to review
   let recommendedLearningMode = "learn" as LearningMode;
@@ -64,6 +66,7 @@ export default function LearningButtonWithExpand({
         showExpand
         showLabel
         showIcon
+        from={from}
       />
       {showExpandButton && (
         <div className="group flex w-12 items-center justify-center">
@@ -86,6 +89,7 @@ export default function LearningButtonWithExpand({
                   listNumber={listNumber}
                   showIcon
                   showLabel
+                  from={from}
                 />
               ))}
           </div>

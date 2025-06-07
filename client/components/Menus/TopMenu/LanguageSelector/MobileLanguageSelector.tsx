@@ -36,7 +36,7 @@ export default function MobileLanguageSelector() {
         <Flag
           code={activeLanguage?.flag}
           className={
-            "absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 phone:h-[75px] phone:w-[75px] w-16 h-16 rounded-full border-2 border-slate-300 object-cover tablet:hidden"
+            "absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 size-[64px] rounded-full border-2 border-slate-300 object-cover tablet:hidden"
           }
           onClick={toggleMobileMenu as MouseEventHandler}
         />

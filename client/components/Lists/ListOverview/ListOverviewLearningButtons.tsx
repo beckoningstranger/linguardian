@@ -22,6 +22,7 @@ export default function ListOverviewLearningButtons({
           unlockedModes={unlockedModes}
           listNumber={listNumber}
           listStats={listStats}
+          from={listNumber}
         />
       </div>
       <IconSidebar position="right" showOn="desktop">
@@ -33,6 +34,7 @@ export default function ListOverviewLearningButtons({
           itemNumber={listStats.unlearned}
           unitNumber={unitNumber}
           disabled={listStats.unlearned === 0}
+          from={listNumber}
         />
         {unlockedModes.includes("translation") && (
           <LearningButton
@@ -43,6 +45,7 @@ export default function ListOverviewLearningButtons({
             itemNumber={listStats.readyToReview}
             unitNumber={unitNumber}
             disabled={listStats.readyToReview === 0}
+            from={listNumber}
           />
         )}
         {unlockedModes.includes("context") && (
@@ -54,6 +57,7 @@ export default function ListOverviewLearningButtons({
             itemNumber={listStats.readyToReview}
             unitNumber={unitNumber}
             disabled={listStats.readyToReview === 0}
+            from={listNumber}
           />
         )}
         {unlockedModes.includes("context") && (
@@ -65,6 +69,7 @@ export default function ListOverviewLearningButtons({
             itemNumber={listStats.readyToReview}
             unitNumber={unitNumber}
             disabled={listStats.readyToReview === 0}
+            from={listNumber}
           />
         )}
         {unlockedModes.includes("context") && (
@@ -76,6 +81,7 @@ export default function ListOverviewLearningButtons({
             itemNumber={listStats.readyToReview}
             unitNumber={unitNumber}
             disabled={listStats.readyToReview === 0}
+            from={listNumber}
           />
         )}
         {unlockedModes.includes("context") && (
@@ -87,6 +93,7 @@ export default function ListOverviewLearningButtons({
             itemNumber={listStats.readyToReview}
             unitNumber={unitNumber}
             disabled={listStats.readyToReview === 0}
+            from={listNumber}
           />
         )}
       </IconSidebar>

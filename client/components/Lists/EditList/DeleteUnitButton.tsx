@@ -69,11 +69,6 @@ export default function DeleteUnitButton({
 
   const handleClickDesktop = () => {
     setShowConfirmDeleteModal(true);
-    // if (noOfItemsInUnit > 0) {
-    //   setShowConfirmDeleteModal(true);
-    // } else {
-    //   removeUnitFromListAction();
-    // }
   };
 
   let button;

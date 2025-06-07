@@ -26,6 +26,7 @@ export default function DashboardBottomButtons({
           showIcon
           rounded
           disabled
+          from="dashboard"
         />
       </div>
       <Link

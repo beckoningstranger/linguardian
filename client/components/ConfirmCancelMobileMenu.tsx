@@ -4,22 +4,35 @@ import { useMobileMenu } from "@/context/MobileMenuContext";
 import Button from "./ui/Button";
 
 interface ConfirmCancelMobileMenuProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  title?: string;
+  message?: string;
   doOnConfirm: Function;
 }
 
 export default function ConfirmCancelMobileMenu({
   children,
+  title,
+  message,
   doOnConfirm,
 }: ConfirmCancelMobileMenuProps) {
   const { toggleMobileMenu } = useMobileMenu();
 
   return (
     <MobileMenu mode="fullscreen" fromDirection="animate-from-top">
-      <div className="relative mx-12 rounded-md text-center text-3xl font-bold">
-        {children}
+      <div className="mx-4 text-center">
+        {title && <div className="text-cxlb leading-tight">{title}</div>}
+        <div>{children}</div>
+        {message && (
+          <div className="absolute inset-x-8 top-1/2 -translate-y-1/2 text-clgm">
+            {message}
+          </div>
+        )}
       </div>
-      <div className="absolute bottom-24 mx-12 mt-32 flex w-full justify-evenly">
+      <div
+        className="absolute bottom-4 flex w-full justify-evenly"
+        id="modalBottomButtons"
+      >
         <Button
           intent="secondary"
           className="mx-4 flex-1 py-4"

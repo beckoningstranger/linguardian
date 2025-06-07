@@ -35,10 +35,12 @@ interface ReviewPageProps {
     mode: LearningMode;
     listNumberString: string;
   };
+  searchParams: { from: "dashboard" | number };
 }
 
 export default async function LearnAndReviewPage({
   params: { mode, listNumberString },
+  searchParams: { from },
 }: ReviewPageProps) {
   const listNumber = parseInt(listNumberString);
 
@@ -61,6 +63,7 @@ export default async function LearnAndReviewPage({
       listName={listName}
       allItemStringsInList={allItemStringsInList}
       mode={mode}
+      from={from}
     />
   );
 }

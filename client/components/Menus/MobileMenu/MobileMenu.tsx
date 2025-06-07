@@ -2,6 +2,7 @@
 import Logo from "@/components/Logo";
 import { useMobileMenu } from "@/context/MobileMenuContext";
 import { cn } from "@/lib/helperFunctionsClient";
+import { Button } from "@headlessui/react";
 import { ReactNode, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
@@ -25,12 +26,8 @@ export default function MobileMenu({
 
   useEffect(() => {
     ref.current = document.querySelector<HTMLElement>("#PortalOutlet");
+    document.body.style.overflow = showMobileMenu ? "hidden" : "";
 
-    if (showMobileMenu) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
     return () => {
       document.body.style.overflow = "";
     };
@@ -43,21 +40,21 @@ export default function MobileMenu({
           "fixed w-full z-50 overflow-hidden backdrop-blur-xl",
           fromDirection,
           mode === "keyboard"
-            ? "IPAKeyboard bottom-0 h-1/3 border-t border-t-black"
+            ? "IPAKeyboard bottom-0 h-1/3 border-t border-t-black" // IPAKeyboard class is needed to useOutsideClick
             : "top-0 h-full"
         )}
       >
         {mode !== "keyboard" && (
-          <div className="pt-4" onClick={() => toggleMobileMenu()}>
-            <div className="flex w-screen cursor-pointer justify-center font-serif text-xl text-blue-800">
+          <Button onClick={() => toggleMobileMenu()} className="text-center">
+            <div className="mt-2 w-screen text-center font-serif text-hmd text-blue-800">
               Back to
             </div>
             <Logo mobileMenu />
-          </div>
+          </Button>
         )}
         <div
           className={`h-full  
-            ${mode === "keyboard" ? "" : "flex flex-col items-center mt-20"}`}
+            ${mode === "keyboard" ? "" : "flex flex-col items-center mt-8"}`}
         >
           {children}
         </div>

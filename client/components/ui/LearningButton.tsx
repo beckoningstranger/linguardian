@@ -18,6 +18,7 @@ interface LearningButtonProps {
   disabled?: boolean;
   rounded?: boolean;
   global?: boolean;
+  from: "dashboard" | number;
 }
 export default function LearningButton({
   mode,
@@ -30,6 +31,7 @@ export default function LearningButton({
   disabled = false,
   rounded = false,
   global = false,
+  from,
 }: LearningButtonProps) {
   const buttonConfig = learningButtonConfig.find(
     (config) => config.name === mode
@@ -45,8 +47,8 @@ export default function LearningButton({
     <Link
       href={
         unitNumber
-          ? paths.learnUnitPath(mode, listNumber, unitNumber)
-          : paths.learnListPath(mode, listNumber)
+          ? paths.learnUnitPath(mode, listNumber, unitNumber) + `?from=${from}`
+          : paths.learnListPath(mode, listNumber) + `?from=${from}`
       }
       data-label={buttonConfig?.label}
       className={cn(

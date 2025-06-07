@@ -12,10 +12,10 @@ const paths = {
   editUnitPath: (listNumber: number, unitNumber: number) =>
     `/lists/${listNumber}/${unitNumber}/edit`,
   learnListPath: (mode: LearningMode, listId: number) =>
-    `/learn/${mode}/${listId}`,
+    `/learningSession/${mode}/${listId}`,
   learnNewLanguagePath: () => `/newLanguage`,
   learnUnitPath: (mode: LearningMode, listId: number, unitNumber: number) =>
-    `/learn/${mode}/${listId}/${unitNumber}`,
+    `/learningSession/${mode}/${listId}/${unitNumber}`,
   listsLanguagePath: (language: SupportedLanguage) => `/${language}/lists`,
   listDetailsPath: (listNumber: number) => `/lists/${listNumber}`,
   newListPath: (language: SupportedLanguage) => `/${language}/lists/new`,
