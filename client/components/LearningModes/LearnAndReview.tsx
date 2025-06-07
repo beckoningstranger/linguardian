@@ -2,7 +2,6 @@
 
 import { updateLearnedItems } from "@/lib/actions";
 import { arrayShuffle } from "@/lib/helperFunctionsClient";
-import useUserOnClient from "@/lib/hooks/useUserOnClient";
 import {
   ItemForServer,
   ItemToLearn,
@@ -10,6 +9,7 @@ import {
   LearningMode,
   PuzzlePieceObject,
   SupportedLanguage,
+  User,
 } from "@/lib/types";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
@@ -26,6 +26,7 @@ interface LearnAndReviewProps {
   targetLanguageFeatures: LanguageFeatures;
   allItemStringsInList: string[];
   mode: LearningMode;
+  user: User;
   from: "dashboard" | number;
 }
 
@@ -37,9 +38,9 @@ export default function LearnAndReview({
   targetLanguageFeatures,
   allItemStringsInList,
   mode,
+  user,
   from,
 }: LearnAndReviewProps) {
-  const user = useUserOnClient();
   const [itemsToLearn, setItemsToLearn] = useState<ItemToLearn[]>(items);
   const [activeItem, setActiveItem] = useState<ItemToLearn>(items[0]);
   const [learnedItems, setLearnedItems] = useState<ItemToLearn[]>([]);
@@ -60,7 +61,6 @@ export default function LearnAndReview({
       }
 
       if (status === "correct") {
-        activeItem.firstPresentation = false;
         activeItem.learningStep++;
         if (activeItem.learningStep === 4)
           setLearnedItems([...learnedItems, activeItem]);
@@ -123,7 +123,7 @@ export default function LearnAndReview({
   );
 
   return sessionEnd ? null : (
-    <div className="grid place-items-center">
+    <>
       <LearningHeader
         listLanguage={targetLanguageFeatures.langCode}
         listName={listName}
@@ -132,7 +132,7 @@ export default function LearnAndReview({
         mode={mode}
         from={from}
       />
-      <div className="mt-3 flex w-[95%] flex-col gap-3">
+      <div className="absolute inset-0 top-[112px] h-[calc(100vh-112px)] overflow-y-auto">
         {!itemPresentation && (
           <ItemPrompt item={activeItem} userNative={user.native.code} />
         )}
@@ -140,8 +140,8 @@ export default function LearnAndReview({
           <ItemPresentation
             item={activeItem}
             wrongSolution={wrongAnswer}
-            endPresentation={evaluateUserAnswer}
-            userNative={user.native.code}
+            endPresentationFunction={evaluateUserAnswer}
+            user={user}
           />
         )}
         {!itemPresentation && activeItem.learningStep === 1 && (
@@ -166,7 +166,7 @@ export default function LearnAndReview({
           />
         )}
       </div>
-    </div>
+    </>
   );
 }
 

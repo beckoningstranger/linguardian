@@ -3,21 +3,22 @@ import Flag from "react-world-flags";
 
 import paths from "@/lib/paths";
 import { siteSettings } from "@/lib/siteSettings";
-import { Item, SupportedLanguage } from "@/lib/types";
-import { getAllUserLanguages } from "@/lib/helperFunctionsServer";
+import { Item, LanguageWithFlagAndName, SupportedLanguage } from "@/lib/types";
 import ItemSection from "./ItemSection";
 
 interface ItemTranslationsProps {
   translations?: Partial<Record<SupportedLanguage, Item[]>>;
+  allUserLanguages: LanguageWithFlagAndName[];
 }
 
-export default async function ItemTranslations({
+export default function ItemTranslations({
   translations,
+  allUserLanguages,
 }: ItemTranslationsProps) {
   if (!translations) return null;
 
   const displayedTranslationLanguages =
-    (await getAllUserLanguages()).map((lang) => lang.code) ||
+    allUserLanguages.map((lang) => lang.code) ||
     siteSettings.supportedLanguages;
 
   return (

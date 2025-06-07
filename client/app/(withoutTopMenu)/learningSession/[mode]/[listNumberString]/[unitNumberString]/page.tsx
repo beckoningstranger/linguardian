@@ -5,6 +5,7 @@ import {
   ItemWithPopulatedTranslations,
   LanguageFeatures,
   LearningMode,
+  User,
 } from "@/lib/types";
 import { Metadata } from "next";
 
@@ -39,21 +40,33 @@ export default async function LearnAndReviewPage({
     listName,
     allItemStringsInList,
     itemsToLearn,
+    user,
   } = (await getLearningSessionForList(listNumber, mode, unitNumber)) as {
     targetLanguageFeatures: LanguageFeatures;
     listName: string;
     allItemStringsInList: string[];
     itemsToLearn: ItemWithPopulatedTranslations[];
+    user: User;
   };
 
   return (
-    <LearnAndReview
-      targetLanguageFeatures={targetLanguageFeatures}
-      items={prepareItemsForSession(mode, itemsToLearn)}
-      listName={listName}
-      allItemStringsInList={allItemStringsInList}
-      mode={mode}
-      from={from}
-    />
+    <>
+      <div
+        className={`absolute inset-0 -z-10 bg-cover bg-center`}
+        style={{
+          backgroundImage: `url("/backgrounds/DictionaryBackground.webp")`,
+        }}
+      />
+
+      <LearnAndReview
+        targetLanguageFeatures={targetLanguageFeatures}
+        items={prepareItemsForSession(mode, itemsToLearn)}
+        listName={listName}
+        allItemStringsInList={allItemStringsInList}
+        mode={mode}
+        user={user}
+        from={from}
+      />
+    </>
   );
 }

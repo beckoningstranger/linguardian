@@ -1,45 +1,44 @@
-import { ItemToLearn, SupportedLanguage } from "@/lib/types";
+import { ItemToLearn, User } from "@/lib/types";
 import { Button } from "@headlessui/react";
+import ItemDetails from "../Dictionary/ItemPage/ItemDetails";
 
 interface ItemPresentationProps {
   item: ItemToLearn;
-  endPresentation: Function;
+  endPresentationFunction: Function;
   wrongSolution: string;
-  userNative: SupportedLanguage;
+  user: User;
 }
 
 export default function ItemPresentation({
   item,
-  endPresentation,
+  endPresentationFunction,
   wrongSolution,
-  userNative,
+  user,
 }: ItemPresentationProps) {
+  const allUserLanguages = [...user.learnedLanguages, user.native];
   return (
-    <>
-      <div className="flex flex-col gap-y-1.5 rounded-md bg-slate-200 p-3 text-center">
+    <div className="absolute inset-x-0 top-0">
+      <div className="my-1 grid justify-center gap-2 rounded-md bg-white/80 py-3 text-center">
         {wrongSolution.length > 0 && (
-          <div className="text-sm text-red-500">We were looking for</div>
+          <p className="text-clgb text-red-500">Your solution was</p>
         )}
         {wrongSolution === "" && (
-          <div className="text-md font-semibold text-green-500">
-            Your next item:
-          </div>
+          <p className="text-clgb">Take a moment to memorize this item</p>
         )}
-        <div className="text-2xl">{item.name}</div>
-        {item.IPA && <div className="">{item.IPA}</div>}
-        <div>
-          {item.gender && <span>{item.gender} </span>}
-          <span>{item.partOfSpeech}</span>
-        </div>
-        {item.case && <div>{item.case}</div>}
-        {item.firstPresentation && (
-          <div className="text-2xl">
-            {item.translations[userNative]
-              ?.map((transl) => transl.name)
-              .join(", ")}
-          </div>
-        )}
+        <Button
+          onClick={() => endPresentationFunction("correct", "")}
+          className="fixed inset-x-0 bottom-0 w-full rounded-t-md bg-green-400 py-5 text-clgb text-white outline-none desktop:static desktop:w-[500px] desktop:rounded-md desktop:py-3 desktop:hover:bg-green-500"
+          autoFocus
+        >
+          Continue
+        </Button>
       </div>
+
+      <ItemDetails
+        item={item}
+        allUserLanguages={allUserLanguages}
+        forItemPresentation
+      />
 
       {wrongSolution.length > 0 && (
         <div className="bg-slate-200 p-3 text-center">
@@ -47,14 +46,6 @@ export default function ItemPresentation({
           <div>{wrongSolution}</div>
         </div>
       )}
-
-      <Button
-        onClick={() => endPresentation("correct", "")}
-        className="rounded-md border-2 bg-green-300 p-2 outline-none focus:border-green-400 focus:outline-none focus:ring-0"
-        autoFocus
-      >
-        Got it!
-      </Button>
-    </>
+    </div>
   );
 }

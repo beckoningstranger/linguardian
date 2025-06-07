@@ -24,14 +24,14 @@ export default function LearningHeader({
   return (
     <div
       id="LearningHeader"
-      className="relative flex w-full justify-between bg-white/80 py-2 desktop:py-4"
+      className="relative flex h-[112px] w-full items-center justify-between bg-white/80"
     >
       <MobileMenuContextProvider>
         <QuitLearningSessionButton listLanguage={listLanguage} from={from} />
       </MobileMenuContextProvider>
       <div
         id="LearningHeaderTitle"
-        className="grid w-full gap-2 text-center text-cmdr"
+        className="grid w-full gap-1 text-center text-cmdr"
       >
         {mode === "learn" ? (
           <div>
@@ -44,7 +44,7 @@ export default function LearningHeader({
             <p>Reviewing items in {mode}</p>
           </div>
         )}
-        <p>
+        <p className="mt-2">
           {itemsInProgress} / {totalItems} items
         </p>
       </div>

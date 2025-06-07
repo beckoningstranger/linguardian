@@ -347,5 +347,6 @@ export async function httpGetLearningSessionForList(
     listName: list.name,
     allItemStringsInList,
     itemsToLearn: learningMode === "learn" ? itemsToLearn : itemsToReview,
+    user,
   });
 }

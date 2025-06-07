@@ -9,6 +9,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import ConfirmCancelMobileMenu from "../ConfirmCancelMobileMenu";
 import ConfirmCancelModal from "../ConfirmCancelModal";
 import { useMobileMenu } from "@/context/MobileMenuContext";
+import { cn } from "@/lib/helperFunctionsClient";
 
 interface QuitLearningSessionButtonProps {
   listLanguage: SupportedLanguage;
@@ -37,14 +38,17 @@ export default function QuitLearningSessionButton({
     </p>
   );
 
+  const buttonStyling =
+    "absolute h-full top-1/2 w-[60px] h-[112px] py-8 -translate-y-1/2 tablet:hover:bg-red-500 tablet:hover:text-white tablet:size-[112px]";
+
   return (
     <Button>
       <FaArrowLeft
-        className="absolute left-2 top-1/2 size-[40px] -translate-y-1/2 tablet:left-4 tablet:hidden desktop:size-[50px]"
+        className={cn(buttonStyling, "tablet:hidden")}
         onClick={toggleMobileMenu as MouseEventHandler}
       />
       <FaArrowLeft
-        className="absolute left-2 top-1/2 hidden size-[40px] -translate-y-1/2 tablet:left-4 tablet:block desktop:size-[50px]"
+        className={cn(buttonStyling, "hidden tablet:block")}
         onClick={() => setShowModal(true)}
       />
       <ConfirmCancelModal
@@ -55,13 +59,9 @@ export default function QuitLearningSessionButton({
       >
         {message}
       </ConfirmCancelModal>
-      <ConfirmCancelMobileMenu
-        doOnConfirm={doOnConfirm}
-        title="You are about to lose your progress!"
-        message={`Are you sure you want to quit this learning session and navigate back ${
-          from === "dashboard" ? " your dashboard" : " this list's overview"
-        } ?`}
-      />
+      <ConfirmCancelMobileMenu doOnConfirm={doOnConfirm}>
+        {message}
+      </ConfirmCancelMobileMenu>
     </Button>
   );
 }

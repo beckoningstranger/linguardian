@@ -12,8 +12,7 @@ import { getList, getUserById } from "./fetchData";
 
 export async function getUserOnServer() {
   const session = await getServerSession(authOptions);
-  const user = await getUserById(session?.user.id);
-  return user as User;
+  return (await getUserById(session?.user.id)) as User;
 }
 
 export async function getAllUserLanguages() {
@@ -30,7 +29,7 @@ export async function getSeperatedUserLanguages() {
 }
 
 export async function getUserAndVerifyUserIsLoggedIn(errorMessage: string) {
-  const [user] = await Promise.all([getUserOnServer()]);
+  const user = await getUserOnServer();
   if (!user) throw new Error(errorMessage);
   return user;
 }
@@ -40,7 +39,7 @@ export async function verifyUserIsAuthorAndGetList(
   errorMessage: string
 ) {
   const list = await getList(listNumber);
-  const [user] = await Promise.all([getUserOnServer()]);
+  const user = await getUserOnServer();
   if (!list?.authors.includes(user.id)) throw new Error(errorMessage);
   return list;
 }
@@ -56,12 +55,10 @@ export function prepareItemsForSession(
     item.increaseLevel = true;
     if (mode === "learn") {
       item.learningStep = 0;
-      item.firstPresentation = true;
       allLearnableItems.push(item);
     }
     if (mode === "translation") {
       item.learningStep = 3;
-      item.firstPresentation = false;
       allReviewableItems.push(item);
     }
   });

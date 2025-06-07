@@ -1,18 +1,28 @@
 import Flag from "react-world-flags";
 
-import { ItemWithPopulatedTranslations } from "@/lib/types";
+import {
+  ItemWithPopulatedTranslations,
+  LanguageWithFlagAndName,
+} from "@/lib/types";
 import ItemPartOfSpeech from "./ItemPartOfSpeech";
 import ItemSection from "./ItemSection";
 import ItemTranslations from "./ItemTranslations";
 import ItemContext from "./ItemContext";
 import ItemPluralForms from "./ItemPluralForms";
 import ItemIPA from "./ItemIPA";
+import { cn } from "@/lib/helperFunctionsClient";
 
 interface ItemDetailsProps {
   item: ItemWithPopulatedTranslations;
+  allUserLanguages: LanguageWithFlagAndName[];
+  forItemPresentation?: boolean;
 }
 
-export default async function ItemDetails({ item }: ItemDetailsProps) {
+export default function ItemDetails({
+  item,
+  allUserLanguages,
+  forItemPresentation = false,
+}: ItemDetailsProps) {
   const {
     name,
     tags,
@@ -28,7 +38,13 @@ export default async function ItemDetails({ item }: ItemDetailsProps) {
   } = item;
 
   return (
-    <div className="flex min-h-[calc(100vh-112px)] w-full flex-col gap-y-2 bg-white/90 px-2 py-3">
+    <div
+      className={cn(
+        "flex min-h-[calc(100vh-112px)] w-full flex-col gap-y-2 bg-white/90 px-2 py-3",
+        forItemPresentation &&
+          "min-h-[calc(100vh-112px-124px)] desktop:px-8 tablet:py-4 tablet:px-6"
+      )}
+    >
       <div id="flagAndName" className="flex items-center gap-x-2">
         <Flag code={flagCode} className="size-14 rounded-full object-cover" />
         <h1 id="itemName" className="font-serif text-hlg">
@@ -44,7 +60,10 @@ export default async function ItemDetails({ item }: ItemDetailsProps) {
       </div>
       <div className="mt-4 flex flex-col gap-y-8">
         <ItemSection title="Definition">{definition}</ItemSection>
-        <ItemTranslations translations={translations} />
+        <ItemTranslations
+          translations={translations}
+          allUserLanguages={allUserLanguages}
+        />
         <ItemContext context={context} />
       </div>
     </div>

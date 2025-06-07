@@ -32,7 +32,6 @@ export type ItemWithPopulatedTranslations = z.infer<
 
 export type ItemToLearn = ItemWithPopulatedTranslations & {
   learningStep: number;
-  firstPresentation: boolean;
   increaseLevel: boolean;
 };
 

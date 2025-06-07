@@ -81,7 +81,7 @@ export default async function ItemPage({
           link={paths.editDictionaryItemPath(slug)}
         />
       </IconSidebar>
-      <ItemDetails item={item} />
+      <ItemDetails item={item} allUserLanguages={await getAllUserLanguages()} />
       <MobileMenuContextProvider>
         <TopContextMenuLoader itemSlug={item.slug} />
       </MobileMenuContextProvider>
