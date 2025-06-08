@@ -11,9 +11,12 @@ export default function ItemPrompt({ item, userNative }: ItemPromptProps) {
     .join(", ");
 
   return (
-    <div className={`w-95 rounded-md bg-slate-200 py-2 text-center`}>
-      <h3 className="my-3 text-2xl">{promptString}</h3>
-      <p className="text-sm">{item.partOfSpeech}</p>
+    <div
+      className="grid justify-center gap-1 bg-white/95 py-4 text-center shadow-lg desktop:py-8"
+      id="ItemPrompt"
+    >
+      <h3 className="font-serif text-hmd tablet:text-hlg">{promptString}</h3>
+      <p className="text-cmdr tablet:text-clgr">{item.partOfSpeech}</p>
     </div>
   );
 }

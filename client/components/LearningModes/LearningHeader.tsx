@@ -19,12 +19,14 @@ export default function LearningHeader({
   mode,
   from,
 }: LearningHeaderProps) {
-  const listNameElement = <p className="font-serif text-hmd">{listName}</p>;
+  const listNameElement = (
+    <p className="font-serif text-hmd desktop:text-hlg">{listName}</p>
+  );
 
   return (
     <div
       id="LearningHeader"
-      className="relative flex h-[112px] w-full items-center justify-between bg-white/80"
+      className="relative flex h-[112px] w-full items-center justify-between bg-white/95"
     >
       <MobileMenuContextProvider>
         <QuitLearningSessionButton listLanguage={listLanguage} from={from} />

@@ -1,8 +1,9 @@
 "use client";
+import { cn } from "@/lib/helperFunctionsClient";
 import { ItemToLearn } from "@/lib/types";
+import { Button } from "@headlessui/react";
 import { useEffect, useRef, useState } from "react";
 import { ReviewStatus } from "./LearnAndReview";
-import Button from "../ui/Button";
 
 interface MultipleChoiceProps {
   options: string[];
@@ -35,7 +36,7 @@ export default function MultipleChoice({
         setSelectedOption(null);
         setReviewStatus("neutral");
         evaluate(reviewStatus, selectedOption);
-      }, 1000);
+      }, 1500);
     }
   }, [reviewStatus, evaluate, selectedOption]);
 
@@ -49,10 +50,11 @@ export default function MultipleChoice({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    const legalKeys = Array.from({ length: options.length }, (_, i) => i + 1);
+    const legalKeys: number[] = options.map((_, index) => index + 1);
     if (!legalKeys.includes(+e.key)) return;
-    setSelectedOption(options[+e.key - 1]);
-    if (correctItem.name === options[+e.key - 1]) {
+    const selectedOption = options[+e.key - 1];
+    setSelectedOption(selectedOption);
+    if (selectedOption === correctItem.name) {
       setReviewStatus("correct");
     } else {
       setReviewStatus("incorrect");
@@ -60,17 +62,29 @@ export default function MultipleChoice({
   };
 
   return (
-    <div className="grid grid-cols-1 place-items-center items-stretch gap-3">
+    <div
+      className="grid h-full grid-cols-1 gap-2 p-2 hover:border-none desktop:h-[calc(100vh-112px-142px)] desktop:grid-cols-2 desktop:grid-rows-4 desktop:gap-x-4 desktop:gap-y-6 desktop:py-6"
+      id="MultipleChoiceAnswers"
+    >
       {options.map((option, index) => (
         <Button
           key={option + index}
-          className={calculateStyling(option === selectedOption, reviewStatus)}
+          className={calculateStyling(
+            selectedOption,
+            option,
+            correctItem.name,
+            reviewStatus
+          )}
           onClick={() => {
             handleClick(option);
           }}
         >
-          <span className="mx-4">{index + 1}:</span>
-          <span>{option}</span>
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-cxlb tablet:text-c2xlb desktop:static desktop:translate-y-0">
+            {index + 1}:
+          </span>
+          <span className="font-serif text-hmd tablet:text-hlg desktop:w-full">
+            {option}
+          </span>
         </Button>
       ))}
       <input
@@ -82,14 +96,30 @@ export default function MultipleChoice({
       />
     </div>
   );
-}
 
-function calculateStyling(selected: boolean, reviewStatus: ReviewStatus) {
-  let styling = "w-full rounded-full p-4 flex items-center text-slate-800";
-  if (!selected) styling += " bg-slate-200";
-  if (selected && reviewStatus === "incorrect") styling += " bg-red-600";
-  if (selected && reviewStatus === "correct") {
-    styling += " bg-green-300";
+  function calculateStyling(
+    selectedOption: string | null,
+    option: string,
+    correctOption: string,
+    reviewStatus: ReviewStatus
+  ) {
+    const thisIsSelectedOption = option === selectedOption;
+    const thisIsCorrectOption = option === correctOption;
+    const userHasAnswered = reviewStatus !== "neutral";
+    const userHasAnsweredCorrectly = reviewStatus === "correct";
+    return cn(
+      "relative w-full rounded-lg py-4 shadow-xl flex justify-center items-center text-grey-800 h-16 tablet:h-[88px] desktop:h-full desktop:px-4 hover:ring-4 ring-grey-800",
+      userHasAnswered && "hover:ring-0",
+      !userHasAnswered && "bg-white/95",
+      userHasAnswered &&
+        !thisIsSelectedOption &&
+        !thisIsCorrectOption &&
+        "bg-white/95",
+      userHasAnswered && thisIsCorrectOption && "bg-green-300",
+      userHasAnswered &&
+        !userHasAnsweredCorrectly &&
+        thisIsSelectedOption &&
+        "bg-red-600"
+    );
   }
-  return styling;
 }

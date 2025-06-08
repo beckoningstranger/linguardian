@@ -18,12 +18,17 @@ export default function ItemPresentation({
   const allUserLanguages = [...user.learnedLanguages, user.native];
   return (
     <div className="absolute inset-x-0 top-0">
-      <div className="my-1 grid justify-center gap-2 rounded-md bg-white/80 py-3 text-center">
+      <div className="my-1 grid justify-center gap-2 bg-white/90 py-3 text-center">
         {wrongSolution.length > 0 && (
-          <p className="text-clgb text-red-500">Your solution was</p>
+          <div className="py-4 leading-tight">
+            <p className="text-clgb text-red-500">Your solution was</p>
+            <p className="font-serif text-hmd">{wrongSolution}</p>
+          </div>
         )}
         {wrongSolution === "" && (
-          <p className="text-clgb">Take a moment to memorize this item</p>
+          <p className="flex h-16 items-center justify-center text-clgb">
+            Take a moment to memorize this item
+          </p>
         )}
         <Button
           onClick={() => endPresentationFunction("correct", "")}
@@ -39,13 +44,6 @@ export default function ItemPresentation({
         allUserLanguages={allUserLanguages}
         forItemPresentation
       />
-
-      {wrongSolution.length > 0 && (
-        <div className="bg-slate-200 p-3 text-center">
-          <div className="mb-1">Your solution was</div>
-          <div>{wrongSolution}</div>
-        </div>
-      )}
     </div>
   );
 }

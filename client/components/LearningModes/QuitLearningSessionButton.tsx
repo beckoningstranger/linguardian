@@ -39,7 +39,7 @@ export default function QuitLearningSessionButton({
   );
 
   const buttonStyling =
-    "absolute h-full top-1/2 w-[60px] h-[112px] py-8 -translate-y-1/2 tablet:hover:bg-red-500 tablet:hover:text-white tablet:size-[112px]";
+    "absolute h-full top-1/2 w-[50px] h-[112px] py-10 desktop:py-8 -translate-y-1/2 tablet:hover:bg-red-500 tablet:hover:text-white tablet:size-[112px]";
 
   return (
     <Button>

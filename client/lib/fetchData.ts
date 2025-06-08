@@ -303,7 +303,7 @@ export async function getLearningSessionForList(
   const response = await fetch(
     `${server}/users/getLearningSessionForList/${
       user.id
-    }/${listNumber}/${mode}/${unitNumber || ""}}`
+    }/${listNumber}/${mode}/${unitNumber || ""}`
   );
   return await response.json();
 }
