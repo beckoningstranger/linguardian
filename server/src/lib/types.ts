@@ -231,6 +231,7 @@ export type PuzzlePieceObject = {
   content: string;
   first: boolean;
   last: boolean;
+  used: boolean;
 };
 
 export type ParsedListInfoFromServer = {

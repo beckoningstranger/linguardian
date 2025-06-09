@@ -1,18 +1,17 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+
 import { updateLearnedItems } from "@/lib/actions";
-import { arrayShuffle } from "@/lib/helperFunctionsClient";
 import {
   ItemForServer,
   ItemToLearn,
   LanguageFeatures,
   LearningMode,
-  PuzzlePieceObject,
   SupportedLanguage,
   User,
 } from "@/lib/types";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import toast from "react-hot-toast";
 import ItemPresentation from "./ItemPresentation";
 import ItemPrompt from "./ItemPrompt";
 import LearningHeader from "./LearningHeader";
@@ -110,17 +109,7 @@ export default function LearnAndReview({
     if (sessionEnd) {
       passDataToServer(learnedItems, user.id, activeItem.language, mode);
     }
-  }, [sessionEnd, activeItem, mode, user.id, learnedItems]);
-
-  const multipleChoiceOptions = useMemo(
-    () => createMultipleChoiceOptions(allItemStringsInList, activeItem.name),
-    [allItemStringsInList, activeItem]
-  );
-
-  const puzzlePieces = useMemo(
-    () => createPuzzlePieces(activeItem.name),
-    [activeItem]
-  );
+  }, [sessionEnd, learnedItems, user.id, activeItem, mode]);
 
   return sessionEnd ? null : (
     <>
@@ -147,16 +136,15 @@ export default function LearnAndReview({
           )}
           {!itemPresentation && activeItem.learningStep === 1 && (
             <MultipleChoice
-              options={multipleChoiceOptions}
               correctItem={activeItem}
               evaluate={evaluateUserAnswer}
+              allItemStringsInList={allItemStringsInList}
             />
           )}
           {!itemPresentation && activeItem.learningStep === 2 && (
             <PuzzleMode
               itemName={activeItem.name}
               evaluate={evaluateUserAnswer}
-              initialPuzzlePieces={puzzlePieces}
             />
           )}
           {!itemPresentation && activeItem.learningStep === 3 && (
@@ -190,74 +178,4 @@ async function passDataToServer(
     success: "Learning data updated! 🎉",
     error: (err) => err.toString(),
   });
-}
-
-function createMultipleChoiceOptions(
-  moreItems: string[],
-  correctItemName: string
-) {
-  const wrongOptions: string[] = [];
-  let numberOfOptions = 0;
-  const maxNumberOfOptions = 7;
-  if (moreItems.length >= maxNumberOfOptions) {
-    numberOfOptions = maxNumberOfOptions;
-  } else numberOfOptions = moreItems.length;
-
-  moreItems
-    .filter((item) => item.split(" ").length === 2)
-    .forEach((option) => {
-      if (option !== correctItemName) wrongOptions.push(option);
-    });
-
-  let stringLengthDifference = 0;
-  while (wrongOptions.length < numberOfOptions && stringLengthDifference < 10) {
-    const newOptions: string[] = [];
-    moreItems
-      .filter(
-        (itemx) =>
-          itemx.length === correctItemName.length + stringLengthDifference &&
-          itemx !== correctItemName
-      )
-      .forEach((option) => newOptions.push(option));
-
-    moreItems
-      .filter(
-        (itemx) =>
-          itemx.length === correctItemName.length - stringLengthDifference &&
-          itemx !== correctItemName
-      )
-      .forEach((option) => newOptions.push(option));
-    newOptions.forEach((option) => {
-      if (!wrongOptions.includes(option)) wrongOptions.push(option);
-    });
-    stringLengthDifference += 1;
-  }
-  const options = wrongOptions.slice(0, numberOfOptions);
-  options.push(correctItemName);
-
-  return arrayShuffle(options);
-}
-
-function createPuzzlePieces(itemName: string) {
-  const amountOfPieces = 6;
-  const pieceLength = Math.ceil(itemName.length / amountOfPieces);
-  const itemString = itemName;
-  let puzzlePieces: string[] = [];
-  for (let x = 0; x < amountOfPieces; x++) {
-    puzzlePieces.push(itemString.slice(x * pieceLength, pieceLength * (x + 1)));
-  }
-  const puzzlePiecesWithoutEmptyOnes = puzzlePieces.filter(
-    (piece) => piece.length > 0 && piece !== " "
-  );
-
-  const puzzlePieceObjects = puzzlePiecesWithoutEmptyOnes.map(
-    (piece, index) => ({
-      position: index + 1,
-      content: piece,
-      first: index === 0,
-      last: index === puzzlePiecesWithoutEmptyOnes.length - 1,
-    })
-  );
-
-  return arrayShuffle<PuzzlePieceObject>(puzzlePieceObjects);
 }

@@ -1,5 +1,6 @@
 import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+
 import { Item } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
@@ -20,7 +21,7 @@ export function setErrorsFromBackend<T>(
   });
 }
 
-export function arrayShuffle<T>(array: T[]) {
+export function shuffleArray<T>(array: T[]) {
   // Durstenfeld Shuffle: https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));

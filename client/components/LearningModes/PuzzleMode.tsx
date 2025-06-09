@@ -1,178 +1,220 @@
-import { PuzzlePieceObject } from "@/lib/types";
+import { Button } from "@headlessui/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { IoMdRefresh } from "react-icons/io";
+
+import { cn, shuffleArray } from "@/lib/helperFunctionsClient";
+import { PuzzlePieceObject } from "@/lib/types";
 import { ReviewStatus } from "./LearnAndReview";
-import Button from "../ui/Button";
 
 interface PuzzleModeProps {
   itemName: string;
-  evaluate: Function;
-  initialPuzzlePieces: PuzzlePieceObject[];
+  evaluate: (status: ReviewStatus, solution: string) => void;
 }
 
-export default function PuzzleMode({
-  itemName,
-  evaluate,
-  initialPuzzlePieces,
-}: PuzzleModeProps) {
-  const [puzzlePieces, setPuzzlePieces] = useState(
-    [] as (PuzzlePieceObject & { used: boolean })[]
-  );
-  const resetPuzzlePieces = useCallback(() => {
-    setPuzzlePieces(
-      initialPuzzlePieces.map((piece) => ({ ...piece, used: false }))
-    );
-  }, [initialPuzzlePieces]);
+export default function PuzzleMode({ itemName, evaluate }: PuzzleModeProps) {
+  const { orderedPuzzlePieces, shuffledPuzzlePieces } = useMemo(() => {
+    const orderedPuzzlePieces = createPuzzlePieces(itemName);
+    const shuffledPuzzlePieces = shuffleArray(orderedPuzzlePieces);
+    return { orderedPuzzlePieces, shuffledPuzzlePieces };
+  }, [itemName]);
 
-  const [input, setInput] = useState("");
-  const [reviewStatus, setReviewStatus] = useState<ReviewStatus>("neutral");
-  const [inputFieldStyling, setInputFieldStyling] = useState(
-    "h-20 w-full rounded-md bg-slate-200 text-center text-xl"
+  const userIsOnMobileDevice = useMemo(
+    () => "ontouchstart" in window || navigator.maxTouchPoints > 0,
+    []
   );
+
+  const [puzzlePieces, setPuzzlePieces] =
+    useState<PuzzlePieceObject[]>(shuffledPuzzlePieces);
+  const [reviewStatus, setReviewStatus] = useState<ReviewStatus>("neutral");
+  const [solution, setSolution] = useState<PuzzlePieceObject[]>([]);
+  const solutionString = solution.map((piece) => piece.content).join("");
+  const validNumberKeys = orderedPuzzlePieces.map((_, i) => String(i + 1));
+
   const keyListener = useRef<HTMLInputElement | null>(null);
 
+  const reset = useCallback(() => {
+    setSolution([]);
+    setReviewStatus("neutral");
+    setPuzzlePieces(shuffledPuzzlePieces);
+    keyListener.current?.focus();
+  }, [
+    setSolution,
+    setReviewStatus,
+    setPuzzlePieces,
+    keyListener,
+    shuffledPuzzlePieces,
+  ]);
+
+  // Prevent mobile keyboard from opening
   useEffect(() => {
-    if (
-      keyListener.current &&
-      ("ontouchstart" in window || navigator.maxTouchPoints > 0)
-    ) {
+    if (keyListener.current && userIsOnMobileDevice) {
       keyListener.current.setAttribute("readonly", "readonly");
     }
-  }, []);
+  }, [userIsOnMobileDevice]);
 
-  const numberKeys = useMemo(
-    () => Array.from({ length: puzzlePieces.length }, (_, i) => String(i + 1)),
-    [puzzlePieces]
-  );
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const lastTypedKey = e.target.value[e.target.value.length - 1];
-    if (numberKeys.includes(lastTypedKey)) {
-      setPuzzlePieces((prevPuzzlePieces) =>
-        prevPuzzlePieces.map((piece, i) =>
-          i === +lastTypedKey - 1 && !piece.used
-            ? { ...piece, used: true }
-            : piece
-        )
-      );
-      setInput(input + puzzlePieces[+lastTypedKey - 1].content);
-    } else {
-      setInput(e.target.value);
+  useEffect(() => {
+    if (puzzlePieces.every((piece) => piece.used)) {
+      setReviewStatus(solutionString === itemName ? "correct" : "incorrect");
     }
+  }, [puzzlePieces, reviewStatus, setReviewStatus, itemName, solutionString]);
+
+  useEffect(() => {
+    setPuzzlePieces(shuffledPuzzlePieces);
+  }, [shuffledPuzzlePieces]);
+
+  useEffect(() => {
+    if (reviewStatus !== "neutral")
+      setTimeout(() => {
+        reset();
+        evaluate(reviewStatus, solutionString);
+      }, 1000);
+
+    if (reviewStatus === "neutral") keyListener.current?.focus();
+  }, [reviewStatus, evaluate, solutionString, reset]);
+
+  const handlePieceSelection = (index: number) => {
+    const piece = puzzlePieces[index];
+    if (!piece || piece.used) return;
+
+    setSolution((prev) => [...prev, piece]);
+    setPuzzlePieces((prev) =>
+      prev.map((piece, i) => (i === index ? { ...piece, used: true } : piece))
+    );
   };
 
-  const handleSubmit = useCallback(
-    (e?: React.FormEvent) => {
-      if (e) e.preventDefault();
-      if (input === itemName) {
-        setReviewStatus("correct");
-        setInputFieldStyling(
-          "h-20 w-full rounded-md text-center text-xl bg-green-300"
-        );
-      } else {
-        setReviewStatus("incorrect");
-        setInputFieldStyling(
-          "h-20 w-full rounded-md text-center text-xl bg-red-400"
-        );
-      }
-    },
-    [input, itemName]
-  );
-
-  useEffect(() => {
-    if (
-      (puzzlePieces &&
-        puzzlePieces.length > 0 &&
-        puzzlePieces.every((piece) => piece.used) &&
-        reviewStatus === "neutral") ||
-      (input === itemName && reviewStatus === "neutral")
-    ) {
-      handleSubmit();
-    }
-  }, [puzzlePieces, handleSubmit, input, itemName, reviewStatus]);
-
-  useEffect(() => {
-    resetPuzzlePieces();
-  }, [resetPuzzlePieces]);
-
-  useEffect(() => {
-    if (reviewStatus !== "neutral") {
-      setTimeout(() => {
-        setInput("");
-        setReviewStatus("neutral");
-        setInputFieldStyling(
-          "h-20 w-full rounded-md text-center text-xl bg-slate-200"
-        );
-        setPuzzlePieces([]);
-        evaluate(reviewStatus, input);
-      }, 1000);
-    }
-    if (reviewStatus === "neutral" && keyListener.current)
-      keyListener.current.focus();
-  }, [reviewStatus, evaluate, input]);
-
+  console.log("sol", solution);
   return (
-    <div className="mx-1">
-      <form className="grid place-items-center" onSubmit={handleSubmit}>
+    <div className="grid gap-2 pt-1">
+      <div
+        id="Solution"
+        className={cn(
+          "w-full bg-white/95 py-6 justify-center font-serif flex",
+          solutionString.length > 25 ? "text-hsm" : "text-hmd",
+          reviewStatus === "correct" && "bg-green-300 animate-pulse",
+          reviewStatus === "incorrect" && "bg-red-500"
+        )}
+      >
+        {solution.length > 0 ? (
+          solution.map((piece) => (
+            <span
+              className="whitespace-pre text-hmd tablet:text-hlg"
+              key={piece.position}
+            >
+              {piece.content}
+            </span>
+          ))
+        ) : (
+          <span className="text-hsm text-grey-700 desktop:text-hlg">
+            Puzzle this word&apos;s translation together
+          </span>
+        )}
+      </div>
+
+      <div className="grid place-items-center gap-y-4 px-4" id="PuzzleModeForm">
         <input
           type="text"
-          placeholder="Compose or enter the translation"
-          value={input}
-          onChange={handleChange}
-          className={inputFieldStyling}
+          tabIndex={-1}
+          className="h-0"
           disabled={reviewStatus !== "neutral"}
           ref={keyListener}
+          onKeyDown={(e) => {
+            if (e.key === "Backspace") {
+              setSolution((prevSolution) => {
+                if (prevSolution.length === 0) return prevSolution;
+
+                const lastPiece = prevSolution[prevSolution.length - 1];
+
+                setPuzzlePieces((prevPieces) => {
+                  const index = prevPieces.findIndex(
+                    (piece) => piece.position === lastPiece.position
+                  );
+                  if (index === -1) return prevPieces;
+
+                  return prevPieces.map((piece, i) =>
+                    i === index ? { ...piece, used: false } : piece
+                  );
+                });
+
+                return prevSolution.slice(0, -1);
+              });
+            }
+            if (e.key === "Escape") reset();
+            if (validNumberKeys.includes(e.key)) {
+              const index = +e.key - 1;
+              const piece = puzzlePieces[index];
+              if (!piece.used) {
+                handlePieceSelection(index);
+              }
+            }
+          }}
         />
-        <div className="m-2 flex w-full justify-around gap-x-8">
-          <Button
-            onClick={() => {
-              setInput("");
-              resetPuzzlePieces();
-              keyListener.current?.focus();
-            }}
-            intent="secondary"
-            className="flex-1 py-4"
-            disabled={reviewStatus !== "neutral"}
-          >
-            Reset
-          </Button>
-          <Button
-            intent="primary"
-            type="submit"
-            className="flex-1 py-4"
-            disabled={reviewStatus !== "neutral"}
-          >
-            Submit
-          </Button>
-        </div>
-      </form>
-      <div className="mt-8 grid grid-cols-2 gap-8">
-        {puzzlePieces.map((piece, index) => (
-          <Button
-            className="relative text-xl text-black"
-            key={index}
-            noRing
-            onClick={() => {
-              setInput(input + piece.content);
-              const updatedPuzzlePieces = puzzlePieces.map((piece, i) =>
-                i === index ? { ...piece, used: true } : piece
-              );
-              setPuzzlePieces(updatedPuzzlePieces);
-            }}
-            disabled={reviewStatus !== "neutral"}
-          >
-            <div className="absolute inset-0 -top-4 m-auto font-poppins text-2xl font-bold">
-              {piece.used ? "" : index + 1}
-            </div>
-            <div
-              className={`flex h-16 w-full min-w-32 items-center justify-center rounded-md ${
-                piece.used ? "bg-transparent" : "bg-slate-200"
-              } p-3 px-5`}
+
+        <div
+          className="grid w-full grid-cols-2 grid-rows-3 gap-4 tablet:w-[600px] desktop:w-[800px] desktop:gap-x-12"
+          id="PuzzlePieces"
+        >
+          {puzzlePieces.map((piece, index) => (
+            <Button
+              className={cn(
+                "relative text-black rounded-md w-full py-6 flex justify-center drop-shadow-lg font-serif bg-white/95",
+                piece.used && "opacity-30"
+              )}
+              key={index}
+              onClick={() => handlePieceSelection(index)}
+              disabled={reviewStatus !== "neutral"}
             >
-              {!piece.used && piece.content}
-            </div>
-          </Button>
-        ))}
+              {!userIsOnMobileDevice && (
+                <div
+                  className={cn(
+                    "flex items-center absolute left-8 font-sans text-c2xlb"
+                  )}
+                >
+                  {index + 1}
+                </div>
+              )}
+              <div className="text-hmd desktop:text-hlg">{piece.content}</div>
+            </Button>
+          ))}
+        </div>
+
+        <Button
+          id="ResetButton"
+          onClick={reset}
+          className="absolute bottom-4 left-1/2 flex w-[80%] -translate-x-1/2 items-center gap-2 rounded-md bg-red-400 py-2 pl-2 pr-8 text-cxlb text-white"
+          disabled={reviewStatus !== "neutral"}
+        >
+          <IoMdRefresh className="size-[50px]" />
+          <p className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            Start over
+          </p>
+        </Button>
       </div>
     </div>
   );
+}
+
+function createPuzzlePieces(itemName: string): PuzzlePieceObject[] {
+  const amountOfPieces = 6;
+  const pieceLength = Math.ceil(itemName.length / amountOfPieces);
+  const itemString = itemName;
+  let puzzlePieces: string[] = [];
+
+  for (let x = 0; x < amountOfPieces; x++) {
+    puzzlePieces.push(itemString.slice(x * pieceLength, pieceLength * (x + 1)));
+  }
+  const puzzlePiecesWithoutEmptyOnes = puzzlePieces.filter(
+    (piece) => piece.length > 0 && piece !== " "
+  );
+
+  const puzzlePieceObjects = puzzlePiecesWithoutEmptyOnes.map(
+    (piece, index) => ({
+      position: index + 1,
+      content: piece,
+      first: index === 0,
+      last: index === puzzlePiecesWithoutEmptyOnes.length - 1,
+      used: false,
+    })
+  );
+
+  return puzzlePieceObjects;
 }

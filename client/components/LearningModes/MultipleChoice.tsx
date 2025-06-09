@@ -1,34 +1,38 @@
 "use client";
-import { cn } from "@/lib/helperFunctionsClient";
-import { ItemToLearn } from "@/lib/types";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@headlessui/react";
-import { useEffect, useRef, useState } from "react";
+
+import { cn, shuffleArray } from "@/lib/helperFunctionsClient";
+import { ItemToLearn } from "@/lib/types";
 import { ReviewStatus } from "./LearnAndReview";
 
 interface MultipleChoiceProps {
-  options: string[];
   correctItem: ItemToLearn;
   evaluate: Function;
+  allItemStringsInList: string[];
 }
 
 export default function MultipleChoice({
   correctItem,
   evaluate,
-  options,
+  allItemStringsInList,
 }: MultipleChoiceProps) {
+  const options = useMemo(() => {
+    return createMultipleChoiceOptions(allItemStringsInList, correctItem.name);
+  }, [correctItem, allItemStringsInList]);
   const [reviewStatus, setReviewStatus] = useState<ReviewStatus>("neutral");
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
   const hiddenInput = useRef<HTMLInputElement | null>(null);
 
+  const userIsOnMobileDevice =
+    "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
   useEffect(() => {
-    if (
-      hiddenInput.current &&
-      ("ontouchstart" in window || navigator.maxTouchPoints > 0)
-    ) {
+    if (hiddenInput.current && userIsOnMobileDevice) {
       hiddenInput.current.setAttribute("readonly", "readonly");
     }
-  }, []);
+  }, [userIsOnMobileDevice]);
 
   useEffect(() => {
     if (reviewStatus !== "neutral") {
@@ -79,9 +83,11 @@ export default function MultipleChoice({
             handleClick(option);
           }}
         >
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-cxlb tablet:text-c2xlb desktop:static desktop:translate-y-0">
-            {index + 1}:
-          </span>
+          {!userIsOnMobileDevice && (
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-cxlb tablet:text-c2xlb desktop:left-8">
+              {index + 1}
+            </span>
+          )}
           <span className="font-serif text-hmd tablet:text-hlg desktop:w-full">
             {option}
           </span>
@@ -108,18 +114,64 @@ export default function MultipleChoice({
     const userHasAnswered = reviewStatus !== "neutral";
     const userHasAnsweredCorrectly = reviewStatus === "correct";
     return cn(
-      "relative w-full rounded-lg py-4 shadow-xl flex justify-center items-center text-grey-800 h-16 tablet:h-[88px] desktop:h-full desktop:px-4 hover:ring-4 ring-grey-800",
-      userHasAnswered && "hover:ring-0",
+      "relative w-full rounded-lg py-4 shadow-xl flex justify-center items-center text-grey-800 h-16 tablet:h-[88px] desktop:h-full desktop:px-4 desktop:hover:ring-4 ring-grey-800",
+      userHasAnswered && "desktop:hover:ring-0",
       !userHasAnswered && "bg-white/95",
       userHasAnswered &&
         !thisIsSelectedOption &&
         !thisIsCorrectOption &&
         "bg-white/95",
-      userHasAnswered && thisIsCorrectOption && "bg-green-300",
+      userHasAnswered && thisIsCorrectOption && "bg-green-300 animate-pulse",
       userHasAnswered &&
         !userHasAnsweredCorrectly &&
         thisIsSelectedOption &&
         "bg-red-600"
     );
   }
+}
+
+function createMultipleChoiceOptions(
+  moreItems: string[],
+  correctItemName: string
+) {
+  const wrongOptions: string[] = [];
+  let numberOfOptions = 0;
+  const maxNumberOfOptions = 7;
+  if (moreItems.length >= maxNumberOfOptions) {
+    numberOfOptions = maxNumberOfOptions;
+  } else numberOfOptions = moreItems.length;
+
+  moreItems
+    .filter((item) => item.split(" ").length === 2)
+    .forEach((option) => {
+      if (option !== correctItemName) wrongOptions.push(option);
+    });
+
+  let stringLengthDifference = 0;
+  while (wrongOptions.length < numberOfOptions && stringLengthDifference < 10) {
+    const newOptions: string[] = [];
+    moreItems
+      .filter(
+        (itemx) =>
+          itemx.length === correctItemName.length + stringLengthDifference &&
+          itemx !== correctItemName
+      )
+      .forEach((option) => newOptions.push(option));
+
+    moreItems
+      .filter(
+        (itemx) =>
+          itemx.length === correctItemName.length - stringLengthDifference &&
+          itemx !== correctItemName
+      )
+      .forEach((option) => newOptions.push(option));
+    newOptions.forEach((option) => {
+      if (!wrongOptions.includes(option)) wrongOptions.push(option);
+    });
+    stringLengthDifference += 1;
+  }
+  const options = wrongOptions.slice(0, numberOfOptions);
+  options.push(correctItemName);
+
+  return shuffleArray(options);
 }

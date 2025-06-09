@@ -55,7 +55,7 @@ export default function QuitLearningSessionButton({
         isOpen={showModal}
         setIsOpen={setShowModal}
         doOnConfirm={doOnConfirm}
-        title="You are about to lose your progress!"
+        title="You are about to lose this learning session's progress!"
       >
         {message}
       </ConfirmCancelModal>

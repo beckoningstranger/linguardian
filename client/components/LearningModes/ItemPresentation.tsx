@@ -32,7 +32,7 @@ export default function ItemPresentation({
         )}
         <Button
           onClick={() => endPresentationFunction("correct", "")}
-          className="fixed inset-x-0 bottom-0 w-full rounded-t-md bg-green-400 py-5 text-clgb text-white outline-none desktop:static desktop:w-[500px] desktop:rounded-md desktop:py-3 desktop:hover:bg-green-500"
+          className="fixed inset-x-0 bottom-0 w-full rounded-t-md bg-green-400 py-6 text-cxlb text-white outline-none desktop:static desktop:w-[500px] desktop:rounded-md desktop:py-3 desktop:hover:bg-green-500"
           autoFocus
         >
           Continue
