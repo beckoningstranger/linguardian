@@ -90,7 +90,7 @@ export default async function ListPage({
       listStats={listStats}
       listStatus={"practice"}
     >
-      <div className="bottom-0 flex w-full justify-center overflow-y-auto tablet:fixed tablet:top-[112px] tablet:pb-4">
+      <div className="flex w-full justify-center overflow-y-auto tablet:pb-4">
         <ListOverviewLeftButtons
           listNumber={listNumber}
           userIsAuthor={userIsAuthor}

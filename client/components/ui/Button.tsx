@@ -31,7 +31,7 @@ export default function Button({
   delete remainingProps.className;
 
   const styling = {
-    "hover:bg-gradient-to-r bg-primarygreen from-primarygreen to-green-700 hover:ring-primarygreen":
+    "hover:bg-gradient-to-r bg-green-500 from-green-500 to-green-700 hover:ring-green-500":
       intent === "primary",
     "hover:bg-gradient-to-r text-amber-300 bg-amber-300 text-white from-amber-300 to-amber-500 hover:ring-amber-300":
       intent === "secondary",
@@ -41,7 +41,7 @@ export default function Button({
       intent === "icon",
     "fixed rounded-full grid size-[90px] place-items-center shadow-xl bottom-4 right-8 bg-green-500 hover:ring-green-700 hover:scale-105 active:scale-100":
       intent === "bottomRightButton",
-    "w-full h-16 text-clgm": fullWidth,
+    "w-full text-clgm": fullWidth,
   };
 
   const colorStyling = {
@@ -66,7 +66,7 @@ export default function Button({
   return (
     <HeadlessUiButton
       className={cn(
-        "text-white relative hover:ring-1 hover:ring-transparent ring-offset-current transition-all duration-800 group hover:ring-offset-2",
+        "relative text-clgr text-white h-12 transition-all duration-300 ring-2 ring-transparent hover:ring-current hover:ring-offset-1 hover:ring-offset-white focus:ring-offset-2 focus:ring-current focus:ring-offset-white",
         styling,
         roundedStyling,
         colorStyling,

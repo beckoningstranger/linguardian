@@ -67,7 +67,7 @@ export default function MultipleChoice({
 
   return (
     <div
-      className="grid h-full grid-cols-1 gap-2 p-2 hover:border-none desktop:h-[calc(100vh-112px-142px)] desktop:grid-cols-2 desktop:grid-rows-4 desktop:gap-x-4 desktop:gap-y-6 desktop:py-6"
+      className="grid h-full grid-cols-1 gap-2 p-2 hover:border-none desktop:grow desktop:grid-cols-2 desktop:grid-rows-4 desktop:gap-x-4 desktop:gap-y-6 desktop:py-6"
       id="MultipleChoiceAnswers"
     >
       {options.map((option, index) => (
@@ -114,14 +114,14 @@ export default function MultipleChoice({
     const userHasAnswered = reviewStatus !== "neutral";
     const userHasAnsweredCorrectly = reviewStatus === "correct";
     return cn(
-      "relative w-full rounded-lg py-4 shadow-xl flex justify-center items-center text-grey-800 h-16 tablet:h-[88px] desktop:h-full desktop:px-4 desktop:hover:ring-4 ring-grey-800",
+      "relative w-full rounded-lg py-4 shadow-xl flex justify-center transition-all duration-400 items-center text-grey-800 h-16 tablet:h-[88px] desktop:h-full desktop:px-4 desktop:hover:ring-2 ring-grey-800",
       userHasAnswered && "desktop:hover:ring-0",
-      !userHasAnswered && "bg-white/95",
+      !userHasAnswered && "bg-white/95 hover:bg-white hover:-translate-y-2",
       userHasAnswered &&
         !thisIsSelectedOption &&
         !thisIsCorrectOption &&
         "bg-white/95",
-      userHasAnswered && thisIsCorrectOption && "bg-green-300 animate-pulse",
+      userHasAnswered && thisIsCorrectOption && "bg-green-300 animate-bounce",
       userHasAnswered &&
         !userHasAnsweredCorrectly &&
         thisIsSelectedOption &&

@@ -68,6 +68,17 @@ export default function LearningButton({
           )}
           aria-label={`Start a learning session in ${mode} mode`}
         >
+          {!showLabel && (
+            <div
+              id="miniLabel"
+              className={cn(
+                "text-sans absolute right-0 top-0 text-cmdb font-sans rounded-bl-lg px-2 group-hover:hidden",
+                miniLabelBgColor
+              )}
+            >
+              {itemNumber}
+            </div>
+          )}
           <Image
             src={buttonConfig?.iconPath || ""}
             width={showExpand || from === "dashboard" ? 60 : 80}
@@ -75,16 +86,23 @@ export default function LearningButton({
             alt={buttonConfig?.label + " icon"}
           />
           <div className="flex w-[378px] flex-col justify-center font-serif text-hsm">
-            <h4>{buttonConfig?.label}</h4>
+            <h4>{global ? buttonConfig?.globalLabel : buttonConfig?.label}</h4>
+            {!disabled && (
+              <h4>
+                (<span className="font-sans text-clgm">{itemNumber} </span>
+                {mode === "learn" ? "left" : "ready to review"})
+              </h4>
+            )}
+            {/* <h4>{buttonConfig?.label}</h4>
             <h4>
               ({itemNumber} {mode === "learn" ? "left" : "ready to review"})
-            </h4>
+            </h4> */}
           </div>
         </HeadLessUiButton>
       )}
       <HeadLessUiButton
         className={cn(
-          "relative flex h-[90px] w-full items-center justify-center px-1 font-serif text-white"
+          "relative flex h-[90px] w-full items-center pl-1 font-serif text-white"
         )}
         disabled={disabled}
         aria-label={`Start a learning session in ${mode} mode`}
@@ -115,7 +133,12 @@ export default function LearningButton({
             }`}
           >
             <h4>{global ? buttonConfig?.globalLabel : buttonConfig?.label}</h4>
-            {!disabled && <h4>{" (" + itemNumber + " left)"}</h4>}
+            {!disabled && (
+              <h4>
+                (<span className="font-sans text-clgm">{itemNumber} </span>
+                {mode === "learn" ? "left" : "ready to review"})
+              </h4>
+            )}
           </div>
         )}
       </HeadLessUiButton>

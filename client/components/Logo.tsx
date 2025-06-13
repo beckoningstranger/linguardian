@@ -13,7 +13,7 @@ export default function Logo({ mobileMenu, ...props }: LogoProps) {
   return (
     <h1
       className={cn(
-        `grid font-bold text-blue-800 w-full place-items-center select-none cursor-pointer font-script text-4xl sm:text-6xl`,
+        `grid font-bold text-blue-800 w-full place-items-center select-none cursor-pointer font-script text-4xl tablet:text-6xl`,
         styling,
         props.className
       )}

@@ -57,7 +57,7 @@ export default async function ItemPage({
   );
   if (!item)
     return (
-      <div className="top-[112px] w-full bg-white/90 py-8 text-center text-cxlr">
+      <div className="w-full bg-white/90 py-8 text-center text-cxlr">
         <p>Sorry, no item found</p>
         <Link href={paths.dictionaryPath()}>
           <Button intent="primary" className="mt-4 p-4" rounded>
@@ -68,7 +68,7 @@ export default async function ItemPage({
     );
 
   return (
-    <div className="flex">
+    <div className="flex grow">
       <IconSidebar position="left" showOn="tablet">
         <IconSidebarButton
           mode="back"

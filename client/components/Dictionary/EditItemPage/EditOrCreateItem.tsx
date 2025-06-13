@@ -143,7 +143,11 @@ export default function EditOrCreateItem({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex h-full">
+    <form
+      id="EditOrCreateItem"
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex grow"
+    >
       <IconSidebar position="left" showOn="tablet">
         {!isNewItem && (
           <IconSidebarButton
@@ -165,7 +169,7 @@ export default function EditOrCreateItem({
       </IconSidebar>
       <div
         id="EditOrCreateItemMain"
-        className="fixed inset-0 top-[112px] grid min-h-[calc(100vh-112px)] gap-3 overflow-y-auto bg-white/90 px-4 py-6 tablet:left-[96px]"
+        className="grid w-full gap-3 overflow-y-auto bg-white/90 px-4 py-6"
       >
         <EditItemName
           itemName={itemName}

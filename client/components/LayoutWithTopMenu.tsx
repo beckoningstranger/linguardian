@@ -15,15 +15,13 @@ export default function LayoutWithTopMenu({
   bgPicture,
 }: LayoutWithTopMenuProps) {
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       <div
-        className={`absolute inset-0 -z-10 bg-cover bg-center ${backGroundOpacity}`}
+        className={`fixed top-0 inset-x-0 min-h-screen -z-10 bg-cover bg-center ${backGroundOpacity}`}
         style={{ backgroundImage: `url(${bgPicture})` }}
       />
       <TopMenu opacity={menuOpacity} />
-      <div className="absolute inset-0 top-[112px] h-[calc(100vh-112px)] overflow-y-auto">
-        {children}
-      </div>
-    </>
+      <main className="flex grow flex-col overflow-y-auto">{children}</main>
+    </div>
   );
 }

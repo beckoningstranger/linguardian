@@ -4,6 +4,7 @@ import { useState } from "react";
 import Logo from "../Logo";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
+import { cn } from "@/lib/helperFunctionsClient";
 
 export default function LandingPageContent() {
   const [mode, setMode] = useState<"present" | "signin" | "register">(
@@ -11,32 +12,65 @@ export default function LandingPageContent() {
   );
 
   return (
-    <>
-      <header>
-        <nav className="mx-4 flex items-baseline justify-between py-8 sm:mx-12">
-          <div>
-            <Logo
-              onClick={() => {
-                setMode("present");
-              }}
-            />
-          </div>
-          <div className="items-bottom font-breeSerif mx-1 flex gap-x-2 text-lg font-light tracking-wider text-blue-800 sm:gap-x-4 sm:text-xl md:mx-4">
-            <h3 onClick={() => setMode("signin")}>Sign In</h3>
-            <h3 onClick={() => setMode("register")}>Register</h3>
-          </div>
-        </nav>
-      </header>
-      <main>
-        {mode === "present" && (
-          <div className="absolute left-1/2 top-3/4 flex w-full -translate-x-1/2 -translate-y-1/2 flex-col gap-y-7 px-8 text-center font-script text-4xl font-black italic tracking-tight text-white sm:px-12 sm:text-5xl lg:px-24 xl:text-6xl">
-            <p>Learning a language is like planting seeds</p>
-            <p>Start today and see your knowledge blossom</p>
-          </div>
-        )}
-        {mode === "signin" && <LoginForm />}
-        {mode === "register" && <RegisterForm />}
-      </main>
-    </>
+    <div
+      className="min-h-screen select-none bg-[url('/backgrounds/landingPageBackground.webp')] bg-cover bg-center"
+      id="BackgroundImage"
+    >
+      <div
+        className="flex min-h-screen flex-col bg-gradient-to-b from-white/0 via-white/0 via-50% to-black/80 to-100%"
+        id="ContainerWithSemiTransparentOverlay"
+      >
+        <header>
+          <nav className="flex items-baseline justify-between bg-white/20 px-4 py-8 tablet:px-12">
+            <div>
+              <Logo
+                onClick={() => {
+                  setMode("present");
+                }}
+              />
+            </div>
+            <div className="flex gap-x-2 text-clgm font-light tracking-wider text-blue-800 tablet:gap-x-8 tablet:text-cxlm">
+              <h3
+                onClick={() => setMode("signin")}
+                className={cn(
+                  "hover:border-blue-800 border-transparent border-b-2",
+                  mode === "signin" && "border-blue-800"
+                )}
+              >
+                Sign In
+              </h3>
+              <h3
+                className={cn(
+                  "hover:border-blue-800 border-transparent border-b-2",
+                  mode === "register" && "border-blue-800"
+                )}
+                onClick={() => setMode("register")}
+              >
+                Register
+              </h3>
+            </div>
+          </nav>
+        </header>
+        <main
+          className={cn(
+            "flex grow flex-col justify-end",
+            mode !== "present" && "items-end"
+          )}
+        >
+          {mode === "present" && (
+            <div className="px-4 pb-24 text-center font-script text-h2xl tracking-tight text-white tablet:px-12">
+              <p className="text-pretty">
+                Learning a language is like planting seeds
+              </p>
+              <p className="text-pretty">
+                Start today and see your knowledge blossom
+              </p>
+            </div>
+          )}
+          {mode === "signin" && <LoginForm />}
+          {mode === "register" && <RegisterForm />}
+        </main>
+      </div>
+    </div>
   );
 }

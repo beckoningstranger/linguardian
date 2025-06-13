@@ -78,9 +78,8 @@ export default function LoginForm() {
         <Button
           disabled={isSubmitting || !!isSigningIn}
           intent="primary"
+          rounded
           type="submit"
-          noRing
-          className="hover:ring-offset-1"
         >
           {isSubmitting ? <Spinner centered size="mini" /> : "Login with Email"}
         </Button>
@@ -90,8 +89,7 @@ export default function LoginForm() {
           <Button
             color="white"
             fullWidth
-            noRing
-            className="h-12"
+            rounded
             onClick={() => {
               setIsSigningIn("google");
               signIn("google", { callbackUrl: paths.signInPath() });
@@ -108,8 +106,7 @@ export default function LoginForm() {
           <Button
             color="blue"
             fullWidth
-            noRing
-            className="h-12"
+            rounded
             onClick={() => {
               setIsSigningIn("facebook");
               signIn("facebook", { callbackUrl: paths.signInPath() });

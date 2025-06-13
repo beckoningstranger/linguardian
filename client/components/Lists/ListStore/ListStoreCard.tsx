@@ -30,7 +30,7 @@ export default function ListStoreCard({
 
   return (
     <Link href={paths.listDetailsPath(listNumber)}>
-      <article className="flex h-[430px] w-[320px] flex-col overflow-hidden rounded-lg shadow-2xl transition-all hover:scale-105 hover:shadow-xl phone:w-[350px] tablet:w-[320px]">
+      <div className="flex h-[430px] w-[350px] flex-col overflow-hidden rounded-lg shadow-2xl transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
         <Image
           src={image}
           alt="Background picture showing the inside of a greenhouse"
@@ -60,7 +60,7 @@ export default function ListStoreCard({
           </div>
           <h3 className="text-cmdr">{description}</h3>
         </div>
-      </article>
+      </div>
     </Link>
   );
 }

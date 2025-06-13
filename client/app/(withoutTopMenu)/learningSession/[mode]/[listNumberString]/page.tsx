@@ -66,6 +66,7 @@ export default async function LearnAndReviewPage({
         style={{
           backgroundImage: `url("/backgrounds/DictionaryBackground.webp")`,
         }}
+        id="BackgroundImage"
       />
 
       <LearnAndReview

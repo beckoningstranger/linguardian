@@ -36,7 +36,7 @@ LandingPageInput.displayName = "LandingPageInput";
 
 export function LandingPageFormContainer({ children }: PropsWithChildren) {
   return (
-    <div className="absolute bottom-0 w-full rounded-lg bg-white bg-opacity-60 bg-cover px-8 py-2 sm:bottom-3 sm:right-3 sm:w-96">
+    <div className="w-full rounded-t-lg bg-white/70 px-8 py-2 tablet:max-w-[500px] tablet:rounded-l-lg">
       {children}
     </div>
   );

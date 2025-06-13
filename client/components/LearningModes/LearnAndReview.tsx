@@ -121,41 +121,34 @@ export default function LearnAndReview({
         mode={mode}
         from={from}
       />
-      <div className="absolute inset-0 top-[116px] h-[calc(100vh-116px)]">
-        {!itemPresentation && (
-          <ItemPrompt item={activeItem} userNative={user.native.code} />
-        )}
-        <div>
-          {itemPresentation && (
-            <ItemPresentation
-              item={activeItem}
-              wrongSolution={wrongAnswer}
-              endPresentationFunction={evaluateUserAnswer}
-              user={user}
-            />
-          )}
-          {!itemPresentation && activeItem.learningStep === 1 && (
-            <MultipleChoice
-              correctItem={activeItem}
-              evaluate={evaluateUserAnswer}
-              allItemStringsInList={allItemStringsInList}
-            />
-          )}
-          {!itemPresentation && activeItem.learningStep === 2 && (
-            <PuzzleMode
-              itemName={activeItem.name}
-              evaluate={evaluateUserAnswer}
-            />
-          )}
-          {!itemPresentation && activeItem.learningStep === 3 && (
-            <TypeSolution
-              targetLanguageFeatures={targetLanguageFeatures}
-              item={activeItem}
-              evaluate={evaluateUserAnswer}
-            />
-          )}
-        </div>
-      </div>
+      {!itemPresentation && (
+        <ItemPrompt item={activeItem} userNative={user.native.code} />
+      )}
+      {itemPresentation && (
+        <ItemPresentation
+          item={activeItem}
+          wrongSolution={wrongAnswer}
+          endPresentationFunction={evaluateUserAnswer}
+          user={user}
+        />
+      )}
+      {!itemPresentation && activeItem.learningStep === 1 && (
+        <MultipleChoice
+          correctItem={activeItem}
+          evaluate={evaluateUserAnswer}
+          allItemStringsInList={allItemStringsInList}
+        />
+      )}
+      {!itemPresentation && activeItem.learningStep === 2 && (
+        <PuzzleMode itemName={activeItem.name} evaluate={evaluateUserAnswer} />
+      )}
+      {!itemPresentation && activeItem.learningStep === 3 && (
+        <TypeSolution
+          targetLanguageFeatures={targetLanguageFeatures}
+          item={activeItem}
+          evaluate={evaluateUserAnswer}
+        />
+      )}
     </>
   );
 }

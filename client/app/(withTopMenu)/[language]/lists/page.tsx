@@ -49,7 +49,7 @@ export default async function ListStore({ params }: ListStoreProps) {
   return (
     <div className="relative flex flex-col">
       <ListSearch languageName={languageFeature?.langName} />
-      <div className="fixed bottom-0 top-[236px] flex min-h-[calc(100vh-112px)] flex-wrap justify-center gap-4 overflow-y-auto px-6 py-4 pb-48 tablet:top-[244px] tablet:justify-start tablet:gap-6 desktop:gap-6 desktop:px-14">
+      <div className="flex flex-wrap justify-center gap-4 overflow-y-auto px-6 py-4 pb-48 tablet:justify-start tablet:gap-6 desktop:gap-6 desktop:px-14">
         {renderedLists}
       </div>
       <Link href={paths.newListPath(params?.language as SupportedLanguage)}>

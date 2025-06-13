@@ -12,7 +12,7 @@ export default function ListSearch({ languageName }: ListSearchProps) {
   const [query, setQuery] = useState("");
 
   return (
-    <div className="absolute top-0 flex w-full flex-col gap-2 bg-white/80 px-1 pb-2 pt-6 tablet:gap-4 tablet:px-4">
+    <div className="flex w-full flex-col gap-2 bg-white/80 px-1 pb-2 pt-6 tablet:gap-4 tablet:px-4">
       <SearchInput
         label={`Search ${languageName} lists`}
         query={query}

@@ -47,7 +47,8 @@ export default function ConfirmCancelModal({
             <div className="flex w-full gap-5">
               <Button
                 intent="secondary"
-                className="flex-1 p-3 px-5"
+                rounded
+                className="flex-1"
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsOpen(false);
@@ -58,6 +59,7 @@ export default function ConfirmCancelModal({
               </Button>
               <Button
                 className="flex-1"
+                rounded
                 intent="danger"
                 onClick={(e) => {
                   e.stopPropagation();

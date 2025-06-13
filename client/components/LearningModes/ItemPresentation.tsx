@@ -17,8 +17,11 @@ export default function ItemPresentation({
 }: ItemPresentationProps) {
   const allUserLanguages = [...user.learnedLanguages, user.native];
   return (
-    <div className="absolute inset-x-0 top-0">
-      <div className="my-1 grid justify-center gap-2 bg-white/90 py-3 text-center">
+    <>
+      <div
+        className="grid justify-center gap-2 bg-white/90 py-3 text-center"
+        id="ItemPresentation"
+      >
         {wrongSolution.length > 0 && (
           <div className="py-4 leading-tight">
             <p className="text-clgb text-red-500">Your solution was</p>
@@ -44,6 +47,6 @@ export default function ItemPresentation({
         allUserLanguages={allUserLanguages}
         forItemPresentation
       />
-    </div>
+    </>
   );
 }

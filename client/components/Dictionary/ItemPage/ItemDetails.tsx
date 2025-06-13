@@ -39,10 +39,10 @@ export default function ItemDetails({
 
   return (
     <div
+      id="ItemDetails"
       className={cn(
-        "flex min-h-[calc(100vh-112px)] w-full flex-col gap-y-2 bg-white/90 px-2 py-3",
-        forItemPresentation &&
-          "min-h-[calc(100vh-112px-124px)] desktop:px-8 tablet:py-4 tablet:px-6"
+        "flex w-full flex-col grow gap-y-2 bg-white/90 px-2 py-3",
+        forItemPresentation && "desktop:px-8 tablet:py-4 tablet:px-6"
       )}
     >
       <div id="flagAndName" className="flex items-center gap-x-2">

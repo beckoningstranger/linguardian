@@ -100,6 +100,7 @@ export default function RegisterForm() {
           intent="primary"
           disabled={isSubmitting || isSubmitted}
           type="submit"
+          rounded
         >
           {isSubmitting ? <Spinner centered size="mini" /> : "Register"}
         </Button>

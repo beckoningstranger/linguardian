@@ -36,7 +36,7 @@ export default function DashboardBottomButtons({
         <Button
           intent="bottomRightButton"
           aria-label="Add a new list to your dashboard"
-          className="bottom-1 right-1"
+          className="bottom-1 right-1 tablet:bottom-4 tablet:right-2"
         >
           <FaPlus className="h-8 w-8 font-semibold text-white" />
         </Button>
