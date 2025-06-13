@@ -1,11 +1,12 @@
-import { useRef, useState } from "react";
+"use client";
+import { useEffect, useRef, useState } from "react";
+
+import { ItemToLearn, LanguageFeatures, MoreReviewsMode } from "@/lib/types";
 import { MobileMenuContextProvider } from "../../context/MobileMenuContext";
-import HelperKeys from "./HelperKeys";
-import SolutionInput from "./SolutionInput";
-import { ReviewStatus } from "./LearnAndReview";
-import { ItemToLearn, LanguageFeatures } from "@/lib/types";
 import GenderCaseReview from "./GenderCaseReview";
-import { MoreReviewsMode } from "./MoreReviews";
+import HelperKeys from "./HelperKeys";
+import { ReviewStatus } from "./LearnAndReview";
+import SolutionInput from "./SolutionInput";
 
 interface TypeSolutionProps {
   targetLanguageFeatures: LanguageFeatures;
@@ -21,21 +22,14 @@ export default function TypeSolution({
   const [solution, setSolution] = useState("");
   const [reviewStatus, setReviewStatus] = useState<ReviewStatus>("neutral");
   const [moreReviews, setMoreReviews] = useState<MoreReviewsMode | null>(null);
-
   const solutionInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    solutionInputRef.current?.focus();
+  });
 
   return (
     <>
-      {!moreReviews && (
-        <MobileMenuContextProvider>
-          <HelperKeys
-            targetLanguageFeatures={targetLanguageFeatures}
-            solution={solution}
-            setSolution={setSolution}
-            inputRef={solutionInputRef}
-          />
-        </MobileMenuContextProvider>
-      )}
       {moreReviews && (
         <GenderCaseReview
           mode={moreReviews}
@@ -56,11 +50,21 @@ export default function TypeSolution({
           setSolution={setSolution}
           reviewStatus={reviewStatus}
           setReviewStatus={setReviewStatus}
-          disable={false}
+          disable={reviewStatus !== "neutral"}
           item={item}
           setMoreReviews={setMoreReviews}
           finalizeReview={evaluate}
         />
+      )}
+      {!moreReviews && (
+        <MobileMenuContextProvider>
+          <HelperKeys
+            targetLanguageFeatures={targetLanguageFeatures}
+            solution={solution}
+            setSolution={setSolution}
+            inputRef={solutionInputRef}
+          />
+        </MobileMenuContextProvider>
       )}
     </>
   );

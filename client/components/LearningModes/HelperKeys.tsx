@@ -1,10 +1,12 @@
 "use client";
+import { RefObject, useContext, useState } from "react";
+import { Button } from "@headlessui/react";
 
+import { cn } from "@/lib/helperFunctionsClient";
 import { LanguageFeatures } from "@/lib/types";
+import { MobileMenuContext } from "../../context/MobileMenuContext";
 import HelperKeysSelector from "../Menus/HelperKeysSelector";
 import MobileMenu from "../Menus/MobileMenu/MobileMenu";
-import { RefObject, useContext, useState } from "react";
-import { MobileMenuContext } from "../../context/MobileMenuContext";
 
 interface HelperKeysProps {
   targetLanguageFeatures: LanguageFeatures;
@@ -31,6 +33,8 @@ export default function HelperKeys({
 
   if (!targetLanguageFeatures.requiresHelperKeys) return null;
 
+  const needHelpButtonStyling =
+    "w-full bg-white/95 mt-1 tablet:text-cxlm text-clgm py-8";
   return (
     <>
       <MobileMenu fromDirection="animate-from-top">
@@ -52,18 +56,18 @@ export default function HelperKeys({
       )}
       {!showHelperKeys && (
         <>
-          <div
-            className="hidden rounded-md bg-slate-200 p-2 text-center md:block"
+          <Button
+            className={cn(needHelpButtonStyling, "hidden tablet:block")}
             onClick={() => setShowHelperKeys(true)}
           >
             Need help entering special characters?
-          </div>
-          <div
-            className="rounded-md bg-slate-200 p-2 text-center md:hidden"
+          </Button>
+          <Button
+            className={cn(needHelpButtonStyling, "tablet:hidden text-cmdm")}
             onClick={() => toggleMobileMenu!()}
           >
             Need help entering special characters?
-          </div>
+          </Button>
         </>
       )}
     </>

@@ -70,8 +70,8 @@ export default function LearningButton({
         >
           <Image
             src={buttonConfig?.iconPath || ""}
-            width={showExpand ? 60 : 80}
-            height={showExpand ? 60 : 80}
+            width={showExpand || from === "dashboard" ? 60 : 80}
+            height={showExpand || from === "dashboard" ? 60 : 80}
             alt={buttonConfig?.label + " icon"}
           />
           <div className="flex w-[378px] flex-col justify-center font-serif text-hsm">
@@ -91,6 +91,7 @@ export default function LearningButton({
       >
         {!showLabel && (
           <div
+            id="miniLabel"
             className={cn(
               "text-sans absolute right-0 top-0 text-cmdb font-sans rounded-bl-lg px-2 group-hover:hidden",
               miniLabelBgColor
@@ -102,8 +103,8 @@ export default function LearningButton({
         {showIcon && (
           <Image
             src={buttonConfig?.iconPath || ""}
-            width={showExpand ? 60 : 80}
-            height={showExpand ? 60 : 80}
+            width={showExpand || from === "dashboard" ? 60 : 80}
+            height={showExpand || from === "dashboard" ? 60 : 80}
             alt={buttonConfig?.label + " icon"}
           />
         )}

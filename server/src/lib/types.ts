@@ -245,3 +245,5 @@ export type ContextItem = {
   author: string;
   takenFrom?: string;
 };
+
+export type MoreReviewsMode = "gender" | "case";

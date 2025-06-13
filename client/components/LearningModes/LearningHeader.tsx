@@ -20,7 +20,7 @@ export default function LearningHeader({
   from,
 }: LearningHeaderProps) {
   const listNameElement = (
-    <p className="font-serif text-hmd desktop:text-hlg">{listName}</p>
+    <p className="font-serif text-hmd tablet:text-hlg">{listName}</p>
   );
 
   return (

@@ -1,6 +1,8 @@
 import { RefObject, useEffect, useState } from "react";
 import { ItemWithPopulatedTranslations, LanguageFeatures } from "@/lib/types";
 import { ReviewStatus } from "./LearnAndReview";
+import { Input } from "@headlessui/react";
+import { cn } from "@/lib/helperFunctionsClient";
 
 interface SolutionInputProps {
   targetLanguageFeatures: LanguageFeatures;
@@ -27,50 +29,13 @@ export default function SolutionInput({
   setMoreReviews,
   finalizeReview,
 }: SolutionInputProps) {
-  const [inputStyling, setInputStyling] = useState({
-    input:
-      "focus:border-b-2 bg-slate-200 m-3 pt-2 text-xl text-center mx-auto w-11/12 focus:outline-none border-b-black transition-all",
-    form: "mt-0 flex justify-stretch transition-all rounded-md bg-slate-200",
-  });
-
   useEffect(() => {
-    let inputFieldStyling: string = "";
-    let formElementStyling: string = "";
-
-    switch (reviewStatus) {
-      case "correct":
-        inputFieldStyling = "focus:border-b-inherit bg-green-300 scale-105";
-        formElementStyling = "bg-green-300 scale-110";
-        break;
-      case "incorrect":
-        inputFieldStyling = "focus:border-b-inherit bg-red-400 scale-90";
-        formElementStyling = "bg-red-400";
-        break;
-      default:
-        inputFieldStyling = "focus:border-b-2 bg-slate-200";
-        formElementStyling = "bg-slate-200";
-    }
-
-    setInputStyling({
-      input:
-        inputFieldStyling +
-        " m-3 pt-2 text-xl text-center mx-auto w-11/12 focus:outline-none border-b-black transition-all",
-      form:
-        formElementStyling +
-        " mt-0 flex justify-stretch transition-all rounded-md",
-    });
-
     if (reviewStatus !== "neutral") {
       setTimeout(() => {
         setSolution("");
         setReviewStatus("neutral");
-        setInputStyling({
-          input:
-            "focus:border-b-2 bg-slate-200 m-3 pt-2 text-xl text-center mx-auto w-11/12 focus:outline-none border-b-black transition-all",
-          form: "mt-0 flex justify-stretch transition-all rounded-md bg-slate-200",
-        });
-        finalizeReview(reviewStatus, solution);
-      }, 1000);
+        finalizeReview(reviewStatus, solution.trim());
+      }, 1500);
     }
   }, [reviewStatus, finalizeReview, setReviewStatus, setSolution, solution]);
 
@@ -78,7 +43,7 @@ export default function SolutionInput({
     e.preventDefault();
     let reviewStatus: ReviewStatus;
 
-    if (item.name === solution.trim()) {
+    if (item.name === solution) {
       setReviewStatus("correct");
       reviewStatus = "correct";
     } else {
@@ -90,8 +55,7 @@ export default function SolutionInput({
     if (
       reviewStatus === "correct" &&
       item.partOfSpeech === "noun" &&
-      targetLanguageFeatures.hasGender &&
-      item.name === solution
+      targetLanguageFeatures.hasGender
     ) {
       setMoreReviews("gender");
       return;
@@ -101,8 +65,7 @@ export default function SolutionInput({
     if (
       reviewStatus === "correct" &&
       item.partOfSpeech === "preposition" &&
-      targetLanguageFeatures.hasCases &&
-      item.name === solution
+      targetLanguageFeatures.hasCases
     ) {
       setMoreReviews("case");
       return;
@@ -110,17 +73,28 @@ export default function SolutionInput({
   }
 
   return (
-    <form onSubmit={handleWordSubmit} className={inputStyling.form}>
-      <input
+    <form
+      onSubmit={handleWordSubmit}
+      className={cn(
+        "mt-1 flex w-full justify-center bg-white/95 py-8",
+        reviewStatus === "correct" && "bg-green-300",
+        reviewStatus === "incorrect" && "bg-red-500"
+      )}
+    >
+      <Input
         type="text"
         placeholder={`Translate to ${targetLanguageFeatures.langName}`}
+        className={cn(
+          "w-[80%] border-black text-center font-serif text-hsm tablet:text-hlg focus:border-b-2 focus:outline-none bg-transparent",
+          reviewStatus !== "neutral" && "focus:border-none"
+        )}
         value={solution}
         onChange={(e) => setSolution(e.target.value)}
-        className={inputStyling.input}
         autoFocus
         ref={inputRef}
         readOnly={reviewStatus !== "neutral"}
         disabled={disable}
+        spellCheck={false}
       />
     </form>
   );

@@ -82,7 +82,6 @@ export default function PuzzleMode({ itemName, evaluate }: PuzzleModeProps) {
     );
   };
 
-  console.log("sol", solution);
   return (
     <div className="grid gap-2 pt-1">
       <div
@@ -180,11 +179,14 @@ export default function PuzzleMode({ itemName, evaluate }: PuzzleModeProps) {
         <Button
           id="ResetButton"
           onClick={reset}
-          className="absolute bottom-4 left-1/2 flex w-[80%] -translate-x-1/2 items-center gap-2 rounded-md bg-red-400 py-2 pl-2 pr-8 text-cxlb text-white"
+          className={cn(
+            "transition-colors absolute bottom-0 tablet:bottom-4 inset-x-0 tablet:inset-x-4 tablet:left-1/2 tablet:w-[600px]  desktop:w-[800px] tablet:-translate-x-1/2 items-center gap-2 rounded-md bg-red-500 py-4 pl-2  text-white",
+            reviewStatus !== "neutral" && "opacity-60"
+          )}
           disabled={reviewStatus !== "neutral"}
         >
           <IoMdRefresh className="size-[50px]" />
-          <p className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <p className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-cxlb">
             Start over
           </p>
         </Button>

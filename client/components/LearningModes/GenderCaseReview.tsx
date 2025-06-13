@@ -1,11 +1,13 @@
+import { useRef } from "react";
+
 import {
   Case,
   Gender,
   ItemWithPopulatedTranslations,
   LanguageFeatures,
+  MoreReviewsMode,
 } from "@/lib/types";
-import MoreReviews, { MoreReviewsMode } from "./MoreReviews";
-import { useRef } from "react";
+import MoreReviews from "./MoreReviews";
 
 interface GenderCaseReviewProps {
   mode: MoreReviewsMode;

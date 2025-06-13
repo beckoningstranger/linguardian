@@ -166,12 +166,10 @@ async function passDataToServer(
   language: SupportedLanguage,
   mode: LearningMode
 ) {
-  const itemsForServer: ItemForServer[] = learnedItems.map((item) => {
-    return {
-      id: item._id.toString(),
-      increaseLevel: item.increaseLevel,
-    };
-  });
+  const itemsForServer: ItemForServer[] = learnedItems.map((item) => ({
+    id: item._id.toString(),
+    increaseLevel: item.increaseLevel,
+  }));
 
   toast.promise(updateLearnedItems(itemsForServer, language, userId, mode), {
     loading: "Updating your learning data...",
