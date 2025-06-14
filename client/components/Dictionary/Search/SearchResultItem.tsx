@@ -13,7 +13,7 @@ export default function SearchResultItem({
 }: SearchResultItemProps) {
   return (
     <div
-      className="rounded-md bg-white/90 px-6 py-4 transition-all duration-300 hover:-translate-y-2 hover:bg-white"
+      className="rounded-md bg-white/90 px-6 py-4 transition-all duration-300 hover:-translate-y-1 hover:bg-white"
       id={"SearchResult-" + result.name + "-" + result.partOfSpeech}
     >
       <div className="relative flex w-full justify-between gap-1">

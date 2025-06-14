@@ -43,7 +43,7 @@ export default function SolutionInput({
     e.preventDefault();
     let reviewStatus: ReviewStatus;
 
-    if (item.name === solution) {
+    if (item.name === solution.trim()) {
       setReviewStatus("correct");
       reviewStatus = "correct";
     } else {

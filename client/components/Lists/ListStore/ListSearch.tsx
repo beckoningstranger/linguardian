@@ -17,6 +17,7 @@ export default function ListSearch({ languageName }: ListSearchProps) {
         label={`Search ${languageName} lists`}
         query={query}
         setQuery={setQuery}
+        searchResultsNumber={0}
       />
       <div className="grid h-10 place-items-center text-center font-serif text-hxs font-bold tablet:text-hsm tablet:font-semibold">
         Showing Most Popular Textbook Lists for Intermediates

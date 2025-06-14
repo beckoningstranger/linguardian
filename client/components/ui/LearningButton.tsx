@@ -58,13 +58,15 @@ export default function LearningButton({
         disabled &&
           "bg-grey-600 hover:bg-grey-600 pointer-events-none cursor-not-allowed",
         rounded && "rounded-md",
-        showIcon && !showLabel && "group w-[90px] hover:w-[378px]"
+        showIcon && !showLabel && "group w-[90px] hover:w-[378px]",
+        global && "w-full tablet:max-w-[724px] desktop:max-w-[740px]"
       )}
     >
       {showIcon && !showLabel && (
         <HeadLessUiButton
           className={cn(
-            "hidden group-hover:flex items-center justify-center px-1 text-white w-[378px]"
+            "hidden group-hover:flex items-center justify-center px-1 text-white w-[378px]",
+            global && "max-w-[600px]"
           )}
           aria-label={`Start a learning session in ${mode} mode`}
         >
@@ -93,10 +95,6 @@ export default function LearningButton({
                 {mode === "learn" ? "left" : "ready to review"})
               </h4>
             )}
-            {/* <h4>{buttonConfig?.label}</h4>
-            <h4>
-              ({itemNumber} {mode === "learn" ? "left" : "ready to review"})
-            </h4> */}
           </div>
         </HeadLessUiButton>
       )}

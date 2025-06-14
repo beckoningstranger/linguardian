@@ -27,7 +27,7 @@ export default function ListDashboardCard({
   const listIsEmpty = itemIdsInUnits.length > 0;
 
   return (
-    <div className="w-[350px] cursor-pointer overflow-clip rounded-lg bg-white/80 shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-2 hover:bg-white/90 hover:shadow-2xl">
+    <div className="w-[350px] cursor-pointer overflow-clip rounded-lg bg-white/80 shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/90 hover:shadow-2xl">
       <Link href={paths.listDetailsPath(listNumber)}>
         <div className="flex h-[88px] items-center justify-center bg-blue-700 px-2 text-center font-serif text-hmd text-white">
           {name}

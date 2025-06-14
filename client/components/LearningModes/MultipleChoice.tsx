@@ -116,7 +116,7 @@ export default function MultipleChoice({
     return cn(
       "relative w-full rounded-lg py-4 shadow-xl flex justify-center transition-all duration-400 items-center text-grey-800 h-16 tablet:h-[88px] desktop:h-full desktop:px-4 desktop:hover:ring-2 ring-grey-800",
       userHasAnswered && "desktop:hover:ring-0",
-      !userHasAnswered && "bg-white/95 hover:bg-white hover:-translate-y-2",
+      !userHasAnswered && "bg-white/95 hover:bg-white hover:-translate-y-1",
       userHasAnswered &&
         !thisIsSelectedOption &&
         !thisIsCorrectOption &&

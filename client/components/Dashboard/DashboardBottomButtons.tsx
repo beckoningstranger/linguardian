@@ -1,9 +1,9 @@
 import paths from "@/lib/paths";
 import { SupportedLanguage } from "@/lib/types";
 import Link from "next/link";
-import Button from "../ui/Button";
 import LearningButton from "../ui/LearningButton";
 import { FaPlus } from "react-icons/fa";
+import { Button } from "@headlessui/react";
 
 interface DashboardBottomButtonsProps {
   language: SupportedLanguage;
@@ -14,9 +14,9 @@ export default function DashboardBottomButtons({
   dashboardIsEmpty,
 }: DashboardBottomButtonsProps) {
   return (
-    <div className="fixed bottom-1 flex w-screen justify-between gap-1 tablet:bottom-4 tablet:gap-4">
-      <div></div>
-      <div className="mr-24 w-[700px] rounded-lg shadow-xl desktop:m-0">
+    <div className="fixed inset-x-0 bottom-1 flex w-full gap-1 px-1 tablet:static tablet:justify-between tablet:px-4">
+      <div className="hidden size-[90px] tablet:block" />
+      <div className="w-full rounded-lg shadow-xl tablet:w-[724px] desktop:m-0 desktop:w-[740px]">
         <LearningButton
           global
           listNumber={1}
@@ -34,9 +34,8 @@ export default function DashboardBottomButtons({
         className={`${dashboardIsEmpty && "animate-pulse"}`}
       >
         <Button
-          intent="bottomRightButton"
           aria-label="Add a new list to your dashboard"
-          className="bottom-1 right-1 tablet:bottom-4 tablet:right-2"
+          className="grid size-[90px] place-items-center rounded-full bg-green-500"
         >
           <FaPlus className="h-8 w-8 font-semibold text-white" />
         </Button>

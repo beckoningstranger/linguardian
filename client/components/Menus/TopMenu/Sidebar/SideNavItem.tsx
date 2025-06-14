@@ -22,7 +22,7 @@ export default function SideNavItem({
   return (
     <li
       className={cn(
-        "flex select-none list-none justify-center",
+        "flex select-none list-none",
         showSidebar && "w-screen phone:w-[340px]"
       )}
     >
@@ -34,11 +34,11 @@ export default function SideNavItem({
         }}
       >
         <div
-          className={`flex h-16 w-[340px] items-center pl-8 text-blue-800 hover:bg-blue-100/60 phone:h-24`}
+          className={`flex h-16 w-[340px] items-center pl-4 text-blue-800 hover:bg-blue-100/60 phone:h-24 phone:pl-8`}
         >
           <div>{icon}</div>
           {label && (
-            <div className="flex w-full justify-center font-serif text-2xl font-semibold">
+            <div className="absolute left-1/2 -translate-x-1/2 font-serif text-hmd phone:static phone:flex phone:w-full phone:translate-x-0 phone:justify-center">
               {label}
             </div>
           )}

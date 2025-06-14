@@ -30,7 +30,7 @@ export default function ListStoreCard({
 
   return (
     <Link href={paths.listDetailsPath(listNumber)}>
-      <div className="flex h-[430px] w-[350px] flex-col overflow-hidden rounded-lg shadow-2xl transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+      <div className="flex h-[430px] w-[350px] flex-col overflow-hidden rounded-lg shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
         <Image
           src={image}
           alt="Background picture showing the inside of a greenhouse"

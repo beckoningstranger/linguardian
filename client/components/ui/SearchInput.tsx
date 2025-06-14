@@ -7,7 +7,7 @@ interface SearchInputProps {
   optional?: boolean;
   query: string;
   setQuery: Dispatch<SetStateAction<string>>;
-  searchResultsNumber?: number;
+  searchResultsNumber: number;
 }
 
 export default function SearchInput({
@@ -40,10 +40,12 @@ export default function SearchInput({
         </div>
       )}
       <p className="absolute right-24 top-3 text-csmr text-slate-500">
-        {searchResultsNumber && searchResultsNumber > 0
-          ? searchResultsNumber
-          : "No"}
-        <span> results</span>
+        {query &&
+          (searchResultsNumber > 0
+            ? `${searchResultsNumber} result${
+                searchResultsNumber > 1 ? "s" : ""
+              }`
+            : "No results")}
       </p>
       <Image
         src={"/icons/Sort.svg"}

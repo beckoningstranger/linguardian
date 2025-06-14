@@ -7,6 +7,7 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useState,
 } from "react";
 
@@ -28,6 +29,19 @@ export const SidebarContextProvider = ({ children }: PropsWithChildren) => {
   const toggleSidebar = useCallback(() => {
     setShowSidebar((prev) => !prev);
   }, []);
+
+  useEffect(() => {
+    const html = document.documentElement;
+    if (showSidebar) {
+      html.classList.add("lock-scroll");
+    } else {
+      html.classList.remove("lock-scroll");
+    }
+
+    return () => {
+      html.classList.remove("lock-scroll");
+    };
+  }, [showSidebar]);
 
   return (
     <SidebarContext.Provider
