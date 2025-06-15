@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import TopMenu from "./Menus/TopMenu/TopMenu";
+import BackgroundPicture from "./BackgroundPicture";
 
 interface LayoutWithTopMenuProps {
   children: ReactNode;
@@ -16,9 +17,9 @@ export default function LayoutWithTopMenu({
 }: LayoutWithTopMenuProps) {
   return (
     <div className="flex min-h-screen flex-col">
-      <div
-        className={`fixed top-0 inset-x-0 min-h-screen -z-10 bg-cover bg-center ${backGroundOpacity}`}
-        style={{ backgroundImage: `url(${bgPicture})` }}
+      <BackgroundPicture
+        bgPicture={bgPicture}
+        backGroundOpacity={backGroundOpacity}
       />
       <TopMenu opacity={menuOpacity} />
       <main className="flex grow flex-col overflow-y-auto">{children}</main>

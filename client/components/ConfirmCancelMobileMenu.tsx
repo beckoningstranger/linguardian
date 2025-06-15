@@ -35,7 +35,8 @@ export default function ConfirmCancelMobileMenu({
       >
         <Button
           intent="secondary"
-          className="mx-4 flex-1 py-4"
+          className="min-w-[150px]"
+          rounded
           onClick={(e) => {
             e.stopPropagation();
             if (toggleMobileMenu) toggleMobileMenu();
@@ -45,7 +46,8 @@ export default function ConfirmCancelMobileMenu({
         </Button>
         <Button
           intent="primary"
-          className="mx-4 flex-1 py-4"
+          className="min-w-[150px]"
+          rounded
           onClick={(e) => {
             e.stopPropagation();
             doOnConfirm();

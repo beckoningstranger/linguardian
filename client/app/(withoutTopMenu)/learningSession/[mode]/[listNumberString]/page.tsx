@@ -1,3 +1,4 @@
+import BackgroundPicture from "@/components/BackgroundPicture";
 import LearnAndReview from "@/components/LearningModes/LearnAndReview";
 import { getLearningSessionForList } from "@/lib/fetchData";
 import { prepareItemsForSession } from "@/lib/helperFunctionsServer";
@@ -60,24 +61,19 @@ export default async function LearnAndReviewPage({
   };
 
   return (
-    <>
-      <div
-        className={`absolute inset-0 -z-10 bg-cover bg-center`}
-        style={{
-          backgroundImage: `url("/backgrounds/DictionaryBackground.webp")`,
-        }}
-        id="BackgroundImage"
-      />
-
-      <LearnAndReview
-        targetLanguageFeatures={targetLanguageFeatures}
-        items={prepareItemsForSession(mode, itemsToLearn)}
-        listName={listName}
-        allItemStringsInList={allItemStringsInList}
-        mode={mode}
-        user={user}
-        from={from}
-      />
-    </>
+    <div className="flex min-h-screen flex-col">
+      <BackgroundPicture bgPicture="/backgrounds/DictionaryBackground.webp" />
+      <div className="flex grow flex-col overflow-y-auto">
+        <LearnAndReview
+          targetLanguageFeatures={targetLanguageFeatures}
+          items={prepareItemsForSession(mode, itemsToLearn)}
+          listName={listName}
+          allItemStringsInList={allItemStringsInList}
+          mode={mode}
+          user={user}
+          from={from}
+        />
+      </div>
+    </div>
   );
 }

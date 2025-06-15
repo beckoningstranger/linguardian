@@ -22,12 +22,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         className={`${dancingScript} ${inter} ${playfairDisplay} ${voces} font-sans`}
       >
         <AuthProvider>{children}</AuthProvider>
-        <div className="hidden tablet:block">
-          <Toaster position="top-right" reverseOrder={true} />
-        </div>
-        <div className="tablet:hidden">
-          <Toaster position="top-center" reverseOrder={true} />
-        </div>
+        <Toaster position="top-center" reverseOrder={true} />
       </body>
     </html>
   );
