@@ -63,6 +63,7 @@ export default function ItemDetails({
         <ItemTranslations
           translations={translations}
           allUserLanguages={allUserLanguages}
+          forItemPresentation
         />
         <ItemContext context={context} />
       </div>

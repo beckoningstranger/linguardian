@@ -9,11 +9,13 @@ import ItemSection from "./ItemSection";
 interface ItemTranslationsProps {
   translations?: Partial<Record<SupportedLanguage, Item[]>>;
   allUserLanguages: LanguageWithFlagAndName[];
+  forItemPresentation?: boolean;
 }
 
 export default function ItemTranslations({
   translations,
   allUserLanguages,
+  forItemPresentation,
 }: ItemTranslationsProps) {
   if (!translations) return null;
 
@@ -31,6 +33,8 @@ export default function ItemTranslations({
           {translations[lang] &&
             translations[lang].map((translation) => (
               <Link
+                target={forItemPresentation ? "_blank" : "_self"}
+                rel={forItemPresentation ? "noopener noreferrer" : undefined}
                 href={paths.dictionaryItemPath(translation.slug)}
                 key={translation.slug}
                 className="flex items-center gap-x-2 hover:underline"
