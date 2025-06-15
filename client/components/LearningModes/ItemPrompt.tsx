@@ -12,7 +12,7 @@ export default function ItemPrompt({ item, userNative }: ItemPromptProps) {
 
   return (
     <div
-      className="grid justify-center gap-1 bg-white/95 py-4 text-center shadow-lg desktop:py-8"
+      className="mt-1 grid justify-center gap-1 bg-white/95 py-4 text-center shadow-lg desktop:py-8"
       id="ItemPrompt"
     >
       <h3 className="font-serif text-hmd tablet:text-hlg">{promptString}</h3>

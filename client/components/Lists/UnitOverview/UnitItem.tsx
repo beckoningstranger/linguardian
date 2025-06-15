@@ -1,15 +1,16 @@
 "use client";
 
-import paths from "@/lib/paths";
-import { ListAndUnitData } from "@/lib/types";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+
+import { updateRecentDictionarySearches } from "@/lib/actions";
+import paths from "@/lib/paths";
+import { ListAndUnitData } from "@/lib/types";
+import { MobileMenuContextProvider } from "../../../context/MobileMenuContext";
 import DeleteItemButton from "../EditUnit/DeleteItemButton";
 import UnitItemText from "./UnitItemText";
 import { ItemPlusLearningInfo } from "./UnitItems";
-import { updateRecentDictionarySearches } from "@/lib/actions";
-import { MobileMenuContextProvider } from "../../../context/MobileMenuContext";
-import Image from "next/image";
 
 interface UnitItemProps {
   item: ItemPlusLearningInfo;
@@ -78,16 +79,16 @@ export default function UnitItem({
             </div>
           </div>
 
-          {item.level && (
-            <div className="absolute bottom-2 left-11 flex justify-between text-cxsb text-grey-900 phone:text-csmb">
-              Level {item.level}:{" "}
-              {currentItemStatus(item.nextReview, item.level)}
-            </div>
-          )}
-          {item.nextReview && item.level && (
-            <div className="absolute bottom-2 right-4 text-cxsb text-grey-900 phone:text-csmb">
-              {nextReview(item.nextReview, item.level)}
-            </div>
+          {item.level && item.nextReview && (
+            <>
+              <div className="absolute bottom-2 left-11 flex justify-between text-cxsb text-grey-900 phone:text-csmb">
+                Level {item.level}:{" "}
+                {currentItemStatus(item.nextReview, item.level)}
+              </div>
+              <div className="absolute bottom-2 right-4 text-cxsb text-grey-900 phone:text-csmb">
+                {nextReviewMessage(item.nextReview, item.level)}
+              </div>
+            </>
           )}
         </div>
       </Link>
@@ -107,30 +108,53 @@ function bgColor(nextReview?: number, itemLevel?: number) {
     : "bg-blue-400 hover:bg-blue-500";
 }
 
-function currentItemStatus(nextReview?: number, itemLevel?: number) {
-  if (!nextReview || !itemLevel) return "";
+function currentItemStatus(nextReviewTime: number, itemLevel: number) {
   const now = Date.now();
-  return nextReview > now
+  return nextReviewTime > now
     ? itemLevel < 8
       ? "Growing"
       : "Mature"
     : "Ready to water";
 }
 
-function nextReview(nextReview: number, itemLevel: number) {
+function nextReviewMessage(nextReview: number, itemLevel: number): string {
   if (!nextReview || !itemLevel) return "";
+
   if (currentItemStatus(nextReview, itemLevel) === "Ready to water") {
     return "Water now!";
   }
-  const waterMessage =
-    `Due next: ` +
-    new Date(nextReview).toLocaleString(undefined, {
-      day: "numeric",
-      month: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-    });
 
-  return waterMessage;
+  const now = Date.now();
+  const diff = nextReview - now;
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+
+  if (minutes < 60) {
+    return `Due in ${minutes} minute${minutes !== 1 && "s"}`;
+  }
+
+  if (diff < 86400000) {
+    // 86400000 = 24 hours
+    return `Due in ${hours} hour${hours !== 1 && "s"}`;
+  }
+
+  const date = new Date(nextReview);
+  const formatter = new Intl.DateTimeFormat(undefined, {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  const day = date.getDate();
+  function getOrdinal(n: number): string {
+    const suffix =
+      n % 100 >= 11 && n % 100 <= 13
+        ? "th"
+        : ["st", "nd", "rd"][(n % 10) - 1] ?? "th";
+    return n + suffix;
+  }
+
+  const formattedDate = formatter.format(date).replace(/\d+/, getOrdinal(day));
+
+  return `Due on ${formattedDate}`;
 }
