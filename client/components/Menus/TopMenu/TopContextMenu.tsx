@@ -11,6 +11,8 @@ import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 import paths from "@/lib/paths";
 import TopContextMenuButton from "./TopContextMenuButton";
+import { cn } from "@/lib/helperFunctionsClient";
+import { TOP_MENU_HEIGHT } from "@/lib/constants";
 
 interface TopContextMenuProps {
   userIsAuthor?: boolean;
@@ -132,7 +134,7 @@ export default function TopContextMenu({
       ref={ref as RefObject<HTMLDivElement>}
       className={showTopContextMenu ? "tablet:hidden" : "hidden"}
     >
-      <div className="fixed inset-x-64 top-0 z-10 grid h-[112px] place-items-center">
+      <div className="fixed left-1/2 top-0 z-10 grid h-[112px] -translate-x-1/2 place-items-center">
         <Image
           alt="Context Menu"
           height={90}
@@ -143,7 +145,7 @@ export default function TopContextMenu({
         />
       </div>
       {contextExpanded && (
-        <div className="fixed inset-x-0 top-[112px] grid w-full gap-2 px-2 py-4 backdrop-blur transition-all">
+        <div className="fixed inset-x-0 top-[112px] grid h-[112px] w-full gap-2 px-2 py-4 backdrop-blur transition-all">
           {displayTheseElements}
         </div>
       )}
