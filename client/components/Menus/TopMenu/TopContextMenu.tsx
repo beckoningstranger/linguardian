@@ -11,8 +11,6 @@ import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 import paths from "@/lib/paths";
 import TopContextMenuButton from "./TopContextMenuButton";
-import { cn } from "@/lib/helperFunctionsClient";
-import { TOP_MENU_HEIGHT } from "@/lib/constants";
 
 interface TopContextMenuProps {
   userIsAuthor?: boolean;
