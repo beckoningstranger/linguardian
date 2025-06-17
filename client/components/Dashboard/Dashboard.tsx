@@ -23,7 +23,10 @@ export default async function Dashboard({
   userNative,
 }: DashboardProps) {
   const renderedLists = (
-    <div id="DashboardLists" className="m-4 grid place-items-center tablet:m-8">
+    <div
+      id="DashboardLists"
+      className="m-4 grid min-h-[calc(100vh-280px)] place-items-center tablet:m-8"
+    >
       <div
         className={cn(
           "grid grid-cols-1 gap-6 tablet:grid-cols-2 desktop:grid-cols-3 desktop:gap-10 desktopxl:grid-cols-4 pb-24",

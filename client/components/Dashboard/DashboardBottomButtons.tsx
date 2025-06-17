@@ -1,9 +1,10 @@
+import Link from "next/link";
+import { Button } from "@headlessui/react";
+import { FaPlus } from "react-icons/fa";
+
 import paths from "@/lib/paths";
 import { SupportedLanguage } from "@/lib/types";
-import Link from "next/link";
 import LearningButton from "../ui/LearningButton";
-import { FaPlus } from "react-icons/fa";
-import { Button } from "@headlessui/react";
 
 interface DashboardBottomButtonsProps {
   language: SupportedLanguage;
@@ -16,22 +17,24 @@ export default function DashboardBottomButtons({
   return (
     <div className="fixed inset-x-0 bottom-1 flex w-full gap-1 px-1 tablet:static tablet:justify-between tablet:px-4">
       <div className="hidden size-[90px] tablet:block" />
-      <div className="w-full rounded-lg shadow-xl tablet:w-[724px] desktop:m-0 desktop:w-[740px]">
-        <LearningButton
-          global
-          listNumber={1}
-          mode="learn"
-          itemNumber={0}
-          showLabel
-          showIcon
-          rounded
-          disabled
-          from="dashboard"
-        />
-      </div>
+      {!dashboardIsEmpty && (
+        <div className="w-full rounded-lg shadow-xl tablet:w-[724px] desktop:m-0 desktop:w-[740px]">
+          <LearningButton
+            global
+            listNumber={1}
+            mode="learn"
+            itemNumber={0}
+            showLabel
+            showIcon
+            rounded
+            disabled
+            from="dashboard"
+          />
+        </div>
+      )}
       <Link
         href={paths.listsLanguagePath(language)}
-        className={`${dashboardIsEmpty && "animate-pulse"}`}
+        className={dashboardIsEmpty ? "animate-pulse" : ""}
       >
         <Button
           aria-label="Add a new list to your dashboard"
