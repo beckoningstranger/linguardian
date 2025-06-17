@@ -30,7 +30,7 @@ export default function SideBarNavigation({}: SideBarNavigationProps) {
     <nav
       id="SidebarNavigation"
       className={cn(
-        "absolute top-[112px] z-50 flex h-[calc(100vh-112px)] flex-col justify-between bg-white shadow-xl transition-all",
+        "absolute top-[112px] z-50 flex h-[calc(100vh-112px)] w-full phone:w-[340px] flex-col justify-between bg-white shadow-xl transition-all",
         !showSidebar && "-translate-x-[2660px]"
       )}
       ref={ref}
@@ -66,7 +66,9 @@ export default function SideBarNavigation({}: SideBarNavigationProps) {
           </div>
           <div className="grid items-end">
             <SideNavItem
-              icon={<FaRegQuestionCircle className="h-[48px] w-[48px]" />}
+              icon={
+                <FaRegQuestionCircle className="h-[48px] w-[48px]" />
+              }
               label="About"
               href={paths.aboutPath()}
             />

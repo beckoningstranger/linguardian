@@ -40,7 +40,8 @@ export default function TopContextMenu({
     const listNumber = Number(urlSegments[2]);
     const unitNumber = Number(urlSegments[3]) || false;
 
-    if (!userIsAuthor && !userIsLearningList && !unitNumber) return null;
+    if (!userIsAuthor && !userIsLearningList && !unitNumber)
+      return null;
 
     displayTheseElements = (
       <>
@@ -55,7 +56,10 @@ export default function TopContextMenu({
                   setContextExpanded={setContextExpanded}
                 />
                 <MobileMenuContextProvider>
-                  <DeleteUnitButton listNumber={listNumber} mode="mobile" />
+                  <DeleteUnitButton
+                    listNumber={listNumber}
+                    mode="mobile"
+                  />
                 </MobileMenuContextProvider>
               </>
             )}
@@ -132,7 +136,7 @@ export default function TopContextMenu({
       ref={ref as RefObject<HTMLDivElement>}
       className={showTopContextMenu ? "tablet:hidden" : "hidden"}
     >
-      <div className="fixed left-1/2 top-0 z-10 grid h-[112px] -translate-x-1/2 place-items-center">
+      <div className="absolute left-1/2 top-0 z-10 grid h-[112px] -translate-x-1/2 place-items-center">
         <Image
           alt="Context Menu"
           height={90}

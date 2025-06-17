@@ -2,6 +2,7 @@
 
 import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/helperFunctionsClient";
+import { Button } from "@headlessui/react";
 import Link from "next/link";
 import { ReactElement } from "react";
 
@@ -20,12 +21,7 @@ export default function SideNavItem({
 }: SideNavItemProps) {
   const { setShowSidebar, showSidebar } = useSidebar();
   return (
-    <li
-      className={cn(
-        "flex select-none list-none",
-        showSidebar && "w-screen phone:w-[340px]"
-      )}
-    >
+    <li className="w-full select-none list-none">
       <Link
         href={href}
         onClick={() => {
@@ -33,16 +29,16 @@ export default function SideNavItem({
           setShowSidebar(false);
         }}
       >
-        <div
-          className={`flex h-16 w-[340px] items-center pl-4 text-blue-800 hover:bg-blue-100/60 phone:h-24 phone:pl-8`}
+        <Button
+          className={`flex h-20 w-full items-center pl-4 text-blue-800 hover:bg-blue-100/60 phone:h-24 phone:w-[340px] phone:pl-8`}
         >
-          <div>{icon}</div>
+          {icon}
           {label && (
-            <div className="absolute left-1/2 -translate-x-1/2 font-serif text-hmd phone:static phone:flex phone:w-full phone:translate-x-0 phone:justify-center">
+            <div className="w-full text-center font-serif text-hmd">
               {label}
             </div>
           )}
-        </div>
+        </Button>
       </Link>
     </li>
   );
