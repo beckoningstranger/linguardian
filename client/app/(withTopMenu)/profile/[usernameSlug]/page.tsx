@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 
-import { getUserByUsernameSlug } from "@/lib/fetchData";
-import UserOverview from "@/components/Profile/UserOverview";
+import ActivityChart from "@/components/Profile/ActivityChart";
 import LearnedLanguageInfo from "@/components/Profile/LearnedLanguageInfo";
-import { cn } from "@/lib/helperFunctionsClient";
+import UserOverview from "@/components/Profile/UserOverview";
+import { getUserByUsernameSlug } from "@/lib/fetchData";
 
 interface ProfilePageProps {
   params: { usernameSlug: string };
@@ -33,6 +33,7 @@ export default async function ProfilePage({
     >
       <div className="grid w-full max-w-[1200px] gap-y-12">
         <UserOverview user={user} />
+        <ActivityChart />
         <LearnedLanguageInfo user={user} />
       </div>
     </div>

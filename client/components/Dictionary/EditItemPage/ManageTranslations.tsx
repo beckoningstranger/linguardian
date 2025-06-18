@@ -1,29 +1,28 @@
 "use client";
 
 import {
-  Item,
-  ItemWithPopulatedTranslations,
+  ItemFE,
+  ItemWithPopulatedTranslationsFE,
   SeperatedUserLanguages,
   SupportedLanguage,
 } from "@/lib/types";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Types } from "mongoose";
-import { FieldErrors, FieldValues } from "react-hook-form";
-import Flag from "react-world-flags";
 import { Button } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/20/solid";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { FieldErrors, FieldValues } from "react-hook-form";
+import Flag from "react-world-flags";
 
 import { FormErrors } from "../../ui/FormErrors";
 import AddItemDialog from "./AddItemDialog";
 import MinusIcon from "./MinusIcon";
 
 interface ManageTranslationsProps {
-  item: Omit<ItemWithPopulatedTranslations, "_id">;
+  item: ItemWithPopulatedTranslationsFE;
   itemLanguage: SupportedLanguage;
   setValue: Function;
   errors: FieldErrors<FieldValues>;
-  allTranslations: Partial<Record<SupportedLanguage, Item[]>> | undefined;
-  visibleTranslations: Partial<Record<SupportedLanguage, Item[]>> | undefined;
+  allTranslations: Partial<Record<SupportedLanguage, ItemFE[]>>;
+  visibleTranslations: Partial<Record<SupportedLanguage, ItemFE[]>> | undefined;
   seperatedUserLanguages: SeperatedUserLanguages;
 }
 
@@ -121,13 +120,13 @@ export default function ManageTranslations({
 }
 
 function removeTranslationById(
-  visibleTranslations: Partial<Record<SupportedLanguage, Item[]>>,
-  idToRemove: Types.ObjectId,
+  visibleTranslations: Partial<Record<SupportedLanguage, ItemFE[]>>,
+  idToRemove: string,
   setTranslations: Dispatch<
-    SetStateAction<Partial<Record<SupportedLanguage, Item[]>>>
+    SetStateAction<Partial<Record<SupportedLanguage, ItemFE[]>>>
   >
 ) {
-  const updatedTranslations: Partial<Record<SupportedLanguage, Item[]>> = {};
+  const updatedTranslations: Partial<Record<SupportedLanguage, ItemFE[]>> = {};
 
   Object.keys(visibleTranslations).forEach((language) => {
     const key = language as SupportedLanguage;
@@ -144,8 +143,8 @@ function removeTranslationById(
 }
 
 function getTouchedTranslations(
-  translations: Partial<Record<SupportedLanguage, Item[]>>,
-  allTranslations: Partial<Record<SupportedLanguage, Item[]>> | undefined,
+  translations: Partial<Record<SupportedLanguage, ItemFE[]>>,
+  allTranslations: Partial<Record<SupportedLanguage, ItemFE[]>>,
   languagesUserIsLearning: SupportedLanguage[]
 ) {
   if (!allTranslations) return translations;
@@ -155,7 +154,7 @@ function getTouchedTranslations(
   );
 
   const translationsUserHasNotTouched: Partial<
-    Record<SupportedLanguage, Item[]>
+    Record<SupportedLanguage, ItemFE[]>
   > = {};
   languagesUserHasNotTouched.forEach(
     (lang) =>

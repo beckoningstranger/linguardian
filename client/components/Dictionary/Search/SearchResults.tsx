@@ -3,13 +3,13 @@
 import Link from "next/link";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 
-import SearchResultItem from "./SearchResultItem";
 import { updateRecentDictionarySearches } from "@/lib/actions";
 import paths from "@/lib/paths";
-import { DictionarySearchResult } from "@/lib/types";
+import { ItemFE } from "@/lib/types";
+import SearchResultItem from "./SearchResultItem";
 
 interface SearchResultsProps {
-  results: DictionarySearchResult[];
+  results: ItemFE[];
   getFlagCode: Function;
   mode:
     | "searchResultIsTranslation"

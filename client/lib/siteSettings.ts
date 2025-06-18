@@ -5,8 +5,9 @@ import {
   type LanguageFeatures,
   type LearningMode,
   type SRSettings,
-  type SupportedLanguage,
 } from "./types";
+
+export const supportedLanguageCodes = ["DE", "EN", "FR", "CN"] as const;
 
 export const allTags = [
   "colloquial",
@@ -74,7 +75,7 @@ const frenchTags = {
   forAll: [...allTagsSorted.forAll, "Belgian French" as Tag],
 };
 
-const languageFeatures: LanguageFeatures[] = [
+const languageFeatures: readonly LanguageFeatures[] = [
   {
     langName: "German",
     langCode: "DE",
@@ -158,7 +159,7 @@ const languageFeatures: LanguageFeatures[] = [
     hasTones: false,
     partsOfSpeech: allPartsOfSpeech,
     tags: allTagsSorted,
-  } as const,
+  },
   {
     langName: "French",
     langCode: "FR",
@@ -231,7 +232,7 @@ const languageFeatures: LanguageFeatures[] = [
     hasTones: false,
     partsOfSpeech: allPartsOfSpeech,
     tags: frenchTags,
-  } as const,
+  },
   {
     langName: "English",
     langCode: "EN",
@@ -290,7 +291,7 @@ const languageFeatures: LanguageFeatures[] = [
     requiresHelperKeys: [],
     partsOfSpeech: allPartsOfSpeech,
     tags: allTagsSorted,
-  } as const,
+  },
   {
     langName: "Chinese",
     langCode: "CN",
@@ -346,7 +347,7 @@ const languageFeatures: LanguageFeatures[] = [
     requiresHelperKeys: [],
     partsOfSpeech: allPartsOfSpeech,
     tags: allTagsSorted,
-  } as const,
+  },
 ] as const;
 
 const defaultSRSettings: SRSettings = {
@@ -377,12 +378,9 @@ const learningModes: LearningMode[] = [
   "visual",
 ] as const;
 
-const supportedLanguages: SupportedLanguage[] = [
-  "DE",
-  "EN",
-  "FR",
-  "CN",
-] as const;
+const supportedLanguages = languageFeatures.map(
+  (language) => language.langCode
+);
 
 const showLanguageSelectorOnlyOn: string[] = supportedLanguages.flatMap(
   (lang) =>

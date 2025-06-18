@@ -356,10 +356,6 @@ async function linkItemsToTheirLemmas(
   });
 }
 
-interface FetchedItem extends Item {
-  _id: Types.ObjectId;
-}
-
 async function addItemsToList(
   harvestedItems: ParsedItem[],
   newListId: Types.ObjectId,
@@ -372,7 +368,7 @@ async function addItemsToList(
           name: item.name,
         },
         { _id: 1 }
-      )) as FetchedItem;
+      )) as Item;
       if (itemInDatabase) {
         const itemId = itemInDatabase._id;
         await Lists.findByIdAndUpdate(
@@ -404,7 +400,7 @@ async function defineUnitOrder(newListId: Types.ObjectId) {
 
 function filterOutUndefinedTranslations(
   translations: Partial<Record<SupportedLanguage, string[]>> | undefined,
-  supportedLanguages: SupportedLanguage[]
+  supportedLanguages: readonly SupportedLanguage[]
 ): Partial<Record<SupportedLanguage, string[]>> {
   const translationObject: Partial<Record<SupportedLanguage, string[]>> = {};
   supportedLanguages?.forEach((lang) => {

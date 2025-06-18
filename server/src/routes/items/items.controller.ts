@@ -1,18 +1,21 @@
 import { Request, Response } from "express";
-import { formatZodErrors } from "../../lib/helperFunctions.js";
+import {
+  formatZodErrors,
+  transformItemFromFEToBE,
+} from "../../lib/helperFunctions.js";
 import { siteSettings } from "../../lib/siteSettings.js";
 import {
   ItemWithPopulatedTranslations,
   SupportedLanguage,
 } from "../../lib/types.js";
-import { itemSchemaWithPopulatedTranslations } from "../../lib/validations.js";
+import { itemSchemaWithPopulatedTranslationsFE } from "../../lib/validations.js";
 import {
   addTranslationBySlug,
   editOrCreateBySlug,
   findItemsByName,
   getAllSlugsForLanguage,
-  getFullyPopulatedItemBySlug,
   getItemBySlug,
+  getPopulatedItemBySlug,
   removeTranslationBySlug,
 } from "../../models/items.model.js";
 
@@ -26,10 +29,7 @@ export async function httpGetItemBySlug(req: Request, res: Response) {
     .json({ message: `Error getting item with slug ${slug}: Item not found` });
 }
 
-export async function httpGetFullyPopulatedItemBySlug(
-  req: Request,
-  res: Response
-) {
+export async function httpGetPopulatedItemBySlug(req: Request, res: Response) {
   const slug = req.params.slug;
   let userLanguages = req.params.userLanguages.split(
     ","
@@ -37,7 +37,7 @@ export async function httpGetFullyPopulatedItemBySlug(
   if (req.params.userLanguages === "undefined")
     userLanguages = [] as SupportedLanguage[];
 
-  const response = await getFullyPopulatedItemBySlug(slug, userLanguages);
+  const response = await getPopulatedItemBySlug(slug, userLanguages);
   if (!response)
     return res
       .status(404)
@@ -81,52 +81,55 @@ export async function httpEditOrCreateItem(req: Request, res: Response) {
     data: validatedItem,
     success,
     error,
-  } = itemSchemaWithPopulatedTranslations.safeParse(item);
+  } = itemSchemaWithPopulatedTranslationsFE.safeParse(item);
 
   if (!success) {
     const formattedErrors = formatZodErrors(error.format());
     return res.status(400).json({ errors: formattedErrors });
   }
 
-  const otherAffectedItems: any[] = [];
-  siteSettings.supportedLanguages.map((lang) =>
-    validatedItem.translations[lang]?.forEach((item) =>
-      otherAffectedItems.push(item)
-    )
+  const serverItem = transformItemFromFEToBE(validatedItem);
+
+  const hasOtherAffectedItems = siteSettings.supportedLanguages.some(
+    (lang) => (serverItem.translations[lang]?.length ?? 0) > 0
   );
 
-  const updateReponses =
-    otherAffectedItems.length > 0
-      ? await updateRelatedItems(validatedItem)
-      : true;
+  const updateResponses = hasOtherAffectedItems
+    ? await updateRelatedItems(serverItem)
+    : true;
 
-  const response = await editOrCreateBySlug(validatedItem, slug);
-  if (updateReponses && response) return res.status(201).json(response);
+  const response = await editOrCreateBySlug(serverItem, slug);
+  if (updateResponses && response) return res.status(201).json(response);
   return res
     .status(500)
     .json({ error: "Internal server error, could not create/edit item" });
 }
 
-async function updateRelatedItems(
-  item: Omit<ItemWithPopulatedTranslations, "_id">
-) {
-  const oldItem = await getFullyPopulatedItemBySlug(
+async function updateRelatedItems(item: ItemWithPopulatedTranslations) {
+  const oldItem = await getPopulatedItemBySlug(
     item.slug,
     siteSettings.supportedLanguages
   );
+
+  if (!oldItem) {
+    console.warn("Could not find old item");
+    return false;
+  }
 
   const { added, removed, areEqual } = translationObjectsDiff(oldItem, item);
   const promises: Promise<any>[] = [];
   if (areEqual) return true;
   if (added)
     added.forEach((slug) =>
-      promises.push(addTranslationBySlug(oldItem._id, slug))
+      promises.push(addTranslationBySlug(oldItem._id.toString(), slug))
     );
   if (removed)
     removed.forEach((slug) =>
-      promises.push(removeTranslationBySlug(oldItem._id, slug))
+      promises.push(removeTranslationBySlug(oldItem._id.toString(), slug))
     );
-  return await Promise.all(promises);
+
+  await Promise.all(promises);
+  return true;
 }
 
 function translationObjectsDiff(

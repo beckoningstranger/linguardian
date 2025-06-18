@@ -96,15 +96,6 @@ const itemSchema = new Schema<Item>(
     tags: {
       type: [String],
     },
-    relevance: {
-      type: [Schema.Types.ObjectId],
-    },
-    collocations: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Item",
-      },
-    ],
   },
   { strict: true }
 );

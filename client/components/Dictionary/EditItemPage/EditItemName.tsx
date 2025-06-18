@@ -1,14 +1,14 @@
 import { Control, Controller, FieldErrors, FieldValues } from "react-hook-form";
 
-import StyledInput from "@/components/ui/StyledInput";
-import { ItemWithPopulatedTranslations } from "@/lib/types";
 import { FormErrors } from "@/components/ui/FormErrors";
+import StyledInput from "@/components/ui/StyledInput";
+import { ItemWithPopulatedTranslationsFE } from "@/lib/types";
 
 interface EditItemNameProps {
   control: Control<
-    ItemWithPopulatedTranslations,
+    ItemWithPopulatedTranslationsFE,
     any,
-    ItemWithPopulatedTranslations
+    ItemWithPopulatedTranslationsFE
   >;
   itemName: string;
   isNewItem: boolean;

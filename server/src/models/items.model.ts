@@ -1,5 +1,9 @@
 import { Types } from "mongoose";
-import { normalizeString, slugifyString } from "../lib/helperFunctions.js";
+import {
+  normalizeString,
+  slugifyString,
+  toObjectId,
+} from "../lib/helperFunctions.js";
 import { siteSettings } from "../lib/siteSettings.js";
 import {
   Item,
@@ -9,6 +13,7 @@ import {
   Tag,
 } from "../lib/types.js";
 import Items from "./item.schema";
+import { itemSchemaWithPopulatedTranslations } from "../lib/validations.js";
 
 export async function getItemBySlug(slug: string) {
   return await Items.findOne({ slug });
@@ -18,30 +23,17 @@ export async function getItemById(_id: Types.ObjectId) {
   return await Items.findOne({ _id });
 }
 
-export async function getFullyPopulatedItemBySlug(
+export async function getPopulatedItemBySlug(
   slug: string,
-  userLanguages: SupportedLanguage[]
-) {
+  userLanguages: readonly SupportedLanguage[]
+): Promise<ItemWithPopulatedTranslations | null> {
   const paths = userLanguages.map((lang) => ({
     path: "translations." + lang,
-    select: `name language slug languageName flagCode`,
   }));
-  const item = (await Items.findOne({ slug }).populate(paths).exec()) as Omit<
-    Item,
-    "translations"
-  > & {
-    _id: Types.ObjectId;
-    translations: {
-      [key in SupportedLanguage]?: {
-        _id: Types.ObjectId;
-        name: string;
-        language: string;
-        slug: string;
-        languageName: string;
-      }[];
-    };
-  };
-  return item;
+
+  const retrievedItem = await Items.findOne({ slug }).populate(paths).lean();
+  if (!retrievedItem) return null;
+  return itemSchemaWithPopulatedTranslations.parse(retrievedItem);
 }
 
 export async function getAllSlugsForLanguage(language: SupportedLanguage) {
@@ -56,9 +48,7 @@ export async function findItemsByName(
   return await Items.find({
     normalizedName: { $regex: normalizedLowerCaseQuery },
     language: { $in: languages },
-  }).select(
-    "_id normalizedName name slug partOfSpeech IPA definition language gender"
-  );
+  });
 }
 
 export async function editOrCreateBySlug(
@@ -141,24 +131,29 @@ async function filterOutInvalidTags(
 }
 
 export async function removeTranslationBySlug(
-  translationToRemove: Types.ObjectId,
+  translationToRemove_id: string,
   slug: string
 ) {
-  const language = (await Items.findOne({ _id: translationToRemove }))
+  const translationsObjectId = toObjectId(translationToRemove_id);
+  const language = (await Items.findOne({ _id: translationsObjectId }))
     ?.language;
   return await Items.updateOne(
     { slug },
-    { $pull: { [`translations.${language}`]: translationToRemove } }
+    { $pull: { [`translations.${language}`]: translationsObjectId } }
   );
 }
 
 export async function addTranslationBySlug(
-  translationToAdd: Types.ObjectId,
+  translationToAdd_id: string,
   slug: string
 ) {
   const language = (await Items.findOne({ slug }))?.language;
   return await Items.updateOne(
     { slug },
-    { $addToSet: { [`translations.${language}`]: translationToAdd } }
+    {
+      $addToSet: {
+        [`translations.${language}`]: toObjectId(translationToAdd_id),
+      },
+    }
   );
 }

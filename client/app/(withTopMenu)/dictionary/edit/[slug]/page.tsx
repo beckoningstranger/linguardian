@@ -4,6 +4,7 @@ import {
   getAllUserLanguages,
   getSeperatedUserLanguages,
 } from "@/lib/helperFunctionsServer";
+import { itemSchemaWithPopulatedTranslationsFE } from "@/lib/validations";
 import { Metadata } from "next";
 
 interface EditPageProps {
@@ -24,6 +25,7 @@ export default async function EditPage({
 }: EditPageProps) {
   // This needs its own background picture. Instead of the hands just holding a book, it should be the same thing but writing in the book.
 
+  // This is unnecessary. If we just send user id the backend can get this and send it to us, saving time
   const [allUserLanguages, seperatedUserLanguages] = await Promise.all([
     getAllUserLanguages(),
     getSeperatedUserLanguages(),
@@ -36,9 +38,11 @@ export default async function EditPage({
     ),
   ]);
 
+  const parsedItem = itemSchemaWithPopulatedTranslationsFE.parse(item);
+
   return (
     <EditOrCreateItem
-      item={item}
+      item={parsedItem}
       seperatedUserLanguages={seperatedUserLanguages}
       comingFrom={comingFrom}
     />

@@ -1,10 +1,11 @@
 import express from "express";
+
 import {
   httpEditOrCreateItem,
   httpFindItemsByName,
   httpGetAllSlugsForLanguage,
-  httpGetFullyPopulatedItemBySlug,
   httpGetItemBySlug,
+  httpGetPopulatedItemBySlug,
 } from "./items.controller";
 
 export const itemsRouter = express.Router();
@@ -15,7 +16,7 @@ itemsRouter.get("/getItemBySlug/:slug", httpGetItemBySlug);
 
 itemsRouter.get(
   "/getPopulatedItemBySlug/:slug/:userLanguages",
-  httpGetFullyPopulatedItemBySlug
+  httpGetPopulatedItemBySlug
 );
 
 itemsRouter.get(

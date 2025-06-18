@@ -4,7 +4,6 @@ import { SupportedLanguage, User } from "../lib/types.js";
 import { languageWithFlagAndNameSchema } from "./helperSchemas";
 
 const supportedLanguages = siteSettings.supportedLanguages;
-
 const userSchema = new Schema<User>(
   {
     id: { type: String, required: true, unique: true },
@@ -101,7 +100,11 @@ const userSchema = new Schema<User>(
       },
       default: {},
     },
-    recentDictionarySearches: { type: [Object], required: true, default: [] },
+    recentDictionarySearches: {
+      type: [Object],
+      required: true,
+      default: [],
+    },
     activeLanguageAndFlag: {
       type: languageWithFlagAndNameSchema,
       required: false,

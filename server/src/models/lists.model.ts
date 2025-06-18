@@ -1,7 +1,11 @@
 import { Types } from "mongoose";
+
+import { siteSettings } from "../lib/siteSettings.js";
 import {
+  FullyPopulatedList,
   Item,
-  ItemWithPopulatedTranslations,
+  ItemFE,
+  ItemWithPopulatedTranslationsFE,
   LearningMode,
   List,
   ListDetails,
@@ -9,13 +13,10 @@ import {
   SupportedLanguage,
 } from "../lib/types.js";
 import Lists from "./list.schema";
-import { siteSettings } from "../lib/siteSettings.js";
 
 export async function getList(listNumber: number) {
   try {
-    return (await Lists.findOne({ listNumber })) as
-      | (List & { _id: Types.ObjectId })
-      | undefined;
+    return await Lists.findOne({ listNumber });
   } catch (err) {
     console.error(`Error getting list with listNumber ${listNumber} `);
   }
@@ -24,7 +25,7 @@ export async function getList(listNumber: number) {
 export async function getPopulatedListByObjectId(listId: Types.ObjectId) {
   try {
     return await Lists.findOne({ _id: listId }).populate<{
-      units: { unitName: string; item: Item }[];
+      units: { unitName: string; item: ItemFE }[];
     }>({ path: "units.item" });
   } catch (err) {
     console.error(`Error getting populated list with _id ${listId}`);
@@ -44,20 +45,51 @@ export async function getPopulatedListByListNumber(listNumber: number) {
 export async function getFullyPopulatedListByListNumber(
   userNative: SupportedLanguage | undefined,
   listNumber: number
-) {
+): Promise<FullyPopulatedList | undefined> {
+  if (!userNative) return undefined;
+
   try {
-    return await Lists.findOne({ listNumber }).populate<{
-      units: { unitName: string; item: ItemWithPopulatedTranslations }[];
+    const result = await Lists.findOne({ listNumber }).populate<{
+      units: {
+        unitName: string;
+        item: ItemWithPopulatedTranslationsFE;
+      }[];
     }>({
       path: "units.item",
-      populate: { path: "translations." + userNative },
+      populate: {
+        path: `translations.${userNative}`,
+      },
     });
+
+    return result ?? undefined;
   } catch (err) {
     console.error(
-      `Error getting fully populated list with listNumber ${listNumber}`
+      `Error getting fully populated list with listNumber ${listNumber}:`,
+      err
     );
   }
 }
+
+// export async function getFullyPopulatedListByListNumber(
+//   userNative: SupportedLanguage | undefined,
+//   listNumber: number
+// ): Promise<FullyPopulatedList | undefined> {
+//   try {
+//     return await Lists.findOne({ listNumber }).populate<{
+//       units: {
+//         unitName: string;
+//         item: ItemWithPopulatedTranslations;
+//       }[];
+//     }>({
+//       path: "units.item",
+//       populate: { path: "translations." + userNative },
+//     });
+//   } catch (err) {
+//     console.error(
+//       `Error getting fully populated list with listNumber ${listNumber}`
+//     );
+//   }
+// }
 
 export async function getAllListsForLanguage(language: SupportedLanguage) {
   try {
@@ -126,11 +158,15 @@ export async function updateUnlockedReviewModes(listId: Types.ObjectId) {
   // Need to check for more review modes
 }
 
-export async function getListNameAndUnitOrder(listNumber: number) {
-  return (await Lists.findOne(
-    { listNumber: listNumber },
-    { _id: 0, name: 1, unitOrder: 1 }
-  )) as { name: string; unitOrder: string[] };
+export async function getListNameAndUnitOrder(
+  listNumber: number
+): Promise<{ name: string; unitOrder: string[] } | null> {
+  const list = await Lists.findOne({ listNumber })
+    .select("name unitOrder")
+    .lean();
+  if (!list) return null;
+  const { name, unitOrder } = list;
+  return { name, unitOrder };
 }
 
 export async function getAmountOfUnits(listNumber: number) {

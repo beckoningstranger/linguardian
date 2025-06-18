@@ -3,7 +3,7 @@ import { useRef } from "react";
 import {
   Case,
   Gender,
-  ItemWithPopulatedTranslations,
+  ItemWithPopulatedTranslationsFE,
   LanguageFeatures,
   MoreReviewsMode,
 } from "@/lib/types";
@@ -12,7 +12,7 @@ import MoreReviews from "./MoreReviews";
 interface GenderCaseReviewProps {
   mode: MoreReviewsMode;
   targetLanguageFeatures: LanguageFeatures;
-  item: ItemWithPopulatedTranslations;
+  item: ItemWithPopulatedTranslationsFE;
   solution: string;
   setSolution: Function;
   setReviewStatus: Function;

@@ -2,9 +2,9 @@
 
 import paths from "@/lib/paths";
 import {
-  DictionarySearchResult,
+  ItemFE,
   ItemForServer,
-  ItemWithPopulatedTranslations,
+  ItemWithPopulatedTranslationsFE,
   LanguageWithFlagAndName,
   LearningMode,
   ListAndUnitData,
@@ -13,7 +13,6 @@ import {
   RegisterSchema,
   SupportedLanguage,
 } from "@/lib/types";
-import { Types } from "mongoose";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getList } from "./fetchData";
@@ -119,14 +118,14 @@ export async function findItems(languages: SupportedLanguage[], query: string) {
       `${server}/items/findItems/${languages}/${query}`
     );
     if (!response.ok) throw new Error(response.statusText);
-    return (await response.json()) as DictionarySearchResult[];
+    return (await response.json()) as ItemFE[];
   } catch (err) {
     console.error(`Error looking up items for query ${query}: ${err}`);
   }
 }
 
 export async function submitItemCreateOrEdit(
-  item: ItemWithPopulatedTranslations,
+  item: ItemWithPopulatedTranslationsFE,
   slug: string,
   addToThisList?: ListAndUnitData
 ) {
@@ -188,7 +187,7 @@ export async function updateRecentDictionarySearches(slug: string) {
 
 export async function addItemToList(
   listData: ListAndUnitData,
-  clickeditem: ItemWithPopulatedTranslations
+  clickeditem: ItemWithPopulatedTranslationsFE
 ) {
   await verifyUserIsAuthorAndGetList(
     listData.listNumber,
@@ -216,7 +215,7 @@ export async function addItemToList(
 
 export async function removeItemFromList(
   listData: ListAndUnitData,
-  itemId: Types.ObjectId
+  itemId: string
 ) {
   const list = await getList(listData.listNumber);
   const [user] = await Promise.all([getUserOnServer()]);

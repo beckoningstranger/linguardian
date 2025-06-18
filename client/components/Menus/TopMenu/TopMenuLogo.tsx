@@ -30,10 +30,11 @@ export default function TopMenuLogo({}: TopMenuLogoProps) {
         >
           <div className="inline">L</div>
           <div
-            className={`absolute bottom-2.5 left-4  text-lsm  phone:bottom-[16px] phone:left-5 tablet:bottom-2 tablet:left-5 tablet:text-lmd hover:before:absolute tablet:hover:before:-bottom-1 hover:before:-bottom-2.5 hover:before:left-[-20px] hover:before:h-[2px] hover:before:w-[calc(100%+20px)] hover:before:bg-current ${
+            className={cn(
+              "absolute bottom-2.5 left-4 text-lsm phone:bottom-[16px] phone:left-5 tablet:bottom-2 tablet:left-5 tablet:text-lmd hover:before:absolute tablet:hover:before:-bottom-0 desktop:hover:before:-bottom-2.5 hover:before:-bottom-2.5 hover:before:left-[-20px] hover:before:h-[2px] hover:before:w-[calc(100%+20px)] hover:before:bg-current",
               currentPath.includes("dashboard") &&
-              " before:absolute before:-bottom-2.5 before:left-[-20px] before:h-[2px] before:w-[calc(100%+20px)] before:bg-current"
-            }`}
+                "before:absolute desktop:before:-bottom-2.5 tablet:before:-bottom-0 before:left-[-20px] before:h-[2px] before:w-[calc(100%+20px)] before:bg-current"
+            )}
           >
             inguardian
           </div>

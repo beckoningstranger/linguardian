@@ -1,19 +1,19 @@
 import Flag from "react-world-flags";
 
+import { cn } from "@/lib/helperFunctionsClient";
 import {
-  ItemWithPopulatedTranslations,
+  ItemWithPopulatedTranslationsFE,
   LanguageWithFlagAndName,
 } from "@/lib/types";
+import ItemContext from "./ItemContext";
+import ItemIPA from "./ItemIPA";
 import ItemPartOfSpeech from "./ItemPartOfSpeech";
+import ItemPluralForms from "./ItemPluralForms";
 import ItemSection from "./ItemSection";
 import ItemTranslations from "./ItemTranslations";
-import ItemContext from "./ItemContext";
-import ItemPluralForms from "./ItemPluralForms";
-import ItemIPA from "./ItemIPA";
-import { cn } from "@/lib/helperFunctionsClient";
 
 interface ItemDetailsProps {
-  item: ItemWithPopulatedTranslations;
+  item: ItemWithPopulatedTranslationsFE;
   allUserLanguages: LanguageWithFlagAndName[];
   forItemPresentation?: boolean;
 }

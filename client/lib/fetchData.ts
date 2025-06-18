@@ -1,8 +1,8 @@
 import { allUsernameSlugs, nextListNumber } from "@/dataForBuild";
 import {
-  DictionarySearchResult,
   FullyPopulatedList,
-  ItemWithPopulatedTranslations,
+  ItemFE,
+  ItemWithPopulatedTranslationsFE,
   LearningDataForLanguage,
   LearningMode,
   List,
@@ -149,7 +149,7 @@ export async function getPopulatedItemBySlug(
     );
     if (!response.ok) throw new Error(response.statusText);
     const responseData = await response.json();
-    return responseData as ItemWithPopulatedTranslations;
+    return responseData as ItemWithPopulatedTranslationsFE;
   } catch (err) {
     console.error(`Error looking up item with slug ${slug}: ${err}`);
   }
@@ -269,7 +269,7 @@ export async function getRecentDictionarySearches() {
     const responseData = await response.json();
     throw new Error(responseData?.error);
   }
-  return (await response.json()) as DictionarySearchResult[];
+  return (await response.json()) as ItemFE[];
 }
 
 export async function getUserByEmail(email: string) {

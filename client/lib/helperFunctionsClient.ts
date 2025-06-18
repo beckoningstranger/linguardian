@@ -1,7 +1,6 @@
 import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-
-import { Item } from "./types";
+import { ItemFE } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -35,7 +34,7 @@ export function capitalizeString(string: string) {
 }
 
 export function getUnitInformation(
-  units: { unitName: string; item: Item }[],
+  units: { unitName: string; item: ItemFE }[],
   unitName: string,
   learnedIds: string[] | undefined
 ) {

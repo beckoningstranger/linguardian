@@ -6,11 +6,10 @@ import { useState } from "react";
 
 import { updateRecentDictionarySearches } from "@/lib/actions";
 import paths from "@/lib/paths";
-import { ListAndUnitData } from "@/lib/types";
+import { ItemPlusLearningInfo, ListAndUnitData } from "@/lib/types";
 import { MobileMenuContextProvider } from "../../../context/MobileMenuContext";
 import DeleteItemButton from "../EditUnit/DeleteItemButton";
 import UnitItemText from "./UnitItemText";
-import { ItemPlusLearningInfo } from "./UnitItems";
 
 interface UnitItemProps {
   item: ItemPlusLearningInfo;

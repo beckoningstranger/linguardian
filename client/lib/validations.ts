@@ -1,14 +1,15 @@
-import { Types } from "mongoose";
 import { z } from "zod";
 
-import { Item, SupportedLanguage } from "./types";
 import {
   allCases,
   allGenders,
   allPartsOfSpeech,
   allTags,
+  supportedLanguageCodes,
 } from "./siteSettings";
+import { Types } from "mongoose";
 
+export const supportedLanguageSchema = z.enum(supportedLanguageCodes);
 export const tagSchema = z.enum(allTags);
 export const genderSchema = z.preprocess(
   (val) => (val === "" || val == null ? undefined : val),
@@ -37,7 +38,7 @@ const sentenceRegexMessage =
   "Only letters, spaces, and basic punctuation (!?¿()':.,-) are allowed";
 const ipaRegex = /^[\p{L}\p{M}\p{S}ˈˌː‿\s]+$/u;
 
-const emailSchema = z
+export const emailSchema = z
   .string()
   .email()
   .min(7)
@@ -93,10 +94,13 @@ export const registerSchema = z
         data.id.slice(0, 4) !== "cred" || data.confirmPassword !== undefined
       );
     },
-    { message: "You must enter your password twice", path: ["confirmPassword"] }
+    {
+      message: "You must enter your password twice",
+      path: ["confirmPassword"],
+    }
   );
 
-const ObjectIdSchema = z.custom<Types.ObjectId>(
+export const objectIdSchema = z.custom<Types.ObjectId>(
   (value) => value instanceof Types.ObjectId,
   {
     message: "Invalid ObjectId",
@@ -104,17 +108,18 @@ const ObjectIdSchema = z.custom<Types.ObjectId>(
 );
 
 const itemSchemaWithoutTranslations = z.object({
+  _id: objectIdSchema,
   name: z
     .string()
     .nonempty("Please enter an item name")
     .regex(sentenceRegex, sentenceRegexMessage)
     .max(60, "Item names can be no longer than 60 characters"),
   normalizedName: z.string().max(60),
-  language: z.custom<SupportedLanguage>(),
+  language: supportedLanguageSchema,
   languageName: z.string(),
   flagCode: z.string(),
   partOfSpeech: partOfSpeechSchema,
-  lemmas: ObjectIdSchema.array().optional(),
+  lemmas: objectIdSchema.array().optional(),
   definition: z
     .string()
     .regex(sentenceRegex, sentenceRegexMessage)
@@ -191,13 +196,11 @@ const itemSchemaWithoutTranslations = z.object({
       })
     )
     .optional(),
-  relevance: ObjectIdSchema.optional(),
-  collocations: ObjectIdSchema.optional(),
 });
 
-const parsedItemSpecificSchema = z.object({
+export const parsedItemSpecificSchema = z.object({
   translations: z
-    .custom<Partial<Record<SupportedLanguage, string[]>>>()
+    .record(supportedLanguageSchema, z.array(z.string()))
     .optional(),
   unit: z
     .string()
@@ -205,23 +208,165 @@ const parsedItemSpecificSchema = z.object({
     .optional(),
 });
 
-export const parsedItemSchema = itemSchemaWithoutTranslations.merge(
-  parsedItemSpecificSchema
-);
+export const parsedItemSchema = itemSchemaWithoutTranslations
+  .merge(parsedItemSpecificSchema)
+  .omit({ _id: true });
 
-const translationsSchema = z.object({
+export const translationsSchema = z.object({
   translations: z
-    .custom<Partial<Record<SupportedLanguage, Types.ObjectId[]>>>()
+    .record(supportedLanguageSchema, z.array(objectIdSchema))
     .optional(),
 });
-const populatedTranslationsSchema = z.object({
-  translations: z.custom<Partial<Record<SupportedLanguage, Item[]>>>(),
+
+export const translationsSchemaFE = z.object({
+  translations: z
+    .record(supportedLanguageSchema, z.array(z.string()))
+    .optional(),
+});
+
+export const populatedTranslationsSchema = z.object({
+  translations: z.record(
+    supportedLanguageSchema,
+    z.array(itemSchemaWithoutTranslations)
+  ),
+});
+
+export const populatedTranslationsSchemaFE = z.object({
+  translations: z.record(
+    supportedLanguageSchema,
+    z.array(
+      itemSchemaWithoutTranslations
+        .omit({ _id: true, lemmas: true })
+        .extend({ _id: z.string(), lemmas: z.array(z.string()) })
+    )
+  ),
 });
 
 export const itemSchemaWithTranslations =
   itemSchemaWithoutTranslations.merge(translationsSchema);
+
+export const itemSchemaWithTranslationsFE = itemSchemaWithoutTranslations
+  .omit({ _id: true, lemmas: true })
+  .extend({ _id: z.string(), lemmas: z.array(z.string()) })
+  .merge(
+    z.object({
+      translations: z
+        .record(supportedLanguageSchema, z.array(z.string()))
+        .optional(),
+    })
+  );
+
 export const itemSchemaWithPopulatedTranslations =
   itemSchemaWithoutTranslations.merge(populatedTranslationsSchema);
+
+export const itemSchemaWithPopulatedTranslationsFE =
+  itemSchemaWithoutTranslations
+    .omit({ _id: true, lemmas: true })
+    .extend({ _id: z.string(), lemmas: z.array(z.string()) })
+    .merge(populatedTranslationsSchemaFE);
+
+export const languageWithFlagAndNameSchema = z.object({
+  code: supportedLanguageSchema,
+  flag: z.string(),
+  name: z.string(),
+});
+
+export const learnedItemSchema = z.object({
+  id: z.string(),
+  level: z.number(),
+  nextReview: z.number(),
+});
+
+export const SRSettingsSchema = z.object({
+  reviewTimes: z.object({
+    1: z.number(),
+    2: z.number(),
+    3: z.number(),
+    4: z.number(),
+    5: z.number(),
+    6: z.number(),
+    7: z.number(),
+    8: z.number(),
+    9: z.number(),
+    10: z.number(),
+  }),
+  itemsPerSession: z.object({
+    learning: z.number(),
+    reviewing: z.number(),
+  }),
+});
+
+export const recentDictionarySearchesSchema = z.object({
+  itemId: objectIdSchema,
+  dateSearched: z.date(),
+});
+
+export const learnedListsSchema = z.record(
+  supportedLanguageSchema,
+  z.array(z.number())
+);
+
+export const learnedItemsSchema = z.record(
+  supportedLanguageSchema,
+  z.array(learnedItemSchema)
+);
+
+export const ignoredItemsSchema = z.record(
+  supportedLanguageSchema,
+  z.array(objectIdSchema)
+);
+
+export const customSRSettingsSchema = z.record(
+  supportedLanguageSchema,
+  SRSettingsSchema
+);
+
+export const IPASchema = z.object({
+  help: z.string(),
+  consonants: z.array(z.string()),
+  vowels: z.array(z.string()),
+  rare: z.array(z.string()).optional(),
+  helperSymbols: z.array(z.string()),
+});
+
+export const userSchema = z.object({
+  id: z.string(),
+  username: z.string(),
+  usernameSlug: z.string(),
+  email: z.string().email(),
+  password: z.string().optional(),
+  image: z.string(),
+  native: languageWithFlagAndNameSchema,
+  learnedLanguages: z.array(languageWithFlagAndNameSchema),
+  learnedLists: learnedListsSchema,
+  learnedItems: learnedItemsSchema,
+  ignoredItems: ignoredItemsSchema,
+  customSRSettings: customSRSettingsSchema,
+  recentDictionarySearches: z.array(recentDictionarySearchesSchema),
+  activeLanguageAndFlag: languageWithFlagAndNameSchema.optional(),
+});
+
+export const sortedTagsSchema = z
+  .object({
+    forAll: z.array(tagSchema),
+  })
+  .catchall(z.array(tagSchema));
+
+export const languageFeaturesSchema = z.object({
+  langName: z.string(),
+  langCode: supportedLanguageSchema,
+  flagCode: z.string(),
+  requiresHelperKeys: z.array(z.string()),
+  hasGender: z.array(genderSchema),
+  hasCases: z.array(casesSchema),
+  hasRomanization: z.boolean(),
+  hasTones: z.boolean(),
+  ipa: IPASchema,
+  partsOfSpeech: z.array(partOfSpeechSchema).readonly(),
+  tags: sortedTagsSchema,
+});
+
+// HELPER FUNCTIONS - Should be moved probably, but then the file it moves to must be available on frontend also
 
 function createRegexWithMessage({
   nameOfString = "String",
@@ -251,3 +396,11 @@ function createRegexWithMessage({
 
   return [regex, message];
 }
+// const itemSchemaWithPopulatedTranslations = itemSchemaWithoutTranslations.merge(
+//   populatedTranslationsSchema
+// );
+
+// const itemSchemaWithTranslationsFrontend = itemSchemaWithTranslations.omit({
+//   _id: true,
+//   lemmas: true,
+// });

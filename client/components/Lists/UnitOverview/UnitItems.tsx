@@ -1,15 +1,16 @@
+import { cn } from "@/lib/helperFunctionsClient";
 import {
-  ItemWithPopulatedTranslations,
+  ItemPlusLearningInfo,
+  ItemWithPopulatedTranslationsFE,
   LearnedItem,
   ListAndUnitData,
   SupportedLanguage,
 } from "@/lib/types";
 import ListAddItemButton from "../EditUnit/ListAddItemButton";
 import UnitItem from "./UnitItem";
-import { cn } from "@/lib/helperFunctionsClient";
 
 interface UnitItemsProps {
-  unitItems: ItemWithPopulatedTranslations[];
+  unitItems: ItemWithPopulatedTranslationsFE[];
   allLearnedItems: LearnedItem[];
   userNative: SupportedLanguage;
   userIsAuthor: boolean;
@@ -17,12 +18,6 @@ interface UnitItemsProps {
   listAndUnitData: ListAndUnitData;
   userIsLearningThisList: boolean;
   editMode?: boolean;
-}
-
-export interface ItemPlusLearningInfo extends ItemWithPopulatedTranslations {
-  learned: boolean;
-  nextReview?: number;
-  level?: number;
 }
 
 export default function UnitItems({

@@ -3,17 +3,16 @@
 import { useMobileMenu } from "@/context/MobileMenuContext";
 import { removeItemFromList } from "@/lib/actions";
 import { ListAndUnitData } from "@/lib/types";
-import { Types } from "mongoose";
+import { Button } from "@headlessui/react";
 import { MouseEventHandler, useState } from "react";
 import toast from "react-hot-toast";
+import { TbTrash } from "react-icons/tb";
 import ConfirmCancelMobileMenu from "../../ConfirmCancelMobileMenu";
 import ConfirmCancelModal from "../../ConfirmCancelModal";
-import { TbTrash } from "react-icons/tb";
-import { Button } from "@headlessui/react";
 
 interface DeleteItemButtonProps {
   listAndUnitData: ListAndUnitData;
-  itemId: Types.ObjectId;
+  itemId: string;
   listName: string;
   itemName: string;
 }

@@ -3,11 +3,15 @@ import Flag from "react-world-flags";
 
 import paths from "@/lib/paths";
 import { siteSettings } from "@/lib/siteSettings";
-import { Item, LanguageWithFlagAndName, SupportedLanguage } from "@/lib/types";
+import {
+  ItemFE,
+  LanguageWithFlagAndName,
+  SupportedLanguage,
+} from "@/lib/types";
 import ItemSection from "./ItemSection";
 
 interface ItemTranslationsProps {
-  translations?: Partial<Record<SupportedLanguage, Item[]>>;
+  translations?: Partial<Record<SupportedLanguage, ItemFE[]>>;
   allUserLanguages: LanguageWithFlagAndName[];
   forItemPresentation?: boolean;
 }

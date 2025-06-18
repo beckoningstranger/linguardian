@@ -19,7 +19,7 @@ import {
   updateReviewedItems,
 } from "../../models/users.model.js";
 
-import { formatZodErrors } from "../../lib/helperFunctions.js";
+import { formatZodErrors, toObjectId } from "../../lib/helperFunctions.js";
 import { siteSettings } from "../../lib/siteSettings.js";
 import {
   ItemForServer,
@@ -302,7 +302,7 @@ export async function httpGetLearningSessionForList(
   const allItemsDueForReviewIncludedInListAndUnit =
     allItemsDueForReview?.filter((dueItem) =>
       sortedItemsInList.some((sortedItem) =>
-        sortedItem.item._id.equals(dueItem.id)
+        toObjectId(sortedItem.item._id).equals(dueItem.id)
       )
     );
 
@@ -326,7 +326,7 @@ export async function httpGetLearningSessionForList(
   const itemsToReview = sortedItems
     .filter((items) =>
       allLearnedItemIdsOfDueItems?.some((learnedItemId) =>
-        items.item._id.equals(learnedItemId)
+        toObjectId(items.item._id).equals(learnedItemId)
       )
     )
     .slice(0, sSRSettings.itemsPerSession.reviewing)
@@ -336,7 +336,7 @@ export async function httpGetLearningSessionForList(
     .filter(
       (items) =>
         !allLearnedItemIds?.some((learnedItemId) =>
-          items.item._id.equals(learnedItemId)
+          toObjectId(items.item._id).equals(learnedItemId)
         )
     )
     .slice(0, sSRSettings.itemsPerSession.learning)

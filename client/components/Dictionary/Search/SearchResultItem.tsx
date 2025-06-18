@@ -1,10 +1,9 @@
+import { ItemFE } from "@/lib/types";
 import Flag from "react-world-flags";
-
-import { DictionarySearchResult } from "@/lib/types";
 
 interface SearchResultItemProps {
   getFlagCode: Function;
-  result: DictionarySearchResult;
+  result: ItemFE;
 }
 
 export default function SearchResultItem({

@@ -1,36 +1,49 @@
 import { Types } from "mongoose";
 import { z } from "zod";
 import {
+  casesSchema,
+  genderSchema,
+  IPASchema,
   itemSchemaWithPopulatedTranslations,
+  itemSchemaWithPopulatedTranslationsFE,
   itemSchemaWithTranslations,
+  itemSchemaWithTranslationsFE,
+  languageFeaturesSchema,
+  languageWithFlagAndNameSchema,
+  learnedItemSchema,
   parsedItemSchema,
+  partOfSpeechSchema,
+  populatedTranslationsSchema,
+  populatedTranslationsSchemaFE,
+  recentDictionarySearchesSchema,
   registerSchema,
+  sortedTagsSchema,
+  SRSettingsSchema,
+  supportedLanguageSchema,
+  tagSchema,
+  translationsSchema,
+  translationsSchemaFE,
+  userSchema,
 } from "./validations";
-import {
-  allCases,
-  allGenders,
-  allPartsOfSpeech,
-  allTags,
-} from "./siteSettings";
 
-export type PartOfSpeech = (typeof allPartsOfSpeech)[number];
-export type Gender = (typeof allGenders)[number];
-export type Case = (typeof allCases)[number];
-export type Tag = (typeof allTags)[number];
+export type SupportedLanguage = z.infer<typeof supportedLanguageSchema>;
+export type PartOfSpeech = z.infer<typeof partOfSpeechSchema>;
+export type Gender = z.infer<typeof genderSchema>;
+export type Case = z.infer<typeof casesSchema>;
+export type Tag = z.infer<typeof tagSchema>;
+export type sortedTags = z.infer<typeof sortedTagsSchema>;
 
-export interface sortedTags {
-  forAll: Tag[];
-  [key: string]: Tag[];
-}
+export type Item = z.infer<typeof itemSchemaWithTranslations>;
+export type ItemFE = z.infer<typeof itemSchemaWithTranslationsFE>;
 
-export type Item = z.infer<typeof itemSchemaWithTranslations> & {
-  _id: Types.ObjectId;
-};
 export type ItemWithPopulatedTranslations = z.infer<
   typeof itemSchemaWithPopulatedTranslations
-> & { _id: Types.ObjectId };
+>;
+export type ItemWithPopulatedTranslationsFE = z.infer<
+  typeof itemSchemaWithPopulatedTranslationsFE
+>;
 
-export type ItemToLearn = ItemWithPopulatedTranslations & {
+export type ItemToLearn = ItemWithPopulatedTranslationsFE & {
   learningStep: number;
   increaseLevel: boolean;
 };
@@ -76,11 +89,11 @@ export interface List {
 }
 
 export type FullyPopulatedList = Omit<List, "units"> & {
-  units: { unitName: string; item: ItemWithPopulatedTranslations }[];
+  units: { unitName: string; item: ItemWithPopulatedTranslationsFE }[];
 };
 
 export type PopulatedList = Omit<List, "units"> & {
-  units: { unitName: string; item: Item }[];
+  units: { unitName: string; item: ItemFE }[];
 };
 
 export interface ListStats {
@@ -93,101 +106,25 @@ export interface ListStats {
 
 export type ListStatus = "review" | "add" | "practice";
 
-export type SupportedLanguage = "DE" | "EN" | "FR" | "CN";
+export type SRSettings = z.infer<typeof SRSettingsSchema>;
 
-export type SRSettings = {
-  reviewTimes: {
-    1: number;
-    2: number;
-    3: number;
-    4: number;
-    5: number;
-    6: number;
-    7: number;
-    8: number;
-    9: number;
-    10: number;
-  };
-  itemsPerSession: { learning: number; reviewing: number };
-};
-
-export interface IPA {
-  help: string;
-  consonants: string[];
-  vowels: string[];
-  rare?: string[];
-  helperSymbols: string[];
-}
-
-export interface LanguageFeatures {
-  langName: string;
-  langCode: SupportedLanguage;
-  flagCode: string;
-  requiresHelperKeys: string[];
-  hasGender: Gender[];
-  hasCases: Case[];
-  hasRomanization: boolean;
-  hasTones: boolean;
-  ipa: IPA;
-  partsOfSpeech: readonly PartOfSpeech[];
-  tags: sortedTags;
-}
+export type IPA = z.infer<typeof IPASchema>;
+export type LanguageFeatures = z.infer<typeof languageFeaturesSchema>;
 
 export interface GlobalSettings {
-  learningModes: LearningMode[];
-  supportedLanguages: SupportedLanguage[];
-  languageFeatures: LanguageFeatures[];
+  learningModes: readonly LearningMode[];
+  supportedLanguages: readonly SupportedLanguage[];
+  languageFeatures: readonly LanguageFeatures[];
   defaultSRSettings: SRSettings;
-  showLanguageSelectorOnlyOn: string[];
+  showLanguageSelectorOnlyOn: readonly string[];
 }
 
-export interface LearnedItem {
-  id: string;
-  level: number;
-  nextReview: number;
-}
+export type LearnedItem = z.infer<typeof learnedItemSchema>;
+export type User = z.infer<typeof userSchema>;
 
-export interface User {
-  id: string;
-  username: string;
-  usernameSlug: string;
-  email: string;
-  password?: string;
-  image: string;
-  native: LanguageWithFlagAndName;
-  learnedLanguages: LanguageWithFlagAndName[];
-  learnedLists: Partial<Record<SupportedLanguage, number[]>>;
-  learnedItems: Partial<Record<SupportedLanguage, LearnedItem[]>>;
-  ignoredItems: Partial<Record<SupportedLanguage, Types.ObjectId[]>>;
-  customSRSettings: Partial<Record<SupportedLanguage, SRSettings>>;
-  recentDictionarySearches: RecentDictionarySearches[];
-  activeLanguageAndFlag?: LanguageWithFlagAndName;
-}
-
-export interface RecentDictionarySearches {
-  itemId: Types.ObjectId;
-  dateSearched: Date;
-}
-
-export interface DictionarySearchResult {
-  _id: Types.ObjectId;
-  normalizedName: string;
-  name: string;
-  slug: string;
-  partOfSpeech: PartOfSpeech;
-  IPA?: string[];
-  definition?: string;
-  language: SupportedLanguage;
-  languageName: string;
-  flagCode: string;
-  gender?: Gender;
-}
-
-export interface LanguageWithFlagAndName {
-  code: SupportedLanguage;
-  flag: string;
-  name: string;
-}
+export type RecentDictionarySearches = z.infer<
+  typeof recentDictionarySearchesSchema
+>;
 
 export interface SlugLanguageObject {
   language: string;
@@ -218,6 +155,9 @@ export type ListDetails = {
   listDescription?: string;
 };
 
+export type LanguageWithFlagAndName = z.infer<
+  typeof languageWithFlagAndNameSchema
+>;
 export type RegisterSchema = z.infer<typeof registerSchema>;
 export type ParsedItem = z.infer<typeof parsedItemSchema>;
 
@@ -247,3 +187,23 @@ export type ContextItem = {
 };
 
 export type MoreReviewsMode = "gender" | "case";
+
+export type ActivityObject = {
+  date: Date;
+  planted: Partial<Record<SupportedLanguage, number>>;
+  reviewed: Partial<Record<SupportedLanguage, number>>;
+  mnemonicsCreated: Partial<Record<SupportedLanguage, number>>;
+};
+
+export interface ItemPlusLearningInfo extends ItemWithPopulatedTranslationsFE {
+  learned: boolean;
+  nextReview?: number;
+  level?: number;
+}
+
+export type PopulatedTranslations = z.infer<typeof populatedTranslationsSchema>;
+export type Translations = z.infer<typeof translationsSchema>;
+export type TranslationsFE = z.infer<typeof translationsSchemaFE>;
+export type PopulatedTranslationsFE = z.infer<
+  typeof populatedTranslationsSchemaFE
+>;

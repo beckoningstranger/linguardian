@@ -1,14 +1,17 @@
 import { Control, Controller, FieldErrors, FieldValues } from "react-hook-form";
 
-import ComboBoxWrapper from "./ComboBoxWrapper";
-import { ItemWithPopulatedTranslations, SupportedLanguage } from "@/lib/types";
 import { siteSettings } from "@/lib/siteSettings";
+import {
+  ItemWithPopulatedTranslationsFE,
+  SupportedLanguage,
+} from "@/lib/types";
+import ComboBoxWrapper from "./ComboBoxWrapper";
 
 interface EditPartOfSpeechGenderAndCaseProps {
   control: Control<
-    ItemWithPopulatedTranslations,
+    ItemWithPopulatedTranslationsFE,
     any,
-    ItemWithPopulatedTranslations
+    ItemWithPopulatedTranslationsFE
   >;
   watch: Function;
   errors: FieldErrors<FieldValues>;

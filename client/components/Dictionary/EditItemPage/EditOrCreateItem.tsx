@@ -16,13 +16,13 @@ import { setErrorsFromBackend } from "@/lib/helperFunctionsClient";
 import paths from "@/lib/paths";
 import { siteSettings } from "@/lib/siteSettings";
 import {
-  Item,
-  ItemWithPopulatedTranslations,
+  ItemFE,
+  ItemWithPopulatedTranslationsFE,
   ListAndUnitData,
   SeperatedUserLanguages,
   SupportedLanguage,
 } from "@/lib/types";
-import { itemSchemaWithPopulatedTranslations } from "@/lib/validations";
+import { itemSchemaWithPopulatedTranslationsFE } from "@/lib/validations";
 import EditItemName from "./EditItemName";
 import LanguagePicker from "./EditOrCreatePageLanguagePicker";
 import EditPartOfSpeechGenderAndCase from "./EditPartOfSpeechGenderAndCase";
@@ -35,7 +35,7 @@ import PickMultiple from "./PickMultiple";
 
 interface EditOrCreateItemProps {
   seperatedUserLanguages: SeperatedUserLanguages;
-  item?: Omit<ItemWithPopulatedTranslations, "_id">;
+  item?: ItemWithPopulatedTranslationsFE;
   addToThisList?: ListAndUnitData;
   comingFrom?: string;
 }
@@ -45,7 +45,9 @@ export default function EditOrCreateItem({
   addToThisList,
   comingFrom,
   item = {
+    _id: "",
     name: "",
+    lemmas: [],
     normalizedName: "",
     language:
       addToThisList?.languageWithFlagAndName.code ||
@@ -69,6 +71,8 @@ export default function EditOrCreateItem({
   const initialName = useSearchParams().get("initialName");
   if (item.name === "" && initialName) item.name = initialName;
   const {
+    _id,
+    lemmas,
     case: Case,
     context,
     definition,
@@ -103,9 +107,11 @@ export default function EditOrCreateItem({
     setValue,
     formState: { errors, isDirty, isSubmitting, isValid },
     watch,
-  } = useForm<ItemWithPopulatedTranslations>({
-    resolver: zodResolver(itemSchemaWithPopulatedTranslations),
+  } = useForm<ItemWithPopulatedTranslationsFE>({
+    resolver: zodResolver(itemSchemaWithPopulatedTranslationsFE),
     defaultValues: {
+      _id,
+      lemmas,
       case: Case,
       context,
       definition,
@@ -125,7 +131,7 @@ export default function EditOrCreateItem({
     mode: "onChange",
   });
 
-  const onSubmit = async (data: ItemWithPopulatedTranslations) => {
+  const onSubmit = async (data: ItemWithPopulatedTranslationsFE) => {
     data.languageName = langName;
     data.flagCode = flagCode;
 
@@ -209,7 +215,10 @@ export default function EditOrCreateItem({
             setValue={setValue}
             formField="pluralForm"
             initialValue={watch().pluralForm}
-            label={{ singular: "Plural Form", plural: "Plural Forms" }}
+            label={{
+              singular: "Plural Form",
+              plural: "Plural Forms",
+            }}
             errors={errors}
           />
         )}
@@ -257,11 +266,11 @@ export default function EditOrCreateItem({
   );
 
   function getTranslationsForUserLanguages() {
-    const translations: Partial<Record<SupportedLanguage, Item[]>> =
+    const translations: Partial<Record<SupportedLanguage, ItemFE[]>> =
       watch().translations;
     const userLanguageCodes = allUserLanguages.map((lang) => lang.code);
 
-    const copyOfTranslations: Partial<Record<SupportedLanguage, Item[]>> =
+    const copyOfTranslations: Partial<Record<SupportedLanguage, ItemFE[]>> =
       JSON.parse(JSON.stringify(translations));
 
     Object.keys(copyOfTranslations).forEach((lang) => {

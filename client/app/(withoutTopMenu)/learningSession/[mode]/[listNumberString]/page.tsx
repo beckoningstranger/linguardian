@@ -2,12 +2,7 @@ import BackgroundPicture from "@/components/BackgroundPicture";
 import LearnAndReview from "@/components/LearningModes/LearnAndReview";
 import { getLearningSessionForList } from "@/lib/fetchData";
 import { prepareItemsForSession } from "@/lib/helperFunctionsServer";
-import {
-  ItemWithPopulatedTranslations,
-  LanguageFeatures,
-  LearningMode,
-  User,
-} from "@/lib/types";
+import { ItemFE, LanguageFeatures, LearningMode, User } from "@/lib/types";
 import { Metadata } from "next";
 
 // export async function generateMetadata({ params }: ReviewPageProps) {
@@ -56,7 +51,7 @@ export default async function LearnAndReviewPage({
     targetLanguageFeatures: LanguageFeatures;
     listName: string;
     allItemStringsInList: string[];
-    itemsToLearn: ItemWithPopulatedTranslations[];
+    itemsToLearn: ItemFE[];
     user: User;
   };
 

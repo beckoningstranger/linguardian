@@ -1,8 +1,8 @@
-import { RefObject, useEffect, useState } from "react";
-import { ItemWithPopulatedTranslations, LanguageFeatures } from "@/lib/types";
-import { ReviewStatus } from "./LearnAndReview";
-import { Input } from "@headlessui/react";
 import { cn } from "@/lib/helperFunctionsClient";
+import { ItemWithPopulatedTranslationsFE, LanguageFeatures } from "@/lib/types";
+import { Input } from "@headlessui/react";
+import { RefObject, useEffect } from "react";
+import { ReviewStatus } from "./LearnAndReview";
 
 interface SolutionInputProps {
   targetLanguageFeatures: LanguageFeatures;
@@ -12,7 +12,7 @@ interface SolutionInputProps {
   reviewStatus: ReviewStatus;
   setReviewStatus: Function;
   disable: boolean | undefined;
-  item: ItemWithPopulatedTranslations;
+  item: ItemWithPopulatedTranslationsFE;
   setMoreReviews: Function;
   finalizeReview: Function;
 }

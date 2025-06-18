@@ -1,7 +1,7 @@
 import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
 import {
+  ItemFE,
   ItemToLearn,
-  ItemWithPopulatedTranslations,
   LanguageWithFlagAndName,
   LearningMode,
   SeperatedUserLanguages,
@@ -46,7 +46,7 @@ export async function verifyUserIsAuthorAndGetList(
 
 export function prepareItemsForSession(
   mode: LearningMode,
-  itemsToLearn: ItemWithPopulatedTranslations[]
+  itemsToLearn: ItemFE[]
 ): ItemToLearn[] {
   const allLearnableItems: ItemToLearn[] = [];
   const allReviewableItems: ItemToLearn[] = [];

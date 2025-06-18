@@ -3,14 +3,14 @@
 import { Dispatch, SetStateAction, useEffect } from "react";
 
 import { findItems } from "@/lib/actions";
-import { DictionarySearchResult, LanguageWithFlagAndName } from "@/lib/types";
+import { ItemFE, LanguageWithFlagAndName } from "@/lib/types";
 import SearchInput from "@/components/ui/SearchInput";
 
 interface SearchBoxProps {
   query: string;
   debouncedQuery: string;
   setQuery: Dispatch<SetStateAction<string>>;
-  searchResults: DictionarySearchResult[];
+  searchResults: ItemFE[];
   searchLanguages: LanguageWithFlagAndName[];
   setSearchResults: Function;
   getFlagCode: Function;

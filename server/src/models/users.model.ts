@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
-import { slugifyString } from "../lib/helperFunctions.js";
+
+import { slugifyString, toObjectId } from "../lib/helperFunctions.js";
 import { siteSettings } from "../lib/siteSettings.js";
 import {
   ItemForServer,
@@ -96,49 +97,56 @@ export async function updateReviewedItems(
   language: SupportedLanguage
 ) {
   try {
-    const allPassedItemIds = items.map((item) => item.id);
+    const allPassedItemIds = items.map((item) => toObjectId(item.id));
     const user = await getUserById(userId);
     const allLearnedItems = user?.learnedItems[language] || [];
     const userSRSettings =
       user?.customSRSettings[language] || siteSettings.defaultSRSettings;
 
-    const allItemsWeNeedToUpdate = allLearnedItems.filter((item) =>
-      allPassedItemIds.includes(item.id)
+    const allItemsWeNeedToUpdate = allLearnedItems.filter((learnedItem) =>
+      allPassedItemIds.some(
+        (passedId) =>
+          toObjectId(learnedItem.id).toString() === passedId.toString()
+      )
     );
+
     const passedItemsAndFetchedItems = allItemsWeNeedToUpdate.map(
       (fetchedItem) => {
         return {
-          fetchedItem: fetchedItem,
-          passedItem: items.find((item) => item.id === fetchedItem.id),
+          fetchedItem,
+          passedItem: items.find(
+            (item) =>
+              toObjectId(item.id).toString() ===
+              toObjectId(fetchedItem.id).toString()
+          ),
         };
       }
     );
 
     passedItemsAndFetchedItems.forEach(async (itemPair) => {
-      if (!itemPair)
+      if (!itemPair || !itemPair.passedItem)
         throw new Error("This item was not reviewed, please report this");
       await Users.updateOne<User>(
         { id: userId },
         {
           $pull: {
             [`learnedItems.${language}`]: {
-              id: itemPair.fetchedItem.id,
+              id: toObjectId(itemPair.fetchedItem.id),
             },
           },
         }
       );
 
-      const newLevelForItem = itemPair.passedItem?.increaseLevel
-        ? itemPair.fetchedItem.level + 1 > 10
-          ? 10
-          : itemPair.fetchedItem.level + 1
+      const newLevelForItem = itemPair.passedItem.increaseLevel
+        ? Math.min(itemPair.fetchedItem.level + 1, 10)
         : 1;
+
       await Users.updateOne<User>(
         { id: userId },
         {
           $push: {
             [`learnedItems.${language}`]: {
-              id: itemPair.passedItem?.id,
+              id: toObjectId(itemPair.passedItem?.id),
               level: newLevelForItem,
               nextReview:
                 Date.now() +
@@ -171,10 +179,12 @@ export async function addNewlyLearnedItems(
     const learnedItemsForLanguage = user.learnedItems[language] || [];
     const sRSettings =
       user.customSRSettings[language] || siteSettings.defaultSRSettings;
-    const newItemIds = items.map((item) => item.id);
+    const newItemIds = items.map((item) => toObjectId(item.id));
     const filteredItems = learnedItemsForLanguage.filter(
       (learnedItem: LearnedItem) =>
-        !newItemIds.some((newItemId) => learnedItem.id === newItemId)
+        !newItemIds.some(
+          (newItemId) => toObjectId(learnedItem.id) === newItemId
+        )
     );
     const newLearnedItems = items.map((item) => ({
       id: item.id,
@@ -262,7 +272,7 @@ export async function addRecentDictionarySearches(
     .reduce((acc, curr) => {
       if (
         !acc.some((obj: RecentDictionarySearches) =>
-          obj.itemId.equals(curr.itemId)
+          toObjectId(obj.itemId).equals(curr.itemId)
         )
       ) {
         acc.push(curr);

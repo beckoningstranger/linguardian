@@ -5,7 +5,7 @@ import { RefObject, useCallback } from "react";
 import {
   Case,
   Gender,
-  ItemWithPopulatedTranslations,
+  ItemWithPopulatedTranslationsFE,
   LanguageFeatures,
   MoreReviewsMode,
   SupportedLanguage,
@@ -15,7 +15,7 @@ import CaseGenderButton from "./GenderCaseButton";
 interface MoreReviewsProps {
   mode: MoreReviewsMode;
   moreReviewsInputRef: RefObject<HTMLInputElement>;
-  item: ItemWithPopulatedTranslations;
+  item: ItemWithPopulatedTranslationsFE;
   target: SupportedLanguage;
   targetLanguageFeatures: LanguageFeatures;
   handleSubmit: Function;

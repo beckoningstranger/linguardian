@@ -10,9 +10,8 @@ import { addItemToList } from "@/lib/actions";
 import useUserOnClient from "@/lib/hooks/useUserOnClient";
 import paths from "@/lib/paths";
 import {
-  DictionarySearchResult,
-  Item,
-  ItemWithPopulatedTranslations,
+  ItemFE,
+  ItemWithPopulatedTranslationsFE,
   ListAndUnitData,
   SupportedLanguage,
 } from "@/lib/types";
@@ -22,11 +21,11 @@ interface AddItemDialogProps {
   mode: "addAsTranslation" | "addToList";
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  item?: Omit<ItemWithPopulatedTranslations, "_id">;
+  item?: ItemWithPopulatedTranslationsFE;
   itemLanguage?: SupportedLanguage;
-  translations?: Partial<Record<SupportedLanguage, Item[]>>;
+  translations?: Partial<Record<SupportedLanguage, ItemFE[]>>;
   setTranslations?: Dispatch<
-    SetStateAction<Partial<Record<SupportedLanguage, Item[]>>>
+    SetStateAction<Partial<Record<SupportedLanguage, ItemFE[]>>>
   >;
   listAndUnitData?: ListAndUnitData;
 }
@@ -97,7 +96,7 @@ export default function AddItemDialog({
     </Dialog>
   );
 
-  async function addItemToThisList(item: ItemWithPopulatedTranslations) {
+  async function addItemToThisList(item: ItemWithPopulatedTranslationsFE) {
     if (!listAndUnitData)
       throw new Error("Cannot add item, list data is missing...");
     toast.promise(addItemToList(listAndUnitData, item), {
@@ -115,7 +114,7 @@ export default function AddItemDialog({
     });
   }
 
-  function addItemAsTranslation(item: DictionarySearchResult) {
+  function addItemAsTranslation(item: ItemFE) {
     if (translations && setTranslations) {
       if (!translations[item.language]) translations[item.language] = [];
       const isAddingDuplicate = translations[item.language]?.some(

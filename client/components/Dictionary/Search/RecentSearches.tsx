@@ -1,8 +1,8 @@
-import { DictionarySearchResult } from "@/lib/types";
+import { ItemFE } from "@/lib/types";
 import SearchResults from "./SearchResults";
 
 interface RecentSearchesProps {
-  recentSearches: DictionarySearchResult[];
+  recentSearches: ItemFE[];
   getFlagCode: Function;
 }
 

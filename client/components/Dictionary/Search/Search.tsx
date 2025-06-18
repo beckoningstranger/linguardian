@@ -5,8 +5,10 @@ import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useDebounce } from "use-debounce";
 
+import Button from "@/components/ui/Button";
+import paths from "@/lib/paths";
 import {
-  DictionarySearchResult,
+  ItemFE,
   LanguageWithFlagAndName,
   ListAndUnitData,
   SupportedLanguage,
@@ -14,8 +16,6 @@ import {
 import RecentSearches from "./RecentSearches";
 import SearchBox from "./SearchBox";
 import SearchResults from "./SearchResults";
-import paths from "@/lib/paths";
-import Button from "@/components/ui/Button";
 
 interface SearchProps {
   searchLanguages: LanguageWithFlagAndName[];
@@ -24,7 +24,7 @@ interface SearchProps {
     | "searchResultIsTranslation"
     | "searchResultWillBeAddedToList";
   doAfterClickOnSearchResult?: Function;
-  recentSearches?: DictionarySearchResult[];
+  recentSearches?: ItemFE[];
   listData?: ListAndUnitData;
 }
 export default function Search({
@@ -36,9 +36,7 @@ export default function Search({
 }: SearchProps) {
   const [query, setQuery] = useState<string>("");
   const [debouncedQuery] = useDebounce(query, 500);
-  const [searchResults, setSearchResults] = useState<DictionarySearchResult[]>(
-    []
-  );
+  const [searchResults, setSearchResults] = useState<ItemFE[]>([]);
 
   const getFlagCode = (langCode: SupportedLanguage) => {
     return searchLanguages.reduce((a, curr) => {

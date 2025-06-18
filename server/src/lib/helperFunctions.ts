@@ -1,5 +1,7 @@
+import { Types } from "mongoose";
 import { ZodFormattedError } from "zod";
-import { SupportedLanguage } from "./types";
+
+import { ItemWithPopulatedTranslationsFE, SupportedLanguage } from "./types";
 
 export function slugifyString(
   string: string,
@@ -68,4 +70,39 @@ export function createRegexWithMessage({
   }${characters ? `these characters: ${characters}` : ""}`.trim();
 
   return [regex, message];
+}
+
+export function toObjectId(id: string | Types.ObjectId): Types.ObjectId {
+  if (!Types.ObjectId.isValid(id)) {
+    throw new Error(`Invalid ObjectId string: "${id}"`);
+  }
+  return new Types.ObjectId(id);
+}
+
+export function arrayToObjectIds(
+  ids: string[] | Types.ObjectId[]
+): Types.ObjectId[] {
+  return ids.map((id) =>
+    id instanceof Types.ObjectId ? id : new Types.ObjectId(id)
+  );
+}
+
+export function transformItemFromFEToBE(item: ItemWithPopulatedTranslationsFE) {
+  const transformedItem = {
+    ...item,
+    _id: toObjectId(item._id),
+    lemmas: item.lemmas.map(toObjectId),
+    translations: Object.fromEntries(
+      Object.entries(item.translations || {}).map(([lang, items]) => [
+        lang,
+        items.map((entry) => ({
+          ...entry,
+          _id: toObjectId(entry._id),
+          lemmas: entry.lemmas.map(toObjectId),
+        })),
+      ])
+    ),
+  };
+
+  return transformedItem;
 }
