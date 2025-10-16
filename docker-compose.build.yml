@@ -17,12 +17,12 @@ services:
   frontend:
     build:
       context: ./client
+      args:
+        GOOGLE_ID: ${GOOGLE_ID}
+        GOOGLE_SECRET: ${GOOGLE_SECRET}
+        NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+        NEXTAUTH_URL: ${NEXTAUTH_URL}
     image: frontend:latest
-    args:
-      GOOGLE_ID: ${GOOGLE_ID}
-      GOOGLE_SECRET: ${GOOGLE_SECRET}
-      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
-      NEXTAUTH_URL: ${NEXTAUTH_URL}
     environment:
       - NODE_ENV=production
       - SERVER_URL=http://backend:8000
