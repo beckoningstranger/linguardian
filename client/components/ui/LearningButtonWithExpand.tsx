@@ -15,7 +15,7 @@ interface LearningButtonWithExpandProps {
 }
 export default function LearningButtonWithExpand({
   listNumber,
-  unlockedLearningModesForUser = [],
+  unlockedLearningModesForUser = ["translation"],
   learningStats,
   rounded = false,
   from,
@@ -24,16 +24,11 @@ export default function LearningButtonWithExpand({
   let recommendedLearningMode = "learn" as LearningMode;
   const excludeModes: LearningMode[] = [];
 
-  // If there are no new words to learn exclude LearnNewWords and show random practice mode
+  // If there are no new words to learn exclude LearnNewWords and show translation mode
   if (learningStats.unlearned === 0) excludeModes.push("learn");
   if (learningStats.readyToReview === 0) excludeModes.push("translation");
-  if (learningStats.readyToReview > 0)
-    recommendedLearningMode =
-      unlockedLearningModesForUser[
-        Math.floor(Math.random() * unlockedLearningModesForUser.length)
-      ];
+  if (learningStats.readyToReview > 0) recommendedLearningMode = "translation"; // for now
 
-  excludeModes.push(recommendedLearningMode);
   const showExpandButton: boolean = Boolean(
     unlockedLearningModesForUser.length - excludeModes.length + 1 > 0
   );

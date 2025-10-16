@@ -1,5 +1,3 @@
-"use client";
-
 import { Button as HeadLessUiButton } from "@headlessui/react";
 import Image from "next/image";
 import Link from "next/link";

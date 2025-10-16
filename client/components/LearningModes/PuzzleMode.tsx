@@ -201,24 +201,21 @@ function createPuzzlePieces(itemName: string): PuzzlePieceObject[] {
   const amountOfPieces = 6;
   const pieceLength = Math.ceil(itemName.length / amountOfPieces);
   const itemString = itemName;
-  let puzzlePieces: string[] = [];
+  const puzzlePieces: string[] = [];
 
   for (let x = 0; x < amountOfPieces; x++) {
     puzzlePieces.push(itemString.slice(x * pieceLength, pieceLength * (x + 1)));
   }
-  const puzzlePiecesWithoutEmptyOnes = puzzlePieces.filter(
-    (piece) => piece.length > 0 && piece !== " "
-  );
 
-  const puzzlePieceObjects = puzzlePiecesWithoutEmptyOnes.map(
-    (piece, index) => ({
-      position: index + 1,
-      content: piece,
-      first: index === 0,
-      last: index === puzzlePiecesWithoutEmptyOnes.length - 1,
-      used: false,
-    })
-  );
+  const filteredPuzzlePieces = puzzlePieces.filter((piece) => piece.length > 0);
+
+  const puzzlePieceObjects = filteredPuzzlePieces.map((piece, index) => ({
+    position: index + 1,
+    content: piece,
+    first: index === 0,
+    last: index === filteredPuzzlePieces.length - 1,
+    used: false,
+  }));
 
   return puzzlePieceObjects;
 }

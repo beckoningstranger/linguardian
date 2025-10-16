@@ -129,7 +129,6 @@ export default async function ListPage({
           <ListOverviewLearningButtons
             listNumber={listNumber}
             learningStats={learningStats}
-            unlockedLearningModesForUser={unlockedLearningModesForUser}
           />
         )}
       </div>

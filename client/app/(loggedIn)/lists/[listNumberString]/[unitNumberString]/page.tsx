@@ -123,7 +123,6 @@ export default async function UnitDetailPage({
         </div>
         {userIsLearningThisList && (
           <ListOverviewLearningButtons
-            unlockedLearningModesForUser={unlockedLearningModesForUser}
             learningStats={learningStats}
             listNumber={listNumber}
             unitNumber={unitNumber}
