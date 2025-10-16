@@ -81,9 +81,19 @@ jobs:
       - name: Set environment variables and run deploy script on EC2 instance
         run: |
           ssh -i private_key.pem -o StrictHostKeyChecking=no ubuntu@linguardian.com \
-          "MONGO_URL='$MONGO_URL' AWS_ID='$AWS_ID' AWS_REGION='$AWS_REGION' bash ~/deploy.sh"
+          "MONGO_URL='$MONGO_URL' \
+          AWS_ID='$AWS_ID' \
+          AWS_REGION='$AWS_REGION' \
+          NEXTAUTH_SECRET='$NEXTAUTH_SECRET' \
+          GOOGLE_ID='$GOOGLE_ID' \
+          GOOGLE_SECRET='$GOOGLE_SECRET' \
+          NEXTAUTH_URL='$NEXTAUTH_URL' \
+          bash ~/deploy.sh"
         env:
           MONGO_URL: ${{ secrets.MONGO_URL }}
           AWS_ID: ${{ secrets.AWS_ID }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          GOOGLE_ID: ${{ secrets.GOOGLE_ID }}
+          GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
