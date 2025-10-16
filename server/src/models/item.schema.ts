@@ -1,8 +1,21 @@
 import { model, Schema } from "mongoose";
-import { Item } from "../lib/types.js";
 
-const itemSchema = new Schema<Item>(
+import { ItemWithTranslationsAndLemmas } from "@/lib/schemas";
+import { supportedLanguageCodes } from "@/lib/siteSettings";
+
+const translationFields = supportedLanguageCodes.reduce((acc, lang) => {
+  acc[lang] = [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Item",
+    },
+  ];
+  return acc;
+}, {} as Record<string, any>);
+
+const mongooseItemSchema = new Schema<ItemWithTranslationsAndLemmas>(
   {
+    id: { type: String, required: true, unique: true },
     name: {
       type: String,
       required: true,
@@ -39,32 +52,7 @@ const itemSchema = new Schema<Item>(
     definition: {
       type: String,
     },
-    translations: {
-      DE: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: "Item",
-        },
-      ],
-      EN: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: "Item",
-        },
-      ],
-      FR: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: "Item",
-        },
-      ],
-      CN: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: "Item",
-        },
-      ],
-    },
+    translations: translationFields,
     context: [
       {
         text: { type: String, required: true },
@@ -78,7 +66,7 @@ const itemSchema = new Schema<Item>(
     pluralForm: {
       type: [String],
     },
-    case: {
+    grammaticalCase: {
       type: String,
     },
     audio: {
@@ -96,8 +84,13 @@ const itemSchema = new Schema<Item>(
     tags: {
       type: [String],
     },
+    flags: { type: [String] },
   },
-  { strict: true }
+  {
+    timestamps: true,
+    strict: true,
+    versionKey: false,
+  }
 );
 
-export default model<Item>("Item", itemSchema);
+export default model<ItemWithTranslationsAndLemmas>("Item", mongooseItemSchema);

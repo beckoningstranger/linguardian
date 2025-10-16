@@ -3,30 +3,28 @@
 import Link from "next/link";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 
-import { updateRecentDictionarySearches } from "@/lib/actions";
+import { SearchResultItem } from "@/components";
+import { updateRecentSearchesAction } from "@/lib/actions/user-actions";
+import { Item } from "@/lib/contracts";
 import paths from "@/lib/paths";
-import { ItemFE } from "@/lib/types";
-import SearchResultItem from "./SearchResultItem";
 
 interface SearchResultsProps {
-  results: ItemFE[];
-  getFlagCode: Function;
+  results: Item[];
   mode:
     | "searchResultIsTranslation"
     | "searchResultIsLinkToItemPage"
     | "searchResultWillBeAddedToList";
-  doAfterClickOnSearchResult?: Function;
+  doAfterClickOnSearchResult?: (item: Item) => void;
 }
 
 export default function SearchResults({
   results,
-  getFlagCode,
   mode,
   doAfterClickOnSearchResult,
 }: SearchResultsProps) {
   return (
     <div
-      className="w-full overflow-y-auto px-1 py-2 tablet:p-2 desktop:p-4"
+      className="w-full overflow-y-auto rounded-md px-1 py-2 drop-shadow-md tablet:p-2 desktop:p-4"
       id="SearchResults"
     >
       <ResponsiveMasonry columnsCountBreakPoints={{ 0: 1, 744: 2, 1140: 3 }}>
@@ -37,11 +35,11 @@ export default function SearchResults({
                 href={paths.dictionaryItemPath(result.slug)}
                 key={result.slug}
                 onClick={async () =>
-                  await updateRecentDictionarySearches(result.slug)
+                  await updateRecentSearchesAction(result.id)
                 }
                 className="w-full"
               >
-                <SearchResultItem getFlagCode={getFlagCode} result={result} />
+                <SearchResultItem result={result} />
               </Link>
             ) : (
               <div
@@ -50,8 +48,9 @@ export default function SearchResults({
                   if (doAfterClickOnSearchResult)
                     doAfterClickOnSearchResult(result);
                 }}
+                className="w-full"
               >
-                <SearchResultItem getFlagCode={getFlagCode} result={result} />
+                <SearchResultItem result={result} />
               </div>
             );
           })}

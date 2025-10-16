@@ -1,19 +1,22 @@
+import { Button } from "@headlessui/react";
 import Link from "next/link";
 import React, { MouseEventHandler } from "react";
-import { Button } from "@headlessui/react";
 import { BsMortarboard } from "react-icons/bs";
 import { FaArrowLeft } from "react-icons/fa6";
 import { GiSaveArrow } from "react-icons/gi";
 import { ImStop } from "react-icons/im";
 import { TbPencil, TbTrash } from "react-icons/tb";
+import { TiDocumentAdd } from "react-icons/ti";
 
-import { cn } from "@/lib/helperFunctionsClient";
+import { Spinner } from "@/components";
+import { cn } from "@/lib/utils";
 
 type IconSidebarButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  mode: "start" | "stop" | "delete" | "edit" | "back" | "save";
+  mode: "start" | "stop" | "delete" | "edit" | "back" | "save" | "addItems";
   onClick?: MouseEventHandler;
   link?: string;
   label?: string;
+  busy?: boolean;
 };
 
 export default function IconSidebarButton({
@@ -22,6 +25,7 @@ export default function IconSidebarButton({
   onClick,
   link,
   label,
+  busy,
   ...props
 }: IconSidebarButtonProps) {
   const config = {
@@ -56,6 +60,11 @@ export default function IconSidebarButton({
       styles:
         "bg-green-400 text-white hidden tablet:flex disabled:bg-white/90 disabled:text-grey-500",
     },
+    addItems: {
+      icon: <TiDocumentAdd className="size-14" />,
+      label: "Add more items",
+      styles: "hover:bg-orange-500",
+    },
   };
 
   const button = (
@@ -70,12 +79,18 @@ export default function IconSidebarButton({
       aria-label={label || config[mode].label}
       {...props}
     >
-      <div id="icon" className="h-20 w-20 p-3">
-        {config[mode].icon}
-      </div>
-      <div className="duration-800 hidden h-20 w-full items-center justify-center truncate pr-4 font-serif text-hmd text-white transition-all ease-in-out group-hover:flex">
-        {label || config[mode].label}
-      </div>
+      {busy ? (
+        <Spinner mini />
+      ) : (
+        <>
+          <div id="icon" className="h-20 w-20 p-3">
+            {config[mode].icon}
+          </div>
+          <div className="duration-800 hidden h-20 w-full items-center justify-center truncate pr-4 font-serif text-hmd text-white transition-all ease-in-out group-hover:flex">
+            {label || config[mode].label}
+          </div>
+        </>
+      )}
     </Button>
   );
 

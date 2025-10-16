@@ -1,0 +1,39 @@
+FROM node:20-alpine3.19 AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+COPY . .
+
+# Use build-time args so Next.js has access to env vars during build
+ARG NEXTAUTH_SECRET
+ARG GOOGLE_ID
+ARG GOOGLE_SECRET
+ARG NEXTAUTH_URL
+ARG SERVER_URL
+ARG FRONTEND_URL
+ARG NODE_ENV=production
+
+ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET \
+    GOOGLE_ID=$GOOGLE_ID \
+    GOOGLE_SECRET=$GOOGLE_SECRET \
+    NEXTAUTH_URL=$NEXTAUTH_URL \
+    SERVER_URL=$SERVER_URL \
+    FRONTEND_URL=$FRONTEND_URL \
+    NODE_ENV=$NODE_ENV
+
+RUN npm run build
+
+FROM node:20-alpine3.19 AS runner
+
+WORKDIR /app
+
+RUN addgroup -S nonroot && adduser -S nonroot -G nonroot
+USER nonroot
+
+COPY --from=builder --chown=nonroot:nonroot /app/.next/standalone .
+COPY --from=builder --chown=nonroot:nonroot /app/public ./public
+COPY --from=builder --chown=nonroot:nonroot /app/.next/static ./.next/static
+
+CMD ["node", "server.js"]

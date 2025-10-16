@@ -1,15 +1,16 @@
 "use client";
 
-import { cn } from "@/lib/helperFunctionsClient";
-import { ListStats } from "@/lib/types";
 import dynamic from "next/dynamic";
+
+import { LearningStats } from "@/lib/contracts";
+import { cn } from "@/lib/utils";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
 interface ListBarChartProps {
-  stats: ListStats;
+  stats: LearningStats;
   height?: number;
   width?: number;
   mode: "dashboard" | "listoverview" | "unitoverview";

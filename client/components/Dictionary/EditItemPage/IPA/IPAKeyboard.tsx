@@ -1,12 +1,11 @@
 "use client";
 
-import MobileMenu from "@/components/Menus/MobileMenu/MobileMenu";
-import { useMobileMenu } from "@/context/MobileMenuContext";
-import { IPA } from "@/lib/types";
 import { TabGroup, TabList, TabPanels } from "@headlessui/react";
 import { Dispatch, SetStateAction, useEffect } from "react";
-import PanelWithIPAKeys from "./PanetWithIPAKeys";
-import StyledTab from "./StyledIPATab";
+
+import { MobileMenu, PanelWithIPAKeys, StyledIPATab } from "@/components";
+import { useMobileMenu } from "@/context/MobileMenuContext";
+import { IPA } from "@/lib/contracts";
 
 interface IPAKeyboardProps {
   IPA: IPA;
@@ -39,10 +38,10 @@ export default function IPAKeyboard({
     <MobileMenu mode="keyboard" fromDirection="animate-from-bottom">
       <TabGroup manual className="h-full">
         <TabList className="flex h-10 justify-evenly bg-slate-200 font-medium">
-          <StyledTab label="Consonants" />
-          <StyledTab label="Vowels" />
-          {IPA?.rare && IPA.rare.length > 0 && <StyledTab label="Rare" />}
-          <StyledTab label="Helpers" />
+          <StyledIPATab label="Consonants" />
+          <StyledIPATab label="Vowels" />
+          {IPA?.rare && IPA.rare.length > 0 && <StyledIPATab label="Rare" />}
+          <StyledIPATab label="Helpers" />
         </TabList>
         <TabPanels className="font-voces h-full px-2 font-semibold">
           <PanelWithIPAKeys

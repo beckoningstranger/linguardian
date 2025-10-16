@@ -4,18 +4,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
-import { updateRecentDictionarySearches } from "@/lib/actions";
+import { DeleteItemButton, UnitItemText } from "@/components";
+import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
+import { updateRecentSearchesAction } from "@/lib/actions/user-actions";
+import { ItemPlusLearningInfo } from "@/lib/contracts";
 import paths from "@/lib/paths";
-import { ItemPlusLearningInfo, ListAndUnitData } from "@/lib/types";
-import { MobileMenuContextProvider } from "../../../context/MobileMenuContext";
-import DeleteItemButton from "../EditUnit/DeleteItemButton";
-import UnitItemText from "./UnitItemText";
+import { bgColor, cn, currentItemStatus, nextReviewMessage } from "@/lib/utils";
+import { AiOutlineExclamationCircle } from "react-icons/ai";
 
 interface UnitItemProps {
   item: ItemPlusLearningInfo;
   translations: string | undefined;
   pathToUnit: string;
-  listAndUnitData: ListAndUnitData;
   editMode?: boolean;
 }
 
@@ -23,7 +23,6 @@ export default function UnitItem({
   item,
   translations,
   pathToUnit,
-  listAndUnitData,
   editMode,
 }: UnitItemProps) {
   const [showItemTranslation, setShowItemTranslation] =
@@ -31,35 +30,44 @@ export default function UnitItem({
 
   return (
     <div
-      className={`relative pr-4 flex w-full rounded-lg h-[86px] ${bgColor(
-        item.nextReview,
-        item.level
-      )}`}
+      className={cn(
+        `relative pr-4 flex w-full overflow-hidden rounded-lg h-[86px]`,
+        bgColor(item.nextReview, item.level)
+      )}
     >
       {editMode && (
         <MobileMenuContextProvider>
-          <DeleteItemButton
-            listAndUnitData={listAndUnitData}
-            itemId={item._id}
-            itemName={item.name}
-            listName={listAndUnitData.listName}
-          />
+          <DeleteItemButton itemId={item.id} itemName={item.name} />
         </MobileMenuContextProvider>
       )}
-      <Image
-        alt="Translation Icon"
-        height={20}
-        width={60}
-        className="h-[86px] w-[48px]"
-        src={"/icons/Translate.svg"}
-        onClick={() => setShowItemTranslation((prev) => !prev)}
-      />
+      {translations ? (
+        <Image
+          alt="Translation Icon"
+          height={20}
+          width={60}
+          className="h-[86px] w-11"
+          src={"/icons/Translate.svg"}
+          onClick={() => setShowItemTranslation((prev) => !prev)}
+        />
+      ) : (
+        <div
+          id="noTranslations"
+          className="group bottom-0 left-0 top-0 z-10 flex w-11 items-center justify-start bg-red-500 pl-1 text-cmdr text-white transition-all duration-300 hover:absolute hover:w-full hover:gap-4"
+        >
+          <AiOutlineExclamationCircle className="size-7 font-bold" />
+
+          <div className="absolute bottom-0 left-0 top-1/2 hidden h-full w-[400px] -translate-x-full -translate-y-1/2 pl-14 text-cmdb group-hover:grid group-hover:translate-x-0 group-hover:items-center">
+            This item does not have translations for your native language! Go
+            add them!
+          </div>
+        </div>
+      )}
       <Link
         href={paths.dictionaryItemPath(item.slug) + `?comingFrom=${pathToUnit}`}
         className="w-full"
-        onClick={() => updateRecentDictionarySearches(item.slug)}
+        onClick={() => updateRecentSearchesAction(item.id)}
       >
-        <div id="content" className="flex w-full flex-col gap-2 py-4">
+        <div id="content" className="flex w-full flex-col gap-2 py-4 pl-1">
           <div className="flex w-full items-center justify-between">
             <UnitItemText
               translations={translations}
@@ -93,67 +101,4 @@ export default function UnitItem({
       </Link>
     </div>
   );
-}
-
-function bgColor(nextReview?: number, itemLevel?: number) {
-  if (!nextReview || !itemLevel) return "bg-white/90 hover:bg-white";
-  const now = Date.now();
-  return itemLevel < 8
-    ? nextReview > now
-      ? "bg-orange-300 hover:bg-orange-400"
-      : "bg-blue-400 hover:bg-blue-500"
-    : nextReview > now
-    ? "bg-green-400 hover:bg-green-500"
-    : "bg-blue-400 hover:bg-blue-500";
-}
-
-function currentItemStatus(nextReviewTime: number, itemLevel: number) {
-  const now = Date.now();
-  return nextReviewTime > now
-    ? itemLevel < 8
-      ? "Growing"
-      : "Mature"
-    : "Ready to water";
-}
-
-function nextReviewMessage(nextReview: number, itemLevel: number): string {
-  if (!nextReview || !itemLevel) return "";
-
-  if (currentItemStatus(nextReview, itemLevel) === "Ready to water") {
-    return "Water now!";
-  }
-
-  const now = Date.now();
-  const diff = nextReview - now;
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(diff / 3600000);
-
-  if (minutes < 60) {
-    return `Due in ${minutes} minute${minutes !== 1 && "s"}`;
-  }
-
-  if (diff < 86400000) {
-    // 86400000 = 24 hours
-    return `Due in ${hours} hour${hours !== 1 && "s"}`;
-  }
-
-  const date = new Date(nextReview);
-  const formatter = new Intl.DateTimeFormat(undefined, {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-
-  const day = date.getDate();
-  function getOrdinal(n: number): string {
-    const suffix =
-      n % 100 >= 11 && n % 100 <= 13
-        ? "th"
-        : ["st", "nd", "rd"][(n % 10) - 1] ?? "th";
-    return n + suffix;
-  }
-
-  const formattedDate = formatter.format(date).replace(/\d+/, getOrdinal(day));
-
-  return `Due on ${formattedDate}`;
 }

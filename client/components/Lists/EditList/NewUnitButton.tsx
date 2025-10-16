@@ -1,6 +1,7 @@
 "use client";
 
-import { addUnitToList } from "@/lib/actions";
+import { createUnitAction } from "@/lib/actions/list-actions";
+import { SupportedLanguage } from "@/lib/contracts";
 import { Input } from "@headlessui/react";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -8,12 +9,14 @@ import toast from "react-hot-toast";
 interface NewUnitButtonProps {
   listNumber: number;
   unitOrder: string[];
+  listLanguage: SupportedLanguage;
   setUnitOrder: Dispatch<SetStateAction<string[]>>;
 }
 
 export default function NewUnitButton({
   listNumber,
   unitOrder,
+  listLanguage,
   setUnitOrder,
 }: NewUnitButtonProps) {
   const [isActive, setIsActive] = useState(false);
@@ -29,25 +32,28 @@ export default function NewUnitButton({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (inputRef.current) {
       inputRef.current.blur();
     }
-    const isDuplicate = unitOrder.includes(unitName.trim());
+    const newUnitName = unitName.trim();
+    const isDuplicate = unitOrder.includes(newUnitName);
     if (isDuplicate) toast.error("This unit name already exists");
-    if (!isDuplicate && unitName.trim().length > 0)
-      toast.promise(addUnitToList(unitName, listNumber), {
-        loading: "Adding new unit...",
-        success: () => {
-          const newUnitOrder = [...unitOrder, unitName];
-          setUnitOrder(newUnitOrder);
-          return "Unit added! 🎉";
-        },
-        error: (err) => {
-          return `Failed to add item: ${err.message}`;
-        },
-      });
+    if (!isDuplicate && newUnitName.length > 0) {
+      const updatedUnitOrder = [...unitOrder, newUnitName];
+      const response = await toast.promise(
+        createUnitAction(listNumber, newUnitName, listLanguage),
+        {
+          loading: "Adding new unit...",
+          success: (response) => response.message,
+          error: (err) => (err instanceof Error ? err.message : err.toString()),
+        }
+      );
+      if (response) {
+        setUnitOrder(updatedUnitOrder);
+      }
+    }
   };
 
   return (

@@ -7,6 +7,7 @@ services:
       - PORT=8000
       - NODE_ENV=production
       - MONGO_URL=${MONGO_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
     networks:
       - app-network
     ports:
@@ -16,16 +17,15 @@ services:
   frontend:
     build:
       context: ./client
-      args:
-        - GOOGLE_ID=${GOOGLE_ID}
-        - GOOGLE_SECRET=${GOOGLE_SECRET}
-        - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
     image: frontend:latest
     environment:
       - NODE_ENV=production
       - SERVER_URL=http://backend:8000
       - FRONTEND_URL=http://frontend:3000
       - NEXTAUTH_URL=https://www.linguardian.com
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - GOOGLE_ID=${GOOGLE_ID}
+      - GOOGLE_SECRET=${GOOGLE_SECRET}
       - NEXT_TELEMETRY_DISABLED=1
     ports:
       - "3000:3000"

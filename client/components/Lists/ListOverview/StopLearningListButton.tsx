@@ -1,15 +1,13 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
-import TopContextMenuButton from "@/components/Menus/TopMenu/TopContextMenuButton";
+import { IconSidebarButton, TopContextMenuButton } from "@/components";
 import { useListContext } from "@/context/ListContext";
-import { setLearnedLists } from "@/lib/actions";
-import { User } from "@/lib/types";
-import Spinner from "../../Spinner";
+import { useUser } from "@/context/UserContext";
+import { useUserUpdater } from "@/lib/hooks/useUserUpdater";
 
 interface StopLearningListButtonProps {
   mode: "mobile" | "desktop";
@@ -18,46 +16,42 @@ interface StopLearningListButtonProps {
 export default function StopLearningListButton({
   mode,
 }: StopLearningListButtonProps) {
-  const {
-    listData: { listNumber, language, name },
-    userIsLearningThisList,
-  } = useListContext();
+  const router = useRouter();
+  const { listNumber, listLanguage, listName, userIsLearningThisList } =
+    useListContext();
 
+  const applyUserUpdate = useUserUpdater();
   const [updating, setUpdating] = useState(false);
-  const { data, status, update } = useSession();
-  const user = data?.user as User;
+  const { user } = useUser();
+  if (!user) throw new Error("User not found");
+
+  if (!userIsLearningThisList) return null;
 
   const handleRemoveList = async () => {
     setUpdating(true);
 
-    const updatedLearnedLists = user.learnedLists[language.code]
+    const learnedLists = user?.learnedLists[listLanguage.code]
       ? {
           ...user.learnedLists,
-          [language.code]: user.learnedLists[language.code]?.filter(
+          [listLanguage.code]: user.learnedLists[listLanguage.code]?.filter(
             (number) => number !== listNumber
           ),
         }
       : {
-          [language.code]: [],
+          [listLanguage.code]: [],
         };
 
-    await toast.promise(
-      setLearnedLists(listNumber, updatedLearnedLists, language.code),
-      {
-        loading: `Removing "${name}" from your learned lists...`,
-        success: `"${name}" has been removed from your learned lists! 🎉`,
-        error: (err) => err.toString(),
-      }
-    );
-    await update({
-      ...data,
-      user: { ...user, learnedLists: updatedLearnedLists },
+    await toast.promise(applyUserUpdate({ id: user.id, learnedLists }), {
+      loading: `Removing "${listName}" from your learned lists...`,
+      success: () => {
+        return ` "${listName}" has been removed from your learned lists! 🎉`;
+      },
+      error: (err) => (err instanceof Error ? err.message : err.toString()),
     });
-    setUpdating(false);
-  };
 
-  if (status === "loading" || updating) return <Spinner centered />;
-  if (!userIsLearningThisList) return null;
+    setUpdating(false);
+    router.refresh();
+  };
 
   if (mode === "mobile")
     return (

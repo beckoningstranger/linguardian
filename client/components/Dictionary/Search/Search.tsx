@@ -1,49 +1,59 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useDebounce } from "use-debounce";
 
-import Button from "@/components/ui/Button";
+import { RecentSearches, SearchBox, SearchResults, Button } from "@/components";
+import { useUser } from "@/context/UserContext";
+import { Item, SupportedLanguage } from "@/lib/contracts";
 import paths from "@/lib/paths";
-import {
-  ItemFE,
-  LanguageWithFlagAndName,
-  ListAndUnitData,
-  SupportedLanguage,
-} from "@/lib/types";
-import RecentSearches from "./RecentSearches";
-import SearchBox from "./SearchBox";
-import SearchResults from "./SearchResults";
+import { allSupportedLanguages } from "@/lib/siteSettings";
+import { SearchMode } from "@/lib/types";
 
 interface SearchProps {
-  searchLanguages: LanguageWithFlagAndName[];
-  mode:
-    | "searchResultIsLinkToItemPage"
-    | "searchResultIsTranslation"
-    | "searchResultWillBeAddedToList";
-  doAfterClickOnSearchResult?: Function;
-  recentSearches?: ItemFE[];
-  listData?: ListAndUnitData;
+  mode: SearchMode;
+  doAfterClickOnSearchResult?: (item: Item) => void;
+  recentSearches?: Item[];
+  listNumber?: number;
+  unitNumber?: number;
+  unitName?: string;
+  listLanguageCode?: SupportedLanguage;
+  searchLanguageCodes?: SupportedLanguage[];
 }
 export default function Search({
-  searchLanguages,
   mode,
   doAfterClickOnSearchResult,
   recentSearches = [],
-  listData,
+  listNumber,
+  unitName,
+  unitNumber,
+  listLanguageCode,
+  searchLanguageCodes,
 }: SearchProps) {
   const [query, setQuery] = useState<string>("");
   const [debouncedQuery] = useDebounce(query, 500);
-  const [searchResults, setSearchResults] = useState<ItemFE[]>([]);
+  const [searchResults, setSearchResults] = useState<Item[]>([]);
+  const { user } = useUser();
 
-  const getFlagCode = (langCode: SupportedLanguage) => {
-    return searchLanguages.reduce((a, curr) => {
-      if (curr.code === langCode) a = curr.flag;
-      return a;
-    }, "" as string);
-  };
+  if (
+    mode === "searchResultWillBeAddedToList" &&
+    (!listNumber || !unitName || !listLanguageCode)
+  )
+    throw new Error("Need listNumber, unitNumber and listLanguage!");
+
+  const allUserLanguageCodes = useMemo(() => {
+    return user
+      ? [user.native.code, ...user.learnedLanguages.map((lang) => lang.code)]
+      : allSupportedLanguages;
+  }, [user]);
+
+  const searchForTheseLanguages = searchLanguageCodes || allUserLanguageCodes;
+
+  const memoizedLanguageCodes = useMemo(() => {
+    return searchForTheseLanguages;
+  }, [searchForTheseLanguages]);
 
   return (
     <div id="Search">
@@ -53,13 +63,11 @@ export default function Search({
         setQuery={setQuery}
         searchResults={searchResults}
         setSearchResults={setSearchResults}
-        searchLanguages={searchLanguages}
-        getFlagCode={getFlagCode}
+        searchLanguageCodes={memoizedLanguageCodes}
       />
-      {searchResults?.length > 0 && (
+      {searchResults.length > 0 && (
         <SearchResults
           results={searchResults}
-          getFlagCode={getFlagCode}
           doAfterClickOnSearchResult={doAfterClickOnSearchResult}
           mode={mode}
         />
@@ -67,36 +75,49 @@ export default function Search({
       {recentSearches.length > 0 &&
         mode === "searchResultIsLinkToItemPage" &&
         query.length === 0 && (
-          <RecentSearches
-            recentSearches={recentSearches}
-            getFlagCode={getFlagCode}
-          />
+          <RecentSearches recentSearches={recentSearches} />
         )}
       {searchResults.length === 0 &&
-        debouncedQuery.length > 0 &&
-        mode !== "searchResultIsTranslation" && (
-          <Button
-            intent="primary"
-            className="left-2 top-2 w-[calc(100vw-24px)] rounded-md py-4"
+        debouncedQuery.length > 1 &&
+        mode === "searchResultWillBeAddedToList" &&
+        listNumber &&
+        unitName &&
+        listLanguageCode && (
+          <Link
+            href={paths.addItemToDictionaryPath(
+              encodeURIComponent(debouncedQuery),
+              listNumber,
+              unitNumber,
+              encodeURIComponent(unitName),
+              listLanguageCode
+            )}
           >
-            <Link
-              href={
-                listData
-                  ? `/dictionary/new/${listData?.listNumber}/${listData?.unitName}?initialName=${query}`
-                  : `/dictionary/new?initialName=${query}`
-              }
+            <Button
+              intent="primary"
+              className="mt-4 flex h-16 w-full items-center justify-center gap-4 rounded-lg px-8 text-clgm text-white"
             >
               Add a new item
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         )}
-      {searchResults?.length > 0 && (
-        <Link href={paths.addItemToDictionaryPath()}>
-          <Button intent="bottomRightButton">
-            <FaPlus className="h-8 w-8 font-semibold text-white" />
-          </Button>
-        </Link>
-      )}
+      {debouncedQuery.length >= 2 &&
+        mode === "searchResultIsLinkToItemPage" && (
+          <Link
+            href={paths.addItemToDictionaryPath(
+              encodeURIComponent(debouncedQuery)
+            )}
+            className="fixed bottom-4 w-full px-4"
+          >
+            <Button
+              intent="primary"
+              className="flex h-20 w-full items-center justify-between gap-4 rounded-lg px-8 text-clgm"
+            >
+              <FaPlus className="h-8 w-8 font-semibold text-white" />
+              <span className="text-white">Add a new item</span>
+              <div></div>
+            </Button>
+          </Link>
+        )}
     </div>
   );
 }

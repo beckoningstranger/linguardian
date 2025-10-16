@@ -1,23 +1,18 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { useCallback, useState } from "react";
 
-import { updateLearnedItems } from "@/lib/actions";
 import {
-  ItemForServer,
-  ItemToLearn,
-  LanguageFeatures,
-  LearningMode,
-  SupportedLanguage,
-  User,
-} from "@/lib/types";
-import ItemPresentation from "./ItemPresentation";
-import ItemPrompt from "./ItemPrompt";
-import LearningHeader from "./LearningHeader";
-import MultipleChoice from "./MultipleChoice";
-import PuzzleMode from "./PuzzleMode";
-import TypeSolution from "./TypeSolution";
+  ItemPresentation,
+  ItemPrompt,
+  LearningHeader,
+  MultipleChoice,
+  PuzzleMode,
+  TypeSolution,
+} from "@/components";
+import { useUser } from "@/context/UserContext";
+import { ItemToLearn, LanguageFeatures, LearningMode } from "@/lib/contracts";
+import { useLearningSessionSync } from "@/lib/hooks/useLearningSessionSync";
 
 interface LearnAndReviewProps {
   listName: string;
@@ -25,7 +20,6 @@ interface LearnAndReviewProps {
   targetLanguageFeatures: LanguageFeatures;
   allItemStringsInList: string[];
   mode: LearningMode;
-  user: User;
   from: "dashboard" | number;
 }
 
@@ -37,7 +31,6 @@ export default function LearnAndReview({
   targetLanguageFeatures,
   allItemStringsInList,
   mode,
-  user,
   from,
 }: LearnAndReviewProps) {
   const [itemsToLearn, setItemsToLearn] = useState<ItemToLearn[]>(items);
@@ -46,8 +39,11 @@ export default function LearnAndReview({
   const [itemPresentation, setItemPresentation] = useState<boolean>(
     mode === "learn" ? true : false
   );
-  const [sessionEnd, setSessionEnd] = useState<boolean>(false);
   const [wrongAnswer, setWrongAnswer] = useState<string>("");
+  const { user } = useUser();
+  if (!user) throw new Error("Could not get user from context");
+
+  const { sendSessionData } = useLearningSessionSync();
 
   const evaluateUserAnswer = useCallback(
     (status: Omit<ReviewStatus, "neutral">, answer: string) => {
@@ -69,7 +65,13 @@ export default function LearnAndReview({
           remainingItemsToLearn.length === 0 &&
           activeItem.learningStep === 4
         ) {
-          setSessionEnd(true);
+          const finalLearnedItems: ItemToLearn[] = [
+            ...learnedItems,
+            activeItem,
+          ];
+          (async () => {
+            await sendSessionData(finalLearnedItems, activeItem.language, mode);
+          })();
           return;
         }
 
@@ -102,16 +104,10 @@ export default function LearnAndReview({
         );
       }
     },
-    [activeItem, mode, learnedItems, itemsToLearn]
+    [activeItem, mode, learnedItems, itemsToLearn, sendSessionData]
   );
 
-  useEffect(() => {
-    if (sessionEnd) {
-      passDataToServer(learnedItems, user.id, activeItem.language, mode);
-    }
-  }, [sessionEnd, learnedItems, user.id, activeItem, mode]);
-
-  return sessionEnd ? null : (
+  return (
     <>
       <LearningHeader
         listLanguage={targetLanguageFeatures.langCode}
@@ -151,22 +147,4 @@ export default function LearnAndReview({
       )}
     </>
   );
-}
-
-async function passDataToServer(
-  learnedItems: ItemToLearn[],
-  userId: string,
-  language: SupportedLanguage,
-  mode: LearningMode
-) {
-  const itemsForServer: ItemForServer[] = learnedItems.map((item) => ({
-    id: item._id.toString(),
-    increaseLevel: item.increaseLevel,
-  }));
-
-  toast.promise(updateLearnedItems(itemsForServer, language, userId, mode), {
-    loading: "Updating your learning data...",
-    success: "Learning data updated! 🎉",
-    error: (err) => err.toString(),
-  });
 }

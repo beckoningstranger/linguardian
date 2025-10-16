@@ -1,35 +1,26 @@
 import Link from "next/link";
 import Flag from "react-world-flags";
 
+import ItemSection from "@/components/Dictionary/ItemPage/ItemSection";
+import { Item, SupportedLanguage } from "@/lib/contracts";
 import paths from "@/lib/paths";
-import { siteSettings } from "@/lib/siteSettings";
-import {
-  ItemFE,
-  LanguageWithFlagAndName,
-  SupportedLanguage,
-} from "@/lib/types";
-import ItemSection from "./ItemSection";
 
 interface ItemTranslationsProps {
-  translations?: Partial<Record<SupportedLanguage, ItemFE[]>>;
-  allUserLanguages: LanguageWithFlagAndName[];
+  translations?: Partial<Record<SupportedLanguage, Item[]>>;
+  allUserLanguageCodes: SupportedLanguage[];
   forItemPresentation?: boolean;
 }
 
 export default function ItemTranslations({
   translations,
-  allUserLanguages,
+  allUserLanguageCodes,
   forItemPresentation,
 }: ItemTranslationsProps) {
   if (!translations) return null;
 
-  const displayedTranslationLanguages =
-    allUserLanguages.map((lang) => lang.code) ||
-    siteSettings.supportedLanguages;
-
   return (
     <ItemSection title="Translations">
-      {displayedTranslationLanguages.map((lang) => (
+      {allUserLanguageCodes.map((lang) => (
         <div
           key={lang}
           className="grid grid-cols-1 gap-2 pt-2 tablet:grid-cols-2 desktop:grid-cols-3"

@@ -1,13 +1,23 @@
-import {
-  sortedTags,
-  Tag,
-  type GlobalSettings,
-  type LanguageFeatures,
-  type LearningMode,
-  type SRSettings,
-} from "./types";
+import { LanguageFeatures, SortedTags, SRSettings, Tag } from "@/lib/contracts";
 
 export const supportedLanguageCodes = ["DE", "EN", "FR", "CN"] as const;
+
+export const allListDifficulties = [
+  "Novice",
+  "Beginner",
+  "Intermediate",
+  "Advanced",
+  "Afficionado",
+] as const;
+
+export const allLearningModes = [
+  "learn",
+  "translation",
+  "context",
+  "spellingBee",
+  "dictionary",
+  "visual",
+] as const;
 
 export const allTags = [
   "colloquial",
@@ -21,6 +31,8 @@ export const allTags = [
   "intransitive",
   "Belgian French",
   "Wechselpräposition",
+  "countable",
+  "uncountable",
 ] as const;
 
 export const allCases = [
@@ -57,7 +69,11 @@ export const allPartsOfSpeech = [
   "phrase",
 ] as const;
 
-export const allTagsSorted: sortedTags = {
+export const allListStatuses = ["review", "add", "practice"] as const;
+
+export const allSecondaryReviewModes = ["grammaticalCase", "gender"] as const;
+
+export const allTagsSorted: SortedTags = {
   forAll: [
     "archaic",
     "colloquial",
@@ -68,6 +84,7 @@ export const allTagsSorted: sortedTags = {
     "literary",
   ],
   verb: ["transitive", "intransitive"],
+  noun: ["countable", "uncountable"],
 };
 
 const frenchTags = {
@@ -75,14 +92,16 @@ const frenchTags = {
   forAll: [...allTagsSorted.forAll, "Belgian French" as Tag],
 };
 
-const languageFeatures: readonly LanguageFeatures[] = [
+export const allLanguageFeatures: readonly LanguageFeatures[] = [
   {
     langName: "German",
     langCode: "DE",
     flagCode: "DE",
     requiresHelperKeys: ["ö", "Ö", "ä", "Ä", "ü", "Ü", "ß", "ẞ"],
-    hasGender: ["feminine", "masculine", "neuter"],
-    hasCases: [
+    hasGender: true,
+    genders: ["feminine", "masculine", "neuter"],
+    hasCases: true,
+    cases: [
       "nominative",
       "genitive",
       "dative",
@@ -157,6 +176,7 @@ const languageFeatures: readonly LanguageFeatures[] = [
     },
     hasRomanization: false,
     hasTones: false,
+    tones: [],
     partsOfSpeech: allPartsOfSpeech,
     tags: allTagsSorted,
   },
@@ -181,7 +201,6 @@ const languageFeatures: readonly LanguageFeatures[] = [
       "û",
       "œ",
     ],
-    hasGender: ["feminine", "masculine"],
     ipa: {
       help: "https://en.wikipedia.org/wiki/Help:IPA/French",
       consonants: [
@@ -227,9 +246,13 @@ const languageFeatures: readonly LanguageFeatures[] = [
       ],
       helperSymbols: ["ː", "‿", "ˈ", "ˌ"],
     },
-    hasCases: [],
+    hasGender: true,
+    genders: ["feminine", "masculine"],
+    hasCases: false,
+    cases: [],
     hasRomanization: false,
     hasTones: false,
+    tones: [],
     partsOfSpeech: allPartsOfSpeech,
     tags: frenchTags,
   },
@@ -284,10 +307,13 @@ const languageFeatures: readonly LanguageFeatures[] = [
       rare: ["æ̃", "ɜː", "ɒ̃", "x", "ʔ"],
       helperSymbols: ["ː", "‿", "ˈ", "ˌ"],
     },
-    hasCases: [],
-    hasGender: [],
+    hasCases: false,
+    cases: [],
+    hasGender: false,
+    genders: [],
     hasRomanization: false,
     hasTones: false,
+    tones: [],
     requiresHelperKeys: [],
     partsOfSpeech: allPartsOfSpeech,
     tags: allTagsSorted,
@@ -341,16 +367,19 @@ const languageFeatures: readonly LanguageFeatures[] = [
       ],
       helperSymbols: [],
     },
-    hasCases: [],
-    hasGender: [],
+    hasCases: false,
+    cases: [],
+    hasGender: false,
+    genders: [],
     hasTones: true,
+    tones: [],
     requiresHelperKeys: [],
     partsOfSpeech: allPartsOfSpeech,
     tags: allTagsSorted,
   },
 ] as const;
 
-const defaultSRSettings: SRSettings = {
+export const defaultSRSettings: SRSettings = {
   reviewTimes: {
     1: 4 * 60 * 60 * 1000, // Level 1: 4 hours
     2: 10 * 60 * 60 * 1000, // 10 hours
@@ -369,30 +398,24 @@ const defaultSRSettings: SRSettings = {
   },
 } as const;
 
-const learningModes: LearningMode[] = [
-  "learn",
-  "translation",
-  "context",
-  "spellingBee",
-  "dictionary",
-  "visual",
+export const allUserRoles = [
+  "learner", // regular user, can create lists and items, cannot delete
+  "editor", // all of learner + delete rights
+  "moderator", // all of user + moderate mnemonics, profile posts
+  "admin", // full access, can assign roles
+  "banned", // no access
 ] as const;
 
-const supportedLanguages = languageFeatures.map(
+export const allFlags = ["delete", "proofread", "moderate"] as const;
+
+export const allSupportedLanguages = allLanguageFeatures.map(
   (language) => language.langCode
 );
 
-const showLanguageSelectorOnlyOn: string[] = supportedLanguages.flatMap(
-  (lang) =>
-    ["dashboard", "dictionary", "lists", "lists/new"].map(
-      (entry) => `/${lang}/${entry}`
-    )
+export const allSupportedLanguagesWithNameAndFlag = allLanguageFeatures.map(
+  (language) => ({
+    code: language.langCode,
+    name: language.langName,
+    flag: language.flagCode,
+  })
 );
-
-export const siteSettings: GlobalSettings = {
-  languageFeatures,
-  learningModes,
-  supportedLanguages,
-  defaultSRSettings,
-  showLanguageSelectorOnlyOn,
-};

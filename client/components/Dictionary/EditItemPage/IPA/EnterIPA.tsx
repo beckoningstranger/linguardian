@@ -1,41 +1,38 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { FieldErrors, FieldValues } from "react-hook-form";
 import { Button } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/16/solid";
+import { useState } from "react";
+import { useController, useFormContext } from "react-hook-form";
 
-import { IPA, Label } from "@/lib/types";
-import EnterIPAField from "./EnterIPAField";
-import { FormErrors } from "@/components/ui/FormErrors";
+import { FormErrors, EnterIPAField, IPAKeyboard } from "@/components";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
-import IPAKeyboard from "./IPAKeyboard";
+import { IPA, ItemWithPopulatedTranslations } from "@/lib/contracts";
+import { Label } from "@/lib/types";
 
 interface EnterIPAProps {
   setValue: Function;
   initialValue: string[] | undefined;
   label: Label;
-  errors: FieldErrors<FieldValues>;
   IPA: IPA;
 }
 
-export default function EnterIPA({
-  setValue,
-  initialValue,
-  label,
-  errors,
-  IPA,
-}: EnterIPAProps) {
-  const [array, setArray] = useState(initialValue ? initialValue : []);
-  const [activeField, setActiveField] = useState<number | null>(null);
+export default function EnterIPA({ initialValue, label, IPA }: EnterIPAProps) {
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<ItemWithPopulatedTranslations>();
 
-  useEffect(() => {
-    setValue("IPA", array, {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    });
-  }, [array, setValue]);
+  const { field } = useController({
+    name: "IPA",
+    control,
+    defaultValue: initialValue,
+  });
+
+  const ipa = field.value || [];
+  const setIPA = field.onChange;
+
+  const [activeField, setActiveField] = useState<number | null>(null);
 
   const faultyFields: number[] = [];
   if (Array.isArray(errors["IPA"])) {
@@ -45,12 +42,12 @@ export default function EnterIPA({
   }
 
   const renderFields = () =>
-    array.map((value, index) => (
+    ipa.map((value, index) => (
       <EnterIPAField
         key={value + index}
         index={index}
-        array={array}
-        setArray={setArray}
+        array={ipa}
+        setArray={setIPA}
         placeholder={label.singular}
         hasErrors={faultyFields.includes(index)}
         activeField={activeField}
@@ -65,12 +62,12 @@ export default function EnterIPA({
           className="IPAPlusButton flex w-32 items-center gap-1"
           onClick={(e) => {
             e.preventDefault();
-            if (!array.includes("")) setArray([...array, ""]);
+            if (!ipa.includes("")) setIPA([...ipa, ""]);
           }}
         >
           <>
             <p className="flex h-full items-center font-semibold capitalize">
-              {array.length > 1 ? (
+              {ipa.length > 1 ? (
                 <span>{label.plural}</span>
               ) : (
                 <span>{label.singular}</span>
@@ -87,8 +84,8 @@ export default function EnterIPA({
       <MobileMenuContextProvider>
         <IPAKeyboard
           IPA={IPA}
-          array={array}
-          setArray={setArray}
+          array={ipa}
+          setArray={setIPA}
           activeField={activeField}
         />
       </MobileMenuContextProvider>

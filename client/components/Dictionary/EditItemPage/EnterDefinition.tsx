@@ -1,38 +1,51 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { FieldErrors, FieldValues } from "react-hook-form";
 import { Button } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/16/solid";
+import { RefObject, useState } from "react";
+import { useController, useFormContext } from "react-hook-form";
 
-import StyledTextarea from "@/components/ui/StyledTextArea";
-import { FormErrors } from "../../ui/FormErrors";
+import { FormErrors, StyledTextArea } from "@/components";
+import { ItemWithPopulatedTranslations } from "@/lib/contracts";
+import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 
 interface EnterDefinitionProps {
-  setValue: Function;
   initialValue: string | undefined;
-  errors: FieldErrors<FieldValues>;
 }
 
 export default function EnterDefinition({
-  setValue,
   initialValue,
-  errors,
 }: EnterDefinitionProps) {
-  const [definition, setDefinition] = useState(
-    initialValue ? initialValue : ""
-  );
+  const {
+    control,
+    formState: { errors },
+    clearErrors,
+  } = useFormContext<ItemWithPopulatedTranslations>();
+
   const [showInputField, setShowInputField] = useState<boolean>(
     (initialValue && initialValue?.length > 0) || false
   );
+  const { field } = useController({
+    name: "definition",
+    control,
+    defaultValue: initialValue,
+  });
 
-  useEffect(() => {
-    setValue("definition", definition === "" ? undefined : definition, {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    });
-  }, [definition, setValue]);
+  const definition = field.value;
+  const setDefinition: (value: string | undefined) => void = field.onChange;
+
+  const deleteDefinition = () => {
+    setDefinition(undefined);
+    clearErrors("definition");
+    setShowInputField(false);
+  };
+
+  const handleOutSideClick = () => {
+    if (!definition || definition.trim().length < 25) {
+      deleteDefinition();
+    }
+  };
+  const definitionRef = useOutsideClick(handleOutSideClick);
 
   return (
     <div id="definition" className="flex flex-col gap-2 text-sm sm:gap-x-1">
@@ -41,6 +54,8 @@ export default function EnterDefinition({
           className="flex w-32 items-center gap-1"
           onClick={(e) => {
             e.preventDefault();
+            clearErrors("definition");
+            setDefinition(undefined);
             setShowInputField(true);
           }}
         >
@@ -52,8 +67,11 @@ export default function EnterDefinition({
           </>
         </Button>
         {showInputField && (
-          <div className="relative flex w-full flex-wrap items-center">
-            <StyledTextarea
+          <div
+            className="relative flex w-full flex-wrap items-center"
+            ref={definitionRef as RefObject<HTMLDivElement>}
+          >
+            <StyledTextArea
               noFloatingLabel
               label="Definition"
               id="definition"
@@ -63,11 +81,11 @@ export default function EnterDefinition({
               }}
               placeholder="Enter a definition"
               value={definition}
-              autoFocus={definition === "" ? true : false}
+              autoFocus={definition === undefined ? true : false}
               onKeyDown={(e) => {
-                if (e.key === "Escape") deleteField();
+                if (e.key === "Escape") deleteDefinition();
               }}
-              minusButtonAction={deleteField}
+              minusButtonAction={deleteDefinition}
               hasErrors={!!errors["definition"]}
             />
           </div>
@@ -76,9 +94,4 @@ export default function EnterDefinition({
       </>
     </div>
   );
-
-  function deleteField() {
-    setDefinition("");
-    setShowInputField(false);
-  }
 }

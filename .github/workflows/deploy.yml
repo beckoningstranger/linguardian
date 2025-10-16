@@ -86,3 +86,4 @@ jobs:
           MONGO_URL: ${{ secrets.MONGO_URL }}
           AWS_ID: ${{ secrets.AWS_ID }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}

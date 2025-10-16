@@ -1,6 +1,7 @@
-import { cn } from "@/lib/helperFunctionsClient";
-import { User } from "@/lib/types";
-import LearnedLanguageInfoCard from "./LearnedLanguageInfoCard";
+import { cn } from "@/lib/utils";
+
+import LearnedLanguageInfoCard from "@/components/Profile/LearnedLanguageInfoCard";
+import { User } from "@/lib/contracts";
 
 interface LearnedLanguageInfoProps {
   user: User;

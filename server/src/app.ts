@@ -1,12 +1,13 @@
-import express from "express";
+import api from "@/routes/api";
 import cors from "cors";
-import morgan from "morgan";
+import express from "express";
 import helmet from "helmet";
-
-import api from "./routes/api";
+import morgan from "morgan";
 
 const app = express();
-const FRONTEND_URL = process.env.FRONTEND;
+const FRONTEND_URL = process.env.FRONTEND_URL;
+const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
+if (!NEXTAUTH_SECRET || !FRONTEND_URL) throw new Error("Environment not set");
 
 app.use(helmet());
 app.use(
@@ -15,7 +16,13 @@ app.use(
   })
 );
 app.use(morgan("combined"));
-app.use(express.json());
-app.use("/", api);
+app.use((req, res, next) => {
+  const contentType = req.headers["content-type"] || "";
+  if (contentType.startsWith("multipart/form-data")) {
+    return next();
+  }
+  express.json()(req, res, next);
+});
 
+app.use("/", api);
 export default app;

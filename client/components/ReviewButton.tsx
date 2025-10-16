@@ -1,7 +1,5 @@
 "use client";
 
-import paths from "@/lib/paths";
-import { LearningMode, ListStats } from "@/lib/types";
 import Link from "next/link";
 import {
   FaBookOpenReader,
@@ -11,15 +9,18 @@ import {
 } from "react-icons/fa6";
 import { GiSeedling, GiSpellBook, GiWateringCan } from "react-icons/gi";
 import { RxDotsHorizontal } from "react-icons/rx";
-import Button from "./ui/Button";
-import { cn } from "@/lib/helperFunctionsClient";
+
+import { Button } from "@/components";
+import { LearningMode, LearningStats } from "@/lib/contracts";
+import paths from "@/lib/paths";
+import { cn } from "@/lib/utils";
 
 interface ReviewButtonProps {
   mode: LearningMode | "more" | "spinner";
   showAllModes?: Function;
   listNumber: number;
   unitNumber?: number;
-  stats: ListStats;
+  stats: LearningStats;
   unlockedModes: LearningMode[] | undefined;
 }
 

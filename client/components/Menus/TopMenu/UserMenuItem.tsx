@@ -20,7 +20,6 @@ export default function UserMenuItem({
         href={to}
         className="flex items-center hover:cursor-pointer"
         onClick={onClick}
-        id="user-menu-link" // used in useOutsideClickForUserMenu
       >
         <span className="mx-4 text-xl">{icon}</span>
         <span className="text-[1rem]">{label}</span>

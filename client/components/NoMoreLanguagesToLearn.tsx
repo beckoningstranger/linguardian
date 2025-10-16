@@ -1,9 +1,10 @@
 "use client";
 
-import paths from "@/lib/paths";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import toast from "react-hot-toast";
+
+import paths from "@/lib/paths";
 
 export default function NoMoreLanguagesToLearn() {
   const router = useRouter();

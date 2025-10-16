@@ -1,7 +1,7 @@
 import Image from "next/image";
 
-import { cn } from "@/lib/helperFunctionsClient";
-import { LanguageWithFlagAndName } from "@/lib/types";
+import { LanguageWithFlagAndName } from "@/lib/contracts";
+import { cn } from "@/lib/utils";
 
 interface CompetencyBadgeProps {
   rating: number;

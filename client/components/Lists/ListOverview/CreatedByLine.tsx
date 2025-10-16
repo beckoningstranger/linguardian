@@ -1,11 +1,13 @@
-import paths from "@/lib/paths";
 import Link from "next/link";
 
-export default function CreatedByLine({
-  authorData,
-}: {
-  authorData: { username: string; usernameSlug: string }[];
-}) {
+import paths from "@/lib/paths";
+import { AuthorData } from "@/lib/contracts";
+
+interface CreatedByLineProps {
+  authorData: AuthorData[];
+}
+
+export default function CreatedByLine({ authorData }: CreatedByLineProps) {
   return (
     <div className="text-csmr text-grey-900">
       {authorData.map((author, index) => (

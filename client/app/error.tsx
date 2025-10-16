@@ -1,10 +1,11 @@
 "use client";
 
+import { useEffect } from "react";
+import { signOut } from "next-auth/react";
+
 import NavigateBackButton from "@/components/NavigateBackButton";
 import Button from "@/components/ui/Button";
-import { signOut } from "next-auth/react";
-import { useEffect } from "react";
-
+import paths from "@/lib/paths";
 interface ErrorProps {
   error: Error & { digest?: string };
   reset: () => void;
@@ -26,7 +27,7 @@ export default function Error({ error, reset }: ErrorProps) {
           <Button
             intent="secondary"
             onClick={() => {
-              signOut({ callbackUrl: "/" });
+              signOut({ callbackUrl: paths.rootPath() });
             }}
           >
             Log out

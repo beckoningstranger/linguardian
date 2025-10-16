@@ -1,0 +1,36 @@
+services:
+
+  backend:
+    build:
+      context: ./server
+    env_file:
+      - ./server/.env.local
+    networks:
+      - app-network
+    ports:
+      - "8000:8000"
+    image: backend:local
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.local
+      args:
+        NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+        GOOGLE_ID: ${GOOGLE_ID}
+        GOOGLE_SECRET: ${GOOGLE_SECRET}
+        NEXTAUTH_URL: http://localhost:3000
+        SERVER_URL: http://backend:8000
+        FRONTEND_URL: http://frontend:3000
+        NODE_ENV: production
+    image: frontend:local
+    env_file:
+      - ./client/.env.local
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

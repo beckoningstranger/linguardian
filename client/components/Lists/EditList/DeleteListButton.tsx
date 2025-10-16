@@ -4,13 +4,15 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import ConfirmCancelMobileMenu from "@/components/ConfirmCancelMobileMenu";
-import ConfirmCancelModal from "@/components/ConfirmCancelModal";
-import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
-import TopContextMenuButton from "@/components/Menus/TopMenu/TopContextMenuButton";
+import {
+  ConfirmCancelMobileMenu,
+  ConfirmCancelModal,
+  IconSidebarButton,
+  TopContextMenuButton,
+} from "@/components";
 import { useListContext } from "@/context/ListContext";
 import { useMobileMenu } from "@/context/MobileMenuContext";
-import { removeList } from "@/lib/actions";
+import { deleteListAction } from "@/lib/actions/list-actions";
 import paths from "@/lib/paths";
 
 interface DeleteListButtonProps {
@@ -22,19 +24,19 @@ export default function DeleteListButton({ mode }: DeleteListButtonProps) {
   if (!toggleMobileMenu) throw new Error("Could not use mobile menu");
   const [showConfirmDeleteModal, setShowConfirmDeleteModel] = useState(false);
   const router = useRouter();
-  const {
-    listData: { listNumber, language, name },
-    userIsAuthor,
-  } = useListContext();
+  const { listName, listNumber, listLanguage, userIsAuthor } = useListContext();
   if (!userIsAuthor) return null;
 
-  const removeListAction = async () => {
-    toast.promise(removeList(listNumber), {
-      loading: `Deleting ${name}...`,
-      success: `${name} has been deleted`,
-      error: (err) => err.toString(),
-    });
-    router.push(paths.dashboardLanguagePath(language.code));
+  const handleDeleteList = async () => {
+    const response = await toast.promise(
+      deleteListAction(listNumber, listLanguage.code),
+      {
+        loading: `Deleting ${listName}...`,
+        success: (result) => result.message,
+        error: (err) => (err instanceof Error ? err.message : err.toString()),
+      }
+    );
+    if (response) router.push(paths.dashboardLanguagePath(listLanguage.code));
   };
 
   if (mode === "desktop")
@@ -51,10 +53,10 @@ export default function DeleteListButton({ mode }: DeleteListButtonProps) {
           isOpen={showConfirmDeleteModal}
           setIsOpen={setShowConfirmDeleteModel}
           closeButton={false}
-          doOnConfirm={removeListAction}
+          doOnConfirm={handleDeleteList}
         >
           <div>Are you sure you want to delete</div>
-          <div>&quot;{name}&quot;?</div>
+          <div>&quot;{listName}&quot;?</div>
         </ConfirmCancelModal>
       </>
     );
@@ -63,12 +65,12 @@ export default function DeleteListButton({ mode }: DeleteListButtonProps) {
     return (
       <>
         <TopContextMenuButton
+          mode="delete"
           onClick={() => {
             if (toggleMobileMenu) toggleMobileMenu();
           }}
-          mode="delete"
         />
-        <ConfirmCancelMobileMenu doOnConfirm={removeListAction}>
+        <ConfirmCancelMobileMenu doOnConfirm={handleDeleteList}>
           <div className="text-2xl">
             Careful! This will delete the entire list!
           </div>

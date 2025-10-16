@@ -1,4 +1,4 @@
-import { Gender, PartOfSpeech, Tag } from "@/lib/types";
+import { Gender, PartOfSpeech } from "@/lib/contracts";
 
 interface ItemPartOfSpeechProps {
   gender?: Gender;

@@ -1,12 +1,13 @@
 "use client";
-import { RefObject, useContext, useState } from "react";
-import { Button } from "@headlessui/react";
 
-import { cn } from "@/lib/helperFunctionsClient";
-import { LanguageFeatures } from "@/lib/types";
-import { MobileMenuContext } from "../../context/MobileMenuContext";
-import HelperKeysSelector from "../Menus/HelperKeysSelector";
-import MobileMenu from "../Menus/MobileMenu/MobileMenu";
+import { Button } from "@headlessui/react";
+import { RefObject, useContext, useState } from "react";
+
+import HelperKeysSelector from "@/components/Menus/HelperKeysSelector";
+import MobileMenu from "@/components/Menus/MobileMenu/MobileMenu";
+import { MobileMenuContext } from "@/context/MobileMenuContext";
+import { cn } from "@/lib/utils";
+import { LanguageFeatures } from "@/lib/contracts";
 
 interface HelperKeysProps {
   targetLanguageFeatures: LanguageFeatures;

@@ -1,167 +1,197 @@
 import { Request, Response } from "express";
+
 import {
+  createItemParamsSchema,
+  fetchItemByIdParamsSchema,
+  fetchItemIdBySlugParamsSchema,
+  itemSchemaWithPopulatedTranslations,
+  searchDictionaryParamsSchema,
+} from "@/lib/contracts";
+import { AuthenticatedItemRequest, AuthenticatedRequest } from "@/lib/types";
+import {
+  assertNever,
+  errorResponse,
   formatZodErrors,
-  transformItemFromFEToBE,
-} from "../../lib/helperFunctions.js";
-import { siteSettings } from "../../lib/siteSettings.js";
+  successResponse,
+} from "@/lib/utils";
 import {
-  ItemWithPopulatedTranslations,
-  SupportedLanguage,
-} from "../../lib/types.js";
-import { itemSchemaWithPopulatedTranslationsFE } from "../../lib/validations.js";
-import {
-  addTranslationBySlug,
-  editOrCreateBySlug,
-  findItemsByName,
-  getAllSlugsForLanguage,
-  getItemBySlug,
-  getPopulatedItemBySlug,
-  removeTranslationBySlug,
-} from "../../models/items.model.js";
+  createNewItem,
+  getItemIdBySlug,
+  getPopulatedItemById,
+  searchDictionary,
+  updateExistingItem,
+} from "@/models/items.model.js";
+import { addItemToUnit } from "@/models/lists.model";
 
-export async function httpGetItemBySlug(req: Request, res: Response) {
-  const slug = req.params.slug;
+export async function getItemIdBySlugController(req: Request, res: Response) {
+  const result = fetchItemIdBySlugParamsSchema.safeParse(req.params);
+  if (!result.success) return errorResponse(res, 400, "Request invalid");
 
-  const response = await getItemBySlug(slug);
-  if (response) return res.status(200).json(response);
-  return res
-    .status(404)
-    .json({ message: `Error getting item with slug ${slug}: Item not found` });
+  const itemSlug = result.data.itemSlug;
+  const response = await getItemIdBySlug(itemSlug);
+  if (!response.success) return errorResponse(res, 404, "Item not found");
+
+  return successResponse(res, 200, response.data.id);
 }
 
-export async function httpGetPopulatedItemBySlug(req: Request, res: Response) {
-  const slug = req.params.slug;
-  let userLanguages = req.params.userLanguages.split(
-    ","
-  ) as SupportedLanguage[];
-  if (req.params.userLanguages === "undefined")
-    userLanguages = [] as SupportedLanguage[];
+export async function getItemController(req: Request, res: Response) {
+  const result = fetchItemByIdParamsSchema.safeParse(req.params);
+  if (!result.success) return errorResponse(res, 400, "Request invalid");
 
-  const response = await getPopulatedItemBySlug(slug, userLanguages);
-  if (!response)
-    return res
-      .status(404)
-      .json({ message: `Error getting item with id ${slug}: Item not found` });
-  return res.status(200).json(response);
+  const itemId = result.data.id;
+
+  const response = await getPopulatedItemById(itemId);
+  if (!response.success) return errorResponse(res, 404, "Item not found");
+
+  const item = response.data;
+
+  // logObjectPropertySizes(item);
+  return successResponse(res, 200, item);
 }
 
-export async function httpGetAllSlugsForLanguage(req: Request, res: Response) {
-  const language = req.params.language as SupportedLanguage;
+export async function createItemController(
+  req: AuthenticatedRequest,
+  res: Response
+) {
+  const body = req.body as unknown;
 
-  const response = await getAllSlugsForLanguage(language);
-  if (response)
-    return res
-      .status(200)
-      .json(response as { slug: string; language: SupportedLanguage }[]);
-  return res
-    .status(404)
-    .json({ message: `Error getting slugs for ${language}: None found` });
-}
-
-export async function httpFindItemsByName(req: Request, res: Response) {
-  const languagesString = req.params.languages as string;
-  const query = req.params.query as string;
-
-  const languages = languagesString.split(",");
-
-  const response = await findItemsByName(
-    languages as SupportedLanguage[],
-    query
-  );
-  if (response) return res.status(200).json(response);
-  return res.status(404).json({
-    message: `Error finding items for ${languages} and query ${query}: None found`,
-  });
-}
-
-export async function httpEditOrCreateItem(req: Request, res: Response) {
-  const item = req.body as unknown;
-  const slug = req.params.slug as string;
-  const {
-    data: validatedItem,
-    success,
-    error,
-  } = itemSchemaWithPopulatedTranslationsFE.safeParse(item);
-
-  if (!success) {
-    const formattedErrors = formatZodErrors(error.format());
-    return res.status(400).json({ errors: formattedErrors });
-  }
-
-  const serverItem = transformItemFromFEToBE(validatedItem);
-
-  const hasOtherAffectedItems = siteSettings.supportedLanguages.some(
-    (lang) => (serverItem.translations[lang]?.length ?? 0) > 0
-  );
-
-  const updateResponses = hasOtherAffectedItems
-    ? await updateRelatedItems(serverItem)
-    : true;
-
-  const response = await editOrCreateBySlug(serverItem, slug);
-  if (updateResponses && response) return res.status(201).json(response);
-  return res
-    .status(500)
-    .json({ error: "Internal server error, could not create/edit item" });
-}
-
-async function updateRelatedItems(item: ItemWithPopulatedTranslations) {
-  const oldItem = await getPopulatedItemBySlug(
-    item.slug,
-    siteSettings.supportedLanguages
-  );
-
-  if (!oldItem) {
-    console.warn("Could not find old item");
-    return false;
-  }
-
-  const { added, removed, areEqual } = translationObjectsDiff(oldItem, item);
-  const promises: Promise<any>[] = [];
-  if (areEqual) return true;
-  if (added)
-    added.forEach((slug) =>
-      promises.push(addTranslationBySlug(oldItem._id.toString(), slug))
-    );
-  if (removed)
-    removed.forEach((slug) =>
-      promises.push(removeTranslationBySlug(oldItem._id.toString(), slug))
+  const result = createItemParamsSchema.safeParse(body);
+  if (!result.success)
+    return errorResponse(
+      res,
+      400,
+      `Could not validate item:\n${formatZodErrors(result.error)}`
     );
 
-  await Promise.all(promises);
-  return true;
+  const { item, listNumber, unitName } = result.data;
+
+  try {
+    const response = await createNewItem(item);
+    if (!response.success) return errorResponse(res, 400, response.error);
+    const data = response.data;
+
+    switch (data.type) {
+      case "duplicate":
+        return successResponse(res, 200, {
+          type: data.type,
+          message: data.message,
+          redirectSlug: data.redirectSlug,
+        });
+      case "itemInfo": {
+        if (listNumber && unitName) {
+          const addToUnitResponse = await addItemToUnit(listNumber, {
+            unitName,
+            itemId: data.itemInfo.id,
+          });
+          if (!addToUnitResponse.success)
+            return successResponse(res, 201, {
+              message:
+                "Item created successfully!  🎉\nbut could not add to unit! :-/",
+              type: "itemInfo",
+              itemInfo: data.itemInfo,
+            });
+
+          return successResponse(res, 201, {
+            message: `Item successfully created and added to unit ${unitName}!  🎉`,
+            type: "itemInfo",
+            itemInfo: data.itemInfo,
+          });
+        }
+
+        return successResponse(res, 201, {
+          message: "Item created successfully! 🎉",
+          type: "itemInfo",
+          itemInfo: data.itemInfo,
+        });
+      }
+      default:
+        const _exhaustiveCheck: never = data;
+        return assertNever(_exhaustiveCheck);
+    }
+  } catch (err) {
+    return errorResponse(
+      res,
+      500,
+      (err as Error).message || "Unknown error occurred"
+    );
+  }
 }
 
-function translationObjectsDiff(
-  oldItem: {
-    translations: { [key: string]: { slug: string }[] };
-  },
-  newItem: {
-    translations: { [key: string]: { slug: string }[] };
+export async function updateItemController(
+  req: AuthenticatedItemRequest,
+  res: Response
+) {
+  const body = req.body as unknown;
+
+  const result = itemSchemaWithPopulatedTranslations.safeParse(body);
+  if (!result.success)
+    return errorResponse(
+      res,
+      400,
+      `Could not validate item:\n${formatZodErrors(result.error)}`
+    );
+
+  try {
+    const response = await updateExistingItem(result.data);
+    if (!response.success) return errorResponse(res, 400, response.error);
+    if (response.data) {
+      return successResponse(res, 200, {
+        message: "Item updated successfully!  🎉",
+        type: "itemInfo",
+        itemInfo: response.data.itemInfo,
+      });
+    }
+  } catch (err) {
+    return errorResponse(
+      res,
+      500,
+      (err as Error).message || "Unknown error occurred"
+    );
   }
-): { added: string[]; removed: string[]; areEqual: boolean } {
-  const allLanguages = new Set([
-    ...Object.keys(oldItem.translations),
-    ...Object.keys(newItem.translations),
-  ]);
-  const added: string[] = [];
-  const removed: string[] = [];
+}
 
-  allLanguages.forEach((lang) => {
-    const slugs1 = oldItem.translations[lang]?.map((item) => item.slug) || [];
-    const slugs2 = newItem.translations[lang]?.map((item) => item.slug) || [];
+export async function deleteItemController(
+  req: AuthenticatedItemRequest,
+  res: Response
+) {
+  const itemId = req.itemId;
+  return errorResponse(res, 418, "Implement correctly");
+}
 
-    // Find added slugs
-    const addedInLang = slugs2.filter((slug) => !slugs1.includes(slug));
-    added.push(...addedInLang);
+export async function searchDictionaryController(req: Request, res: Response) {
+  try {
+    const { languages, query } = req.query;
+    if (!query || !languages || typeof languages !== "string")
+      return errorResponse(res, 400, "Missing query or languages");
 
-    // Find removed slugs
-    const removedInLang = slugs1.filter((slug) => !slugs2.includes(slug));
-    removed.push(...removedInLang);
-  });
+    // languages comes as comma-separated string
+    const languageArray = languages.split(",");
 
-  // Determine if both objects are equal
-  const areEqual = added.length === 0 && removed.length === 0;
+    const result = searchDictionaryParamsSchema.safeParse({
+      query,
+      languages: languageArray,
+    });
+    if (!result.success)
+      return errorResponse(
+        res,
+        400,
+        "Search query or search languages invalid"
+      );
 
-  return { added, removed, areEqual };
+    const response = await searchDictionary(
+      result.data.languages,
+      result.data.query
+    );
+    if (!response.success) {
+      console.error(`Search failed for query ${query}: ${response.error}`);
+      return successResponse(res, 200, []);
+    }
+    return successResponse(res, 200, response.data);
+  } catch (err) {
+    return errorResponse(
+      res,
+      500,
+      (err as Error).message || "Unknown error occurred"
+    );
+  }
 }

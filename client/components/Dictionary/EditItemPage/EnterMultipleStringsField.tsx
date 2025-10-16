@@ -2,7 +2,7 @@
 
 import { Dispatch, RefObject, SetStateAction, useState } from "react";
 
-import StyledInput from "@/components/ui/StyledInput";
+import StyledInput from "@/components/Forms/StyledInput";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 
 interface EnterMultipleStringsFieldProps {
@@ -52,6 +52,7 @@ export default function EnterMultipleStringsField({
         placeholder={placeholder}
         spellCheck={false}
         id={formField}
+        name={formField}
         onChange={(e) => setValue(e.target.value)}
         value={value}
         autoFocus={value === ""}

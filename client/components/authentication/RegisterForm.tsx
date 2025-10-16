@@ -1,121 +1,99 @@
 "use client";
-import { createUser } from "@/lib/actions";
-import { setErrorsFromBackend } from "@/lib/helperFunctionsClient";
-import paths from "@/lib/paths";
-import { RegisterSchema } from "@/lib/types";
-import { registerSchema } from "@/lib/validations";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
-import { FieldErrors, FieldValues, useForm } from "react-hook-form";
-import Spinner from "../Spinner";
-import Button from "../ui/Button";
-import InputWithCheck from "./InputWithCheck";
+import { FormProvider, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+
 import {
+  Button,
+  FormErrors,
+  InputWithAvailabilityCheck,
   LandingPageFormContainer,
   LandingPageFormHeader,
   LandingPageInput,
-} from "./LandingPageComponents";
+  Spinner,
+} from "@/components";
+
+import { createUserAction } from "@/lib/actions/user-actions";
+
+import paths from "@/lib/paths";
+import { RegistrationData, registrationDataSchema } from "@/lib/contracts";
 
 export default function RegisterForm() {
-  const {
-    register,
-    handleSubmit,
-    setError,
-    reset,
-    formState: { errors, isSubmitting, isSubmitted },
-    setValue,
-    watch,
-  } = useForm<RegisterSchema>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: { id: "credentials" },
+  const methods = useForm<RegistrationData>({
+    resolver: zodResolver(registrationDataSchema),
+    defaultValues: { registeredVia: "email" },
     mode: "onBlur",
   });
 
-  const onSubmit = async ({
-    username,
-    email,
-    password,
-    confirmPassword,
-  }: RegisterSchema) => {
-    const response = await createUser({
-      id: "credentials",
-      username,
-      email,
-      password,
-      confirmPassword,
+  const onSubmit = async (formData: RegistrationData) => {
+    const response = await toast.promise(createUserAction(formData), {
+      loading: "Creating user...",
+      success: "User created successfully! 🎉",
+      error: (err) => {
+        const error: string =
+          err instanceof Error ? err.message : err.toString();
+        methods.setError("root", {
+          type: "manual",
+          message: error,
+        });
+        return error;
+      },
     });
 
-    if (!response.success) {
-      setErrorsFromBackend(response.errors, setError);
-    } else {
-      reset();
+    if (response) {
       await signIn("credentials", {
-        email,
-        password,
+        email: formData.email,
+        password: formData.password,
         callbackUrl: paths.welcomePath(),
       });
     }
   };
 
-  return (
-    <LandingPageFormContainer>
-      <LandingPageFormHeader title="Create an account" />
-      <form className="flex flex-col gap-1" onSubmit={handleSubmit(onSubmit)}>
-        <InputWithCheck
-          setValue={setValue}
-          checkMode="username"
-          setError={setError}
-          register={register}
-          watch={watch}
-        />
-        <FormErrors errors={errors} field="username" />
+  const { isSubmitting, isValid } = methods.formState;
 
-        <InputWithCheck
-          setValue={setValue}
-          checkMode="email"
-          setError={setError}
-          register={register}
-          watch={watch}
-        />
-        <FormErrors errors={errors} field="email" />
-
-        <LandingPageInput
-          {...register("password")}
-          type="password"
-          id="password"
-          placeholder="Enter your password"
-        />
-        <FormErrors errors={errors} field="password" />
-
-        <LandingPageInput
-          {...register("confirmPassword")}
-          type="password"
-          id="confirmPassword"
-          placeholder="Enter your password again"
-        />
-        <FormErrors errors={errors} field="confirmPassword" />
-        <FormErrors errors={errors} field="root" />
-
-        <Button
-          intent="primary"
-          disabled={isSubmitting || isSubmitted}
-          type="submit"
-          rounded
-        >
-          {isSubmitting ? <Spinner centered size="mini" /> : "Register"}
-        </Button>
-      </form>
-    </LandingPageFormContainer>
+  const requiredFields = ["username", "email", "password", "confirmPassword"];
+  const allFieldsAreDirty = requiredFields.every((field) =>
+    Object.keys(methods.formState.dirtyFields).includes(field)
   );
-}
 
-type FormErrorsProps = {
-  errors: FieldErrors<FieldValues>;
-  field: string;
-};
-function FormErrors({ errors, field }: FormErrorsProps) {
-  const error = errors[field];
-  const message =
-    typeof error?.message === "string" ? error.message : undefined;
-  return <div className="ml-2 max-w-96 text-sm text-red-500">{message}</div>;
+  return (
+    <FormProvider {...methods}>
+      <LandingPageFormContainer>
+        <LandingPageFormHeader title="Create an account" />
+        <form
+          className="flex flex-col gap-1"
+          onSubmit={methods.handleSubmit(onSubmit)}
+        >
+          <InputWithAvailabilityCheck checkMode="username" />
+          <InputWithAvailabilityCheck checkMode="email" />
+          <LandingPageInput
+            type="password"
+            id="password"
+            placeholder="Enter your password"
+          />
+          <LandingPageInput
+            type="password"
+            id="confirmPassword"
+            placeholder="Enter your password again"
+          />
+          <FormErrors
+            errors={methods.formState.errors}
+            field="root"
+            aria-live="polite"
+          />
+
+          <Button
+            intent="primary"
+            disabled={isSubmitting || !allFieldsAreDirty || !isValid}
+            type="submit"
+            rounded
+          >
+            {isSubmitting ? <Spinner centered mini /> : "Register"}
+          </Button>
+        </form>
+      </LandingPageFormContainer>
+    </FormProvider>
+  );
 }

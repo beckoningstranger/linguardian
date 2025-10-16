@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import SearchInput from "../../ui/SearchInput";
+import SearchInput from "@/components/Forms/SearchInput";
 
 interface ListSearchProps {
   languageName?: string;

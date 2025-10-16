@@ -3,11 +3,11 @@
 import { useMemo } from "react";
 import { Button } from "@headlessui/react";
 
-import { Case, Gender } from "@/lib/types";
-import { cn } from "@/lib/helperFunctionsClient";
+import { cn } from "@/lib/utils";
+import { Gender, GrammaticalCase } from "@/lib/contracts";
 
 type CaseGenderButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  mode: Gender | Case;
+  mode: Gender | GrammaticalCase;
 };
 
 export default function CaseGenderButton({
@@ -20,7 +20,7 @@ export default function CaseGenderButton({
   );
 
   const config: {
-    [key in Gender | Case]: {
+    [key in Gender | GrammaticalCase]: {
       beginning?: string;
       key: string;
       end: string;

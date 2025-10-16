@@ -1,94 +1,106 @@
-import bcrypt from "bcryptjs";
+import { z } from "zod";
 
-import { slugifyString, toObjectId } from "../lib/helperFunctions.js";
-import { siteSettings } from "../lib/siteSettings.js";
 import {
+  ApiResponse,
+  AuthorData,
+  authorDataSchema,
+  GetUserParams,
   ItemForServer,
-  LanguageWithFlagAndName,
   LearnedItem,
-  RecentDictionarySearches,
-  RegisterSchema,
+  RegistrationData,
   SupportedLanguage,
+  UpdateUser,
   User,
-} from "../lib/types.js";
-import Items from "./item.schema";
-import Users from "./users.schema";
+} from "@/lib/contracts";
+import {
+  objectIdSchema,
+  SensitiveUser,
+  sensitiveUserSchema,
+} from "@/lib/schemas";
+import { defaultSRSettings } from "@/lib/siteSettings";
+import {
+  buildNewUser,
+  isOAuthProvider,
+  safeDbRead,
+  safeDbWrite,
+} from "@/lib/utils";
+import Users from "@/models/user.schema";
+import { Types, UpdateResult } from "mongoose";
 
-export async function getUserById(id: string) {
-  try {
-    const response = await Users.findOne<User>({ id: id }, { _id: 0, __v: 0 });
-    if (response) return response;
-  } catch (err) {
-    console.error(`Error getting user by id: ${err}`);
-  }
+export async function createUser(
+  registrationData: RegistrationData
+): Promise<ApiResponse<SensitiveUser>> {
+  const newUser = await buildNewUser(registrationData);
+
+  const extendedSensitiveUserSchema = sensitiveUserSchema.extend({
+    _id: objectIdSchema,
+  });
+
+  return await safeDbWrite({
+    input: newUser,
+    dbWriteQuery: (validatedUser) => Users.create(validatedUser),
+    schemaForValidation: extendedSensitiveUserSchema,
+    errorMessage: `Failed to create user ${newUser.username}`,
+  });
 }
 
-export async function getUserByUsernameSlug(usernameSlug: string) {
-  try {
-    const response = await Users.findOne(
-      { usernameSlug: usernameSlug },
-      { _id: 0, __v: 0 }
-    );
-    if (response) return response;
-  } catch (err) {
-    console.error(
-      `Error getting ObjectId for usernameSlug ${usernameSlug}: ${err}`
-    );
-  }
+export async function updateUser(
+  userData: UpdateUser
+): Promise<ApiResponse<UpdateResult>> {
+  const { id, ...updateFields } = userData;
+  return await safeDbWrite({
+    input: updateFields,
+    dbWriteQuery: () =>
+      Users.updateOne({ id }, updateFields, {
+        runValidators: true,
+      }),
+    schemaForValidation: sensitiveUserSchema.partial(),
+    errorMessage: `Failed to update user with user id ${id}`,
+  });
 }
 
-export async function setLearnedLists(
-  userId: string,
-  learnedLists: Partial<Record<SupportedLanguage, number[]>>
-) {
-  try {
-    return await Users.updateOne<User>(
-      { id: userId },
-      { $set: { learnedLists } }
-    );
-  } catch (err) {
-    console.error(`Error setting learned lists for user ${userId}: ${err}`);
-  }
+export async function getUser({
+  method,
+  query,
+}: GetUserParams): Promise<ApiResponse<SensitiveUser>> {
+  const dbQuery = isOAuthProvider(method)
+    ? { oauth: { [method]: query } }
+    : { [method]: query };
+
+  return await safeDbRead({
+    dbReadQuery: () =>
+      Users.findOne(dbQuery)
+        .populate({
+          path: "recentDictionarySearches",
+          select: "name partOfSpeech IPA gender language definition slug",
+        })
+        .lean(),
+    schemaForValidation: sensitiveUserSchema,
+  });
 }
 
-export async function setLearnedLanguagesForUserId(
-  userId: string,
-  learnedLanguages: LanguageWithFlagAndName[]
-) {
-  try {
-    const user = await Users.findOne({ id: userId }).lean();
+export async function getAuthors(
+  userIds: string[]
+): Promise<ApiResponse<AuthorData[]>> {
+  return await safeDbRead({
+    dbReadQuery: () =>
+      Users.find(
+        { _id: { $in: userIds } },
+        { username: 1, usernameSlug: 1, _id: 0 }
+      ).lean(),
+    schemaForValidation: z.array(authorDataSchema),
+    errorMessage: "Failed to fetch author data",
+  });
+}
 
-    if (!user) {
-      throw new Error(`User with ID ${userId} not found.`);
-    }
-
-    const seenLanguages = new Set();
-    const uniqueLearnedLanguages = learnedLanguages.filter((lang) => {
-      if (seenLanguages.has(lang.code)) return false;
-      seenLanguages.add(lang.code);
-      return true;
-    });
-
-    const updates: Record<string, any> = {
-      learnedLanguages: uniqueLearnedLanguages,
-    };
-
-    // Make sure there is a learnedLists entry for each learned language
-    uniqueLearnedLanguages.forEach((lang) => {
-      const key = `learnedLists.${lang.code}`;
-      const alreadyDefined = user.learnedLists?.[lang.code];
-      if (!alreadyDefined) updates[key] = [];
-    });
-
-    return await Users.updateOne(
-      { id: userId },
-      {
-        $set: updates,
-      }
-    );
-  } catch (err) {
-    console.error(`Error setting learned languages for user ${userId}: ${err}`);
-  }
+export async function isTaken(
+  field: "username" | "email" | "usernameSlug",
+  value: string
+): Promise<boolean> {
+  const exists = await Users.exists({
+    [field]: { $regex: `^${value}$`, $options: "i" },
+  });
+  return !!exists;
 }
 
 export async function updateReviewedItems(
@@ -97,28 +109,24 @@ export async function updateReviewedItems(
   language: SupportedLanguage
 ) {
   try {
-    const allPassedItemIds = items.map((item) => toObjectId(item.id));
-    const user = await getUserById(userId);
-    const allLearnedItems = user?.learnedItems[language] || [];
+    const allPassedItemIds = items.map((item) => item.id);
+    const userResponse = await getUser({ method: "_id", query: userId });
+    if (!userResponse.success) throw new Error("Could not find user");
+
+    const user = userResponse.data;
+    const allLearnedItems = user?.learnedItems?.[language] || [];
     const userSRSettings =
-      user?.customSRSettings[language] || siteSettings.defaultSRSettings;
+      user?.customSRSettings?.[language] || defaultSRSettings;
 
     const allItemsWeNeedToUpdate = allLearnedItems.filter((learnedItem) =>
-      allPassedItemIds.some(
-        (passedId) =>
-          toObjectId(learnedItem.id).toString() === passedId.toString()
-      )
+      allPassedItemIds.some((passedId) => learnedItem.id === passedId)
     );
 
     const passedItemsAndFetchedItems = allItemsWeNeedToUpdate.map(
       (fetchedItem) => {
         return {
           fetchedItem,
-          passedItem: items.find(
-            (item) =>
-              toObjectId(item.id).toString() ===
-              toObjectId(fetchedItem.id).toString()
-          ),
+          passedItem: items.find((item) => item.id === fetchedItem.id),
         };
       }
     );
@@ -131,7 +139,7 @@ export async function updateReviewedItems(
         {
           $pull: {
             [`learnedItems.${language}`]: {
-              id: toObjectId(itemPair.fetchedItem.id),
+              id: itemPair.fetchedItem.id,
             },
           },
         }
@@ -146,7 +154,7 @@ export async function updateReviewedItems(
         {
           $push: {
             [`learnedItems.${language}`]: {
-              id: toObjectId(itemPair.passedItem?.id),
+              id: itemPair.passedItem?.id,
               level: newLevelForItem,
               nextReview:
                 Date.now() +
@@ -176,14 +184,13 @@ export async function addNewlyLearnedItems(
   try {
     const user = await Users.findOne({ id: userId });
     if (!user) throw new Error("User not found");
-    const learnedItemsForLanguage = user.learnedItems[language] || [];
-    const sRSettings =
-      user.customSRSettings[language] || siteSettings.defaultSRSettings;
-    const newItemIds = items.map((item) => toObjectId(item.id));
+    const learnedItemsForLanguage = user.learnedItems?.[language] || [];
+    const sRSettings = user.customSRSettings?.[language] || defaultSRSettings;
+    const newItemIds = items.map((item) => new Types.ObjectId(item.id));
     const filteredItems = learnedItemsForLanguage.filter(
       (learnedItem: LearnedItem) =>
         !newItemIds.some(
-          (newItemId) => toObjectId(learnedItem.id) === newItemId
+          (newItemId) => new Types.ObjectId(learnedItem.id) === newItemId
         )
     );
     const newLearnedItems = items.map((item) => ({
@@ -208,118 +215,4 @@ export async function addNewlyLearnedItems(
       )}, user ${userId}, language ${language}. ${err}`
     );
   }
-}
-
-export async function getLearningDataForUser(userId: string) {
-  try {
-    const user = await Users.findOne({ id: userId });
-    return {
-      learnedItems: user?.learnedItems,
-      ignoredItems: user?.ignoredItems as Partial<
-        Record<SupportedLanguage, string[]>
-      >,
-    };
-  } catch (err) {
-    console.error(`Error getting learned item ids: ${err}`);
-  }
-}
-
-export async function getNextUserId() {
-  const allCredentialsUsers = await Users.find({
-    id: { $regex: "^" + "credentials" },
-  })
-    .select("id")
-    .sort({ id: "asc" });
-  const onlyIds = allCredentialsUsers.map((x) => x.id);
-  const onlyNumbers = onlyIds
-    .map((x: string) => +x.replace(/[a-z]/g, ""))
-    .sort((a, b) => a - b);
-
-  if (onlyNumbers.length === 0) return 1;
-  return onlyNumbers[onlyNumbers.length - 1] + 1;
-}
-
-export async function setNativeLanguage(
-  userId: string,
-  language: SupportedLanguage
-) {
-  return await Users.updateOne<User>({ id: userId }, { native: language });
-}
-
-export async function getNativeLanguageById(userId: string) {
-  const user = await Users.findOne<User>({ id: userId });
-  return user?.native;
-}
-
-export async function getAllUsernameSlugs() {
-  return await Users.find<User>({}, { usernameSlug: 1, _id: 0 });
-}
-
-export async function addRecentDictionarySearches(
-  userId: string,
-  slug: string
-) {
-  const user = await Users.findOne(
-    { id: userId },
-    { _id: 0, recentDictionarySearches: 1 }
-  );
-  let recentSearches = user?.recentDictionarySearches || [];
-  const item = await Items.findOne({ slug }, { _id: 1 });
-  if (item?._id)
-    recentSearches.push({ itemId: item._id, dateSearched: new Date() });
-
-  const tenSortedUniqueSearches = recentSearches
-    .reduce((acc, curr) => {
-      if (
-        !acc.some((obj: RecentDictionarySearches) =>
-          toObjectId(obj.itemId).equals(curr.itemId)
-        )
-      ) {
-        acc.push(curr);
-      }
-      return acc;
-    }, [] as RecentDictionarySearches[])
-    .sort((a, b) => b.dateSearched.getTime() - a.dateSearched.getTime())
-    .slice(0, 10);
-
-  return await Users.findOneAndUpdate<User>(
-    { id: userId },
-    {
-      recentDictionarySearches: tenSortedUniqueSearches,
-    },
-    { new: true }
-  );
-}
-
-export async function getRecentDictionarySearches(userId: string) {
-  return await Users.findOne<User>(
-    { id: userId },
-    { recentDictionarySearches: 1, _id: 0 }
-  );
-}
-
-export async function createUser(registrationData: RegisterSchema) {
-  const userDataPWEncryptedWithUsernameSlug: RegisterSchema & {
-    usernameSlug: string;
-  } = {
-    ...registrationData,
-    usernameSlug: slugifyString(registrationData.username),
-    id:
-      registrationData.id === "credentials"
-        ? "credentials" + (await getNextUserId())
-        : registrationData.id,
-    password: registrationData.password
-      ? await bcrypt.hash(registrationData.password, 10)
-      : undefined,
-  };
-
-  return await Users.create(userDataPWEncryptedWithUsernameSlug);
-}
-
-export async function getUserByEmail(email: string) {
-  return await Users.findOne({ email });
-}
-
-export async function checkUsernameAvailability(username: string) {
-  return await Users.findOne({ username });
 }

@@ -1,6 +1,6 @@
+import { QuitLearningSessionButton } from "@/components";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
-import { LearningMode, SupportedLanguage } from "@/lib/types";
-import QuitLearningSessionButton from "./QuitLearningSessionButton";
+import { LearningMode, SupportedLanguage } from "@/lib/contracts";
 
 interface LearningHeaderProps {
   listName: string;

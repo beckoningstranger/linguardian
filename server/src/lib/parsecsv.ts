@@ -1,196 +1,180 @@
 import { parse } from "csv-parse";
-import fs from "fs";
+import { createReadStream, unlink } from "fs";
+import { mkdir, readFile, writeFile } from "fs/promises";
 import { Types } from "mongoose";
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
+import { join } from "path";
 
-import Items from "../models/item.schema.js";
-import Lemmas from "../models/lemma.schema.js";
-import Lists from "../models/list.schema.js";
 import {
-  createList,
-  getPopulatedListByObjectId,
-} from "../models/lists.model.js";
-import { placeholders } from "./constants";
-import { normalizeString, slugifyString } from "./helperFunctions";
-import { siteSettings } from "./siteSettings";
-import {
-  Case,
   Gender,
+  GrammaticalCase,
   Item,
+  itemSchemaWithTranslations,
   List,
-  ParsedItem,
-  PopulatedList,
+  ParsedTranslations,
+  ParseResult,
   SupportedLanguage,
   Tag,
-} from "./types";
-import { parsedItemSchema } from "./validations";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+} from "@/lib/contracts";
+import { ParsedItem, parsedItemSchema } from "@/lib/schemas";
+import {
+  allLanguageFeatures,
+  allSupportedLanguages,
+  supportedLanguageCodes,
+} from "@/lib/siteSettings";
+import {
+  getAllLemmaObjectIdsForItem,
+  getLemmasFromEachParsedItemAndUpload,
+  safeDbRead,
+} from "@/lib/utils";
+import Items from "@/models/item.schema";
+import { createNewItem } from "@/models/items.model";
+import Lemmas from "@/models/lemma.schema";
+import Lists from "@/models/list.schema";
+import { getListByListNumber } from "@/models/lists.model";
+import { randomUUID } from "crypto";
 
 export async function parseCSV(filename: string, newList: List) {
   console.log("Parsing CSV File...");
-  const newUploadedList = await createList(newList);
-  const newListId = newUploadedList?._id;
-  if (!newListId) throw new Error("Error creating new list");
 
-  return new Promise<{ newListId: Types.ObjectId; issues: string[] }>(
-    (resolve, reject) => {
-      const issues: string[] = [];
-      const promises: Promise<void>[] = [];
+  return new Promise<ParseResult[]>((resolve, reject) => {
+    const results: ParseResult[] = [];
+    const promises: Promise<void>[] = [];
 
-      fs.createReadStream(
-        join(__dirname + `../../../data/csvUploads/${filename}`)
-      )
-        .pipe(parse({ columns: true, comment: "#" }))
-        .on("data", async (data) => {
-          let formattedData: ParsedItem = {
-            name: data.name,
-            normalizedName: normalizeString(data.name),
-            slug: slugifyString(data.name, newList.language.code),
-            language: newList.language.code,
-            languageName: siteSettings.languageFeatures.find(
-              (lang) => lang.langCode === newList.language.code
-            )?.langName!,
-            flagCode: siteSettings.languageFeatures.find(
-              (lang) => lang.langCode === newList.language.code
-            )?.flagCode!,
-            partOfSpeech: data.partOfSpeech,
-            case:
-              data.case && data.case.length > 0
-                ? (data.case as Case)
-                : undefined,
-            gender:
-              data.gender && data.gender.length > 0
-                ? (data.gender as Gender)
-                : undefined,
-            pluralForm:
-              data.pluralForm && data.pluralForm.length > 0
-                ? data.pluralForm?.split(", ")
-                : undefined,
-            tags: data.tags?.split(", ") as Tag[],
-            translations: {
-              DE: data.tDE?.split(", "),
-              FR: data.tFR?.split(", "),
-              EN: data.tEN?.split(", "),
-              CN: data.tCN?.split(", "),
-            },
-            unit: data.unit,
-          };
+    const file = join(process.cwd(), "data", "csvUploads", filename);
+    let rowIndex = 2; // Header is row 1
 
-          const {
-            data: validatedData,
-            success,
-            error,
-          } = parsedItemSchema.safeParse(formattedData);
-          if (!validatedData || !success) {
-            error.issues.forEach((issue) => {
-              console.error(`${data.name}: ${issue.path} - ${issue.message}`);
-              issues.push(`${data.name}: ${issue.path} - ${issue.message}`);
-            });
-            return;
+    createReadStream(file)
+      .pipe(parse({ columns: true, comment: "#" }))
+      .on("data", async (data) => {
+        const currentRow = rowIndex++;
+        const languageFeatures = allLanguageFeatures.find(
+          (lang) => lang.langCode === newList.language.code
+        );
+        if (!languageFeatures)
+          throw new Error("Could not get language features");
+        const formattedData: ParsedItem = {
+          name: data.name,
+          language: newList.language.code,
+          languageName: languageFeatures.langName,
+          flagCode: languageFeatures.flagCode,
+          partOfSpeech: data.partOfSpeech,
+          grammaticalCase:
+            data.case && data.case.length > 0
+              ? (data.case as GrammaticalCase)
+              : undefined,
+          gender:
+            data.gender && data.gender.length > 0
+              ? (data.gender as Gender)
+              : undefined,
+          pluralForm:
+            data.pluralForm && data.pluralForm.length > 0
+              ? data.pluralForm?.split(", ")
+              : undefined,
+          tags: data.tags?.split(", ") as Tag[],
+          unit: data.unit,
+          translations: {},
+          lemmas: [],
+          flags: [],
+        };
+
+        const translations: ParsedTranslations = {};
+
+        for (const code of supportedLanguageCodes) {
+          const raw = data[`t${code}`];
+          if (typeof raw === "string" && raw.trim().length > 0) {
+            translations[code] = raw
+              .split(", ")
+              .map((t: string) => t.trim())
+              .filter(Boolean);
           }
+        }
 
-          const processRow = async () => {
-            await getLemmasFromEachItemAndUpload(validatedData);
+        const dataToParse: ParsedItem = { ...formattedData, translations };
 
-            // Harvest all possible items from each parsed item
+        const parsed = parsedItemSchema.safeParse(dataToParse);
+
+        if (!parsed.success) {
+          const errorMsg = parsed.error.issues
+            .map((i) => `${i.path.join(".")}: ${i.message}`)
+            .join("; ");
+          results.push({
+            row: currentRow,
+            name: data.name,
+            status: "error",
+            message: `Validation failed: ${errorMsg}`,
+          });
+          return;
+        }
+
+        const validatedData = parsed.data;
+
+        const processRow = async () => {
+          try {
+            const issuesCreatingLemmas =
+              await getLemmasFromEachParsedItemAndUpload(validatedData);
             const harvestedItems: ParsedItem[] =
               await harvestItemsWithoutTranslations(validatedData);
-            await uploadItemsWithoutTranslations(harvestedItems);
+            const issuesWhileUploading =
+              await uploadParsedItemsWithoutTranslations(harvestedItems);
 
-            await Promise.all([
-              linkItemsToTheirLemmas(harvestedItems),
-              addTranslationsToItems(harvestedItems),
-              addItemsToList(harvestedItems, newListId, newList.language.code),
-            ]);
-          };
+            if (
+              issuesCreatingLemmas.length > 0 ||
+              issuesWhileUploading.length > 0
+            ) {
+              const allIssues = [
+                ...issuesCreatingLemmas,
+                ...issuesWhileUploading,
+              ].join("; ");
+              results.push({
+                row: currentRow,
+                name: validatedData.name,
+                status: "error",
+                message: allIssues,
+              });
+            } else {
+              await Promise.all([
+                linkItemsToTheirLemmas(harvestedItems),
+                addTranslationsToItems(harvestedItems),
+                addItemsToList(
+                  harvestedItems,
+                  newList.listNumber,
+                  newList.language.code
+                ),
+              ]);
+              results.push({
+                row: currentRow,
+                name: validatedData.name,
+                status: "success",
+                message: "Uploaded successfully",
+              });
+            }
+          } catch (err) {
+            results.push({
+              row: currentRow,
+              name: validatedData.name,
+              status: "error",
+              message: (err as Error).message || "Unknown error",
+            });
+          }
+        };
 
-          promises.push(processRow());
-        })
-        .on("error", (err) => {
-          console.error("Error while parsing csv file", err);
-          reject(err);
-        })
-        .on("end", async () => {
-          await Promise.allSettled(promises);
-          await defineUnitOrder(newListId);
-          resolve({
-            newListId,
-            issues,
-          });
+        promises.push(processRow());
+      })
+      .on("error", (err) => {
+        console.error("Error while parsing csv file", err);
+        reject(err);
+      })
+      .on("end", async () => {
+        await Promise.all(promises);
+        await defineUnitOrder(newList.listNumber);
+        unlink(file, (err) => {
+          if (err) console.error("Failed to delete uploaded file:", err);
+          else console.log(`Deleted uploaded file.`);
         });
-    }
-  );
-}
-
-interface LemmaItem {
-  name: string;
-  language: SupportedLanguage;
-}
-
-async function getLemmasFromEachItemAndUpload(item: ParsedItem) {
-  // Function to create lemmas from words that are not placeholders
-  const createLemmas = (
-    words: string[],
-    language: SupportedLanguage
-  ): LemmaItem[] =>
-    words
-      .filter((word) => word.length > 0 && !placeholders.includes(word))
-      .map((word) => ({ name: word, language }));
-
-  // Extract lemmas from the item's name
-  const lemmas: LemmaItem[] = [
-    ...createLemmas(item.name.split(" "), item.language),
-    ...Object.entries(item.translations || {}).flatMap(([lang, translations]) =>
-      translations
-        ? createLemmas(
-            translations.map((translation) => translation.split(" ")).flat(),
-            lang as SupportedLanguage
-          )
-        : []
-    ),
-  ];
-  await uploadLemmas(lemmas);
-}
-
-async function uploadLemmas(lemmaArray: LemmaItem[]): Promise<void> {
-  const lemmaUpload = lemmaArray.map(async (lemma) => {
-    try {
-      await Lemmas.findOneAndUpdate(
-        { name: lemma.name, language: lemma.language },
-        { $set: { name: lemma.name, language: lemma.language } },
-        { upsert: true }
-      );
-    } catch (err) {
-      console.error(
-        `Error while processing lemma ${JSON.stringify(lemma)}: ${err}`
-      );
-    }
+        saveImportLog(results, newList.listNumber);
+        resolve(results);
+      });
   });
-  await Promise.all(lemmaUpload);
-}
-
-async function getAllLemmaObjectIdsForItem(
-  item: string,
-  itemLanguage: SupportedLanguage
-) {
-  const allWordsinItem = item.split(" ");
-  const lemmasForCurrentItem = allWordsinItem.filter(
-    (word) => !placeholders.includes(word)
-  );
-
-  // Look up ObjectIds for found lemmas up in Mongodb
-  const allFoundLemmaObjects = await Lemmas.find(
-    { name: { $in: lemmasForCurrentItem }, language: itemLanguage },
-    { _id: 1 }
-  );
-  const allFoundLemmaObjectIds = allFoundLemmaObjects.map(
-    (lemmaObject) => lemmaObject._id
-  );
-
-  return allFoundLemmaObjectIds;
 }
 
 async function harvestItemsWithoutTranslations(
@@ -227,13 +211,11 @@ async function harvestItemsWithoutTranslations(
           // Add translation as harvested item
           harvestedItems.push({
             name: translation,
-            normalizedName: normalizeString(translation),
-            slug: slugifyString(translation, language),
             language: language,
-            languageName: siteSettings.languageFeatures.find(
+            languageName: allLanguageFeatures.find(
               (lang) => lang.langCode === language
             )?.langName!,
-            flagCode: siteSettings.languageFeatures.find(
+            flagCode: allLanguageFeatures.find(
               (lang) => lang.langCode === language
             )?.flagCode!,
             partOfSpeech: item.partOfSpeech,
@@ -243,6 +225,7 @@ async function harvestItemsWithoutTranslations(
               // Use item it was harvested from as translation
               [item.language]: [item.name],
             },
+            flags: [],
           });
         }
       });
@@ -254,30 +237,25 @@ async function harvestItemsWithoutTranslations(
   return harvestedItems;
 }
 
-async function uploadItemsWithoutTranslations(items: ParsedItem[]) {
-  const uploadHarvestedItemsPromises = items.map(async (item) => {
+async function uploadParsedItemsWithoutTranslations(items: ParsedItem[]) {
+  const issues: string[] = [];
+  const uploadHarvestedItemsPromises = items.map(async (item: ParsedItem) => {
+    const errorString = (error: string) =>
+      `Error uploading item ${item.name}. Part of speech: ${item.partOfSpeech}. Error was: ${error}`;
     try {
-      await Items.findOneAndUpdate(
-        { name: item.name, language: item.language },
-        {
-          $set: {
-            name: item.name,
-            normalizedName: item.normalizedName,
-            slug: item.slug,
-            language: item.language,
-            partOfSpeech: item.partOfSpeech,
-            lemmas: item.lemmas,
-          },
-        },
-        { upsert: true }
-      );
+      const response = await createNewItem({
+        ...item,
+        translations: {},
+      }); // We can't submit translations at this point, will add later
+      if (!response.success) issues.push(errorString(response.error));
     } catch (err) {
-      console.error(
-        `Error while processing item ${JSON.stringify(item)}: ${err}`
-      );
+      const error = (err as Error).message || "Unknown error occurred";
+      issues.push(errorString(error));
+      console.error(errorString(error));
     }
   });
   await Promise.all(uploadHarvestedItemsPromises);
+  return issues;
 }
 
 async function addTranslationsToItems(
@@ -289,7 +267,7 @@ async function addTranslationsToItems(
       ...item,
       translations: filterOutUndefinedTranslations(
         item.translations,
-        siteSettings.supportedLanguages
+        allSupportedLanguages
       ),
     };
   });
@@ -300,32 +278,40 @@ async function addTranslationsToItems(
         Record<SupportedLanguage, Types.ObjectId[]>
       > = {};
 
-      Object.entries(item.translations).forEach(async ([lang, translation]) => {
-        const language = lang as SupportedLanguage;
-        // We get the object ids for every translation of each item...
-        const objectIDs = await Items.find(
-          { name: { $in: translation }, language: language },
-          { _id: 1 }
-        );
-        if (objectIDs) {
-          objectIDs.forEach((idObject) => {
-            // ... and save them in an object of type {SupportedLanguage: ObjectId[]}
-            if (!newTranslationProperty[language])
-              newTranslationProperty[language] = [];
-            newTranslationProperty[language]?.push(idObject._id);
-          });
-        }
+      Object.entries(item.translations).forEach(
+        async ([lang, translationArray]) => {
+          const language = lang as SupportedLanguage;
+          // We retrieve the already uploaded items by their name from the db but only need their _ids
+          const items: { _id: Types.ObjectId }[] = await Items.find(
+            { name: { $in: translationArray }, language: language },
+            { _id: 1 }
+          );
+          if (items) {
+            items.forEach((item) => {
+              // ... and save them in an object of type {SupportedLanguage: ObjectId[]}
+              if (!newTranslationProperty[language])
+                newTranslationProperty[language] = [];
+              newTranslationProperty[language]?.push(item._id);
+            });
+          }
 
-        // This new object can now serve as the new translation property of the item we want to update
-        await Items.findOneAndUpdate(
-          { name: item.name, language: item.language },
-          {
-            ...item,
-            translations: newTranslationProperty,
-          },
-          { upsert: true }
-        );
-      });
+          /** This new object can now serve as the new translation property of the item we want to update
+           *  But really we probably want to get the item, inspect the translations and only
+           *  add to them, not replace them, so there's more work to do */
+          await Items.findOneAndUpdate(
+            {
+              name: item.name,
+              language: item.language,
+              partOfSpeech: item.partOfSpeech,
+            },
+            {
+              $set: {
+                translations: newTranslationProperty,
+              },
+            }
+          );
+        }
+      );
     }
   });
 }
@@ -338,10 +324,11 @@ async function linkItemsToTheirLemmas(
       { name: item.name, language: item.language },
       { _id: 1 }
     );
+    if (!thisItemsObjectId) return;
     item.lemmas?.forEach(async (lemmaObjectId) => {
       // Since we didn't populate, item.lemmas is an array of ObjectIds
       try {
-        // We push the item's ObjectId to the lemmas items array if it's not in already
+        // We push the item's ObjectId to the lemma's items array if it's not in already
         await Lemmas.findByIdAndUpdate(lemmaObjectId, {
           $addToSet: {
             items: thisItemsObjectId,
@@ -349,7 +336,7 @@ async function linkItemsToTheirLemmas(
         });
       } catch (err) {
         console.error(
-          `Error linking item ${item.name} to lemma with ObjectId ${lemmaObjectId}`
+          `Error linking item ${item.name} to lemma with ObjectId ${lemmaObjectId}: ${err}`
         );
       }
     });
@@ -358,44 +345,52 @@ async function linkItemsToTheirLemmas(
 
 async function addItemsToList(
   harvestedItems: ParsedItem[],
-  newListId: Types.ObjectId,
+  listNumber: number,
   listLanguage: SupportedLanguage
 ) {
-  harvestedItems.forEach(async (item) => {
+  for (const item of harvestedItems) {
     if (item.language === listLanguage) {
-      const itemInDatabase = (await Items.findOne(
+      const response = await safeDbRead<Item>({
+        dbReadQuery: () =>
+          Items.findOne({
+            name: item.name,
+            partOfSpeech: item.partOfSpeech,
+            language: item.language,
+          }).lean(),
+        schemaForValidation: itemSchemaWithTranslations,
+      });
+      if (!response.success) throw new Error("Could not find item");
+      const foundItem = response.data;
+      await Lists.findOneAndUpdate(
         {
-          name: item.name,
+          listNumber,
         },
-        { _id: 1 }
-      )) as Item;
-      if (itemInDatabase) {
-        const itemId = itemInDatabase._id;
-        await Lists.findByIdAndUpdate(
-          newListId,
-          {
-            $addToSet: { units: { unitName: item.unit, item: itemId } },
-          },
-          { upsert: true }
-        );
-      }
+        {
+          $addToSet: { units: { unitName: item.unit, item: foundItem.id } },
+        }
+      );
     }
-  });
+  }
 }
 
-async function defineUnitOrder(newListId: Types.ObjectId) {
-  const newList = (await getPopulatedListByObjectId(
-    newListId
-  )) as PopulatedList;
-  if (newList && newList.units) {
-    const unitNames = Array.from(
-      new Set(newList.units.map((item) => item.unitName))
-    );
+async function defineUnitOrder(newListNumber: number): Promise<true> {
+  const response = await getListByListNumber(newListNumber);
+  if (!response.success) throw new Error("Could not get new list");
 
-    await Lists.findByIdAndUpdate(newListId, {
+  const newList = response.data;
+
+  const unitNames = Array.from(
+    new Set(newList.units.map((item) => item.unitName))
+  );
+
+  const updateResponse = await Lists.findOneAndUpdate(
+    { listNumber: newListNumber },
+    {
       $set: { unitOrder: unitNames },
-    });
-  }
+    }
+  );
+  if (updateResponse) return true;
+  throw new Error(`Could not set unit order for list ${newListNumber}`);
 }
 
 function filterOutUndefinedTranslations(
@@ -408,4 +403,84 @@ function filterOutUndefinedTranslations(
       translationObject[lang] = translations[lang];
   });
   return translationObject;
+}
+
+export async function saveImportLog(
+  results: {
+    row: number;
+    name: string;
+    status: "success" | "error";
+    message: string;
+  }[],
+  listNumber: number
+): Promise<string | null> {
+  const errorsOnly = results.filter((r) => r.status === "error");
+  if (errorsOnly.length === 0) {
+    console.log("✅ No import errors — no log created.");
+    return null;
+  }
+
+  const logsDir = join(process.cwd(), "data");
+  const filePath = join(logsDir, "import-log.json");
+
+  try {
+    await mkdir(logsDir, { recursive: true });
+
+    // 🆕 Read existing logs
+    let existingLogs: any[] = [];
+    try {
+      const fileContent = await readFile(filePath, "utf-8");
+      existingLogs = JSON.parse(fileContent);
+    } catch {
+      existingLogs = [];
+    }
+
+    // 🆕 Add unique IDs to each new entry
+    const newEntries = errorsOnly.map((entry) => ({
+      id: randomUUID(),
+      ...entry,
+      listNumber,
+      timestamp: new Date().toISOString(),
+    }));
+
+    const updatedLogs = [...existingLogs, ...newEntries];
+    await writeFile(filePath, JSON.stringify(updatedLogs, null, 2), "utf-8");
+
+    console.log(
+      `⚠️  Appended ${newEntries.length} import errors to ${filePath}`
+    );
+    return filePath;
+  } catch (err) {
+    console.error("❌ Failed to write import error log:", err);
+    throw err;
+  }
+}
+
+/* In admin dashboard data getter, do
+ * const logs = JSON.parse(await readFile("data/import-log.json", "utf-8"));
+ * and send that to the FE
+ */
+
+/* Use this function to delete rows from the log*/
+export async function deleteImportLogEntry(id: string): Promise<boolean> {
+  const filePath = join(process.cwd(), "data", "import-log.json");
+
+  try {
+    const fileContent = await readFile(filePath, "utf-8");
+    const logs = JSON.parse(fileContent);
+
+    const updatedLogs = logs.filter((entry: any) => entry.id !== id);
+
+    if (updatedLogs.length === logs.length) {
+      console.warn("⚠️  No matching log entry found.");
+      return false;
+    }
+
+    await writeFile(filePath, JSON.stringify(updatedLogs, null, 2), "utf-8");
+    console.log(`🗑️  Deleted log entry with id ${id}`);
+    return true;
+  } catch (err) {
+    console.error("❌ Failed to delete log entry:", err);
+    return false;
+  }
 }

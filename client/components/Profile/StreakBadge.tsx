@@ -1,17 +1,14 @@
 import Image from "next/image";
 
-import { LanguageWithFlagAndName } from "@/lib/types";
-import { cn } from "@/lib/helperFunctionsClient";
+import { LanguageWithFlagAndName } from "@/lib/contracts";
+import { cn } from "@/lib/utils";
 
 interface StreakBadgeProps {
   language?: LanguageWithFlagAndName;
   streak: number;
 }
 
-export default function StreakBadge({
-  language,
-  streak,
-}: StreakBadgeProps) {
+export default function StreakBadge({ language, streak }: StreakBadgeProps) {
   return (
     <div
       className={cn(

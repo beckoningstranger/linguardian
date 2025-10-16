@@ -1,16 +1,13 @@
 import Image from "next/image";
 
-import { LanguageWithFlagAndName, User } from "@/lib/types";
+import { LanguageWithFlagAndName, User } from "@/lib/contracts";
 
 interface UserTopListsProps {
   language: LanguageWithFlagAndName;
   user: User;
 }
 
-export default function UserTopLists({
-  language,
-  user,
-}: UserTopListsProps) {
+export default function UserTopLists({ language, user }: UserTopListsProps) {
   const lists = [
     { title: "Ensemble - C'est tout", image: "", competency: 820 },
     {
@@ -26,10 +23,7 @@ export default function UserTopLists({
   ];
 
   return (
-    <div
-      id={`TopLists-${language.name}`}
-      className="px-4 py-2 tablet:px-8"
-    >
+    <div id={`TopLists-${language.name}`} className="px-4 py-2 tablet:px-8">
       <p className="mb-4 font-serif text-hlg">
         {user.username}&apos;s Top Lists
       </p>

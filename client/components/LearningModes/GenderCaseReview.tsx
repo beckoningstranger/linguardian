@@ -1,22 +1,25 @@
-import { useRef } from "react";
+"use client";
 
+import { Dispatch, SetStateAction, useRef } from "react";
+
+import { ReviewStatus } from "@/components/LearningModes/LearnAndReview";
+import MoreReviews from "@/components/LearningModes/MoreReviews";
 import {
-  Case,
   Gender,
-  ItemWithPopulatedTranslationsFE,
+  GrammaticalCase,
+  ItemWithPopulatedTranslations,
   LanguageFeatures,
-  MoreReviewsMode,
-} from "@/lib/types";
-import MoreReviews from "./MoreReviews";
+  SecondaryReviewMode,
+} from "@/lib/contracts";
 
 interface GenderCaseReviewProps {
-  mode: MoreReviewsMode;
+  mode: SecondaryReviewMode;
   targetLanguageFeatures: LanguageFeatures;
-  item: ItemWithPopulatedTranslationsFE;
+  item: ItemWithPopulatedTranslations;
   solution: string;
-  setSolution: Function;
-  setReviewStatus: Function;
-  setMoreReviews: Function;
+  setSolution: Dispatch<SetStateAction<string>>;
+  setReviewStatus: Dispatch<SetStateAction<ReviewStatus>>;
+  setMoreReviews: Dispatch<SetStateAction<SecondaryReviewMode | null>>;
   finalizeReview: Function;
 }
 
@@ -33,8 +36,8 @@ export default function GenderCaseReview({
   const moreReviewsInputRef = useRef<HTMLInputElement>(null);
 
   function handleMoreReviewsSubmit(
-    mode: MoreReviewsMode,
-    moreReviewsSolution: Gender | Case
+    mode: SecondaryReviewMode,
+    moreReviewsSolution: Gender | GrammaticalCase
   ) {
     let correct = true;
     setSolution(`${solution} (${moreReviewsSolution})`);

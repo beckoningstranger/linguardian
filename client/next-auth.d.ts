@@ -1,10 +1,23 @@
-import NextAuth from "next-auth/next";
-import { LearnedLanguage, SupportedLanguage } from "./lib/types";
+import "next-auth";
+import "next-auth/jwt";
+
+import { SessionUser } from "@/lib/contracts";
 
 declare module "next-auth" {
+  interface User extends SessionUser {}
+
   interface Session {
-    user: {
-      id: string;
-    } & Session["user"];
+    user: SessionUser;
+    accessToken?: string;
+  }
+
+  interface JWT extends SessionUser {
+    accessToken: string;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT extends SessionUser {
+    accessToken: string;
   }
 }

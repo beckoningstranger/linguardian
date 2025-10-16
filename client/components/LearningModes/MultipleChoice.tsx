@@ -1,10 +1,10 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@headlessui/react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import { cn, shuffleArray } from "@/lib/helperFunctionsClient";
-import { ItemToLearn } from "@/lib/types";
-import { ReviewStatus } from "./LearnAndReview";
+import { ReviewStatus } from "@/components";
+import { ItemToLearn } from "@/lib/contracts";
+import { cn, shuffleArray } from "@/lib/utils";
 
 interface MultipleChoiceProps {
   correctItem: ItemToLearn;

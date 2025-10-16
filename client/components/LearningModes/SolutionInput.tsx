@@ -1,8 +1,15 @@
-import { cn } from "@/lib/helperFunctionsClient";
-import { ItemWithPopulatedTranslationsFE, LanguageFeatures } from "@/lib/types";
+"use client";
+
 import { Input } from "@headlessui/react";
 import { RefObject, useEffect } from "react";
-import { ReviewStatus } from "./LearnAndReview";
+
+import { ReviewStatus } from "@/components";
+import { TIME_BETWEEN_REVIEWS } from "@/lib/constants";
+import {
+  ItemWithPopulatedTranslations,
+  LanguageFeatures,
+} from "@/lib/contracts";
+import { cn } from "@/lib/utils";
 
 interface SolutionInputProps {
   targetLanguageFeatures: LanguageFeatures;
@@ -12,7 +19,7 @@ interface SolutionInputProps {
   reviewStatus: ReviewStatus;
   setReviewStatus: Function;
   disable: boolean | undefined;
-  item: ItemWithPopulatedTranslationsFE;
+  item: ItemWithPopulatedTranslations;
   setMoreReviews: Function;
   finalizeReview: Function;
 }
@@ -35,7 +42,7 @@ export default function SolutionInput({
         setSolution("");
         setReviewStatus("neutral");
         finalizeReview(reviewStatus, solution.trim());
-      }, 1500);
+      }, TIME_BETWEEN_REVIEWS);
     }
   }, [reviewStatus, finalizeReview, setReviewStatus, setSolution, solution]);
 

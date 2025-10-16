@@ -3,8 +3,8 @@ import { Button } from "@headlessui/react";
 import { FaPlus } from "react-icons/fa";
 
 import paths from "@/lib/paths";
-import { SupportedLanguage } from "@/lib/types";
-import LearningButton from "../ui/LearningButton";
+import LearningButton from "@/components/ui/LearningButton";
+import { SupportedLanguage } from "@/lib/contracts";
 
 interface DashboardBottomButtonsProps {
   language: SupportedLanguage;
@@ -15,7 +15,7 @@ export default function DashboardBottomButtons({
   dashboardIsEmpty,
 }: DashboardBottomButtonsProps) {
   return (
-    <div className="fixed inset-x-0 bottom-1 flex w-full gap-1 px-1 tablet:static tablet:justify-between tablet:px-4">
+    <div className="fixed inset-x-0 flex w-full justify-end gap-1 px-1 py-2 tablet:static tablet:justify-between tablet:px-4">
       <div className="hidden size-[90px] tablet:block" />
       {!dashboardIsEmpty && (
         <div className="w-full rounded-lg shadow-xl tablet:w-[724px] desktop:m-0 desktop:w-[740px]">
@@ -33,7 +33,7 @@ export default function DashboardBottomButtons({
         </div>
       )}
       <Link
-        href={paths.listsLanguagePath(language)}
+        href={paths.listStorePath(language)}
         className={dashboardIsEmpty ? "animate-pulse" : ""}
       >
         <Button

@@ -1,21 +1,22 @@
 "use client";
+
 import { Input } from "@headlessui/react";
 import { RefObject, useCallback } from "react";
 
+import CaseGenderButton from "@/components/LearningModes/GenderCaseButton";
 import {
-  Case,
   Gender,
-  ItemWithPopulatedTranslationsFE,
+  GrammaticalCase,
+  ItemWithPopulatedTranslations,
   LanguageFeatures,
-  MoreReviewsMode,
+  SecondaryReviewMode,
   SupportedLanguage,
-} from "@/lib/types";
-import CaseGenderButton from "./GenderCaseButton";
+} from "@/lib/contracts";
 
 interface MoreReviewsProps {
-  mode: MoreReviewsMode;
+  mode: SecondaryReviewMode;
   moreReviewsInputRef: RefObject<HTMLInputElement>;
-  item: ItemWithPopulatedTranslationsFE;
+  item: ItemWithPopulatedTranslations;
   target: SupportedLanguage;
   targetLanguageFeatures: LanguageFeatures;
   handleSubmit: Function;
@@ -28,6 +29,8 @@ export default function MoreReviews({
   targetLanguageFeatures,
   handleSubmit,
 }: MoreReviewsProps) {
+  const { hasGender, genders, hasCases, cases } = targetLanguageFeatures;
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       const key = e.key.toLowerCase();
@@ -41,7 +44,7 @@ export default function MoreReviews({
         a: "animate",
       };
 
-      const caseMap: Record<string, Case> = {
+      const caseMap: Record<string, GrammaticalCase> = {
         n: "nominative",
         g: "genitive",
         d: "dative",
@@ -53,8 +56,8 @@ export default function MoreReviews({
 
       const isValid = (option: string) =>
         mode === "gender"
-          ? targetLanguageFeatures.hasGender?.includes(option as Gender)
-          : targetLanguageFeatures.hasCases?.includes(option as Case);
+          ? hasGender && genders?.includes(option as Gender)
+          : hasCases && cases?.includes(option as GrammaticalCase);
 
       const value = mode === "gender" ? genderMap[key] : caseMap[key];
 
@@ -64,7 +67,15 @@ export default function MoreReviews({
         moreReviewsInputRef.current?.focus();
       }
     },
-    [mode, handleSubmit, moreReviewsInputRef, targetLanguageFeatures]
+    [
+      mode,
+      handleSubmit,
+      moreReviewsInputRef,
+      hasGender,
+      genders,
+      hasCases,
+      cases,
+    ]
   );
 
   return (
@@ -84,11 +95,13 @@ export default function MoreReviews({
       <div className="grid gap-2 text-center font-serif text-hmd">
         <p>Well done!</p>
         {mode === "gender" && <p>What is {item.name}&apos;s gender?</p>}
-        {mode === "case" && <p>And {item.name} is followed by which case?</p>}
+        {mode === "grammaticalCase" && (
+          <p>And {item.name} is followed by which case?</p>
+        )}
       </div>
       <div className="grid gap-2 px-2">
-        {mode === "case" &&
-          targetLanguageFeatures.hasCases?.map((itemCase) => (
+        {mode === "grammaticalCase" &&
+          cases.map((itemCase) => (
             <CaseGenderButton
               key={itemCase}
               mode={itemCase}
@@ -96,7 +109,7 @@ export default function MoreReviews({
             />
           ))}
         {mode === "gender" &&
-          targetLanguageFeatures.hasGender?.map((gender) => (
+          genders.map((gender) => (
             <CaseGenderButton
               key={gender}
               mode={gender}

@@ -2,11 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 import paths from "@/lib/paths";
-import { PopulatedList } from "@/lib/types";
+import { List } from "@/lib/contracts";
 
 interface ListStoreCardProps {
   authorData: { username: string; usernameSlug: string }[];
-  list: PopulatedList;
+  list: List;
 }
 
 export default function ListStoreCard({
@@ -45,7 +45,7 @@ export default function ListStoreCard({
               {authorData.map((data) => data.username).join(" & ") + "'s"}
             </h4>
             <h2
-              className={`h-[54px] grid place-items-center text-center font-serif leading-tight ${
+              className={`h-[54px] grid place-items-center text-center font-serif text-balance leading-tight ${
                 title.length > 24 ? "text-hsm" : "text-hmd"
               }`}
             >

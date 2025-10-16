@@ -1,4 +1,4 @@
-export function AllLearningButtonsContainer({
+export default function AllLearningButtonsContainer({
   mode,
   children,
 }: {

@@ -1,21 +1,22 @@
+import { cn } from "@/lib/utils";
+
 interface SpinnerProps {
-  size?: "big" | "mini";
+  big?: boolean;
+  mini?: boolean;
   centered?: boolean;
 }
-export default function Spinner({ size, centered }: SpinnerProps) {
-  let computedValues = "";
-  if (size === undefined) computedValues += "border-4 my-4 w-12";
-  if (size === "mini") computedValues += "border-2 my-1 w-4";
-  if (size === "big") computedValues += "border-8 my-8 w-32";
-
+export default function Spinner({ big, mini, centered }: SpinnerProps) {
   const spinner = (
     <div
-      className={`aspect-square animate-spin rounded-full border-gray-400 border-r-gray-300 ${computedValues}`}
+      className={cn(
+        "aspect-square animate-spin rounded-full border-gray-400 border-r-gray-300",
+        !big && !mini && "border-4 my-4 w-12",
+        mini && "border-2 my-1 w-4",
+        big && "border-8 my-8 w-32"
+      )}
     />
   );
 
-  if (centered)
-    return <div className="grid w-full place-items-center">{spinner}</div>;
-
-  return spinner;
+  if (!centered) return spinner;
+  return <div className="grid w-full place-items-center">{spinner}</div>;
 }

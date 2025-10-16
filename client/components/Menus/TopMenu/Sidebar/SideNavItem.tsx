@@ -1,10 +1,10 @@
 "use client";
 
-import { useSidebar } from "@/context/SidebarContext";
-import { cn } from "@/lib/helperFunctionsClient";
 import { Button } from "@headlessui/react";
 import Link from "next/link";
 import { ReactElement } from "react";
+
+import { useSidebar } from "@/context/SidebarContext";
 
 interface SideNavItemProps {
   icon: ReactElement;

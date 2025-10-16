@@ -1,53 +1,48 @@
 import Link from "next/link";
 
+import UnitButton from "@/components/Lists/ListOverview/UnitButton";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
-import { getUnitInformation } from "@/lib/helperFunctionsClient";
-import { LearningDataForLanguage, PopulatedList } from "@/lib/types";
-import UnitButton from "./UnitButton";
+import { UnitInformation } from "@/lib/contracts";
 import paths from "@/lib/paths";
+import { cn } from "@/lib/utils";
 
 interface ListUnitsProps {
-  listData: PopulatedList;
-  learningDataForLanguage?: LearningDataForLanguage;
+  userIsLearningThisList: boolean;
+  unitInformation: UnitInformation;
+  listNumber: number;
 }
 
 export default function ListUnits({
-  listData,
-  learningDataForLanguage,
+  userIsLearningThisList,
+  unitInformation,
+  listNumber,
 }: ListUnitsProps) {
-  const { listNumber, units, unitOrder } = listData;
-
-  const learnedIds = learningDataForLanguage?.learnedItems?.map(
-    (item) => item.id
-  );
-
   return (
-    <div className="tablet:col-span-2 desktopxl:row-start-2" id="listUnits">
-      <div className="my-2 flex w-full flex-col gap-y-2 tablet:m-0 tablet:pb-24 desktop:pb-2">
-        {unitOrder?.map((unitName, index) => {
-          const { noOfItemsInUnit, fillWidth } = getUnitInformation(
-            units,
-            unitName,
-            learnedIds
-          );
-
-          return (
-            <Link
-              key={index}
-              href={paths.unitDetailsPath(listNumber, index + 1)}
-              className="flex w-full justify-center"
-            >
-              <MobileMenuContextProvider>
+    <MobileMenuContextProvider>
+      <div className="tablet:col-span-2 desktopxl:row-start-2" id="listUnits">
+        <div
+          className={cn(
+            "my-2 flex w-full flex-col gap-y-2 tablet:m-0 desktop:pb-2 tablet:pb-20",
+            !userIsLearningThisList && "pb-24 tablet:pb-2"
+          )}
+        >
+          {unitInformation?.map(({ fillWidth, unitName, noOfItems }, index) => {
+            return (
+              <Link
+                key={index}
+                href={paths.unitDetailsPath(listNumber, index + 1)}
+                className="flex w-full justify-center"
+              >
                 <UnitButton
                   fillWidth={fillWidth}
                   unitName={unitName}
-                  noOfItemsInUnit={noOfItemsInUnit}
+                  noOfItemsInUnit={noOfItems}
                 />
-              </MobileMenuContextProvider>
-            </Link>
-          );
-        })}
+              </Link>
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </MobileMenuContextProvider>
   );
 }

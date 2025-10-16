@@ -27,7 +27,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env*.local
+.env.local
 .env
 
 # vercel
@@ -40,9 +40,8 @@ next-env.d.ts
 
 mongosh_connect.sh
 tailwind.config.ts
-server/data/csvUploads*
+server/data/*
 server/scripts*
 mongoScripts/
-client/dataForBuild.ts
 build_locally.sh
 docker-compose.dev.yml

@@ -1,5 +1,5 @@
-import { ContextItem } from "@/lib/types";
-import ItemSection from "./ItemSection";
+import ItemSection from "@/components/Dictionary/ItemPage/ItemSection";
+import { ContextItem } from "@/lib/contracts";
 
 interface ItemContextProps {
   context?: ContextItem[];

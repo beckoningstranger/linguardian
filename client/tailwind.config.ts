@@ -113,12 +113,6 @@ const config: Config = {
           600: "hsl(359, 100%, 45%)",
           500: "hsl(359, 100%, 52%)",
         },
-        primarygreen: "#16a34a", // green-600
-        darkred: "#B63347",
-        autumnorange: "#CA843E",
-        harvestyellow: "#F7CD54",
-        lightblue: "#BEE2EE",
-        darkgrey: "#2D4C4D",
       },
       animation: {
         "from-top": "from-top .2s forwards",
@@ -153,12 +147,15 @@ const config: Config = {
   },
   plugins: [],
   safelist: [
+    "bg-orange-300",
+    "bg-orange-400",
     "bg-orange-500",
     "bg-orange-600",
     "bg-green-500",
     "bg-green-600",
     "bg-brown-500",
     "bg-brown-600",
+    "bg-blue-400",
     "bg-blue-500",
     "bg-blue-600",
     "bg-magenta-500",

@@ -1,57 +1,52 @@
 "use client";
 
-import { setLearnedLanguages } from "@/lib/actions";
-import paths from "@/lib/paths";
-import { LanguageWithFlagAndName, User } from "@/lib/types";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import Flag from "react-world-flags";
-import Spinner from "./Spinner";
-import Button from "./ui/Button";
+
+import { useUser } from "@/context/UserContext";
+import { useUserUpdater } from "@/lib/hooks/useUserUpdater";
+import paths from "@/lib/paths";
+import { LanguageWithFlagAndName } from "@/lib/contracts";
+import Button from "@/components/ui/Button";
 
 interface PickNewLanguageProps {
   newLanguage: LanguageWithFlagAndName;
 }
 
 export default function PickNewLanguage({ newLanguage }: PickNewLanguageProps) {
-  const { data, status, update } = useSession();
-  const user = data?.user as User;
   const [updating, setUpdating] = useState(false);
+  const { user } = useUser();
+  const applyUserUpdate = useUserUpdater();
   const router = useRouter();
 
+  if (!user) {
+    toast.error("User not loaded in context.");
+    return null;
+  }
+
   const handleLanguageSelection = async () => {
-    setUpdating(true);
-    const newLearnedLanguages = user.learnedLanguages
+    if (updating) return;
+    const learnedLanguages = user?.learnedLanguages
       ? [...user.learnedLanguages, newLanguage]
       : [newLanguage];
-    try {
-      toast.promise(setLearnedLanguages(newLearnedLanguages), {
+
+    setUpdating(true);
+
+    const result = await toast.promise(
+      applyUserUpdate({ id: user.id, learnedLanguages }),
+      {
         loading: "Adding a new language...",
-        success: `You are now learning ${newLanguage.name}! 🎉`,
-        error: (err) => {
-          return err.toString();
-        },
-      });
+        success: () => `You are now learning ${newLanguage.name}! 🎉`,
+        error: (err) => (err instanceof Error ? err.message : err.toString()),
+      }
+    );
 
-      await update({
-        ...data,
-        user: {
-          ...user,
-          learnedLanguages: newLearnedLanguages,
-          activeLanguageAndFlag: newLanguage,
-        },
-      });
-      router.push(paths.dashboardLanguagePath(newLanguage.code));
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setUpdating(false);
-    }
+    if (result) router.push(paths.dashboardLanguagePath(newLanguage.code));
+
+    setUpdating(false);
   };
-
-  if (status === "loading") return <Spinner centered />;
 
   return (
     <Button onClick={handleLanguageSelection} disabled={updating}>

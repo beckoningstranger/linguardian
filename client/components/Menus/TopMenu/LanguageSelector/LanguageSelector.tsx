@@ -4,22 +4,20 @@ import { usePathname } from "next/navigation";
 import { RefObject, useState } from "react";
 import Flag from "react-world-flags";
 
-import { useActiveLanguage } from "@/context/ActiveLanguageContext";
+import { AddNewLanguageOption, LanguageSelectorLink } from "@/components";
+import { useUser } from "@/context/UserContext";
 import { MAX_NUMBER_OF_LANGUAGES_ALLOWED } from "@/lib/constants";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
-import useUserOnClient from "@/lib/hooks/useUserOnClient";
-import { siteSettings } from "@/lib/siteSettings";
-import AddNewLanguageOption from "./AddNewLanguageOption";
-import LanguageSelectorLink from "./LanguageSelectorLink";
+import { allSupportedLanguages } from "@/lib/siteSettings";
+import { moreLanguagesToLearn, showLanguageSelector } from "@/lib/utils";
 
 export default function LanguageSelector() {
   const currentBaseUrl = usePathname();
-  const { activeLanguage } = useActiveLanguage();
+  const { activeLanguage, user } = useUser();
 
-  const user = useUserOnClient();
   const [showAllLanguageOptions, setShowAllLanguageOptions] = useState(false);
   const currentPath = usePathname();
-  const amountOfSupportedLanguages = siteSettings.supportedLanguages.length;
+  const amountOfSupportedLanguages = allSupportedLanguages.length;
 
   const allLanguagesAndFlagsUserIsLearning = user?.learnedLanguages || [];
 
@@ -40,8 +38,8 @@ export default function LanguageSelector() {
     showAllLanguageOptions
   );
 
-  if (!siteSettings.showLanguageSelectorOnlyOn.includes(currentBaseUrl))
-    return null;
+  if (!showLanguageSelector(currentBaseUrl)) return null;
+
   return (
     <div
       ref={ref as RefObject<HTMLDivElement>}
@@ -80,14 +78,4 @@ export default function LanguageSelector() {
       )}
     </div>
   );
-}
-
-export function moreLanguagesToLearn(
-  amountOfLanguagesUserLearns: number,
-  amountOfSupportedLanguages: number
-): boolean {
-  const amountOfLanguagesThatCanBeLearned = amountOfSupportedLanguages - 1; // native language has to be deducted
-  if (amountOfLanguagesUserLearns >= amountOfLanguagesThatCanBeLearned)
-    return false;
-  return true;
 }

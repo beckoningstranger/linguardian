@@ -1,150 +1,370 @@
-import { Types } from "mongoose";
+import { DeleteResult, Types, UpdateResult } from "mongoose";
+import { z } from "zod";
 
-import { siteSettings } from "../lib/siteSettings.js";
 import {
+  AddItemToUnitUpdate,
+  addItemToUnitUpdateSchema,
+  ApiResponse,
   FullyPopulatedList,
-  Item,
-  ItemFE,
-  ItemWithPopulatedTranslationsFE,
+  fullyPopulatedListSchema,
   LearningMode,
   List,
-  ListDetails,
+  listSchema,
+  ListUpdate,
+  listUpdateSchema,
   PopulatedList,
+  populatedListSchema,
   SupportedLanguage,
-} from "../lib/types.js";
-import Lists from "./list.schema";
+  UnitNameUpdate,
+} from "@/lib/contracts";
+import { CreateNewListData, objectIdSchema } from "@/lib/schemas";
+import {
+  allSupportedLanguages,
+  supportedLanguageCodes,
+} from "@/lib/siteSettings";
+import { safeDbRead, safeDbWrite } from "@/lib/utils";
+import Lists from "@/models/list.schema";
 
-export async function getList(listNumber: number) {
-  try {
-    return await Lists.findOne({ listNumber });
-  } catch (err) {
-    console.error(`Error getting list with listNumber ${listNumber} `);
-  }
+export async function getListByListNumber(
+  listNumber: number
+): Promise<ApiResponse<List>> {
+  return await safeDbRead<List>({
+    dbReadQuery: () => Lists.findOne({ listNumber }).lean(),
+    schemaForValidation: listSchema,
+  });
 }
 
-export async function getPopulatedListByObjectId(listId: Types.ObjectId) {
-  try {
-    return await Lists.findOne({ _id: listId }).populate<{
-      units: { unitName: string; item: ItemFE }[];
-    }>({ path: "units.item" });
-  } catch (err) {
-    console.error(`Error getting populated list with _id ${listId}`);
-  }
+export async function getListAuthorsByListNumber(listNumber: number) {
+  const listWithOnlyAuthorsSchema = listSchema.pick({ authors: true });
+  type ListWithOnlyAuthors = z.infer<typeof listWithOnlyAuthorsSchema>;
+  return await safeDbRead<ListWithOnlyAuthors>({
+    dbReadQuery: () => Lists.findOne({ listNumber }).select("authors").lean(),
+    schemaForValidation: listWithOnlyAuthorsSchema,
+  });
 }
 
-export async function getPopulatedListByListNumber(listNumber: number) {
-  try {
-    return await Lists.findOne({ listNumber }).populate<{
-      units: { unitName: string; item: Item }[];
-    }>({ path: "units.item" });
-  } catch (err) {
-    console.error(`Error getting populated list with listNumber ${listNumber}`);
-  }
+export async function getPopulatedListByListNumber(
+  listNumber: number
+): Promise<ApiResponse<PopulatedList>> {
+  return await safeDbRead<PopulatedList>({
+    dbReadQuery: () =>
+      Lists.findOne({ listNumber })
+        .populate({
+          path: "units.item",
+        })
+        .lean(),
+    schemaForValidation: populatedListSchema,
+  });
 }
 
 export async function getFullyPopulatedListByListNumber(
-  userNative: SupportedLanguage | undefined,
   listNumber: number
-): Promise<FullyPopulatedList | undefined> {
-  if (!userNative) return undefined;
+): Promise<ApiResponse<FullyPopulatedList>> {
+  return await safeDbRead<FullyPopulatedList>({
+    dbReadQuery: () =>
+      Lists.findOne({ listNumber })
+        .populate({
+          path: "units.item",
+          populate: supportedLanguageCodes.map((lang) => ({
+            path: `translations.${lang}`,
+          })),
+        })
+        .lean(),
+    schemaForValidation: fullyPopulatedListSchema,
+  });
+}
 
-  try {
-    const result = await Lists.findOne({ listNumber }).populate<{
-      units: {
-        unitName: string;
-        item: ItemWithPopulatedTranslationsFE;
-      }[];
-    }>({
-      path: "units.item",
-      populate: {
-        path: `translations.${userNative}`,
-      },
-    });
+export async function getAllListsForLanguage(
+  language: SupportedLanguage
+): Promise<ApiResponse<List[]>> {
+  return await safeDbRead<List[]>({
+    dbReadQuery: () => Lists.find({ "language.code": language }).lean(),
+    schemaForValidation: z.array(listSchema),
+  });
+}
 
-    return result ?? undefined;
-  } catch (err) {
-    console.error(
-      `Error getting fully populated list with listNumber ${listNumber}:`,
-      err
-    );
+export async function getNextListNumber(): Promise<number> {
+  const response = await safeDbRead<List>({
+    dbReadQuery: () => Lists.findOne().sort("-listNumber").lean(),
+    schemaForValidation: listSchema,
+  });
+
+  if (!response.success) {
+    if (response.error === "No result found") return 1;
+
+    throw new Error(`Database call failed: ${response.error}`);
   }
+
+  const newestList = response.data;
+  return newestList.listNumber + 1;
 }
 
-// export async function getFullyPopulatedListByListNumber(
-//   userNative: SupportedLanguage | undefined,
-//   listNumber: number
-// ): Promise<FullyPopulatedList | undefined> {
-//   try {
-//     return await Lists.findOne({ listNumber }).populate<{
-//       units: {
-//         unitName: string;
-//         item: ItemWithPopulatedTranslations;
-//       }[];
-//     }>({
-//       path: "units.item",
-//       populate: { path: "translations." + userNative },
-//     });
-//   } catch (err) {
-//     console.error(
-//       `Error getting fully populated list with listNumber ${listNumber}`
-//     );
-//   }
-// }
+export async function createList(
+  newListData: CreateNewListData
+): Promise<ApiResponse<List>> {
+  const newListId = new Types.ObjectId();
+  const newListNumber = await getNextListNumber();
+  const newList = {
+    ...newListData,
+    _id: newListId,
+    id: newListId.toHexString(),
+    listNumber: newListNumber,
+    units: [],
+    unitOrder: [],
+    unlockedReviewModes: {},
+    learners: [],
+  };
 
-export async function getAllListsForLanguage(language: SupportedLanguage) {
-  try {
-    return await Lists.find({ "language.code": language });
-  } catch (err) {
-    console.error(`Error getting all lists for language ${language}`);
+  const listSchemaWith_id = listSchema.extend({ _id: objectIdSchema });
+
+  return await safeDbWrite({
+    input: newList,
+    dbWriteQuery: (validatedList) => Lists.create(validatedList),
+    schemaForValidation: listSchemaWith_id,
+    errorMessage: "Failed to create list",
+  });
+}
+
+export async function verifyUserIsAuthor(
+  userId: string,
+  listNumber: number
+): Promise<boolean> {
+  const response = await getListByListNumber(listNumber);
+  if (!response.success) throw new Error("Could not get list");
+
+  return response.data.authors.includes(userId);
+}
+
+export async function addUnitToList(listNumber: number, unitName: string) {
+  const listResponse = await getListByListNumber(listNumber);
+  if (!listResponse.success) {
+    return { success: false, error: listResponse.error };
   }
+
+  const list = listResponse.data;
+
+  if (list.unitOrder.includes(unitName)) {
+    return { success: false, error: "Unit already exists" };
+  }
+
+  const updatedList = {
+    ...list,
+    unitOrder: [...list.unitOrder, unitName],
+  };
+
+  return updateList(updatedList, listNumber);
 }
 
-export async function getNextListNumber() {
-  const latestList = await Lists.findOne().sort("-listNumber");
-  return !latestList?.listNumber ? 1 : latestList.listNumber + 1;
+export async function renameUnitName(
+  listNumber: number,
+  update: UnitNameUpdate
+) {
+  const listResponse = await getListByListNumber(listNumber);
+  if (!listResponse.success) {
+    return { success: false, error: listResponse.error };
+  }
+
+  const list = listResponse.data;
+
+  if (!list.unitOrder.includes(update.oldName)) {
+    return { success: false, error: "Cannot rename: Old unit name not found" };
+  }
+
+  const updatedUnitOrder = list.unitOrder.map((unitName) => {
+    if (unitName === update.oldName) {
+      return update.newName;
+    } else {
+      return unitName;
+    }
+  });
+
+  const updatedUnits = list.units.map((unitItem) => {
+    if (unitItem.unitName === update.oldName) {
+      return { ...unitItem, unitName: update.newName };
+    } else return unitItem;
+  });
+
+  const updatedList = {
+    ...list,
+    unitOrder: updatedUnitOrder,
+    units: updatedUnits,
+  };
+
+  return updateList(updatedList, listNumber);
 }
+
+export async function deleteUnitFromList(listNumber: number, unitName: string) {
+  const listResponse = await getListByListNumber(listNumber);
+  if (!listResponse.success) {
+    return { success: false, error: listResponse.error };
+  }
+
+  const list = listResponse.data;
+
+  if (!list.unitOrder.includes(unitName)) {
+    return { success: false, error: "No such unit name in list" };
+  }
+
+  const updatedUnitOrder = list.unitOrder.filter((unit) => unit !== unitName);
+
+  const updatedList = {
+    ...list,
+    unitOrder: updatedUnitOrder,
+  };
+
+  return updateList(updatedList, listNumber);
+}
+
+export async function updateList(
+  listUpdate: ListUpdate,
+  listNumber: number
+): Promise<ApiResponse<UpdateResult>> {
+  return await safeDbWrite({
+    input: listUpdate,
+    schemaForValidation: listUpdateSchema,
+    dbWriteQuery: () => Lists.updateOne({ listNumber }, listUpdate),
+    errorMessage: `Error updating list number ${listNumber}`,
+  });
+}
+
+export async function deleteList(
+  listNumber: number
+): Promise<ApiResponse<DeleteResult>> {
+  return await safeDbWrite({
+    input: undefined,
+    schemaForValidation: z.void(),
+    dbWriteQuery: async () => {
+      const result = await Lists.deleteOne({ listNumber });
+      if (result.deletedCount === 0) {
+        throw new Error(`List ${listNumber} not found`);
+      }
+      return {
+        acknowledged: result.acknowledged,
+        deletedCount: result.deletedCount,
+      };
+    },
+    errorMessage: `Failed to delete list ${listNumber}`,
+  });
+}
+
+export async function addItemToUnit(
+  listNumber: number,
+  update: AddItemToUnitUpdate
+): Promise<ApiResponse<{ message?: string }>> {
+  return await safeDbWrite({
+    input: update,
+    schemaForValidation: addItemToUnitUpdateSchema,
+    dbWriteQuery: async ({ unitName, itemId }) => {
+      const response = await getListByListNumber(listNumber);
+      if (!response.success)
+        return {
+          success: false,
+          error: "Failed to get this list, try again later",
+        };
+
+      const list = response.data;
+
+      const currentUnit = list.units.find((u) => u.item.toString() === itemId);
+
+      // If the item is already in the desired unit → nothing to do
+      if (currentUnit && currentUnit.unitName === unitName) {
+        return { message: `Item is already in ${unitName}` };
+      }
+
+      // If the item exists in a different unit → move it
+      if (currentUnit && currentUnit.unitName !== unitName) {
+        await Lists.updateOne(
+          { listNumber },
+          {
+            $pull: { units: { item: itemId } }, // remove from current unit
+          }
+        );
+
+        await Lists.updateOne(
+          { listNumber },
+          {
+            $addToSet: { units: { unitName, item: itemId } }, // add to new unit
+          }
+        );
+
+        return {
+          message: `Item was in ${currentUnit.unitName}, but we moved it to ${unitName}.`,
+        };
+      }
+
+      // If not in any unit → just add it
+      await Lists.updateOne(
+        { listNumber },
+        {
+          $addToSet: { units: { unitName, item: itemId } },
+        }
+      );
+
+      return { message: `Item added successfully to ${unitName}.` };
+    },
+    errorMessage: `Failed to add or move item ${update.itemId} in list ${listNumber}`,
+  });
+}
+
+export async function removeItemFromList(
+  listNumber: number,
+  itemId: string
+): Promise<ApiResponse<UpdateResult>> {
+  return await safeDbWrite({
+    input: undefined,
+    schemaForValidation: z.void(),
+    dbWriteQuery: () =>
+      Lists.updateOne(
+        { listNumber: listNumber },
+        { $pull: { units: { item: itemId } } }
+      ),
+  });
+}
+
+/** ------------------------------------- Below: Need to refine ------------------------------ */
 
 export async function unlockReviewMode(
-  id: Types.ObjectId,
+  listNumber: number,
   language: SupportedLanguage,
   reviewMode: LearningMode
-) {
-  await Lists.findOneAndUpdate(
-    { _id: id },
-    {
-      $addToSet: { ["unlockedReviewModes." + language]: reviewMode },
-    },
-    { upsert: true }
-  );
+): Promise<ApiResponse<UpdateResult>> {
+  return await safeDbWrite({
+    dbWriteQuery: () =>
+      Lists.updateOne(
+        { listNumber },
+        {
+          $addToSet: { ["unlockedReviewModes." + language]: reviewMode },
+        }
+      ),
+    schemaForValidation: z.void(),
+    input: null,
+  });
 }
 
-export async function getChapterNameByNumber(
-  chapterNumber: number,
-  listNumber: number
-) {
-  const list = await Lists.findOne({ listNumber: listNumber });
-  return list?.unitOrder ? list.unitOrder[chapterNumber - 1] : null;
-}
+/** ------------------------------------- Potential Rubbish Line ------------------------------ */
 
-export async function updateUnlockedReviewModes(listId: Types.ObjectId) {
-  const { units } = (await getPopulatedListByObjectId(listId)) as PopulatedList;
+export async function updateUnlockedReviewModes(newListNumber: number) {
+  const response = await getPopulatedListByListNumber(newListNumber);
+  if (!response.success)
+    throw new Error("updateUnlockedReviewModes: Could not get new list");
+
+  const { units } = response.data;
   // This part checks for translation mode
   const allTranslationsExist: Partial<Record<SupportedLanguage, boolean>> = {};
-  siteSettings.supportedLanguages.forEach((language) => {
+
+  allSupportedLanguages.forEach((language) => {
     // Let's assume it can be unlocked
     let languageCanBeUnlocked = true;
-    // Check every item in every unit for whether if has a translation and part of speech in this language
-    units.forEach((item) => {
-      if (item?.item?.translations) {
-        const translations = item.item.translations[language];
+    // Check every item for whether it has a translation and part of speech in this language
+    units.forEach((unitItem) => {
+      if (unitItem.item.translations) {
+        const translations = unitItem.item.translations[language] ?? [];
 
         // It it doesn't, we can't unlock translation mode
-        if (translations?.length === 0 || !item.item.partOfSpeech)
+        if (translations.length === 0 || !unitItem.item.partOfSpeech)
           languageCanBeUnlocked = false;
       }
     });
-    if (languageCanBeUnlocked)
-      console.log(`Translation mode for ${language} will be unlocked!`);
     Object.assign(allTranslationsExist, {
       [language]: languageCanBeUnlocked,
     });
@@ -152,82 +372,17 @@ export async function updateUnlockedReviewModes(listId: Types.ObjectId) {
   Object.entries(allTranslationsExist).map(async (language) => {
     const [lang, canBeUnlocked] = language;
     if (canBeUnlocked) {
-      await unlockReviewMode(listId, lang as SupportedLanguage, "translation");
+      const result = await unlockReviewMode(
+        newListNumber,
+        lang as SupportedLanguage,
+        "translation"
+      );
+      if (!result.success) console.warn("Error unlocking a review mode");
+      if (result.success)
+        console.log(`Translation mode for ${language} has been unlocked!`);
     }
   });
   // Need to check for more review modes
-}
-
-export async function getListNameAndUnitOrder(
-  listNumber: number
-): Promise<{ name: string; unitOrder: string[] } | null> {
-  const list = await Lists.findOne({ listNumber })
-    .select("name unitOrder")
-    .lean();
-  if (!list) return null;
-  const { name, unitOrder } = list;
-  return { name, unitOrder };
-}
-
-export async function getAmountOfUnits(listNumber: number) {
-  return (
-    await Lists.findOne({ listNumber: listNumber }, { _id: 0, unitOrder: 1 })
-  )?.unitOrder.length;
-}
-
-export async function addItemToList(
-  listNumber: number,
-  unitName: string,
-  itemId: string
-) {
-  try {
-    return await Lists.findOneAndUpdate(
-      {
-        listNumber: listNumber,
-        "units.item": { $ne: itemId },
-      },
-      {
-        $addToSet: {
-          units: { unitName: unitName, item: itemId },
-        },
-      },
-      {
-        new: true,
-        upsert: true,
-      }
-    );
-  } catch (error: unknown) {
-    const mongoError = error as { code?: number };
-    if (mongoError.code === 11000) {
-      return null; // Return null to signal duplicate
-    }
-    throw error;
-  }
-}
-
-export async function removeItemFromList(listNumber: number, itemId: string) {
-  return await Lists.findOneAndUpdate(
-    { listNumber: listNumber },
-    { $pull: { units: { item: itemId } } },
-    { new: true }
-  );
-}
-
-export async function addUnitToList(listNumber: number, unitName: string) {
-  return await Lists.findOneAndUpdate(
-    {
-      listNumber: listNumber,
-    },
-    {
-      $addToSet: {
-        unitOrder: unitName,
-      },
-    },
-    {
-      new: true,
-      upsert: true,
-    }
-  );
 }
 
 export async function removeUnitFromList(listNumber: number, unitName: string) {
@@ -242,62 +397,4 @@ export async function removeUnitFromList(listNumber: number, unitName: string) {
     { new: true }
   );
   if (removeFromUnitOrder && removeUnitItems) return removeUnitItems;
-}
-
-export async function removeList(listNumber: number) {
-  return await Lists.deleteOne({ listNumber: listNumber });
-}
-
-export async function createList(newList: List) {
-  return await Lists.findOneAndUpdate(
-    {
-      listNumber: newList.listNumber,
-    },
-    newList,
-    { upsert: true, new: true }
-  );
-}
-
-export async function editDetails(listDetails: ListDetails) {
-  if (listDetails.listName !== undefined) {
-    return await Lists.findOneAndUpdate(
-      { listNumber: listDetails.listNumber },
-      { name: listDetails.listName },
-      { new: true }
-    );
-  }
-
-  if (listDetails.listDescription !== undefined) {
-    return await Lists.findOneAndUpdate(
-      { listNumber: listDetails.listNumber },
-      { description: listDetails.listDescription },
-      { new: true }
-    );
-  }
-
-  if (listDetails.unitOrder !== undefined) {
-    const list = await getList(listDetails.listNumber);
-    if (!list) throw new Error("Error getting list");
-
-    let editedUnitName = "";
-    let newUnitName = "";
-
-    listDetails.unitOrder.forEach((unitName) => {
-      if (!list.unitOrder.includes(unitName)) newUnitName = unitName;
-    });
-
-    list.unitOrder.forEach((unitName) => {
-      if (!listDetails.unitOrder?.includes(unitName)) editedUnitName = unitName;
-    });
-
-    const units = list.units.map((item) => ({
-      unitName: item.unitName === editedUnitName ? newUnitName : item.unitName,
-      item: item.item,
-    }));
-    return await Lists.findOneAndUpdate(
-      { listNumber: listDetails.listNumber },
-      { units: units, unitOrder: listDetails.unitOrder },
-      { new: true }
-    );
-  }
 }

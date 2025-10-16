@@ -2,54 +2,47 @@
 
 import { Dispatch, SetStateAction, useEffect } from "react";
 
-import { findItems } from "@/lib/actions";
-import { ItemFE, LanguageWithFlagAndName } from "@/lib/types";
-import SearchInput from "@/components/ui/SearchInput";
+import { SearchInput } from "@/components";
+import { searchDictionaryAction } from "@/lib/actions/dictionary-actions";
+import { Item, SupportedLanguage } from "@/lib/contracts";
 
 interface SearchBoxProps {
   query: string;
   debouncedQuery: string;
   setQuery: Dispatch<SetStateAction<string>>;
-  searchResults: ItemFE[];
-  searchLanguages: LanguageWithFlagAndName[];
+  searchResults: Item[];
+  searchLanguageCodes: SupportedLanguage[];
   setSearchResults: Function;
-  getFlagCode: Function;
 }
+
 export default function SearchBox({
   query,
   debouncedQuery,
   setQuery,
   searchResults,
   setSearchResults,
-  searchLanguages,
+  searchLanguageCodes,
 }: SearchBoxProps) {
   useEffect(() => {
-    if (query.length < 2 || debouncedQuery.length < 2) setSearchResults([]);
-
-    if (debouncedQuery.length > 1) {
-      const controller = new AbortController();
+    if (debouncedQuery.length >= 2)
       (async () => {
-        const response = await findItems(
-          searchLanguages.map((lang) => lang.code),
+        const foundItems = await searchDictionaryAction(
+          searchLanguageCodes,
           debouncedQuery
         );
-        if (response) {
-          response.sort((a, b) => {
-            if (
-              a.name.slice(0, query.length) === query &&
-              b.name.slice(0, query.length) !== query
-            )
-              return -1;
-            return 1;
-          });
-          setSearchResults(response);
-        }
+
+        const sortedResults = foundItems.sort((a, b) => {
+          if (
+            a.name.slice(0, query.length) === query &&
+            b.name.slice(0, query.length) !== query
+          )
+            return -1;
+          return 1;
+        });
+        setSearchResults(sortedResults);
       })();
-      return () => controller.abort();
-    } else {
-      setSearchResults([]);
-    }
-  }, [debouncedQuery, query, setSearchResults, searchLanguages]);
+    else setSearchResults([]);
+  }, [debouncedQuery, query, setSearchResults, searchLanguageCodes]);
 
   return (
     <div

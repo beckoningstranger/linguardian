@@ -4,10 +4,6 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile.dev
-    environment:
-      - SERVER_URL=http://backend:8000
-      - NEXTAUTH_URL=http://localhost:3000
-      - FRONTEND_URL=http://frontend:3000
     env_file:
       - ./client/.env.local
     volumes:
@@ -23,10 +19,7 @@ services:
     volumes:
       - /app/node_modules
       - ./server:/app
-    environment:
-      - NODE_ENV=development
-      - PORT=8000
     env_file:
-      - ./server/.env
+      - ./server/.env.local
     ports:
       - "8000:8000"

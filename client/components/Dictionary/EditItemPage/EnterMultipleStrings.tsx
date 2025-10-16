@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { FieldErrors, FieldValues } from "react-hook-form";
 import { Button } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/16/solid";
+import { useEffect, useState } from "react";
+import { FieldErrors, FieldValues } from "react-hook-form";
 
+import { FormErrors } from "@/components";
 import { Label } from "@/lib/types";
-import { FormErrors } from "../../ui/FormErrors";
-import EnterMultipleStringsField from "./EnterMultipleStringsField";
+import EnterMultipleStringsField from "@/components/Dictionary/EditItemPage/EnterMultipleStringsField";
 
 interface EnterMultipleStringsProps {
   setValue: Function;

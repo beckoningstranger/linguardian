@@ -1,7 +1,5 @@
 "use client";
 
-import StyledInput from "@/components/ui/StyledInput";
-import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 import {
   Dispatch,
   RefObject,
@@ -9,6 +7,9 @@ import {
   useEffect,
   useState,
 } from "react";
+
+import { StyledInput } from "@/components";
+import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 
 interface EnterIPAFieldProps {
   array: string[];
@@ -63,6 +64,7 @@ export default function EnterIPAField({
         ref={ref as RefObject<HTMLInputElement>}
         minusButtonAction={deleteValue}
         id={"IPA-" + value}
+        name={"IPA-" + value}
         label={placeholder}
         noFloatingLabel
         hasErrors={hasErrors}

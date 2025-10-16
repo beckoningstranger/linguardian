@@ -1,31 +1,23 @@
-import {
-  LearningDataForLanguage,
-  PopulatedList,
-  SupportedLanguage,
-} from "@/lib/types";
-import DashboardBottomButtons from "./DashboardBottomButtons";
-import ListDashboardCard from "./ListDashboardCard";
-import { cn } from "@/lib/helperFunctionsClient";
+import { DashboardBottomButtons, ListDashboardCard } from "@/components";
+import { ListForDashboard, SupportedLanguage } from "@/lib/contracts";
+import { cn } from "@/lib/utils";
 
 interface DashboardProps {
-  language: SupportedLanguage;
+  dashboardLanguage: SupportedLanguage;
   learnedLists: number[];
-  populatedLists: PopulatedList[];
-  learningDataForLanguage: LearningDataForLanguage;
-  userNative: SupportedLanguage;
+  listsForDashboard: ListForDashboard[];
 }
 
 export default async function Dashboard({
-  language,
+  dashboardLanguage,
   learnedLists,
-  populatedLists,
-  learningDataForLanguage,
-  userNative,
+  listsForDashboard,
 }: DashboardProps) {
   const renderedLists = (
     <div
       id="DashboardLists"
-      className="m-4 grid min-h-[calc(100vh-280px)] place-items-center tablet:m-8"
+      className="m-4 grid min-h-[calc(100vh-112px-90px-32px-16px)] place-items-center tablet:m-8 tablet:min-h-[calc(100vh-112px-90px-64px-16px)]"
+      // This calculation is full height - top menu height - bottom button height - margin (here) - padding (around bottom button)
     >
       <div
         className={cn(
@@ -37,18 +29,11 @@ export default async function Dashboard({
         )}
       >
         {learnedLists?.map((listNumber) => {
-          const listData = populatedLists.find(
+          const listData = listsForDashboard.find(
             (list) => list?.listNumber === listNumber
           );
           if (!listData) return null;
-          return (
-            <ListDashboardCard
-              key={listNumber}
-              list={listData}
-              userNative={userNative}
-              learningDataForLanguage={learningDataForLanguage}
-            />
-          );
+          return <ListDashboardCard key={listNumber} list={listData} />;
         })}
       </div>
     </div>
@@ -59,7 +44,7 @@ export default async function Dashboard({
       {renderedLists}
       <DashboardBottomButtons
         dashboardIsEmpty={learnedLists && learnedLists.length < 1}
-        language={language}
+        language={dashboardLanguage}
       />
     </div>
   );

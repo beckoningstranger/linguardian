@@ -1,11 +1,13 @@
-import Link from "next/link";
-import Image from "next/image";
+"use client";
+
 import { Button as HeadLessUiButton } from "@headlessui/react";
+import Image from "next/image";
+import Link from "next/link";
 
 import learningButtonConfig from "@/lib/learningButtonConfig";
 import paths from "@/lib/paths";
-import { cn } from "@/lib/helperFunctionsClient";
-import { LearningMode } from "@/lib/types";
+import { LearningMode } from "@/lib/contracts";
+import { cn } from "@/lib/utils";
 
 interface LearningButtonProps {
   mode: LearningMode;

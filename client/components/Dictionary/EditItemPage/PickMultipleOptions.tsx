@@ -1,96 +1,57 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useState } from "react";
-import {
-  Listbox,
-  ListboxButton,
-  ListboxOption,
-  ListboxOptions,
-} from "@headlessui/react";
-import { CheckIcon } from "@heroicons/react/20/solid";
+import { Button } from "@headlessui/react";
+import { Dispatch, SetStateAction } from "react";
 
-import { Label, StringOrPickOne } from "@/lib/types";
-import MinusIcon from "./MinusIcon";
+import MinusIcon from "@/components/Dictionary/EditItemPage/MinusIcon";
+import { Tag } from "@/lib/contracts";
+import { cn } from "@/lib/utils";
 
 interface PickMultipleOptionsProps {
-  array: StringOrPickOne[];
-  arrayIndexNumber: number;
-  setArray: Function;
-  options: string[];
-  label: Label;
+  option: Tag;
+  displayAll: boolean;
+  setDisplayAll: Dispatch<SetStateAction<boolean>>;
+  setTags: (tags: Tag[]) => void;
+  tags: Tag[];
 }
 
 export default function PickMultipleOptions({
-  array,
-  arrayIndexNumber,
-  setArray,
-  options,
-  label,
+  option,
+  displayAll,
+  setDisplayAll,
+  setTags,
+  tags,
 }: PickMultipleOptionsProps) {
-  const placeholder = `Pick a ${label.singular}`;
-  const [value, setValue] = useState<StringOrPickOne>(
-    array[arrayIndexNumber] || placeholder
-  );
+  const handleClick = () => {
+    if (!tags.includes(option)) setTags([...tags, option]);
+    setDisplayAll(false);
+  };
 
-  useEffect(() => {
-    if (value === placeholder) return;
-    if (value !== array[arrayIndexNumber]) {
-      const newArray = [...array];
-      newArray[arrayIndexNumber] = value;
-      const uniqueArray = Array.from(new Set(newArray));
-      setArray(uniqueArray);
-    }
-  }, [value, array, arrayIndexNumber, setArray, placeholder]);
+  const handleRemoveClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // prevent triggering handleClick
+    setTags(tags.filter((tag) => tag !== option));
+    setDisplayAll(false);
+  };
 
-  const removeItemFromArray = useCallback(() => {
-    const newArray = [...array];
-    const index = array.indexOf(value);
-    if (index > -1) {
-      newArray.splice(index, 1);
-      setArray(newArray);
-    }
-  }, [value, array, setArray]);
+  const picked = tags.includes(option);
+
+  const borderColor = picked
+    ? displayAll
+      ? "border-green-400"
+      : "border-grey-400 border"
+    : "border-red-500";
 
   return (
-    <Listbox value={value} onChange={setValue}>
-      <div className="flex flex-col gap-y-2">
-        <ListboxButton className="relative mb-2 flex h-10 w-44 items-center rounded-md border border-grey-500 bg-white px-3 shadow-md data-[open]:border-black">
-          {value}
-          <MinusIcon onClick={removeItemFromArray} />
-        </ListboxButton>
-        <ListboxOptions
-          anchor="bottom"
-          className="relative mt-1 rounded-md border bg-white"
-        >
-          {options.map((option, index) => (
-            <ListboxOption key={option + index} value={option} as={Fragment}>
-              {({ focus, selected }) => (
-                <div
-                  className={`group flex w-32 gap-2  px-2 py-2 text-sm ${
-                    focus
-                      ? "bg-orange-600 text-white font-bold"
-                      : "bg-white text-gray-900"
-                  }`}
-                >
-                  {selected ? (
-                    <CheckIcon
-                      className={`size-5 ${
-                        focus
-                          ? "bg-orange-600 text-white"
-                          : "bg-white text-gray-900"
-                      }`}
-                    />
-                  ) : (
-                    <CheckIcon className="invisible size-5" />
-                  )}
-
-                  {option}
-                </div>
-              )}
-            </ListboxOption>
-          ))}
-        </ListboxOptions>
-      </div>
-    </Listbox>
+    <Button
+      className={cn(
+        "flex relative w-[150px] h-10 bg-white justify-between items-center rounded-md border-2 px-3 py-1 text-sm",
+        borderColor,
+        !picked && !displayAll && "hidden"
+      )}
+      onClick={handleClick}
+    >
+      <span>{option}</span>
+      {picked && !displayAll && <MinusIcon onClick={handleRemoveClick} />}
+    </Button>
   );
 }

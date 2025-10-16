@@ -1,10 +1,12 @@
+"use client";
+
 import { Button } from "@headlessui/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { IoMdRefresh } from "react-icons/io";
 
-import { cn, shuffleArray } from "@/lib/helperFunctionsClient";
-import { PuzzlePieceObject } from "@/lib/types";
-import { ReviewStatus } from "./LearnAndReview";
+import { ReviewStatus } from "@/components";
+import { PuzzlePieceObject } from "@/lib/contracts";
+import { cn, shuffleArray } from "@/lib/utils";
 
 interface PuzzleModeProps {
   itemName: string;

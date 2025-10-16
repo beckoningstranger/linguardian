@@ -1,74 +1,101 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
 import toast from "react-hot-toast";
 import { TbTrash } from "react-icons/tb";
 
+import {
+  ConfirmCancelMobileMenu,
+  ConfirmCancelModal,
+  IconSidebarButton,
+  TopContextMenuButton,
+} from "@/components";
+import { useOptionalListContext } from "@/context/ListContext";
 import { useMobileMenu } from "@/context/MobileMenuContext";
-import { removeUnitFromList } from "@/lib/actions";
+import { deleteUnitAction } from "@/lib/actions/list-actions";
+import { SupportedLanguage } from "@/lib/contracts";
 import paths from "@/lib/paths";
-import ConfirmCancelMobileMenu from "../../ConfirmCancelMobileMenu";
-import ConfirmCancelModal from "../../ConfirmCancelModal";
-import IconSidebarButton from "../../IconSidebar/IconSidebarButton";
-import TopContextMenuButton from "../../Menus/TopMenu/TopContextMenuButton";
-import { useUnitContext } from "@/context/UnitContext";
 
 interface DeleteUnitButtonProps {
-  setUnitOrder?: Dispatch<SetStateAction<string[]>>;
   listNumber: number;
-  mode?: "desktop" | "mobile" | "inCard";
-  unitName?: string;
-  noOfItemsInUnit?: number;
+  mode: "desktop" | "mobile" | "inCard";
+  unitName: string;
+  listLanguageCode: SupportedLanguage;
+  noOfItemsInUnit: number;
 }
 
 export default function DeleteUnitButton({
-  setUnitOrder,
   listNumber,
   mode,
-  unitName: passedUnitName,
-  noOfItemsInUnit: passedNoOfItemsInUnit,
+  unitName,
+  listLanguageCode,
+  noOfItemsInUnit,
 }: DeleteUnitButtonProps) {
+  let unitOrderState: string[];
+  let updateUnitOrderState: Dispatch<SetStateAction<string[]>>;
+
+  const listContext = useOptionalListContext();
+
+  if (listContext) {
+    unitOrderState = listContext.unitOrder;
+    updateUnitOrderState = listContext.setUnitOrder;
+  }
+
+  if (
+    noOfItemsInUnit === undefined ||
+    unitName === undefined ||
+    listLanguageCode === undefined
+  )
+    throw new Error(`Something went wrong in DeleteUnitButton`);
+
+  const router = useRouter();
   const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
   const { toggleMobileMenu } = useMobileMenu();
   const [updating, setUpdating] = useState(false);
 
-  const context = useUnitContext();
-  const unitName = passedUnitName ?? context.unitName;
-  const noOfItemsInUnit =
-    passedNoOfItemsInUnit !== undefined
-      ? passedNoOfItemsInUnit
-      : context.noOfItemsInUnit;
-
-  const removeUnitFromListAction = () => {
+  const handleRemoveUnitFromList = async () => {
+    let previousUnitOrder = unitOrderState;
     setUpdating(true);
-    toast.promise(removeUnitFromList(unitName, listNumber), {
-      loading: "Removing this unit...",
-      success: () => {
-        if (setUnitOrder) {
-          setUnitOrder((prevUnitOrder) =>
-            prevUnitOrder.filter((name) => name !== unitName)
-          );
-        } else {
-          redirect(paths.editListPath(listNumber));
-        }
-        return "Unit removed! ✅";
-      },
-      error: (err) => err.toString(),
-    });
-    setUpdating(false);
+    if (listContext) {
+      const newUnitOrder = unitOrderState.filter(
+        (unit) => !(unit === unitName)
+      );
+      updateUnitOrderState(newUnitOrder);
+    }
+
+    const response = await toast.promise(
+      deleteUnitAction(listNumber, unitName, listLanguageCode),
+      {
+        loading: "Removing this unit...",
+        success: (response) => response.message,
+        error: (err) => {
+          // set unit order state back if possible
+          if (listContext) updateUnitOrderState(previousUnitOrder);
+          return err instanceof Error ? err.message : err.toString();
+        },
+      }
+    );
+    if (response) {
+      setUpdating(false);
+      router.push(paths.editListPath(listNumber));
+    }
   };
 
   const handleClickMobile = () => {
-    if (noOfItemsInUnit > 0) {
-      if (toggleMobileMenu) toggleMobileMenu();
+    if (noOfItemsInUnit > 0 && toggleMobileMenu) {
+      toggleMobileMenu();
     } else {
-      removeUnitFromListAction();
+      handleRemoveUnitFromList();
     }
   };
 
   const handleClickDesktop = () => {
-    setShowConfirmDeleteModal(true);
+    if (noOfItemsInUnit > 0) {
+      setShowConfirmDeleteModal(true);
+    } else {
+      handleRemoveUnitFromList();
+    }
   };
 
   let button;
@@ -80,7 +107,7 @@ export default function DeleteUnitButton({
         onClick={handleClickDesktop}
         disabled={updating}
       >
-        <TbTrash className="z-50 size-8" />
+        <TbTrash className="z-30 size-8" />
       </button>
     );
 
@@ -121,11 +148,11 @@ export default function DeleteUnitButton({
         isOpen={showConfirmDeleteModal}
         setIsOpen={setShowConfirmDeleteModal}
         closeButton={false}
-        doOnConfirm={removeUnitFromListAction}
+        doOnConfirm={handleRemoveUnitFromList}
       >
         {modalText}
       </ConfirmCancelModal>
-      <ConfirmCancelMobileMenu doOnConfirm={removeUnitFromListAction}>
+      <ConfirmCancelMobileMenu doOnConfirm={handleRemoveUnitFromList}>
         {modalText}
       </ConfirmCancelMobileMenu>
     </>

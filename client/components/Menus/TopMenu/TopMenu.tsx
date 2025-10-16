@@ -1,10 +1,12 @@
-import { cn } from "@/lib/helperFunctionsClient";
-import { MobileMenuContextProvider } from "../../../context/MobileMenuContext";
-import HamburgerMenu from "./HamburgerMenu";
-import LanguageSelectorAndProfileLink from "./LanguageSelectorAndProfileLink";
-import SideBarNavigation from "./Sidebar/SideBarNavigation";
-import TopMenuLogo from "./TopMenuLogo";
-import TopMiddleNavigation from "./TopMiddleNavigation";
+import {
+  LanguageSelectorAndProfileLink,
+  SideBarNavigation,
+  TopMenuLogo,
+  TopMiddleNavigation,
+} from "@/components";
+import HamburgerMenu from "@/components/Menus/TopMenu/HamburgerMenu";
+import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
+import { cn } from "@/lib/utils";
 
 interface TopMenuProps {
   opacity?: 50 | 80 | 90;
@@ -16,6 +18,7 @@ export default async function TopMenu({ opacity }: TopMenuProps) {
   return (
     <header id="TopMenu">
       <SideBarNavigation />
+
       <div
         id="TopMenuMain"
         className={cn(

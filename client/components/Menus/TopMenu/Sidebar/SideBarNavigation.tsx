@@ -1,5 +1,6 @@
 "use client";
 
+import { signOut } from "next-auth/react";
 import { FaBookReader, FaRegQuestionCircle } from "react-icons/fa";
 import { ImProfile } from "react-icons/im";
 import { IoSettings } from "react-icons/io5";
@@ -9,22 +10,21 @@ import {
   RiLogoutBoxLine,
 } from "react-icons/ri";
 
-import { useActiveLanguage } from "@/context/ActiveLanguageContext";
+import SideNavItem from "@/components/Menus/TopMenu/Sidebar/SideNavItem";
 import { useSidebar } from "@/context/SidebarContext";
-import { cn } from "@/lib/helperFunctionsClient";
+import { useUser } from "@/context/UserContext";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
-import useUserOnClient from "@/lib/hooks/useUserOnClient";
 import paths from "@/lib/paths";
-import { signOut } from "next-auth/react";
-import SideNavItem from "./SideNavItem";
+import { cn } from "@/lib/utils";
 
 interface SideBarNavigationProps {}
 
 export default function SideBarNavigation({}: SideBarNavigationProps) {
   const { toggleSidebar, showSidebar } = useSidebar();
-  const { activeLanguage } = useActiveLanguage();
+  const { activeLanguage, user } = useUser();
   const ref = useOutsideClick(toggleSidebar, showSidebar);
-  const user = useUserOnClient();
+
+  if (!user || !activeLanguage) return null;
 
   return (
     <nav
@@ -34,60 +34,56 @@ export default function SideBarNavigation({}: SideBarNavigationProps) {
         !showSidebar && "-translate-x-[2660px]"
       )}
       ref={ref}
+      role="navigation"
+      aria-label="Sidebar"
     >
-      {activeLanguage && (
-        <>
-          <div>
-            <SideNavItem
-              icon={<RiDashboardFill className="h-[48px] w-[48px]" />}
-              label="Dashboard"
-              href={paths.dashboardLanguagePath(activeLanguage.code)}
-            />
-            <SideNavItem
-              icon={<RiFileList3Fill className="h-[48px] w-[48px]" />}
-              label="Lists"
-              href={paths.listsLanguagePath(activeLanguage.code)}
-            />
-            <SideNavItem
-              icon={<FaBookReader className="h-[48px] w-[48px]" />}
-              label="Dictionary"
-              href={paths.dictionaryPath()}
-            />
-            {/* <SideNavItem
+      <div>
+        <SideNavItem
+          icon={<RiDashboardFill className="h-[48px] w-[48px]" />}
+          label="Dashboard"
+          href={paths.dashboardLanguagePath(activeLanguage.code)}
+        />
+        <SideNavItem
+          icon={<RiFileList3Fill className="h-[48px] w-[48px]" />}
+          label="Lists"
+          href={paths.listStorePath(activeLanguage.code)}
+        />
+        <SideNavItem
+          icon={<FaBookReader className="h-[48px] w-[48px]" />}
+          label="Dictionary"
+          href={paths.dictionaryPath()}
+        />
+        {/* <SideNavItem
                 icon={<FaPeopleRoof className="h-[48px] w-[48px]" />}
                 label="Community"
                 href={paths.socialPath()}
               /> */}
-            <SideNavItem
-              icon={<ImProfile className="h-[48px] w-[48px]" />}
-              label="Profile"
-              href={paths.profilePath(user.usernameSlug)}
-            />
-          </div>
-          <div className="grid items-end">
-            <SideNavItem
-              icon={
-                <FaRegQuestionCircle className="h-[48px] w-[48px]" />
-              }
-              label="About"
-              href={paths.aboutPath()}
-            />
-            <SideNavItem
-              icon={<IoSettings className="h-[48px] w-[48px]" />}
-              label="Settings"
-              href={paths.settingsPath()}
-            />
-            <SideNavItem
-              icon={<RiLogoutBoxLine className="h-[48px] w-[48px]" />}
-              label="Logout"
-              href={paths.aboutPath()}
-              onClick={() => {
-                signOut({ callbackUrl: paths.rootPath() });
-              }}
-            />
-          </div>
-        </>
-      )}
+        <SideNavItem
+          icon={<ImProfile className="h-[48px] w-[48px]" />}
+          label="Profile"
+          href={paths.profilePath(user.usernameSlug)}
+        />
+      </div>
+      <div className="grid items-end">
+        <SideNavItem
+          icon={<FaRegQuestionCircle className="h-[48px] w-[48px]" />}
+          label="About"
+          href={paths.aboutPath()}
+        />
+        <SideNavItem
+          icon={<IoSettings className="h-[48px] w-[48px]" />}
+          label="Settings"
+          href={paths.settingsPath()}
+        />
+        <SideNavItem
+          icon={<RiLogoutBoxLine className="h-[48px] w-[48px]" />}
+          label="Logout"
+          href={"#"}
+          onClick={() => {
+            signOut({ callbackUrl: paths.rootPath() });
+          }}
+        />
+      </div>
     </nav>
   );
 }

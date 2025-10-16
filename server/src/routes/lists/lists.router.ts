@@ -1,92 +1,95 @@
 import express from "express";
-import multer from "multer";
-import path from "path";
+
+import { csvUploadMiddleware } from "@/lib/middleware/csvUpload";
+import { requireAuth } from "@/lib/middleware/requireAuth";
+import { requireListAuthor } from "@/lib/middleware/requireListAuthor";
+import { requireListNumber } from "@/lib/middleware/requireListNumber";
 import {
-  httpAddItemToList,
-  httpAddUnitToList,
-  httpEditListDetails,
-  httpGetAllListsForLanguage,
-  httpGetAmountOfUnits,
-  httpGetFullyPopulatedListByListNumber,
-  httpGetList,
-  httpGetListDataForMetadata,
-  httpGetListName,
-  httpGetNextListNumber,
-  httpGetPopulatedListByListNumber,
-  httpPostCreateNewList,
-  httpRemoveItemFromList,
-  httpRemoveList,
-  httpRemoveUnitFromList,
-} from "./lists.controller";
+  asAuthenticatedListRequest,
+  asAuthenticatedRequest,
+} from "@/lib/utils";
+import {
+  addItemToUnitController,
+  createListController,
+  createUnitController,
+  deleteListController,
+  deleteListItemController,
+  deleteUnitController,
+  renameUnitController,
+  reorderUnitsController,
+  updateListDetailsController,
+} from "@/routes/lists/lists.controller";
 
 export const listsRouter = express.Router();
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "data/csvUploads/");
-  },
-  filename: function (req, file, cb) {
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-    );
-  },
-});
-const upload = multer({ storage: storage });
-
-// GET
-
-listsRouter.get("/getAllLists/:language", httpGetAllListsForLanguage);
-
-listsRouter.get("/getList/:listNumber", httpGetList);
-
-listsRouter.get(
-  "/getPopulatedList/:listNumber",
-  httpGetPopulatedListByListNumber
-);
-
-listsRouter.get(
-  "/getFullyPopulatedList/:userNative/:listNumber",
-  httpGetFullyPopulatedListByListNumber
-);
-listsRouter.get("/getListName/:listNumber", httpGetListName);
-
-listsRouter.get(
-  "/getListDataForMetadata/:listNumber/:unitNumber",
-  httpGetListDataForMetadata
-);
-
-listsRouter.get("/nextListNumber", httpGetNextListNumber);
-
-listsRouter.get("/amountOfUnits/:listNumber", httpGetAmountOfUnits);
-
 // POST
-
 listsRouter.post(
-  "/createNewList",
-  upload.single("csvfile"),
-  httpPostCreateNewList
+  "/create",
+  requireAuth,
+  csvUploadMiddleware,
+  asAuthenticatedRequest(createListController)
 );
 
-listsRouter.post("/addUnitToList/:listNumber/:unitName", httpAddUnitToList);
-
-listsRouter.post("/editListDetails", httpEditListDetails);
-
 listsRouter.post(
-  "/addItemToList/:listNumber/:unitName/:itemId",
-  httpAddItemToList
+  "/:listNumber/units",
+  requireAuth,
+  requireListNumber,
+  requireListAuthor,
+  asAuthenticatedListRequest(createUnitController)
+);
+
+// PATCH
+
+listsRouter.patch(
+  "/:listNumber",
+  requireAuth,
+  requireListNumber,
+  requireListAuthor,
+  asAuthenticatedListRequest(updateListDetailsController)
+);
+listsRouter.patch(
+  "/:listNumber/units",
+  requireAuth,
+  requireListNumber,
+  requireListAuthor,
+  asAuthenticatedListRequest(renameUnitController)
+);
+listsRouter.patch(
+  "/:listNumber/units/order",
+  requireAuth,
+  requireListNumber,
+  requireListAuthor,
+  asAuthenticatedListRequest(reorderUnitsController)
+);
+
+listsRouter.patch(
+  "/:listNumber/units/items",
+  requireAuth,
+  requireListNumber,
+  requireListAuthor,
+  asAuthenticatedListRequest(addItemToUnitController)
 );
 
 // DELETE
 
 listsRouter.delete(
-  "/removeItemFromList/:listNumber/:itemId",
-  httpRemoveItemFromList
+  "/:listNumber",
+  requireAuth,
+  requireListNumber,
+  requireListAuthor,
+  asAuthenticatedListRequest(deleteListController)
 );
-
 listsRouter.delete(
-  "/removeUnitFromList/:listNumber/:unitName",
-  httpRemoveUnitFromList
+  "/:listNumber/item/:itemId",
+  requireAuth,
+  requireListNumber,
+  requireListAuthor,
+  asAuthenticatedListRequest(deleteListItemController)
 );
-
-listsRouter.delete("/removeList/:listNumber", httpRemoveList);
+listsRouter.delete(
+  "/:listNumber/units/:unitName",
+  requireAuth,
+  requireListNumber,
+  requireListAuthor,
+  asAuthenticatedListRequest(deleteUnitController)
+);

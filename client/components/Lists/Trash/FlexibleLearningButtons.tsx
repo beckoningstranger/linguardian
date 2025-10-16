@@ -1,13 +1,13 @@
 "use client";
-import { LearningMode, ListStats, ListStatus } from "@/lib/types";
+
 import { useRef, useState } from "react";
-import ReviewButton from "../../ReviewButton";
-import { AllLearningButtonsContainer } from "../ListOverview/AllLearningButtonsContainer";
-import AllLearningButtons from "../ListOverview/AllLearningButtons";
+
+import ReviewButton from "@/components/ReviewButton";
+import { LearningMode, LearningStats, ListStatus } from "@/lib/contracts";
 
 interface FlexibleLearningButtonsProps {
   status: ListStatus;
-  stats: ListStats;
+  stats: LearningStats;
   listNumber: number;
   unlockedModes: LearningMode[] | undefined;
 }

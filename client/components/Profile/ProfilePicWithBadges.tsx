@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Flag from "react-world-flags";
 
-import { User } from "@/lib/types";
-import StreakBadge from "./StreakBadge";
+import StreakBadge from "@/components/Profile/StreakBadge";
+import { User } from "@/lib/contracts";
 
 interface ProfilePicWithBadgesProps {
   user: User;
@@ -12,10 +12,7 @@ export default function ProfilePicWithBadges({
   user,
 }: ProfilePicWithBadgesProps) {
   return (
-    <div
-      className="relative min-w-[200px]"
-      id="ProfilePicNativeLanguageStreak"
-    >
+    <div className="relative min-w-[200px]" id="ProfilePicNativeLanguageStreak">
       {user?.image && (
         <Image
           src={user?.image}

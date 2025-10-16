@@ -1,6 +1,7 @@
-import { ItemToLearn, User } from "@/lib/types";
 import { Button } from "@headlessui/react";
-import ItemDetails from "../Dictionary/ItemPage/ItemDetails";
+
+import { ItemDetails } from "@/components";
+import { ItemToLearn, User } from "@/lib/contracts";
 
 interface ItemPresentationProps {
   item: ItemToLearn;
@@ -15,11 +16,14 @@ export default function ItemPresentation({
   wrongSolution,
   user,
 }: ItemPresentationProps) {
-  const allUserLanguages = [...user.learnedLanguages, user.native];
+  const allUserLanguageCodes = [
+    ...user.learnedLanguages.map((lang) => lang.code),
+    user.native.code,
+  ];
   return (
     <>
       <div
-        className="grid justify-center gap-2 bg-white/90 py-3 text-center"
+        className="my-1 grid justify-center gap-2 bg-white/90 py-3 text-center"
         id="ItemPresentation"
       >
         {wrongSolution.length > 0 && (
@@ -30,7 +34,7 @@ export default function ItemPresentation({
         )}
         {wrongSolution === "" && (
           <p className="flex h-16 items-center justify-center text-clgb">
-            Take a moment to memorize this item
+            Take a moment to memorize the item below
           </p>
         )}
         <Button
@@ -41,10 +45,9 @@ export default function ItemPresentation({
           Continue
         </Button>
       </div>
-
       <ItemDetails
         item={item}
-        allUserLanguages={allUserLanguages}
+        allUserLanguageCodes={allUserLanguageCodes}
         forItemPresentation
       />
     </>

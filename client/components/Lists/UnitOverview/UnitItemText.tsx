@@ -1,4 +1,4 @@
-import { cn } from "@/lib/helperFunctionsClient";
+import { cn } from "@/lib/utils";
 
 interface UnitItemTextProps {
   translations: string | undefined;

@@ -1,14 +1,12 @@
-import { ItemFE } from "@/lib/types";
-import SearchResults from "./SearchResults";
+import { SearchResults } from "@/components";
+import { Item } from "@/lib/contracts";
 
 interface RecentSearchesProps {
-  recentSearches: ItemFE[];
-  getFlagCode: Function;
+  recentSearches: Item[];
 }
 
 export default function RecentSearches({
   recentSearches,
-  getFlagCode,
 }: RecentSearchesProps) {
   return (
     <>
@@ -17,7 +15,6 @@ export default function RecentSearches({
       </div>
       <SearchResults
         results={recentSearches}
-        getFlagCode={getFlagCode}
         mode="searchResultIsLinkToItemPage"
       />
     </>

@@ -1,15 +1,15 @@
 "use client";
 
-import paths from "@/lib/paths";
-import { SupportedLanguage } from "@/lib/types";
 import { Button } from "@headlessui/react";
 import { useRouter } from "next/navigation";
 import { MouseEventHandler, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import ConfirmCancelMobileMenu from "../ConfirmCancelMobileMenu";
-import ConfirmCancelModal from "../ConfirmCancelModal";
+
+import { ConfirmCancelMobileMenu, ConfirmCancelModal } from "@/components";
 import { useMobileMenu } from "@/context/MobileMenuContext";
-import { cn } from "@/lib/helperFunctionsClient";
+import { SupportedLanguage } from "@/lib/contracts";
+import paths from "@/lib/paths";
+import { cn } from "@/lib/utils";
 
 interface QuitLearningSessionButtonProps {
   listLanguage: SupportedLanguage;
@@ -39,7 +39,7 @@ export default function QuitLearningSessionButton({
   );
 
   const buttonStyling =
-    "absolute h-full top-1/2 w-[50px] h-[112px] py-10 desktop:py-8 -translate-y-1/2 tablet:hover:bg-red-500 tablet:hover:text-white tablet:size-[112px]";
+    "absolute h-full top-1/2 w-[50px] h-[112px] py-10 desktop:py-8 -translate-y-1/2 tablet:hover:bg-red-500 tablet:hover:text-white tablet:size-[112px] transition-colors duration-300 rounded-br-lg";
 
   return (
     <Button>

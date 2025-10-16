@@ -1,0 +1,73 @@
+import { Field, Label, Textarea } from "@headlessui/react";
+import { forwardRef, TextareaHTMLAttributes } from "react";
+
+import { cn } from "@/lib/utils";
+import MinusIcon from "@/components/Dictionary/EditItemPage/MinusIcon";
+
+type StyledTextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
+  label: string;
+  optional?: boolean;
+  id: string;
+  noFloatingLabel?: boolean;
+  hasErrors?: boolean;
+  minusButtonAction?: Function;
+};
+
+const StyledTextarea = forwardRef<HTMLTextAreaElement, StyledTextareaProps>(
+  (
+    {
+      label,
+      noFloatingLabel = false,
+      hasErrors = false,
+      minusButtonAction,
+      optional = false,
+      id,
+      name,
+      className,
+      ...props
+    },
+    ref
+  ) => {
+    return (
+      <Field
+        className={cn(
+          "relative flex w-full flex-col items-center rounded-md border border-grey-500 bg-white focus-within:outline-none focus-within:border-black",
+          hasErrors && "border-red-500 focus-within:border-red-500",
+          className
+        )}
+      >
+        <Textarea
+          id={id}
+          name={name || id}
+          ref={ref}
+          className={cn(
+            "peer h-full w-full resize-y bg-transparent px-4 pr-12 pt-3 border-none outline-none leading-tight",
+            !noFloatingLabel && "placeholder-transparent"
+          )}
+          placeholder={label}
+          {...props}
+        />
+
+        <Label
+          htmlFor={id}
+          className={cn(
+            "absolute -top-6 left-0 text-base text-grey-800 transition-all duration-75 peer-placeholder-shown:top-3 peer-placeholder-shown:px-4 peer-placeholder-shown:text-cmdr peer-placeholder-shown:text-grey-800",
+            noFloatingLabel && "hidden"
+          )}
+        >
+          {label}
+        </Label>
+
+        {optional && (
+          <div className="absolute -top-6 right-0 text-base text-grey-800">
+            Optional
+          </div>
+        )}
+        {minusButtonAction && <MinusIcon onClick={() => minusButtonAction()} />}
+      </Field>
+    );
+  }
+);
+
+StyledTextarea.displayName = "StyledTextarea";
+export default StyledTextarea;

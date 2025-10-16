@@ -21,7 +21,11 @@ export function useOutsideClick(
       );
       if (clickedException) return;
 
-      if (condition && !elementRef.current?.contains(eventTarget)) {
+      if (
+        condition &&
+        elementRef.current &&
+        !elementRef.current.contains(eventTarget)
+      ) {
         callbackRef.current();
       }
     };

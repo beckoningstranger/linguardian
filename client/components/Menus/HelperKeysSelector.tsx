@@ -1,6 +1,6 @@
-import { SupportedLanguage, LanguageFeatures } from "@/lib/types";
-import Button from "../ui/Button";
-import { cn } from "@/lib/helperFunctionsClient";
+import { LanguageFeatures, SupportedLanguage } from "@/lib/contracts";
+import { cn } from "@/lib/utils";
+import Button from "@/components/ui/Button";
 
 interface HelperKeysSelectorProps {
   targetLanguageFeatures: LanguageFeatures;

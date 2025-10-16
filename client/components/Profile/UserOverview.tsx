@@ -1,8 +1,9 @@
-import { User } from "@/lib/types";
-import BadgeShowcase from "./BadgeShowcase";
-import BasicUserInfo from "./BasicUserInfo";
-import CompetencyBadge from "./CompetencyBadge";
-import ProfilePicWithBadges from "./ProfilePicWithBadges";
+import {
+  BasicUserInfo,
+  CompetencyBadge,
+  ProfilePicWithBadges,
+} from "@/components";
+import { User } from "@/lib/contracts";
 
 interface UserOverviewProps {
   user: User;

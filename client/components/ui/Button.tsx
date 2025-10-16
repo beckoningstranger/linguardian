@@ -1,6 +1,8 @@
-import { cn } from "@/lib/helperFunctionsClient";
 import { Button as HeadlessUiButton } from "@headlessui/react";
 import { ReactNode } from "react";
+
+import { Spinner } from "@/components";
+import { cn } from "@/lib/utils";
 
 type ButtonProps = {
   children?: ReactNode;
@@ -16,6 +18,7 @@ type ButtonProps = {
   rounded?: boolean;
   noRing?: boolean;
   fullWidth?: boolean;
+  busy?: boolean;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export default function Button({
@@ -25,6 +28,7 @@ export default function Button({
   noRing,
   fullWidth,
   rounded,
+  busy,
   ...props
 }: ButtonProps) {
   const remainingProps = { ...props };
@@ -58,7 +62,7 @@ export default function Button({
 
   const disabledStyling =
     props.disabled &&
-    "hover:cursor-not-allowed hover:ring-0 hover:ring-offset-0 text-grey-500 pointer-events-none";
+    "hover:cursor-not-allowed hover:ring-0 hover:ring-offset-0 text-grey-100 bg-grey-500 pointer-events-none";
 
   const noRingStyling =
     noRing && "hover:ring-0 hover:ring-offset-0 focus:ring-0 active:ring-0";
@@ -78,7 +82,13 @@ export default function Button({
       aria-disabled={props.disabled}
       {...remainingProps}
     >
-      {children}
+      {busy ? (
+        <div className="flex justify-center">
+          <Spinner mini />
+        </div>
+      ) : (
+        <>{children}</>
+      )}
     </HeadlessUiButton>
   );
 }

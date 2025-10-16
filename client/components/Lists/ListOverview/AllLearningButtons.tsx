@@ -1,24 +1,25 @@
 "use client";
 
-import ReviewButton from "@/components/ReviewButton";
-import { LearningMode, ListStats } from "@/lib/types";
 import { useMemo } from "react";
+
+import ReviewButton from "@/components/ReviewButton";
+import { LearningMode, LearningStats } from "@/lib/contracts";
 
 interface AllLearningButtonsProps {
   listNumber: number;
   unitNumber?: number;
-  listStats: ListStats;
+  learningStats: LearningStats;
   unlockedLearningModesForUser?: LearningMode[];
 }
 
 export default function AllLearningButtons({
   listNumber,
   unitNumber,
-  listStats,
+  learningStats,
   unlockedLearningModesForUser,
 }: AllLearningButtonsProps) {
   const renderedButtons = useMemo(() => {
-    if (!listNumber || !listStats || !unlockedLearningModesForUser) {
+    if (!listNumber || !learningStats || !unlockedLearningModesForUser) {
       return null;
     }
 
@@ -28,47 +29,47 @@ export default function AllLearningButtons({
           mode="learn"
           listNumber={listNumber}
           unitNumber={unitNumber}
-          stats={listStats}
+          stats={learningStats}
           unlockedModes={unlockedLearningModesForUser}
         />
         <ReviewButton
           listNumber={listNumber}
           unitNumber={unitNumber}
           mode="translation"
-          stats={listStats}
+          stats={learningStats}
           unlockedModes={unlockedLearningModesForUser}
         />
         <ReviewButton
           listNumber={listNumber}
           unitNumber={unitNumber}
           mode="dictionary"
-          stats={listStats}
+          stats={learningStats}
           unlockedModes={unlockedLearningModesForUser}
         />
         <ReviewButton
           listNumber={listNumber}
           unitNumber={unitNumber}
           mode="context"
-          stats={listStats}
+          stats={learningStats}
           unlockedModes={unlockedLearningModesForUser}
         />
         <ReviewButton
           listNumber={listNumber}
           unitNumber={unitNumber}
           mode="visual"
-          stats={listStats}
+          stats={learningStats}
           unlockedModes={unlockedLearningModesForUser}
         />
         <ReviewButton
           listNumber={listNumber}
           unitNumber={unitNumber}
           mode="spellingBee"
-          stats={listStats}
+          stats={learningStats}
           unlockedModes={unlockedLearningModesForUser}
         />
       </>
     );
-  }, [listNumber, unitNumber, listStats, unlockedLearningModesForUser]);
+  }, [listNumber, unitNumber, learningStats, unlockedLearningModesForUser]);
 
   if (!renderedButtons) {
     return "Loading buttons...";

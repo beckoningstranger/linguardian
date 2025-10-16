@@ -1,26 +1,26 @@
 import Flag from "react-world-flags";
 
-import { cn } from "@/lib/helperFunctionsClient";
+import ItemContext from "@/components/Dictionary/ItemPage/ItemContext";
+import ItemIPA from "@/components/Dictionary/ItemPage/ItemIPA";
+import ItemPartOfSpeech from "@/components/Dictionary/ItemPage/ItemPartOfSpeech";
+import ItemPluralForms from "@/components/Dictionary/ItemPage/ItemPluralForms";
+import ItemSection from "@/components/Dictionary/ItemPage/ItemSection";
+import ItemTranslations from "@/components/Dictionary/ItemPage/ItemTranslations";
 import {
-  ItemWithPopulatedTranslationsFE,
-  LanguageWithFlagAndName,
-} from "@/lib/types";
-import ItemContext from "./ItemContext";
-import ItemIPA from "./ItemIPA";
-import ItemPartOfSpeech from "./ItemPartOfSpeech";
-import ItemPluralForms from "./ItemPluralForms";
-import ItemSection from "./ItemSection";
-import ItemTranslations from "./ItemTranslations";
+  ItemWithPopulatedTranslations,
+  SupportedLanguage,
+} from "@/lib/contracts";
+import { cn } from "@/lib/utils";
 
 interface ItemDetailsProps {
-  item: ItemWithPopulatedTranslationsFE;
-  allUserLanguages: LanguageWithFlagAndName[];
+  item: ItemWithPopulatedTranslations;
+  allUserLanguageCodes: SupportedLanguage[];
   forItemPresentation?: boolean;
 }
 
 export default function ItemDetails({
   item,
-  allUserLanguages,
+  allUserLanguageCodes,
   forItemPresentation = false,
 }: ItemDetailsProps) {
   const {
@@ -33,7 +33,7 @@ export default function ItemDetails({
     IPA,
     pluralForm,
     flagCode,
-    case: itemCase,
+    grammaticalCase: itemCase,
     translations,
   } = item;
 
@@ -41,7 +41,7 @@ export default function ItemDetails({
     <div
       id="ItemDetails"
       className={cn(
-        "flex w-full flex-col grow gap-y-2 bg-white/90 px-2 py-3",
+        "flex w-full flex-col grow gap-y-2 bg-white/90 px-2 py-3 tablet:px-4 desktop:px-8",
         forItemPresentation && "desktop:px-8 tablet:py-4 tablet:px-6"
       )}
     >
@@ -62,7 +62,7 @@ export default function ItemDetails({
         <ItemSection title="Definition">{definition}</ItemSection>
         <ItemTranslations
           translations={translations}
-          allUserLanguages={allUserLanguages}
+          allUserLanguageCodes={allUserLanguageCodes}
           forItemPresentation
         />
         <ItemContext context={context} />

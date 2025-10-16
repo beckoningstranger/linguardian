@@ -1,7 +1,8 @@
-import { LanguageWithFlagAndName } from "@/lib/types";
 import { Listbox, ListboxButton, ListboxOptions } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import Flag from "react-world-flags";
+
+import { LanguageWithFlagAndName } from "@/lib/contracts";
 
 interface LanguagePickerProps {
   languageObject: LanguageWithFlagAndName | null;

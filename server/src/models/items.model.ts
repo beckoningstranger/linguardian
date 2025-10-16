@@ -1,159 +1,196 @@
-import { Types } from "mongoose";
 import {
-  normalizeString,
-  slugifyString,
-  toObjectId,
-} from "../lib/helperFunctions.js";
-import { siteSettings } from "../lib/siteSettings.js";
-import {
-  Item,
+  ApiResponse,
+  coreItemSchema,
+  itemSchemaWithPopulatedTranslations,
+  itemSchemaWithTranslations,
   ItemWithPopulatedTranslations,
-  PartOfSpeech,
+  MessageWithItemInfoResponse,
+  MessageWithSlugResponse,
+  NewItem,
   SupportedLanguage,
-  Tag,
-} from "../lib/types.js";
-import Items from "./item.schema";
-import { itemSchemaWithPopulatedTranslations } from "../lib/validations.js";
+} from "@/lib/contracts";
+import { itemToSubmitSchema } from "@/lib/schemas";
+import { allSupportedLanguages } from "@/lib/siteSettings";
+import {
+  isNoResultError,
+  normalizeString,
+  prepareExistingItemToSave,
+  prepareNewItemToSave,
+  safeDbRead,
+  safeDbWrite,
+  translationsAreEqual,
+  updateAllAffectedItems,
+} from "@/lib/utils";
+import Items from "@/models/item.schema";
+import { z } from "zod";
 
-export async function getItemBySlug(slug: string) {
-  return await Items.findOne({ slug });
+export async function getItemIdBySlug(slug: string) {
+  return await safeDbRead({
+    dbReadQuery: () => Items.findOne({ slug }).select({ id: true }).lean(),
+    schemaForValidation: coreItemSchema.pick({ id: true }),
+  });
 }
 
-export async function getItemById(_id: Types.ObjectId) {
-  return await Items.findOne({ _id });
-}
-
-export async function getPopulatedItemBySlug(
-  slug: string,
-  userLanguages: readonly SupportedLanguage[]
-): Promise<ItemWithPopulatedTranslations | null> {
-  const paths = userLanguages.map((lang) => ({
+export async function getPopulatedItemById(id: string) {
+  const paths = allSupportedLanguages.map((lang) => ({
     path: "translations." + lang,
   }));
 
-  const retrievedItem = await Items.findOne({ slug }).populate(paths).lean();
-  if (!retrievedItem) return null;
-  return itemSchemaWithPopulatedTranslations.parse(retrievedItem);
+  return await safeDbRead({
+    dbReadQuery: () => Items.findOne({ _id: id }).populate(paths).lean(),
+    schemaForValidation: itemSchemaWithPopulatedTranslations,
+  });
 }
 
-export async function getAllSlugsForLanguage(language: SupportedLanguage) {
-  return await Items.find({ language: language }).select("slug language -_id");
-}
-
-export async function findItemsByName(
+export async function searchDictionary(
   languages: SupportedLanguage[],
   query: string
 ) {
   const normalizedLowerCaseQuery = normalizeString(query);
-  return await Items.find({
-    normalizedName: { $regex: normalizedLowerCaseQuery },
-    language: { $in: languages },
+
+  return await safeDbRead({
+    dbReadQuery: () =>
+      Items.find({
+        normalizedName: { $regex: normalizedLowerCaseQuery, $options: "i" },
+        language: { $in: languages },
+      }).lean(),
+    schemaForValidation: z.array(itemSchemaWithTranslations),
   });
 }
 
-export async function editOrCreateBySlug(
-  item: Omit<ItemWithPopulatedTranslations, "_id">,
-  slug: string
-) {
-  const isNewItem = item.slug === "new-item" ? true : false;
+export async function createNewItem(
+  item: NewItem
+): Promise<ApiResponse<MessageWithItemInfoResponse | MessageWithSlugResponse>> {
+  /* We call this function when users believe this is a new item (POST endpoint)
+   and from parseCSV. We make sure we don't overwrite an existing item or create
+   duplicates by looking existing items up first*/
 
-  const update: Omit<ItemWithPopulatedTranslations, "_id"> = {
-    ...item,
-    tags: await filterOutInvalidTags(
-      item.tags,
-      item.partOfSpeech,
-      item.language
-    ),
-    slug: slugifyString(item.name, item.language),
-    normalizedName: normalizeString(item.name),
-    gender: item.partOfSpeech === "noun" ? item.gender : undefined,
-    case: item.partOfSpeech === "preposition" ? item.case : undefined,
-    definition: item.definition || undefined,
-    pluralForm:
-      item.partOfSpeech === "noun" || item.partOfSpeech === "adjective"
-        ? item.pluralForm && item.pluralForm.length > 0
-          ? item.pluralForm
-          : undefined
-        : undefined,
-  };
+  const itemToSubmit = await prepareNewItemToSave(item);
 
-  const conflictFreeUpdate: ItemWithPopulatedTranslations =
-    resolveConflictsInUpdate(update);
-
-  return await Items.findOneAndUpdate({ slug: slug }, conflictFreeUpdate, {
-    new: true,
-    upsert: isNewItem,
+  const existingItemResponse = await safeDbRead({
+    dbReadQuery: () =>
+      Items.findOne({
+        name: item.name,
+        language: item.language,
+        partOfSpeech: item.partOfSpeech,
+      }).lean(),
+    schemaForValidation: itemSchemaWithTranslations,
   });
-}
 
-function resolveConflictsInUpdate(
-  update: Omit<ItemWithPopulatedTranslations, "_id">
-) {
-  // When doing the given update, MongoDB will save undefined values as null, which collides with zod validation
-  // and causes problems. Below code fixes this by instead unsetting the keys that have undefined values.
-  const conflictFreeUpdate: any = { $set: {}, $unset: {} };
-  const propertiesToSet = Object.entries(update).filter(
-    (entry) => entry[1] !== undefined
-  );
-  propertiesToSet.forEach(
-    (entry) => (conflictFreeUpdate.$set[entry[0]] = entry[1])
-  );
+  if (!existingItemResponse.success && !isNoResultError(existingItemResponse)) {
+    return {
+      success: false,
+      error: "Database error, please try again later",
+    };
+  }
 
-  const propertiesToUnset: any = {};
-  const propertiesWithValueUndefined = Object.keys(update).filter(
-    (key) =>
-      update[key as keyof Omit<ItemWithPopulatedTranslations, "_id">] ===
-      undefined
-  );
-  propertiesWithValueUndefined.forEach(
-    (property) => (propertiesToUnset[property] = 1)
-  );
-  conflictFreeUpdate.$unset = propertiesToUnset;
-  return conflictFreeUpdate;
-}
-
-async function filterOutInvalidTags(
-  tagArray: string[] | undefined,
-  partOfSpeech: PartOfSpeech,
-  language: SupportedLanguage
-) {
-  if (!tagArray) return [];
-  const languageFeatures = siteSettings.languageFeatures.find(
-    (lang) => lang.langCode === language
-  );
-  const validTags = languageFeatures?.tags.forAll
-    .concat(languageFeatures.tags[partOfSpeech])
-    .filter((item) => item !== undefined);
-
-  if (validTags)
-    return tagArray.filter((tag) => validTags.includes(tag as Tag)) as Tag[];
-  return [] as Tag[];
-}
-
-export async function removeTranslationBySlug(
-  translationToRemove_id: string,
-  slug: string
-) {
-  const translationsObjectId = toObjectId(translationToRemove_id);
-  const language = (await Items.findOne({ _id: translationsObjectId }))
-    ?.language;
-  return await Items.updateOne(
-    { slug },
-    { $pull: { [`translations.${language}`]: translationsObjectId } }
-  );
-}
-
-export async function addTranslationBySlug(
-  translationToAdd_id: string,
-  slug: string
-) {
-  const language = (await Items.findOne({ slug }))?.language;
-  return await Items.updateOne(
-    { slug },
-    {
-      $addToSet: {
-        [`translations.${language}`]: toObjectId(translationToAdd_id),
+  if (existingItemResponse.success) {
+    return {
+      success: true,
+      data: {
+        type: "duplicate",
+        message:
+          "An item with this name already exists. Please edit it instead.",
+        redirectSlug: existingItemResponse.data.slug,
       },
-    }
+    };
+  }
+
+  const created = await updateAllAffectedItems(
+    itemToSubmit,
+    {},
+    item.translations,
+    true
   );
+
+  if (!created.success) return { success: false, error: created.error };
+
+  return {
+    success: true,
+    data: {
+      type: "itemInfo",
+      message: "Item successfully created! 🎉",
+      itemInfo: {
+        id: created.data.id,
+        slug: created.data.slug,
+        language: created.data.language,
+      },
+    },
+  };
+}
+
+export async function updateExistingItem(
+  item: ItemWithPopulatedTranslations
+): Promise<ApiResponse<MessageWithItemInfoResponse>> {
+  const itemToSubmit = await prepareExistingItemToSave(item);
+
+  const oldItemResponse = await getPopulatedItemById(item.id);
+  if (!oldItemResponse.success) {
+    return {
+      success: false,
+      error: "Could not find old item for update",
+    };
+  }
+
+  const oldTranslations = oldItemResponse.data.translations;
+  const newTranslations = item.translations;
+
+  const changed = !translationsAreEqual(oldTranslations, newTranslations);
+
+  if (!changed) {
+    const updated = await safeDbWrite({
+      input: itemToSubmit,
+      schemaForValidation: itemToSubmitSchema,
+      dbWriteQuery: () =>
+        Items.findOneAndUpdate(
+          { id: itemToSubmit.id },
+          { $set: itemToSubmit },
+          { new: true }
+        ),
+      errorMessage: `Error updating item with slug: ${itemToSubmit.slug}`,
+    });
+
+    if (!updated.success) return { success: false, error: updated.error };
+    if (!updated.data)
+      return { success: false, error: "No data returned when updating" };
+
+    return {
+      success: true,
+      data: {
+        type: "itemInfo",
+        message: "Item successfully updated! 🎉",
+        itemInfo: {
+          id: updated.data.id,
+          slug: updated.data.slug,
+          language: updated.data.language,
+        },
+      },
+    };
+  }
+
+  const updated = await updateAllAffectedItems(
+    itemToSubmit,
+    oldTranslations,
+    newTranslations,
+    false
+  );
+
+  if (!updated.success) {
+    return {
+      success: false,
+      error: updated.error || "Failed to update item with translations",
+    };
+  }
+  return {
+    success: true,
+    data: {
+      type: "itemInfo",
+      message: "Item and its translations updated successfully! 🎉",
+      itemInfo: {
+        id: updated.data.id,
+        slug: updated.data.slug,
+        language: updated.data.language,
+      },
+    },
+  };
 }

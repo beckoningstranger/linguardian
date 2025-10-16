@@ -1,55 +1,183 @@
-# Linguardian - Enrich your vocabulary with the power of spaced repetition.
+# Linguardian - Enrich your vocabulary with the power of spaced repetition
 
-## <a href="https://www.linguardian.com" target="_blank" rel="noopener">Check it out on www.linguardian.com</a>
+## 🌐 [Check it out on www.linguardian.com](https://www.linguardian.com)
 
 This is a project using **Next.js** and an **Express** backend that communicates with **MongoDB**.
 
-On Linguardian users can **learn and review user-generated vocabulary lists** that can be created using the website or by uploading csv-files. Of course they can also pick from the existing list catalogue. After learning the items users wait for a set period of time (the default is 4 hours), after which they are then tested on each of the learned items. If the tests go well, the amount of time between reviews increases, but once they make a mistake, it is reset to the initial 4 hours. This scientifically proven concept is called **spaced repetition**.
+On Linguardian, users can **learn and review user-generated vocabulary lists** that can be created using the website or by uploading CSV files. They can also pick from the existing list catalogue. After learning the items, users wait for a set period of time (default is 4 hours), after which they are tested. If the tests go well, the time between reviews increases — but if they fail, the interval resets. This scientifically backed system is known as **spaced repetition**.
 
-Depending on the language they are learning, users are also tested on the gender of nouns (for German or French) or the case that is followed by a preposition (German).
+Depending on the language they are learning, users are also tested on the gender of nouns (German/French) or the grammatical case required by prepositions (German).
 
-Uploading learnable items will also be added to a **browsable dictionary** that can be edited and refined. It aims to be as complete as possible, including example sentences, images, recordings, phonetic transcription, etc.
+Uploaded items also become part of a **browsable dictionary**, which aims to be comprehensive with example sentences, images, recordings, and phonetic transcription.
 
-## Project Status
+---
 
-As of right now, the dictionary, creating and managing lists and learning and reviewing lists have basic functionality, but the experience is unpolished and the design yet to be implemented. I am working on it here: <a href="https://www.figma.com/design/lOeIA9jB6QLTcKTwJVzYj8/Linguardian?node-id=419-572&t=RNUHs0xGzvzMy8u1-1" target="\_blank" rel="noopener">Linguardian Figma File</a>
+## 📈 Project Status
 
-## Overview of Languages, Frameworks & Libraries Used
+As of now:
+
+- ✅ Dictionary, list creation/management, and learning flow are functional
+- 🎨 UI/UX design is in progress: [Figma File](https://www.figma.com/design/lOeIA9jB6QLTcKTwJVzYj8/Linguardian?node-id=419-572&t=RNUHs0xGzvzMy8u1-1)
+
+---
+
+## 🧰 Technologies & Libraries Used
 
 ### General
 
-- [Typescript](https://www.typescriptlang.org/) - Strongly typed JavaScript
-- [Git](https://git-scm.com/) - For version control
-- [Figma](https://figma.com) - For creating the design
-- [Zod](https://www.npmjs.com/package/zod) - Schemas for user data validation
+- TypeScript
+- Git
+- Figma
+- Zod
 
-### Front End
+### Frontend
 
-- [Next.js](https://nextjs.org/) - React Framework powering my Front End
-- [NextAuth](https://next-auth.js.org/) - Authentication for Next.js
-- [Tailwind CSS](https://tailwindcss.com/) - CSS Framework
-- [Headless UI](https://github.com/tailwindlabs/headlessui) - Completely unstyled, fully accessible UI components, designed to integrate beautifully with Tailwind CSS.
-- [React Hot Toast](https://www.npmjs.com/package/react-hot-toast) - Notifications for React
-- [React Hook Form](https://www.npmjs.com/package/react-hook-form) - Performant forms with great integration, validation and Zod support
-- [@hello-pangea/dnd](https://github.com/hello-pangea/dnd) - Drag and drop for lists with React
-- [react-world-flags](https://www.npmjs.com/package/react-world-flags) - SVG flags of the world for React
-- [ApexCharts](https://www.npmjs.com/package/apexcharts) - A modern JavaScript charting library
-- [React Icons](https://react-icons.github.io/react-icons/) - Icon Library
-- [clsx](https://www.npmjs.com/package/clsx) - Construct className string conditionally
-- [tailwind-merge](https://www.npmjs.com/package/tailwind-merge) - Efficiently merge Tailwind CSS classes without style conflicts
-- [Google Fonts](https://fonts.google.com/) - Find and import fonts
+- Next.js
+- NextAuth
+- Tailwind CSS
+- Headless UI
+- React Hook Form + Zod
+- React Hot Toast
+- ApexCharts
+- React Icons
+- @hello-pangea/dnd
+- react-world-flags
+- clsx
+- tailwind-merge
+- Google Fonts
 
 ### Backend
 
-- [Node.js](https://nodejs.org/) - Javascript Runtime Environment running on my backend
-- [Express.js](https://expressjs.com/) - Build RESTful APIs
-- [ts-node](https://www.npmjs.com/package/ts-node) - Directly execute TypeScript on Node.js without precompiling
-- [csv-parse](https://www.npmjs.com/package/csv-parse) - CSV Parser for uploading user created vocabulary lists
-- [Mongoose](https://mongoosejs.com/) - Communication between backend and database
-- [bcryptjs](https://www.npmjs.com/package/bcrypt) - Encryption of user password
-- [helmet](https://www.npmjs.com/package/helmet) - Secures Express Apps
-- [multer](https://www.npmjs.com/package/multer) - Handle uploaded files
-- [morgan](https://www.npmjs.com/package/morgan) - HTTP request logger middleware
-- [cors](https://www.npmjs.com/package/cors) - Cross origin resource sharing middleware for Express.js
-- [dotenv](https://www.npmjs.com/package/dotenv) - Load environment variables
-- [nodemon](https://www.npmjs.com/package/nodemon) - Automatically restart node applications on file changes
+- Node.js
+- Express.js
+- ts-node
+- Mongoose
+- bcryptjs
+- multer
+- morgan
+- helmet
+- cors
+- dotenv
+- nodemon
+- csv-parse
+
+---
+
+## 🧪 Local Development Setup
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/linguardian.git
+cd linguardian
+```
+
+### 2. Set up environment variables
+
+```bash
+cp client/.env.example client/.env.local
+cp server/.env.example server/.env
+```
+
+> 💡 Never commit `.env` files. Only commit `.env.example` templates.
+
+### 3. Start the dev environment
+
+```bash
+docker-compose -f docker-compose.dev.yml up --build
+```
+
+- Frontend: [http://localhost:3000](http://localhost:3000)
+- Backend: [http://localhost:8000](http://localhost:8000)
+
+### 4. Configure Google OAuth
+
+Add this URI in your Google Console:
+
+```
+http://localhost:3000/api/auth/callback/google
+```
+
+---
+
+## 🚀 Production Deployment (GitHub Actions + EC2 + Docker Compose)
+
+This project uses GitHub Actions to build and push Docker images to Amazon ECR, then deploy them to an EC2 instance using SSH and Docker Compose.
+
+---
+
+### 🔐 1. GitHub Secrets Setup
+
+In your GitHub repository, define the following secrets under **Settings > Secrets and variables > Actions**:
+
+- `AWS_ACCESS_KEY` – Your AWS IAM access key
+- `AWS_SECRET_KEY` – Your AWS IAM secret key
+- `AWS_REGION` – Your AWS region (e.g. `eu-central-1`)
+- `AWS_ID` – Your AWS account ID
+- `ECR_REPOSITORY` – Your ECR repository URL (e.g. `123456789.dkr.ecr.eu-central-1.amazonaws.com/linguardian`)
+- `PEM_FILE` – Contents of your EC2 SSH private key (multiline string)
+- `NEXTAUTH_SECRET` – Your NextAuth JWT secret
+- `GOOGLE_ID` – Google OAuth client ID
+- `GOOGLE_SECRET` – Google OAuth client secret
+- `NEXTAUTH_URL` – Typically `https://www.linguardian.com`
+- `MONGO_URL` – MongoDB connection URI
+
+---
+
+### ⚙️ 2. Deployment Process
+
+Your GitHub Actions workflow (`.github/workflows/deploy.yml`) does the following:
+
+1. Builds frontend and backend Docker images using your `build.sh` script
+2. Tags and pushes the images to ECR with both `latest` and timestamped tags
+3. SSHs into your EC2 instance and runs `deploy.sh`
+4. `deploy.sh` uses `docker-compose.deploy.yml` to:
+
+   - Pull new images from ECR
+   - Inject environment variables (secrets)
+   - Restart the running containers
+
+---
+
+### 🖥️ 3. EC2 Instance Requirements
+
+Make sure your EC2 instance:
+
+- Has **Docker** and **Docker Compose** installed
+- Allows SSH access via the **PEM file** defined in your secrets
+- Has IAM permission to pull images from ECR
+
+---
+
+### 📦 4. `docker-compose.deploy.yml` Example
+
+```yaml
+services:
+  frontend:
+    image: <your-ecr>/linguardian:frontend-latest
+    environment:
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - GOOGLE_ID=${GOOGLE_ID}
+      - GOOGLE_SECRET=${GOOGLE_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - SERVER_URL=http://backend:8000
+      - FRONTEND_URL=http://frontend:3000
+
+  backend:
+    image: <your-ecr>/linguardian:backend-latest
+    environment:
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - MONGO_URL=${MONGO_URL}
+      - FRONTEND_URL=http://frontend:3000
+```
+
+---
+
+### 🚀 5. Triggering a Deployment
+
+Every `git push` to the `main` branch automatically:
+
+- Builds and pushes Docker images to Amazon ECR
+- Deploys them to your EC2 instance via SSH
+
+> You can customize the trigger behavior in `.github/workflows/deploy.yml` under the `on:` block.

@@ -1,21 +1,22 @@
-import { cn } from "@/lib/helperFunctionsClient";
-import learningButtonConfig from "@/lib/learningButtonConfig";
-import { LearningMode, ListStats } from "@/lib/types";
 import Image from "next/image";
-import LearningButton from "./LearningButton";
-import { siteSettings } from "@/lib/siteSettings";
+
+import LearningButton from "@/components/ui/LearningButton";
+import { LearningMode, LearningStats } from "@/lib/contracts";
+import learningButtonConfig from "@/lib/learningButtonConfig";
+import { allLearningModes } from "@/lib/siteSettings";
+import { cn } from "@/lib/utils";
 
 interface LearningButtonWithExpandProps {
   listNumber: number;
-  unlockedModes: LearningMode[];
-  listStats: ListStats;
+  unlockedLearningModesForUser: LearningMode[];
+  learningStats: LearningStats;
   rounded?: boolean;
   from: "dashboard" | number;
 }
 export default function LearningButtonWithExpand({
   listNumber,
-  unlockedModes,
-  listStats,
+  unlockedLearningModesForUser = [],
+  learningStats,
   rounded = false,
   from,
 }: LearningButtonWithExpandProps) {
@@ -24,15 +25,17 @@ export default function LearningButtonWithExpand({
   const excludeModes: LearningMode[] = [];
 
   // If there are no new words to learn exclude LearnNewWords and show random practice mode
-  if (listStats.unlearned === 0) excludeModes.push("learn");
-  if (listStats.readyToReview === 0) excludeModes.push("translation");
-  if (listStats.readyToReview > 0)
+  if (learningStats.unlearned === 0) excludeModes.push("learn");
+  if (learningStats.readyToReview === 0) excludeModes.push("translation");
+  if (learningStats.readyToReview > 0)
     recommendedLearningMode =
-      unlockedModes[Math.floor(Math.random() * unlockedModes.length)];
+      unlockedLearningModesForUser[
+        Math.floor(Math.random() * unlockedLearningModesForUser.length)
+      ];
 
   excludeModes.push(recommendedLearningMode);
   const showExpandButton: boolean = Boolean(
-    unlockedModes.length - excludeModes.length + 1 > 0
+    unlockedLearningModesForUser.length - excludeModes.length + 1 > 0
   );
 
   const bgColor =
@@ -59,8 +62,8 @@ export default function LearningButtonWithExpand({
         mode={recommendedLearningMode}
         itemNumber={
           recommendedLearningMode === "learn"
-            ? listStats.unlearned
-            : listStats.readyToReview
+            ? learningStats.unlearned
+            : learningStats.readyToReview
         }
         listNumber={listNumber}
         showExpand
@@ -71,11 +74,12 @@ export default function LearningButtonWithExpand({
       {showExpandButton && (
         <div className="group flex w-12 items-center justify-center">
           <div className="absolute bottom-0 right-0 z-50 flex w-full translate-y-[600px] flex-col opacity-0 transition-all duration-500 ease-in-out group-hover:translate-y-0 group-hover:opacity-100">
-            {siteSettings.learningModes
+            {allLearningModes
               .filter(
                 (m) =>
-                  (!excludeModes.includes(m) && unlockedModes.includes(m)) ||
-                  (m === "learn" && listStats.unlearned > 0)
+                  (!excludeModes.includes(m) &&
+                    unlockedLearningModesForUser.includes(m)) ||
+                  (m === "learn" && learningStats.unlearned > 0)
               )
               .map((mode: LearningMode) => (
                 <LearningButton
@@ -83,8 +87,8 @@ export default function LearningButtonWithExpand({
                   mode={mode}
                   itemNumber={
                     mode === "learn"
-                      ? listStats.unlearned
-                      : listStats.readyToReview
+                      ? learningStats.unlearned
+                      : learningStats.readyToReview
                   }
                   listNumber={listNumber}
                   showIcon

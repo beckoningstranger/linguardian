@@ -4,10 +4,10 @@ import { Button } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/20/solid";
 import { Dispatch, RefObject, SetStateAction, useState } from "react";
 
-import StyledInput from "@/components/ui/StyledInput";
-import StyledTextarea from "@/components/ui/StyledTextArea";
+import StyledInput from "@/components/Forms/StyledInput";
+import StyledTextarea from "@/components/Forms/StyledTextArea";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
-import { ContextItem } from "@/lib/types";
+import { ContextItem } from "@/lib/contracts";
 
 interface EnterContextItemsFieldProps {
   contextItems: ContextItem[];
@@ -101,6 +101,7 @@ export default function EnterContextItemsField({
             setItemTakenFrom("");
             setShowSource(false);
           }}
+          name={"contextItem" + index}
         />
       )}
     </div>

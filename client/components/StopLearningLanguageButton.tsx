@@ -1,12 +1,12 @@
 "use client";
 
-import { setLearnedLanguages } from "@/lib/actions";
-import { LanguageWithFlagAndName, SupportedLanguage, User } from "@/lib/types";
-import { useSession } from "next-auth/react";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import Spinner from "./Spinner";
-import Button from "./ui/Button";
+
+import Button from "@/components/ui/Button";
+import { useUser } from "@/context/UserContext";
+import { LanguageWithFlagAndName, SupportedLanguage } from "@/lib/contracts";
+import { useUserUpdater } from "@/lib/hooks/useUserUpdater";
 
 interface StopLearningLanguageButtonProps {
   language: LanguageWithFlagAndName;
@@ -18,46 +18,41 @@ export default function StopLearningLanguageButton({
   const [updatingMap, setUpdatingMap] = useState<
     Map<SupportedLanguage, boolean>
   >(new Map());
-  const { data, status, update } = useSession();
-  const user = data?.user as User;
+  const { user } = useUser();
+  const applyUserUpdate = useUserUpdater();
+
+  if (!user) {
+    toast.error("User not loaded in context.");
+    return null;
+  }
 
   const handleStopLearningLanguage = async () => {
     setUpdatingMap((prev) => new Map(prev).set(language.code, true));
-    const updatedLearnedLanguages = user.learnedLanguages
+
+    const learnedLanguages = user?.learnedLanguages
       ? user?.learnedLanguages.filter(
           (languageObject) => languageObject.code !== language.code
         )
       : [];
 
-    try {
-      toast.promise(setLearnedLanguages(updatedLearnedLanguages), {
+    const result = await toast.promise(
+      applyUserUpdate({ id: user.id, learnedLanguages }),
+      {
         loading: "Updating your learning settings...",
         success: `You are no longer learning ${language.name}!`,
-        error: (err) => err.toString(),
-      });
-
-      await update({
-        ...data,
-        user: {
-          ...user,
-          learnedLanguages: updatedLearnedLanguages,
-          activeLanguageAndFlag: updatedLearnedLanguages[0],
-        },
-      });
-    } catch (err) {
-      console.error(err);
-    } finally {
+        error: (err) => (err instanceof Error ? err.message : err.toString()),
+      }
+    );
+    if (result)
       setUpdatingMap((prev) => new Map(prev).set(language.code, false));
-    }
   };
-
-  if (status === "loading") return <Spinner centered />;
 
   return (
     <Button
       intent="danger"
       onClick={handleStopLearningLanguage}
       disabled={updatingMap.get(language.code)}
+      className="h-20 rounded-md bg-white text-clgb text-red-500"
     >
       Stop learning {language.name}
     </Button>

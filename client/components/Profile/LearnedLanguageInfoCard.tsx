@@ -1,11 +1,11 @@
 import Flag from "react-world-flags";
 
-import { cn } from "@/lib/helperFunctionsClient";
-import { LanguageWithFlagAndName, User } from "@/lib/types";
-import ActivityOverview from "./ActivityOverview";
-import CompetencyBadge from "./CompetencyBadge";
-import StreakBadge from "./StreakBadge";
-import UserTopLists from "./UserTopLists";
+import ActivityOverview from "@/components/Profile//ActivityOverview";
+import CompetencyBadge from "@/components/Profile//CompetencyBadge";
+import UserTopLists from "@/components/Profile//UserTopLists";
+import StreakBadge from "@/components/Profile/StreakBadge";
+import { cn } from "@/lib/utils";
+import { LanguageWithFlagAndName, User } from "@/lib/contracts";
 
 interface LearnedLanguageInfoCardProps {
   user: User;
@@ -18,10 +18,8 @@ export default function LearnedLanguageInfoCard({
   fillWidth,
   language,
 }: LearnedLanguageInfoCardProps) {
-  const totalItemsForLanguage =
-    user.learnedItems[language.code]?.length;
-  const totalListsForLanguage =
-    user.learnedLists[language.code]?.length;
+  const totalItemsForLanguage = user.learnedItems[language.code]?.length;
+  const totalListsForLanguage = user.learnedLists[language.code]?.length;
 
   return (
     <div
@@ -58,15 +56,12 @@ export default function LearnedLanguageInfoCard({
         >
           <p className="font-serif text-hlg">{language.name}</p>
           <p className="text-clgm">
-            {totalItemsForLanguage || 0} items in{" "}
-            {totalListsForLanguage} lists
+            {totalItemsForLanguage || 0} items in {totalListsForLanguage} lists
           </p>
         </div>
       </div>
       {/* Overview End */}
-      <div
-        className={cn("grid", fillWidth && "min-[980px]:grid-cols-2")}
-      >
+      <div className={cn("grid", fillWidth && "min-[980px]:grid-cols-2")}>
         <ActivityOverview language={language} />
         <UserTopLists language={language} user={user} />
       </div>

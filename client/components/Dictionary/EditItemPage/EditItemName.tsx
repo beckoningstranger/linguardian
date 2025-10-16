@@ -1,14 +1,15 @@
+"use client";
+
 import { Control, Controller, FieldErrors, FieldValues } from "react-hook-form";
 
-import { FormErrors } from "@/components/ui/FormErrors";
-import StyledInput from "@/components/ui/StyledInput";
-import { ItemWithPopulatedTranslationsFE } from "@/lib/types";
+import { FormErrors, StyledInput } from "@/components";
+import { ItemWithPopulatedTranslations } from "@/lib/contracts";
 
 interface EditItemNameProps {
   control: Control<
-    ItemWithPopulatedTranslationsFE,
+    ItemWithPopulatedTranslations,
     any,
-    ItemWithPopulatedTranslationsFE
+    ItemWithPopulatedTranslations
   >;
   itemName: string;
   isNewItem: boolean;
@@ -31,6 +32,7 @@ export default function EditItemName({
               label="Item name"
               onChange={onChange}
               onBlur={onBlur}
+              name="name"
               id="name"
               defaultValue={itemName}
               placeholder="Item name"

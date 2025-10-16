@@ -1,12 +1,22 @@
-import { LearningMode, SupportedLanguage } from "./types";
+import { LearningMode, SupportedLanguage } from "@/lib/contracts";
 
 const paths = {
   aboutPath: () => `/about`,
   dashboardLanguagePath: (language: SupportedLanguage) =>
-    `/${language}/dashboard`,
+    `/dashboard/${language}`,
   dictionaryPath: () => `/dictionary`,
   dictionaryItemPath: (slug: string) => `/dictionary/${slug}`,
-  addItemToDictionaryPath: () => "/dictionary/new",
+  addItemToDictionaryPath: (
+    initialName: string,
+    listNumber?: number,
+    unitNumber?: number,
+    unitName?: string,
+    listLanguage?: SupportedLanguage
+  ) => {
+    return listNumber && unitNumber && listLanguage && unitName
+      ? `/dictionary/new?initialName=${initialName}&addToList=${listNumber}&addToUnit=${unitNumber}&unitName=${unitName}&listLanguage=${listLanguage}`
+      : `/dictionary/new?initialName=${initialName}`;
+  },
   editDictionaryItemPath: (slug: string) => `/dictionary/edit/${slug}`,
   editListPath: (listNumber: number) => `/lists/${listNumber}/edit`,
   editUnitPath: (listNumber: number, unitNumber: number) =>
@@ -16,9 +26,9 @@ const paths = {
   learnNewLanguagePath: () => `/newLanguage`,
   learnUnitPath: (mode: LearningMode, listId: number, unitNumber: number) =>
     `/learningSession/${mode}/${listId}/${unitNumber}`,
-  listsLanguagePath: (language: SupportedLanguage) => `/${language}/lists`,
+  listStorePath: (language: SupportedLanguage) => `/listStore/${language}`,
   listDetailsPath: (listNumber: number) => `/lists/${listNumber}`,
-  newListPath: (language: SupportedLanguage) => `/${language}/lists/new`,
+  newListPath: (language: SupportedLanguage) => `/listStore/${language}/new`,
   profilePath: (usernameSlug: string) => `/profile/${usernameSlug}`,
   registerPath: () => `/register`,
   rootPath: () => "/",

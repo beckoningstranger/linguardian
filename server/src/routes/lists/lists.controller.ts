@@ -1,250 +1,299 @@
-import { Request, Response } from "express";
-import fs from "fs";
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
+import { Response } from "express";
 
-import { parseCSV } from "../../lib/parsecsv.js";
-import { siteSettings } from "../../lib/siteSettings.js";
 import {
-  FullyPopulatedList,
-  List,
-  ParsedListInfoFromServer,
-  SupportedLanguage,
-} from "../../lib/types.js";
+  addItemToUnitUpdateSchema,
+  addUnitUpdateSchema,
+  CreateListSuccessResponse,
+  listDetailsUpdateSchema,
+  objectIdStringSchema,
+  unitNameSchema,
+  unitNameUpdateSchema,
+  unitOrderUpdateSchema,
+} from "@/lib/contracts";
+import { parseCSV } from "@/lib/parsecsv";
+import { createNewListApiSchema } from "@/lib/schemas";
+import { AuthenticatedListRequest, AuthenticatedRequest } from "@/lib/types";
 import {
-  addItemToList,
+  composeListUpdateMessage,
+  errorResponse,
+  formatZodErrors,
+  normalizeCreateListBody,
+  successMessageResponse,
+  successResponse,
+} from "@/lib/utils";
+import {
+  addItemToUnit,
   addUnitToList,
   createList,
-  editDetails,
-  getAllListsForLanguage,
-  getAmountOfUnits,
-  getChapterNameByNumber,
-  getFullyPopulatedListByListNumber,
-  getList,
-  getListNameAndUnitOrder,
-  getNextListNumber,
-  getPopulatedListByListNumber,
+  deleteList,
+  deleteUnitFromList,
   removeItemFromList,
-  removeList,
-  removeUnitFromList,
+  renameUnitName,
+  updateList,
   updateUnlockedReviewModes,
-} from "../../models/lists.model.js";
+} from "@/models/lists.model";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// POST
 
-export async function httpPostCreateNewList(req: Request, res: Response) {
-  // Needs proper validation
-  const { listName, language, author, description } = req.body;
-
-  const { flagCode, langName } = siteSettings.languageFeatures.find(
-    (lfeatures) => lfeatures.langCode === language
-  )!;
+export async function createListController(
+  req: AuthenticatedRequest,
+  res: Response
+) {
+  const normalizedBody = normalizeCreateListBody(req.body, req.file);
 
   try {
-    const newList: List = {
-      authors: [author],
-      language: {
-        code: language,
-        flag: flagCode,
-        name: langName,
-      },
-      name: listName,
-      description,
-      private: false,
-      listNumber: await getNextListNumber(),
-      units: [],
-      unitOrder: [],
-      unlockedReviewModes: {},
-    };
-    const responseObject: ParsedListInfoFromServer = {
+    const result = createNewListApiSchema.safeParse(normalizedBody);
+    if (!result.success) {
+      return errorResponse(res, 400, formatZodErrors(result.error));
+    }
+    const response = await createList(result.data);
+    if (!response.success) {
+      return errorResponse(res, 500, "Failed to persist list");
+    }
+    const newList = response.data;
+
+    const parsedListResponse: CreateListSuccessResponse = {
       listNumber: newList.listNumber,
-      listLanguage: language,
+      listLanguage: newList.language.code,
+      results: [],
+      message: `${newList.name} was created! 🎉`,
     };
 
     if (req.file && req.file.size > 0) {
-      const { newListId, issues } = await parseCSV(req.file.filename, newList);
-      console.log("Issues encountered while parsing CSV file", issues);
-      responseObject.issues = issues;
+      try {
+        const results = await parseCSV(req.file.filename, newList);
+        parsedListResponse.results = results;
+        const failedCount = results.filter((r) => r.status === "error").length;
+        parsedListResponse.message =
+          failedCount > 0
+            ? `List created 🎉, but ${failedCount} ${
+                failedCount === 1 ? "item" : "items"
+              } could not be imported`
+            : "List created! 🎉";
 
-      // Now check whether we can unlock review modes
-      await updateUnlockedReviewModes(newListId);
-      if (newListId) return res.status(201).json(responseObject);
-      throw new Error("Error creating list");
-    } else {
-      const response = await createList(newList);
-      if (response) return res.status(201).json(responseObject);
-      throw new Error("Error creating list");
+        await updateUnlockedReviewModes(newList.listNumber);
+      } catch (err) {
+        parsedListResponse.message = `List created, but critical error during import:\n ${err}.`;
+      }
     }
-  } catch (error) {
-    return res.status(500).json({ error: "Error creating new list" });
-  } finally {
-    // Remove uploaded file so things don't clog up
-    if (req.file)
-      fs.unlink(
-        join(__dirname + `/../../../data/csvUploads/${req.file.filename}`),
-        () => {
-          console.log(`Deleting uploaded file.`);
-        }
-      );
+
+    return successResponse(res, 201, parsedListResponse);
+  } catch (err) {
+    return errorResponse(
+      res,
+      500,
+      (err as Error).message || "Unknown error occurred"
+    );
   }
 }
 
-export async function httpGetChapterNameByNumber(req: Request, res: Response) {
-  const chapterNumber = parseInt(req.params.chapterNumber);
-  const listNumber = parseInt(req.params.listNumber);
-
-  const chapterName = await getChapterNameByNumber(chapterNumber, listNumber);
-  if (chapterName) return res.status(200).json(chapterName);
-  return res.status(404).json();
-}
-
-export async function httpGetFullyPopulatedListByListNumber(
-  req: Request,
+export async function createUnitController(
+  req: AuthenticatedListRequest,
   res: Response
 ) {
-  const userNative = req.params.userNative as SupportedLanguage;
-  const listNumber = parseInt(req.params.listNumber);
-  const listData = await getFullyPopulatedListByListNumber(
-    userNative,
-    listNumber
-  );
-
-  if (listData) {
-    return res.status(200).json(listData);
+  const listNumber = req.listNumber;
+  const body = req.body as unknown;
+  const result = addUnitUpdateSchema.safeParse(body);
+  if (!result.success) {
+    return errorResponse(res, 400, formatZodErrors(result.error));
   }
-  return res.status(404).json();
+  const listUpdate = result.data;
+
+  try {
+    const response = await addUnitToList(listNumber, listUpdate.unitName);
+    if (!response.success) {
+      return errorResponse(res, 400, response.error);
+    }
+
+    return successMessageResponse(res, 201, "Unit created successfully 🎉");
+  } catch (err) {
+    return errorResponse(
+      res,
+      500,
+      (err as Error).message || "Unknown error occurred"
+    );
+  }
 }
 
-export async function httpGetPopulatedListByListNumber(
-  req: Request,
+// PATCH
+
+export async function updateListDetailsController(
+  req: AuthenticatedListRequest,
   res: Response
 ) {
-  const listNumber = parseInt(req.params.listNumber);
+  const listNumber = req.listNumber;
+  const body = req.body as unknown;
+  const result = listDetailsUpdateSchema.safeParse(body);
+  if (!result.success)
+    return errorResponse(res, 400, formatZodErrors(result.error));
 
-  return res.status(200).json(await getPopulatedListByListNumber(listNumber));
-}
-
-export async function httpGetList(req: Request, res: Response) {
-  const listNumber = parseInt(req.params.listNumber);
-
-  return res.status(200).json(await getList(listNumber));
-}
-
-export async function httpGetAllListsForLanguage(req: Request, res: Response) {
-  const language = req.params.language as SupportedLanguage;
-
-  return res.status(200).json(await getAllListsForLanguage(language));
-}
-
-export async function httpGetListName(req: Request, res: Response) {
-  const listNumber = parseInt(req.params.listNumber);
-  const response = await getListNameAndUnitOrder(listNumber);
-  if (!response) return res.status(404).json();
-  return res.status(200).json(response.name);
-}
-
-export async function httpGetListDataForMetadata(req: Request, res: Response) {
-  const listNumber = parseInt(req.params.listNumber);
-  const unitNumber = parseInt(req.params.unitNumber);
-  const list = await getList(listNumber);
-  if (!list) return res.status(404).json();
-
-  const { name, unitOrder, language, description } = list;
-  const languageFeatures = siteSettings.languageFeatures.find(
-    (lang) => lang.langCode === language.code
-  );
-
-  return res.status(200).json({
-    listName: name,
-    unitName: unitOrder[unitNumber - 1],
-    langName: languageFeatures?.langName,
-    description,
-  });
-}
-
-export async function httpGetNextListNumber(req: Request, res: Response) {
-  const response = await getNextListNumber();
-  if (!response) res.status(404).json();
-  return res.status(200).json(response);
-}
-
-export async function httpGetAmountOfUnits(req: Request, res: Response) {
-  const listNumber = parseInt(req.params.listNumber);
-  const response = await getAmountOfUnits(listNumber);
-  if (!response) res.status(404).json();
-  return res.status(200).json(response);
-}
-
-export async function httpAddItemToList(req: Request, res: Response) {
-  const listNumber = parseInt(req.params.listNumber);
-  const unitName = req.params.unitName;
-  const itemId = req.params.itemId;
+  const listUpdate = result.data;
 
   try {
-    const response = await addItemToList(listNumber, unitName, itemId);
-    if (!response) {
-      return res.status(409).json({
-        message: "Duplicate item",
-      });
+    const response = await updateList(listUpdate, listNumber);
+
+    if (!response.success) return errorResponse(res, 404, response.error);
+
+    const message = composeListUpdateMessage(result.data);
+    return successMessageResponse(res, 200, message);
+  } catch (err) {
+    return errorResponse(
+      res,
+      500,
+      (err as Error).message || "Unknown error occurred"
+    );
+  }
+}
+
+export async function renameUnitController(
+  req: AuthenticatedListRequest,
+  res: Response
+) {
+  const listNumber = req.listNumber;
+  try {
+    const body = req.body as unknown;
+    const result = unitNameUpdateSchema.safeParse(body);
+    if (!result.success)
+      return errorResponse(res, 400, formatZodErrors(result.error));
+
+    const unitNameUpdate = result.data;
+    const response = await renameUnitName(listNumber, unitNameUpdate);
+
+    if (!response.success) return errorResponse(res, 404, response.error);
+    return successMessageResponse(res, 200, "Updated unit name 🎉");
+  } catch (err) {
+    return errorResponse(
+      res,
+      500,
+      (err as Error).message || "Unknown error occurred"
+    );
+  }
+}
+
+export async function reorderUnitsController(
+  req: AuthenticatedListRequest,
+  res: Response
+) {
+  const listNumber = req.listNumber;
+  try {
+    const body = req.body as unknown;
+    const result = unitOrderUpdateSchema.safeParse(body);
+    if (!result.success)
+      return errorResponse(res, 400, formatZodErrors(result.error));
+
+    const listUpdate = result.data;
+    const response = await updateList(listUpdate, listNumber);
+
+    if (!response.success) return errorResponse(res, 404, response.error);
+    return successMessageResponse(res, 200, "Updated unit order 🎉");
+  } catch (err) {
+    return errorResponse(
+      res,
+      500,
+      (err as Error).message || "Unknown error occurred"
+    );
+  }
+}
+
+export async function addItemToUnitController(
+  req: AuthenticatedListRequest,
+  res: Response
+) {
+  try {
+    const listNumber = req.listNumber;
+
+    const body = req.body as unknown;
+    const result = addItemToUnitUpdateSchema.safeParse(body);
+    if (!result.success)
+      return errorResponse(res, 400, formatZodErrors(result.error));
+
+    const response = await addItemToUnit(listNumber, result.data);
+
+    if (!response.success) return errorResponse(res, 404, response.error);
+    const message = response.data.message || "Item added successfully! 🎉";
+
+    return successMessageResponse(res, 200, message);
+  } catch (err) {
+    return errorResponse(
+      res,
+      500,
+      (err as Error).message || "Unknown error occurred"
+    );
+  }
+}
+
+// DELETE
+
+export async function deleteListController(
+  req: AuthenticatedListRequest,
+  res: Response
+) {
+  const listNumber = req.listNumber;
+
+  try {
+    const response = await deleteList(listNumber);
+    if (!response.success) return errorResponse(res, 404, response.error);
+
+    return successMessageResponse(res, 200, "List was deleted 🎉");
+  } catch (err) {
+    return errorResponse(
+      res,
+      500,
+      (err as Error).message || "Unknown error occurred"
+    );
+  }
+}
+
+export async function deleteUnitController(
+  req: AuthenticatedListRequest,
+  res: Response
+) {
+  const listNumber = req.listNumber;
+
+  const result = unitNameSchema.safeParse(req.params.unitName);
+  if (!result.success)
+    return errorResponse(res, 400, formatZodErrors(result.error));
+  const unitName = result.data;
+
+  try {
+    const response = await deleteUnitFromList(listNumber, unitName);
+    if (!response.success) {
+      return errorResponse(res, 400, response.error);
     }
-    return res.status(201).json(response);
-  } catch (error) {
-    return res.status(500).json({ error: "Error adding item to list" });
+
+    return successMessageResponse(res, 200, "Unit deleted successfully 🎉");
+  } catch (err) {
+    return errorResponse(
+      res,
+      500,
+      (err as Error).message || "Unknown error occurred"
+    );
   }
 }
 
-export async function httpRemoveItemFromList(req: Request, res: Response) {
-  const listNumber = parseInt(req.params.listNumber);
-  const itemId = req.params.itemId;
-  const response = await removeItemFromList(listNumber, itemId);
-  if (!response) res.status(404).json();
-  return res.status(204).send();
-}
-
-export async function httpAddUnitToList(req: Request, res: Response) {
-  const listNumber = parseInt(req.params.listNumber);
-  const unitName = req.params.unitName;
+export async function deleteListItemController(
+  req: AuthenticatedListRequest,
+  res: Response
+) {
+  const listNumber = req.listNumber;
+  const result = objectIdStringSchema.safeParse(req.params.itemId);
+  if (!result.success)
+    return errorResponse(res, 400, formatZodErrors(result.error));
+  const itemId = result.data;
 
   try {
-    const response = await addUnitToList(listNumber, unitName);
-    return res.status(201).json(response);
-  } catch (error) {
-    return res.status(500).json({ error: "Error adding unit to list" });
-  }
-}
+    const response = await removeItemFromList(listNumber, itemId);
+    if (!response.success) return errorResponse(res, 400, response.error);
 
-export async function httpRemoveUnitFromList(req: Request, res: Response) {
-  const listNumber = parseInt(req.params.listNumber);
-  const unitName = req.params.unitName;
+    if (response.data.modifiedCount === 0)
+      return errorResponse(res, 404, "Item not found in list");
 
-  try {
-    const response = await removeUnitFromList(listNumber, unitName);
-    return res.status(204).send();
-  } catch (error) {
-    return res.status(500).json({ error: "Error removing unit from list" });
-  }
-}
-
-export async function httpRemoveList(req: Request, res: Response) {
-  const listNumber = parseInt(req.params.listNumber);
-
-  try {
-    const response = await removeList(listNumber);
-    return res.status(204).send();
-  } catch (error) {
-    return res.status(500).json({ error: "Error removing unit from list" });
-  }
-}
-
-export async function httpEditListDetails(req: Request, res: Response) {
-  const listDetails = req.body;
-  try {
-    const response = await editDetails(listDetails);
-    return res.status(200).json(response);
-  } catch (error) {
-    return res
-      .status(500)
-      .json({ error: `Error editing list details: ${error}` });
+    return successMessageResponse(res, 200, "Item deleted successfully 🎉");
+  } catch (err) {
+    return errorResponse(
+      res,
+      500,
+      (err as Error).message || "Unknown error occurred"
+    );
   }
 }

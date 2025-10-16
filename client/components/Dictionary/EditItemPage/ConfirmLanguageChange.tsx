@@ -5,11 +5,11 @@ import {
   DialogTitle,
 } from "@headlessui/react";
 import { MouseEventHandler } from "react";
-import Button from "../../ui/Button";
+import Button from "@/components/ui/Button";
 
 interface ConfirmLanguageChangeProps {
-  confirmFunction: Function;
-  closeFunction: Function;
+  confirmFunction: () => void;
+  closeFunction: () => void;
 }
 export default function ConfirmLanguageChange({
   closeFunction,

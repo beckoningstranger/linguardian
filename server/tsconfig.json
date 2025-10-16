@@ -11,6 +11,17 @@
     "strict": true,
     "rootDir": "src",
     "noEmit": false,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/models/*": ["./src/models/*"],
+      "@/routes/*": ["./src/routes/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/data/*": ["./data/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/middleware/*": [".src/lib/middleware/*"],
+      "@/*": ["./src/*"]
+    },
+    "typeRoots": ["./types", "./node_modules/@types", "./src/types"]
   }
 }

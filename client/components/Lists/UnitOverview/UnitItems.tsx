@@ -1,54 +1,29 @@
-import { cn } from "@/lib/helperFunctionsClient";
-import {
-  ItemPlusLearningInfo,
-  ItemWithPopulatedTranslationsFE,
-  LearnedItem,
-  ListAndUnitData,
-  SupportedLanguage,
-} from "@/lib/types";
-import ListAddItemButton from "../EditUnit/ListAddItemButton";
-import UnitItem from "./UnitItem";
+import UnitItem from "@/components/Lists/UnitOverview/UnitItem";
+import { ItemPlusLearningInfo, SupportedLanguage } from "@/lib/contracts";
+import { cn } from "@/lib/utils";
 
 interface UnitItemsProps {
-  unitItems: ItemWithPopulatedTranslationsFE[];
-  allLearnedItems: LearnedItem[];
+  itemsPlusLearningInfo: ItemPlusLearningInfo[];
   userNative: SupportedLanguage;
   userIsAuthor: boolean;
   pathToUnit: string;
-  listAndUnitData: ListAndUnitData;
   userIsLearningThisList: boolean;
   editMode?: boolean;
 }
 
 export default function UnitItems({
-  unitItems,
-  allLearnedItems,
+  itemsPlusLearningInfo,
   userNative,
   userIsAuthor,
   pathToUnit,
-  listAndUnitData,
   userIsLearningThisList,
   editMode,
 }: UnitItemsProps) {
-  const enrichedItems = unitItems.map((item) => {
-    const enrichedItem = item as ItemPlusLearningInfo;
-    const foundLearnedItem = allLearnedItems.find(
-      (learnedItem) => learnedItem.id === item._id.toString()
-    );
-    if (foundLearnedItem) {
-      enrichedItem.learned = true;
-      enrichedItem.nextReview = foundLearnedItem.nextReview;
-      enrichedItem.level = foundLearnedItem.level;
-      return enrichedItem;
-    }
-    return { ...item, learned: false } as ItemPlusLearningInfo;
-  });
-
   let learnedItems: JSX.Element[] = [];
   let unlearnedItems: JSX.Element[] = [];
 
-  enrichedItems.forEach((item, index) => {
-    const translations = item.translations[userNative]
+  itemsPlusLearningInfo.forEach((item, index) => {
+    const translations = item.translations?.[userNative]
       ?.map((trans) => trans.name)
       .join(", ");
     const renderedItem = (
@@ -57,7 +32,6 @@ export default function UnitItems({
         translations={translations}
         key={index}
         pathToUnit={pathToUnit}
-        listAndUnitData={listAndUnitData}
         editMode={editMode}
       />
     );
@@ -69,17 +43,15 @@ export default function UnitItems({
   return (
     <div
       className={cn(
-        "mt-2 tablet:mt-0 relative col-span-1 col-start-1 grid justify-items-center gap-2",
+        "my-2 tablet:mt-0 relative col-span-1 col-start-1 grid justify-items-center gap-2",
         userIsLearningThisList &&
           "grid-cols-1 desktop:grid-cols-2 w-full tablet:w-auto desktopxl:row-start-2",
         !userIsLearningThisList &&
           "min-w-[340px] min-[900px]:grid-cols-2 desktopxl:grid-cols-3"
       )}
+      id="UnitItems"
     >
       {learnedItems} {unlearnedItems}
-      {userIsAuthor && editMode && (
-        <ListAddItemButton addToThisList={listAndUnitData} />
-      )}
     </div>
   );
 }

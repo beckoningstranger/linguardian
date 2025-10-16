@@ -1,14 +1,15 @@
 import express from "express";
-import { itemsRouter } from "./items/items.router";
-import { lemmasRouter } from "./lemmas/lemmas.router";
-import { listsRouter } from "./lists/lists.router";
-import { usersRouter } from "./users/users.router";
+
+import { bffRouter } from "@/routes/bff/bff.router";
+import { itemsRouter } from "@/routes/items/items.router";
+import { listsRouter } from "@/routes/lists/lists.router";
+import { usersRouter } from "@/routes/users/users.router";
 
 const api = express.Router();
 
-api.use("/dictionary", lemmasRouter);
 api.use("/items", itemsRouter);
 api.use("/lists", listsRouter);
 api.use("/users", usersRouter);
+api.use("/bff", bffRouter);
 
 export default api;

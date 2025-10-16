@@ -1,12 +1,20 @@
 "use client";
+
 import { useEffect, useRef, useState } from "react";
 
-import { ItemToLearn, LanguageFeatures, MoreReviewsMode } from "@/lib/types";
-import { MobileMenuContextProvider } from "../../context/MobileMenuContext";
-import GenderCaseReview from "./GenderCaseReview";
-import HelperKeys from "./HelperKeys";
-import { ReviewStatus } from "./LearnAndReview";
-import SolutionInput from "./SolutionInput";
+import {
+  GenderCaseReview,
+  HelperKeys,
+  ReviewStatus,
+  SolutionInput,
+} from "@/components";
+
+import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
+import {
+  ItemToLearn,
+  LanguageFeatures,
+  SecondaryReviewMode,
+} from "@/lib/contracts";
 
 interface TypeSolutionProps {
   targetLanguageFeatures: LanguageFeatures;
@@ -21,7 +29,9 @@ export default function TypeSolution({
 }: TypeSolutionProps) {
   const [solution, setSolution] = useState("");
   const [reviewStatus, setReviewStatus] = useState<ReviewStatus>("neutral");
-  const [moreReviews, setMoreReviews] = useState<MoreReviewsMode | null>(null);
+  const [moreReviews, setMoreReviews] = useState<SecondaryReviewMode | null>(
+    null
+  );
   const solutionInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {

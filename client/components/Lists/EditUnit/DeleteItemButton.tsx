@@ -1,38 +1,38 @@
 "use client";
 
+import { ConfirmCancelMobileMenu, ConfirmCancelModal } from "@/components";
 import { useMobileMenu } from "@/context/MobileMenuContext";
-import { removeItemFromList } from "@/lib/actions";
-import { ListAndUnitData } from "@/lib/types";
+import { useUnitContext } from "@/context/UnitContext";
+import { deleteItemFromListAction } from "@/lib/actions/list-actions";
+
 import { Button } from "@headlessui/react";
 import { MouseEventHandler, useState } from "react";
 import toast from "react-hot-toast";
 import { TbTrash } from "react-icons/tb";
-import ConfirmCancelMobileMenu from "../../ConfirmCancelMobileMenu";
-import ConfirmCancelModal from "../../ConfirmCancelModal";
 
 interface DeleteItemButtonProps {
-  listAndUnitData: ListAndUnitData;
   itemId: string;
-  listName: string;
   itemName: string;
 }
 
 export default function DeleteItemButton({
-  listAndUnitData,
   itemId,
   itemName,
-  listName,
 }: DeleteItemButtonProps) {
   const { toggleMobileMenu } = useMobileMenu();
+  const { listNumber, listLanguage, listName } = useUnitContext();
   if (!toggleMobileMenu) throw new Error("Could not use mobile menu");
   const [showConfirmDeleteModal, setShowConfirmDeleteModel] = useState(false);
 
-  const deleteItemAction = () => {
-    toast.promise(removeItemFromList(listAndUnitData, itemId), {
-      loading: "Deleting the item...",
-      success: () => "Item deleted! 🎉",
-      error: (err) => err.toString(),
-    });
+  const handleDeleteItemFromList = () => {
+    toast.promise(
+      deleteItemFromListAction(listNumber, itemId, listLanguage.code),
+      {
+        loading: "Deleting the item...",
+        success: (res) => res.message,
+        error: (err) => (err instanceof Error ? err.message : err.toString()),
+      }
+    );
   };
 
   return (
@@ -47,7 +47,7 @@ export default function DeleteItemButton({
       >
         <TbTrash className="size-8" />
       </Button>
-      <ConfirmCancelMobileMenu doOnConfirm={deleteItemAction}>
+      <ConfirmCancelMobileMenu doOnConfirm={handleDeleteItemFromList}>
         <div className="text-2xl">Confirm to delete item from list</div>
         <div className="mt-8 text-xl">
           <div>
@@ -72,7 +72,7 @@ export default function DeleteItemButton({
         isOpen={showConfirmDeleteModal}
         setIsOpen={setShowConfirmDeleteModel}
         closeButton={false}
-        doOnConfirm={deleteItemAction}
+        doOnConfirm={handleDeleteItemFromList}
       >
         <div>Are you sure you want to delete</div>
         <div>

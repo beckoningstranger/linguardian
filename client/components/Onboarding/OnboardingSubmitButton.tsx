@@ -1,76 +1,80 @@
 "use client";
-import { setLearnedLanguages, setNativeLanguage } from "@/lib/actions";
-import { LanguageWithFlagAndName, User } from "@/lib/types";
-import { useSession } from "next-auth/react";
+
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import Spinner from "../Spinner";
-import { useRouter } from "next/navigation";
+
+import { Button, Spinner } from "@/components";
+import { useUser } from "@/context/UserContext";
+import { LanguageWithFlagAndName, updateUserSchema } from "@/lib/contracts";
+import { useUserUpdater } from "@/lib/hooks/useUserUpdater";
 import paths from "@/lib/paths";
-import Button from "../ui/Button";
+import { defaultSRSettings } from "@/lib/siteSettings";
 
 interface OnboardingSubmitButtonProps {
-  userNative: LanguageWithFlagAndName;
   languageToLearn: LanguageWithFlagAndName;
+  userNative: LanguageWithFlagAndName;
 }
 
 export default function OnboardingSubmitButton({
-  userNative,
   languageToLearn,
+  userNative,
 }: OnboardingSubmitButtonProps) {
+  const { user } = useUser();
   const router = useRouter();
-  const { data, status, update } = useSession();
-  const user: User = data?.user;
-  const [updating, setUpdating] = useState<boolean>(false);
+  const applyUserUpdate = useUserUpdater();
+  const [updating, setUpdating] = useState(false);
 
-  if (status === "loading") return <Spinner centered />;
+  const handleSubmit = async () => {
+    if (!user) {
+      toast.error("User not loaded in context.");
+      return;
+    }
+
+    const draftUser = {
+      id: user.id,
+      native: userNative,
+      learnedLanguages: [languageToLearn],
+      completedOnboarding: true,
+      learnedLists: { [languageToLearn.code]: [] },
+      learnedItems: { [languageToLearn.code]: [] },
+      ignoredItems: { [languageToLearn.code]: [] },
+      activeLanguageAndFlag: languageToLearn,
+      customSRSettings: {
+        [languageToLearn.code]: defaultSRSettings,
+      },
+    };
+
+    const result = updateUserSchema.safeParse(draftUser);
+    if (!result.success) {
+      toast.error("Could not validate user update, please report this.");
+      return;
+    }
+
+    setUpdating(true);
+
+    const response = await toast.promise(applyUserUpdate(result.data), {
+      loading: "Updating...",
+      success: "User data updated!",
+      error: (err) => (err instanceof Error ? err.message : err.toString()),
+    });
+
+    setUpdating(false);
+
+    if (response) router.push(paths.listStorePath(languageToLearn.code));
+  };
+
   return (
     <Button
       intent="primary"
       type="submit"
       className="flex h-16 w-full items-center px-6 py-3 text-center disabled:cursor-not-allowed"
-      onClick={async () => {
-        setUpdating(true);
-        try {
-          await toast.promise(setNativeLanguage(userNative), {
-            loading: "Setting your native language...",
-            success: () => {
-              return `Your native language is ${userNative.name}! 🎉`;
-            },
-            error: (err) => {
-              return err.toString();
-            },
-          });
-
-          await toast.promise(setLearnedLanguages([languageToLearn]), {
-            loading: "Updating your learning settings...",
-            success: `You are now learning ${languageToLearn.name}! 🎉`,
-            error: (err) => {
-              return err.toString();
-            },
-          });
-
-          await update({
-            ...data,
-            user: {
-              ...user,
-              native: userNative,
-              learnedLanguages: [languageToLearn],
-              activeLanguageAndFlag: languageToLearn,
-            },
-          });
-          router.push(paths.dashboardLanguagePath(languageToLearn.code));
-        } catch (err) {
-          console.error("There was an error during registration: ", err);
-        } finally {
-          setUpdating(false);
-        }
-      }}
+      onClick={handleSubmit}
       disabled={updating}
     >
       {updating ? (
         <span className="flex w-full justify-center">
-          <Spinner size="mini" />
+          <Spinner mini />
         </span>
       ) : (
         <span className="w-full text-center">

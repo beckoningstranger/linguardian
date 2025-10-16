@@ -1,12 +1,10 @@
-import { LanguageWithFlagAndName } from "@/lib/types";
-import ActivityRow from "./ActivityRow";
+import ActivityRow from "@/components/Profile/ActivityRow";
+import { LanguageWithFlagAndName } from "@/lib/contracts";
 
 interface ActivityOverviewProps {
   language: LanguageWithFlagAndName;
 }
-export default function ActivityOverview({
-  language,
-}: ActivityOverviewProps) {
+export default function ActivityOverview({ language }: ActivityOverviewProps) {
   return (
     <div
       id={`LastWeekActivity-${language.name}`}

@@ -1,4 +1,4 @@
-import { Tag } from "@/lib/types";
+import { Tag } from "@/lib/contracts";
 
 interface ItemTagsProps {
   tags?: Tag[];

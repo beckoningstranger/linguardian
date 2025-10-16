@@ -1,4 +1,5 @@
-import { Fragment, useState } from "react";
+"use client";
+
 import {
   Combobox,
   ComboboxButton,
@@ -7,11 +8,12 @@ import {
   ComboboxOptions,
   Transition,
 } from "@headlessui/react";
-import { FieldErrors, FieldValues } from "react-hook-form";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { Fragment, useState } from "react";
+import { FieldErrors, FieldValues } from "react-hook-form";
 
-import { FormErrors } from "../../ui/FormErrors";
-import { Case, Gender, PartOfSpeech } from "@/lib/types";
+import { FormErrors } from "@/components";
+import { Gender, GrammaticalCase, PartOfSpeech } from "@/lib/contracts";
 
 interface ComboBoxWrapperProps {
   placeholder: string;
@@ -19,7 +21,10 @@ interface ComboBoxWrapperProps {
   value: string | undefined;
   onChange: any;
   onBlur: any;
-  options: readonly Gender[] | readonly Case[] | readonly PartOfSpeech[];
+  options:
+    | readonly Gender[]
+    | readonly GrammaticalCase[]
+    | readonly PartOfSpeech[];
   errors: FieldErrors<FieldValues>;
 }
 

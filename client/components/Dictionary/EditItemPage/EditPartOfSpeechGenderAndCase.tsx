@@ -1,17 +1,19 @@
+"use client";
+
 import { Control, Controller, FieldErrors, FieldValues } from "react-hook-form";
 
-import { siteSettings } from "@/lib/siteSettings";
+import ComboBoxWrapper from "@/components/Dictionary/EditItemPage/ComboBoxWrapper";
 import {
-  ItemWithPopulatedTranslationsFE,
+  ItemWithPopulatedTranslations,
   SupportedLanguage,
-} from "@/lib/types";
-import ComboBoxWrapper from "./ComboBoxWrapper";
+} from "@/lib/contracts";
+import { allLanguageFeatures } from "@/lib/siteSettings";
 
 interface EditPartOfSpeechGenderAndCaseProps {
   control: Control<
-    ItemWithPopulatedTranslationsFE,
+    ItemWithPopulatedTranslations,
     any,
-    ItemWithPopulatedTranslationsFE
+    ItemWithPopulatedTranslations
   >;
   watch: Function;
   errors: FieldErrors<FieldValues>;
@@ -24,15 +26,13 @@ export default function EditPartOfSpeechGenderAndCase({
   errors,
   itemLanguage,
 }: EditPartOfSpeechGenderAndCaseProps) {
-  const { partsOfSpeech, hasGender, hasCases } =
-    siteSettings.languageFeatures.find(
-      (lang) => lang.langCode === itemLanguage
-    )!;
+  const { partsOfSpeech, hasGender, genders, hasCases, cases } =
+    allLanguageFeatures.find((lang) => lang.langCode === itemLanguage)!;
   return (
     <div id="partOfSpeech">
       <div className="text-csmb font-semibold">Part of Speech</div>
       <div className="flex flex-col gap-2 phone:flex-row">
-        {watch().partOfSpeech === "noun" && hasGender.length > 0 && (
+        {watch().partOfSpeech === "noun" && hasGender && (
           <Controller
             name="gender"
             control={control}
@@ -43,7 +43,7 @@ export default function EditPartOfSpeechGenderAndCase({
                 onChange={onChange}
                 formField="gender"
                 onBlur={onBlur}
-                options={hasGender}
+                options={genders}
                 errors={errors}
               />
             )}
@@ -64,18 +64,18 @@ export default function EditPartOfSpeechGenderAndCase({
             />
           )}
         />
-        {watch().partOfSpeech === "preposition" && hasCases.length > 0 && (
+        {watch().partOfSpeech === "preposition" && hasCases && (
           <Controller
-            name="case"
+            name="grammaticalCase"
             control={control}
             render={({ field: { onChange, value, onBlur } }) => (
               <ComboBoxWrapper
                 placeholder="Case after preposition"
                 value={value ? value : ""}
-                formField="case"
+                formField="grammaticalCase"
                 onChange={onChange}
                 onBlur={onBlur}
-                options={hasCases}
+                options={cases}
                 errors={errors}
               />
             )}

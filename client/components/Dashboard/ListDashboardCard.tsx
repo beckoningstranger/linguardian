@@ -1,40 +1,33 @@
-import {
-  LearningDataForLanguage,
-  PopulatedList,
-  SupportedLanguage,
-} from "@/lib/types";
-import ListPieChart from "../Charts/ListPieChart";
-import { getListStats } from "../Lists/ListHelpers";
-import LearningButtonWithExpand from "../ui/LearningButtonWithExpand";
 import Link from "next/link";
+
+import ListPieChart from "@/components/Charts/ListPieChart";
+import LearningButtonWithExpand from "@/components/ui/LearningButtonWithExpand";
 import paths from "@/lib/paths";
+import { ListForDashboard } from "@/lib/contracts";
 
 interface ListDashboardCardProps {
-  list: PopulatedList;
-  userNative: SupportedLanguage;
-  learningDataForLanguage: LearningDataForLanguage | undefined;
+  list: ListForDashboard;
 }
 
-export default function ListDashboardCard({
-  list,
-  userNative,
-  learningDataForLanguage,
-}: ListDashboardCardProps) {
-  const itemIdsInUnits = list.units.map((item) => item.item._id.toString());
-  const listStats = getListStats(itemIdsInUnits, learningDataForLanguage);
+export default function ListDashboardCard({ list }: ListDashboardCardProps) {
+  const itemIdsInUnits = list.units.map((unitItem) => unitItem.item);
 
-  const { listNumber, name, unlockedReviewModes } = list;
+  const { listNumber, name } = list;
   const listIsEmpty = itemIdsInUnits.length > 0;
 
   return (
     <div className="w-[350px] cursor-pointer overflow-clip rounded-lg bg-white/80 shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/90 hover:shadow-2xl">
       <Link href={paths.listDetailsPath(listNumber)}>
-        <div className="flex h-[88px] items-center justify-center bg-blue-700 px-2 text-center font-serif text-hmd text-white">
+        <div className="flex h-[88px] items-center justify-center bg-blue-700 px-2 text-center font-serif text-hmd text-white text-balance">
           {name}
         </div>
         <div className="grid h-[350px] place-items-center">
           {listIsEmpty ? (
-            <ListPieChart stats={listStats} height={336} mode="dashboard" />
+            <ListPieChart
+              stats={list.learningStatsForUser}
+              height={336}
+              mode="dashboard"
+            />
           ) : (
             <div className="px-4 pt-12 text-center font-serif text-hlgb leading-relaxed text-blue-800">
               Start adding items to your new list!
@@ -45,8 +38,8 @@ export default function ListDashboardCard({
       {listIsEmpty ? (
         <LearningButtonWithExpand
           listNumber={listNumber}
-          unlockedModes={unlockedReviewModes[userNative]}
-          listStats={listStats}
+          unlockedLearningModesForUser={list.unlockedReviewModesForUser}
+          learningStats={list.learningStatsForUser}
           from="dashboard"
         />
       ) : (

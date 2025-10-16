@@ -1,131 +1,107 @@
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import { Input, Textarea } from "@headlessui/react";
+"use client";
 
-import { changeListDetails } from "@/lib/actions";
-import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
+import { Button } from "@headlessui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+
+import { FormErrors, StyledInput, StyledTextArea } from "@/components";
+import { updateListDetailsAction } from "@/lib/actions/list-actions";
+import {
+  ListDetailsUpdate,
+  listDetailsUpdateSchema,
+  listSchema,
+  SupportedLanguage,
+} from "@/lib/contracts";
+import paths from "@/lib/paths";
+import { cn } from "@/lib/utils";
 
 interface ChangeListNameOrDescriptionProps {
-  oldString: string | undefined;
+  name: string;
   listNumber: number;
-  listProperty: "listDescription" | "listName";
-  editStyling: string;
-  nonEditStyling: string;
+  description?: string;
+  listLanguage: SupportedLanguage;
 }
 
 export default function ChangeListNameOrDescription({
-  oldString,
+  name,
   listNumber,
-  listProperty,
-  editStyling,
-  nonEditStyling,
+  description,
+  listLanguage,
 }: ChangeListNameOrDescriptionProps) {
-  const [newString, setNewString] = useState(oldString || "");
-  const [editMode, setEditMode] = useState(false);
+  const router = useRouter();
 
-  const changeIt = () => {
-    if (newString === oldString) return;
-    if (
-      (listProperty === "listName" && newString.length > 5) ||
-      listProperty === "listDescription"
-    ) {
-      toast.promise(
-        changeListDetails({
-          listNumber: listNumber,
-          [listProperty]: newString?.trim(),
-        }),
-        {
-          loading: "Loading...",
-          success: `${
-            listProperty === "listName" ? "Title" : "Description"
-          } changed! 🎉`,
-          error: (err) => err.toString(),
-        }
-      );
-    } else {
-      setNewString(oldString || "");
-    }
-  };
-
-  const inputRef = useOutsideClick(() => {
-    setEditMode(false);
-    changeIt();
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isDirty, isValid },
+    watch,
+  } = useForm<ListDetailsUpdate>({
+    resolver: zodResolver(listDetailsUpdateSchema),
+    defaultValues: {
+      name,
+      description,
+    },
+    mode: "onChange",
   });
 
-  useEffect(() => {
-    if (editMode && inputRef.current) {
-      const inputElement = inputRef.current;
+  const onSubmit = async () => {
+    const update: ListDetailsUpdate = {
+      name: watch().name?.trim(),
+      description: watch().description?.trim(),
+    };
 
-      if (
-        inputElement instanceof HTMLInputElement ||
-        inputElement instanceof HTMLTextAreaElement
-      ) {
-        inputElement.focus();
-        const length = inputElement.value.length;
-        inputElement.setSelectionRange(length, length);
+    const response = await toast.promise(
+      updateListDetailsAction(update, listLanguage, listNumber),
+      {
+        loading: "Updating the list...",
+        success: (result) => result.message,
+        error: (err) => (err instanceof Error ? err.message : err.toString()),
       }
-    }
-  }, [editMode, inputRef]);
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setEditMode(false);
-    changeIt();
-  };
-
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => {
-    if (e.key === "Escape") {
-      setNewString(oldString || "");
-      setEditMode(false);
-    }
+    );
+    if (response) router.push(paths.listDetailsPath(listNumber));
   };
 
   return (
-    <>
-      {editMode && (
-        <form onSubmit={handleSubmit} className="w-full">
-          {listProperty === "listName" && (
-            <Input
-              ref={inputRef as React.RefObject<HTMLInputElement>}
-              value={newString}
-              onChange={(e) => setNewString(e.target.value)}
-              type="text"
-              name="title"
-              placeholder="Enter a new title for this list"
-              onKeyDown={handleKeyDown}
-              className={editStyling}
-            />
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex w-full grow flex-col gap-1"
+    >
+      <div>
+        <StyledInput
+          {...register("name", {})}
+          id="name"
+          name="name"
+          noFloatingLabel
+          label={`Enter a name for this list`}
+          className="font-serif text-hsm tablet:text-hmd"
+          hasErrors={!!errors.name}
+        />
+        <FormErrors errors={errors} field="name" />
+      </div>
+      <div className="flex grow flex-col">
+        <StyledTextArea
+          {...register("description", {})}
+          id="description"
+          noFloatingLabel
+          name="description"
+          label={`Enter a description for this list`}
+          hasErrors={!!errors.description}
+          className="flex grow overflow-hidden"
+        />
+        <FormErrors errors={errors} field="description" />
+      </div>
+      {isDirty && isValid && (
+        <Button
+          className={cn(
+            "fixed bottom-0 left-0 h-20 z-40 text-clgm w-full bg-green-400 hover:bg-green-500"
           )}
-          {listProperty === "listDescription" && (
-            <Textarea
-              ref={inputRef as React.RefObject<HTMLTextAreaElement>}
-              value={newString}
-              onChange={(e) => setNewString(e.target.value)}
-              name="description"
-              placeholder="Enter a description for this list..."
-              onKeyDown={handleKeyDown}
-              className={editStyling}
-              maxLength={200}
-            />
-          )}
-        </form>
-      )}
-      {!editMode && (
-        <div
-          className={nonEditStyling}
-          onClick={(e) => {
-            e.stopPropagation();
-            setEditMode(true);
-            inputRef.current?.focus();
-          }}
+          type="submit"
         >
-          {newString && newString?.length > 0
-            ? newString
-            : "Enter a list description"}
-        </div>
+          <span className="text-white">Save changes</span>
+        </Button>
       )}
-    </>
+    </form>
   );
 }

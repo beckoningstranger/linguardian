@@ -1,38 +1,33 @@
-import { ItemFE } from "@/lib/types";
+import { Item } from "@/lib/contracts";
 import Flag from "react-world-flags";
 
 interface SearchResultItemProps {
-  getFlagCode: Function;
-  result: ItemFE;
+  result: Item;
 }
 
-export default function SearchResultItem({
-  getFlagCode,
-  result,
-}: SearchResultItemProps) {
+export default function SearchResultItem({ result }: SearchResultItemProps) {
+  const { name, partOfSpeech, IPA, gender, definition, flagCode } = result;
+
   return (
     <div
       className="rounded-md bg-white/90 px-6 py-4 transition-all duration-300 hover:-translate-y-1 hover:bg-white"
-      id={"SearchResult-" + result.name + "-" + result.partOfSpeech}
+      id={"SearchResult-" + name + "-" + partOfSpeech}
     >
       <div className="relative flex w-full justify-between gap-1">
         <div className="grid gap-1">
-          <p className="font-serif text-hmd leading-tight">{result.name}</p>
-          {result.IPA && (
+          <p className="font-serif text-hmd leading-tight">{name}</p>
+          {IPA && (
             <p className="font-IPA text-cmdr text-grey-700">
-              {result.IPA.length > 0 ? `/${result.IPA.join("/ /")}/` : null}
+              {IPA.length > 0 ? `/${IPA.join("/ /")}/` : null}
             </p>
           )}
           <p className="text-cmdr">
-            {result.gender} {result.partOfSpeech}
+            {gender} {partOfSpeech}
           </p>
         </div>
-        <Flag
-          code={getFlagCode(result.language)}
-          className="size-16 rounded-full object-cover"
-        />
+        <Flag code={flagCode} className="size-16 rounded-full object-cover" />
       </div>
-      <p>{result.definition}</p>
+      <p>{definition}</p>
     </div>
   );
 }

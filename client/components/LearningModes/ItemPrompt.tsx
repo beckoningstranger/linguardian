@@ -1,15 +1,15 @@
 import {
-  ItemWithPopulatedTranslationsFE,
+  ItemWithPopulatedTranslations,
   SupportedLanguage,
-} from "@/lib/types";
+} from "@/lib/contracts";
 
 interface ItemPromptProps {
-  item: ItemWithPopulatedTranslationsFE;
+  item: ItemWithPopulatedTranslations;
   userNative: SupportedLanguage;
 }
 
 export default function ItemPrompt({ item, userNative }: ItemPromptProps) {
-  const promptString = item.translations[userNative]
+  const promptString = item.translations?.[userNative]
     ?.map((item) => item.name)
     .join(", ");
 

@@ -1,17 +1,15 @@
 "use client";
 
-import toast from "react-hot-toast";
 import { Button } from "@headlessui/react";
-import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { BsMortarboard } from "react-icons/bs";
 
-import Spinner from "@/components/Spinner";
-import { useActiveLanguage } from "@/context/ActiveLanguageContext";
-import { useListContext } from "@/context/ListContext";
-import { setLearnedLanguages, setLearnedLists } from "@/lib/actions";
-import { User } from "@/lib/types";
 import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
+import { useListContext } from "@/context/ListContext";
+import { useUser } from "@/context/UserContext";
+import { useUserUpdater } from "@/lib/hooks/useUserUpdater";
 
 interface StartLearningListButtonProps {
   mode: "mobile" | "desktop";
@@ -21,65 +19,55 @@ export default function StartLearningListButton({
   mode,
 }: StartLearningListButtonProps) {
   const {
-    listData: { listNumber, language, name },
+    listNumber,
+    listName,
+    listLanguage: newLanguage,
     userIsLearningThisList,
     userIsLearningListLanguage,
   } = useListContext();
-
   const [updating, setUpdating] = useState(false);
-  const { data, status, update } = useSession();
-  const user = data?.user as User;
-  const { setActiveLanguage } = useActiveLanguage();
+  const { user, setActiveLanguage } = useUser();
+  const applyUserUpdate = useUserUpdater();
+  const router = useRouter();
+
   if (userIsLearningThisList) return null;
+  if (!user) throw new Error("User not found");
 
   const handleAddListToLearnedLists = async () => {
     setUpdating(true);
 
-    const updatedLearnedLists = {
-      ...user.learnedLists,
-      [language.code]: Array.from(
+    const learnedLists = {
+      ...user?.learnedLists,
+      [newLanguage.code]: Array.from(
         new Set(
-          [...(user.learnedLists[language.code] ?? []), listNumber].flat()
+          [...(user?.learnedLists[newLanguage.code] ?? []), listNumber].flat()
         )
       ),
     };
 
-    await toast.promise(
-      setLearnedLists(listNumber, updatedLearnedLists, language.code),
-      {
-        loading: `Adding "${name}" to your learned lists...`,
-        success: `"${name}" has been added to your learned lists! 🎉`,
-        error: (err) => err.toString(),
-      }
-    );
+    await toast.promise(applyUserUpdate({ id: user.id, learnedLists }), {
+      loading: `Adding "${listName}" to your learned lists...`,
+      success: `"${listName}" has been added to your learned lists! 🎉`,
+      error: (err) => (err instanceof Error ? err.message : err.toString()),
+    });
 
-    await update({ ...data, user: { learnedLists: updatedLearnedLists } });
     setUpdating(false);
+    router.refresh();
   };
 
   const startLearningLanguageAndList = async () => {
-    const updatedIsLearning = user.learnedLanguages
-      ? [...user.learnedLanguages, language]
-      : [language];
-    await toast.promise(setLearnedLanguages(updatedIsLearning), {
-      loading: `Adding ${language.name} to your languages...`,
-      success: `You are now learning ${language.name}! 🎉`,
-      error: (err) => err.toString(),
+    const learnedLanguages = user?.learnedLanguages
+      ? [...user.learnedLanguages, newLanguage]
+      : [newLanguage];
+    await toast.promise(applyUserUpdate({ id: user.id, learnedLanguages }), {
+      loading: `Adding ${newLanguage.name} to your languages...`,
+      success: `You are now learning ${newLanguage.name}! 🎉`,
+      error: (err) => (err instanceof Error ? err.message : err.toString()),
     });
 
-    await update({
-      ...data,
-      user: {
-        ...user,
-        updatedIsLearning,
-        activeLanguageAndFlag: language,
-      },
-    });
-    setActiveLanguage(language);
+    setActiveLanguage(newLanguage);
     await handleAddListToLearnedLists();
   };
-
-  if (status === "loading" || updating) return <Spinner centered />;
 
   if (mode === "mobile")
     return (
@@ -89,11 +77,11 @@ export default function StartLearningListButton({
             id="startLearningButtonMobile"
             onClick={startLearningLanguageAndList}
             disabled={updating}
-            className="absolute bottom-0 flex h-24 w-full items-center bg-green-400 px-2 text-white active:bg-green-500 tablet:hidden tablet:px-4"
+            className="fixed bottom-0 flex h-24 w-full items-center bg-green-400 px-2 text-white active:bg-green-500 tablet:hidden tablet:px-4"
           >
             <BsMortarboard className="h-16 w-16" />
             <p className="absolute right-2 flex w-[calc(100vw-80px)] flex-wrap justify-center overflow-hidden text-hsm tablet:w-[calc(100vw-16px)] tablet:text-hmd desktop:hidden">
-              Start learning {language.name} with this list!
+              Start learning {newLanguage.name} with this list!
             </p>
           </Button>
         )}
@@ -101,7 +89,7 @@ export default function StartLearningListButton({
           <Button
             onClick={handleAddListToLearnedLists}
             disabled={updating}
-            className="absolute bottom-0 flex h-24 w-full items-center bg-green-400 px-2 text-white active:bg-green-500 tablet:hidden tablet:px-4"
+            className="fixed bottom-0 flex h-24 w-full items-center bg-green-400 px-2 text-white active:bg-green-500 tablet:hidden tablet:px-4"
           >
             <BsMortarboard className="h-16 w-16" />
             <p className="absolute right-2 flex w-[calc(100vw-80px)] flex-wrap justify-center text-hsm tablet:w-[calc(100vw-16px)] tablet:text-hmd desktop:hidden">
@@ -116,7 +104,7 @@ export default function StartLearningListButton({
     return !userIsLearningListLanguage ? (
       <IconSidebarButton
         id="startLearningButtonDesktop"
-        label={`Start learning ${language.name} with this list`}
+        label={`Start learning ${newLanguage.name} with this list`}
         mode="start"
         disabled={updating}
         onClick={startLearningLanguageAndList}
