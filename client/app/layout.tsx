@@ -26,10 +26,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         className={`${dancingScript} ${inter} ${playfairDisplay} ${voces} font-sans`}
       >
         <AuthProvider>
-          <UserContextProvider
-            initialUser={user}
-            initialActiveLanguage={user?.activeLanguageAndFlag}
-          >
+          <UserContextProvider initialUser={user}>
             <main>{children}</main>
           </UserContextProvider>
         </AuthProvider>

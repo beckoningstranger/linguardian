@@ -12,6 +12,8 @@ import {
 } from "react";
 
 import { LanguageWithFlagAndName, User } from "@/lib/contracts";
+import { usePathname } from "next/navigation";
+import { allLanguageFeatures } from "@/lib/siteSettings";
 
 interface UserContextProps {
   user: User | null;
@@ -25,26 +27,24 @@ const UserContext = createContext<UserContextProps | undefined>(undefined);
 type UserContextProviderProps = {
   children: ReactNode;
   initialUser?: User | null;
-  initialActiveLanguage?: LanguageWithFlagAndName | null;
 };
 
 export const UserContextProvider = ({
   children,
   initialUser = null,
-  initialActiveLanguage = null,
 }: UserContextProviderProps) => {
   const [user, setUser] = useState<User | null>(initialUser);
 
+  const pathName = usePathname();
+
   const [activeLanguage, setActiveLanguage] =
-    useState<LanguageWithFlagAndName | null>(initialActiveLanguage);
+    useState<LanguageWithFlagAndName | null>(
+      user ? getActiveLanguage(user) : null
+    );
 
   useEffect(() => {
     setUser(initialUser ?? null);
   }, [initialUser]);
-
-  useEffect(() => {
-    setActiveLanguage(initialActiveLanguage ?? null);
-  }, [initialActiveLanguage]);
 
   const contextValue = useMemo(
     () => ({ user, setUser, activeLanguage, setActiveLanguage }),
@@ -54,6 +54,19 @@ export const UserContextProvider = ({
   return (
     <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
   );
+
+  function getActiveLanguage(user: User): LanguageWithFlagAndName {
+    const fromPathName = allLanguageFeatures.find(
+      (lang) => lang.langCode === pathName.slice(-2)
+    );
+    if (fromPathName)
+      return {
+        name: fromPathName.langName,
+        code: fromPathName.langCode,
+        flag: fromPathName.flagCode,
+      };
+    else return user.learnedLanguages[0];
+  }
 };
 
 export const useUser = () => {

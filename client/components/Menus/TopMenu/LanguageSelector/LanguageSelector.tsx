@@ -12,11 +12,20 @@ import { allSupportedLanguages } from "@/lib/siteSettings";
 import { moreLanguagesToLearn, showLanguageSelector } from "@/lib/utils";
 
 export default function LanguageSelector() {
-  const currentBaseUrl = usePathname();
-  const { activeLanguage, user } = useUser();
+  const { user, activeLanguage } = useUser();
 
   const [showAllLanguageOptions, setShowAllLanguageOptions] = useState(false);
   const currentPath = usePathname();
+  const ref = useOutsideClick(
+    () =>
+      setShowAllLanguageOptions(
+        (showAllLanguageOptions) => !showAllLanguageOptions
+      ),
+    showAllLanguageOptions
+  );
+
+  if (!user || !showLanguageSelector(currentPath)) return null;
+
   const amountOfSupportedLanguages = allSupportedLanguages.length;
 
   const allLanguagesAndFlagsUserIsLearning = user?.learnedLanguages || [];
@@ -29,16 +38,6 @@ export default function LanguageSelector() {
     allLanguagesAndFlagsUserIsLearning.filter(
       (lang) => lang.code !== activeLanguage?.code
     );
-
-  const ref = useOutsideClick(
-    () =>
-      setShowAllLanguageOptions(
-        (showAllLanguageOptions) => !showAllLanguageOptions
-      ),
-    showAllLanguageOptions
-  );
-
-  if (!showLanguageSelector(currentBaseUrl)) return null;
 
   return (
     <div
