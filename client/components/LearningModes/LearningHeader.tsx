@@ -23,6 +23,25 @@ export default function LearningHeader({
     <p className="font-serif text-hmd tablet:text-hlg">{listName}</p>
   );
 
+  let modeName = "";
+  switch (mode) {
+    case "translation":
+      modeName = "Translation Mode";
+      break;
+    case "context":
+      modeName = "Context Mode";
+      break;
+    case "dictionary":
+      modeName = "Definition Mode";
+      break;
+    case "spellingBee":
+      modeName = "Spelling Bee Mode";
+      break;
+    case "visual":
+      modeName = "Visual Mode";
+      break;
+  }
+
   return (
     <div
       id="LearningHeader"
@@ -43,7 +62,7 @@ export default function LearningHeader({
         ) : (
           <div>
             {listNameElement}
-            <p>Reviewing items in {mode}</p>
+            <p>Reviewing items in {modeName}</p>
           </div>
         )}
         <p className="mt-2">

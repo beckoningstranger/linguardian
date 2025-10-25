@@ -113,7 +113,7 @@ export default function LearnAndReview({
         listLanguage={targetLanguageFeatures.langCode}
         listName={listName}
         itemsInProgress={learnedItems.length}
-        totalItems={itemsToLearn.length + learnedItems.length}
+        totalItems={items.length}
         mode={mode}
         from={from}
       />
