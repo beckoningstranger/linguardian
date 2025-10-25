@@ -28,7 +28,7 @@ export default function HelperKeysSelector({
           "max-w-[500px] justify-center gap-2"
         )}
       >
-        {targetLanguageFeatures.requiresHelperKeys?.map((key) => (
+        {targetLanguageFeatures.helperKeys?.map((key) => (
           <Button
             intent="icon"
             color="white"

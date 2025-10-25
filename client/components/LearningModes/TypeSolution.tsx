@@ -66,7 +66,7 @@ export default function TypeSolution({
           finalizeReview={evaluate}
         />
       )}
-      {!moreReviews && (
+      {!moreReviews && targetLanguageFeatures.requiresHelperKeys && (
         <MobileMenuContextProvider>
           <HelperKeys
             targetLanguageFeatures={targetLanguageFeatures}
