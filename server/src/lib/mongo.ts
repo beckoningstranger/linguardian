@@ -8,7 +8,7 @@ async function mongoConnect() {
     console.log("MongoDB connection ready!")
   );
   mongoose.connection.on("error", (err: MongooseError) => {
-    console.error(err);
+    console.error("MongoDB connection error:", err);
   });
 
   MONGO_URL

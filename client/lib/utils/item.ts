@@ -62,13 +62,13 @@ export function nextReviewMessage(
   const minutes = Math.floor(diff / 60000);
   const hours = Math.floor(diff / 3600000);
 
-  if (minutes < 60) {
+  if (minutes < 100) {
     return `Due in ${minutes} minute${minutes !== 1 && "s"}`;
   }
 
   if (diff < 86400000) {
     // 86400000 = 24 hours
-    return `Due in ${hours} hour${hours !== 1 && "s"}`;
+    return `Due in ${hours} hour${hours !== 1 ? "s" : ""}`;
   }
 
   const date = new Date(nextReview);
