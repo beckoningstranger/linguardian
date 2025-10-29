@@ -14,9 +14,10 @@ export const allLearningModes = [
   "learn",
   "translation",
   "context",
-  "spellingBee",
+  "spelling",
   "dictionary",
   "visual",
+  "overstudy",
 ] as const;
 
 export const allTags = [
@@ -403,7 +404,7 @@ export const defaultSRSettings: SRSettings = {
 export const allUserRoles = [
   "learner", // regular user, can create lists and items, cannot delete
   "editor", // all of learner + delete rights
-  "moderator", // all of user + moderate mnemonics, profile posts
+  "moderator", // all of user + moderate mnemonics and message boards, profile posts
   "admin", // full access, can assign roles
   "banned", // no access
 ] as const;

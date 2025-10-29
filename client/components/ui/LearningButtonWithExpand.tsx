@@ -1,96 +1,70 @@
 import Image from "next/image";
 
 import LearningButton from "@/components/ui/LearningButton";
-import { LearningMode, LearningStats } from "@/lib/contracts";
+import { LearningStats } from "@/lib/contracts";
 import learningButtonConfig from "@/lib/learningButtonConfig";
-import { allLearningModes } from "@/lib/siteSettings";
 import { cn } from "@/lib/utils";
 
 interface LearningButtonWithExpandProps {
   listNumber: number;
-  unlockedLearningModesForUser: LearningMode[];
   learningStats: LearningStats;
-  rounded?: boolean;
   from: "dashboard" | number;
 }
 export default function LearningButtonWithExpand({
   listNumber,
-  unlockedLearningModesForUser = ["translation"],
   learningStats,
-  rounded = false,
   from,
 }: LearningButtonWithExpandProps) {
-  // Show LearnNewWords if there are new words to learn and there is nothing to review
-  let recommendedLearningMode = "learn" as LearningMode;
-  const excludeModes: LearningMode[] = [];
-
-  // If there are no new words to learn exclude LearnNewWords and show translation mode
-  if (learningStats.unlearned === 0) excludeModes.push("learn");
-  if (learningStats.readyToReview === 0) excludeModes.push("translation");
-  if (learningStats.readyToReview > 0) recommendedLearningMode = "translation"; // for now
-
-  const showExpandButton: boolean = Boolean(
-    unlockedLearningModesForUser.length - excludeModes.length + 1 > 0
-  );
+  const { availableModesWithInfo, recommendedModeWithInfo } = learningStats;
+  const usedWithExpandButton = availableModesWithInfo.length > 1;
 
   const bgColor =
     "bg-" +
     learningButtonConfig.find(
-      (config) => config.name === recommendedLearningMode
+      (config) => config.name === recommendedModeWithInfo.mode
     )?.color;
   const hoverColor =
     "hover:bg-" +
     learningButtonConfig.find(
-      (config) => config.name === recommendedLearningMode
+      (config) => config.name === recommendedModeWithInfo.mode
     )?.hoverColor;
 
   return (
     <div
-      className={cn(
-        bgColor,
-        hoverColor,
-        "flex h-[90px] transition-colors relative duration-200 ease-in-out w-full",
-        rounded && "rounded-md"
-      )}
+      className={cn("flex h-[90px] relative w-full rounded-t-md", hoverColor)}
     >
       <LearningButton
-        mode={recommendedLearningMode}
-        itemNumber={
-          recommendedLearningMode === "learn"
-            ? learningStats.unlearned
-            : learningStats.readyToReview
-        }
+        modeWithInfo={recommendedModeWithInfo}
         listNumber={listNumber}
-        showExpand
+        usedWithExpandButton
         showLabel
         showIcon
         from={from}
       />
-      {showExpandButton && (
-        <div className="group flex w-12 items-center justify-center">
-          <div className="absolute bottom-0 right-0 z-50 flex w-full translate-y-[600px] flex-col opacity-0 transition-all duration-500 ease-in-out group-hover:translate-y-0 group-hover:opacity-100">
-            {allLearningModes
-              .filter(
-                (m) =>
-                  (!excludeModes.includes(m) &&
-                    unlockedLearningModesForUser.includes(m)) ||
-                  (m === "learn" && learningStats.unlearned > 0)
-              )
-              .map((mode: LearningMode) => (
+
+      {usedWithExpandButton && (
+        <div
+          className={cn(
+            "group flex w-12 items-center justify-center",
+            bgColor,
+            hoverColor
+          )}
+        >
+          <div className="absolute bottom-0 right-0 z-50 flex w-full translate-y-[600px] flex-col overflow-hidden rounded-t-md opacity-0 transition-all duration-500 ease-in-out group-hover:translate-y-0 group-hover:opacity-100">
+            {availableModesWithInfo.map((modeWithInfo) => {
+              if (modeWithInfo.mode === "overstudy") return null;
+              return (
                 <LearningButton
-                  key={mode}
-                  mode={mode}
-                  itemNumber={
-                    mode === "learn"
-                      ? learningStats.unlearned
-                      : learningStats.readyToReview
-                  }
+                  key={modeWithInfo.mode}
+                  modeWithInfo={modeWithInfo}
                   listNumber={listNumber}
+                  usedWithExpandButton
                   showIcon
                   showLabel
                   from={from}
                 />
-              ))}
+              );
+            })}
           </div>
 
           {/* Divider */}

@@ -35,16 +35,23 @@ export const itemPlusLearningInfoSchema =
     level: z.number().optional(),
   });
 
-export const fetchLearningSessionParamsSchema = z.object({
+export const fetchLearningSessionForListOrUnitParamsSchema = z.object({
   listNumber: z.number(),
   unitNumber: z.number().optional(),
   mode: learningModeSchema,
+  overstudy: z.boolean(),
+});
+
+export const fetchLearningSessionForLanguageParamsSchema = z.object({
+  langCode: supportedLanguageSchema,
+  mode: learningModeSchema,
+  overstudy: z.boolean(),
 });
 
 export const learningSessionDataSchema = z.object({
   targetLanguageFeatures: languageFeaturesSchema,
   listName: z.string(),
-  allItemStringsInList: z.array(z.string()),
+  possibleAnswers: z.array(z.string()),
   items: z.array(itemToLearnSchema),
 });
 
@@ -60,8 +67,11 @@ export type ItemToLearn = z.infer<typeof itemToLearnSchema>;
 export type PuzzlePieceObject = z.infer<typeof puzzlePieceObjectSchema>;
 export type SecondaryReviewMode = z.infer<typeof secondaryReviewModeSchema>;
 export type ItemPlusLearningInfo = z.infer<typeof itemPlusLearningInfoSchema>;
-export type FetchLearningSessionParams = z.infer<
-  typeof fetchLearningSessionParamsSchema
+export type FetchLearningSessionForListOrUnitParams = z.infer<
+  typeof fetchLearningSessionForListOrUnitParamsSchema
+>;
+export type FetchLearningSessionForLanguageParams = z.infer<
+  typeof fetchLearningSessionForLanguageParamsSchema
 >;
 export type LearningSessionData = z.infer<typeof learningSessionDataSchema>;
 export type LearningDataUpdate = z.infer<typeof learningDataUpdateSchema>;

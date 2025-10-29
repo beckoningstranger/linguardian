@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsup",
     "start": "node dist/server.js",
-    "dev": "concurrently \"tsx watch src/server.ts\" \"tsc --noEmit --watch\"",
+    "dev": "concurrently \"tsx watch --clear-screen=false src/server.ts\" \"tsc --noEmit --incremental false --watch\"",
     "test": "jest"
   },
   "author": "",

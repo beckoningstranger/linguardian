@@ -25,6 +25,7 @@ import {
   UnitOverviewDataService,
 } from "@/lib/services/units";
 import {
+  AuthenticatedLearningSessionRequestForLanguage,
   AuthenticatedLearningSessionRequestForList,
   AuthenticatedLearningSessionRequestForUnit,
 } from "@/lib/types";
@@ -35,7 +36,10 @@ import {
   formatZodErrors,
   successResponse,
 } from "@/lib/utils";
-import { LearningSessionDataService } from "@/lib/services/learning";
+import {
+  LearningSessionDataServiceForLanguage,
+  LearningSessionDataServiceForListOrUnit,
+} from "@/lib/services/learning";
 
 export const getDashboardDataController = createAuthenticatedRequestHandler({
   parseParams: dashboardDataParamsSchema,
@@ -73,13 +77,6 @@ export const getEditUnitDataController = createAuthenticatedRequestHandler({
   validateOutput: editUnitDataSchema,
 });
 
-// export const getLearningSessionDataController =
-//   createAuthenticatedRequestHandler({
-//     parseParams: fetchLearningSessionParamsSchema,
-//     service: LearningSessionDataService,
-//     validateOutput: learningSessionDataSchema,
-//   });
-
 export async function getLearningSessionForListDataController(
   req: AuthenticatedLearningSessionRequestForList,
   res: Response
@@ -87,12 +84,14 @@ export async function getLearningSessionForListDataController(
   const listNumber = req.listNumber;
   const userId = req.auth.id;
   const learningMode = req.learningMode;
+  const overstudy = req.overstudy;
 
   try {
-    const response = await LearningSessionDataService({
+    const response = await LearningSessionDataServiceForListOrUnit({
       listNumber,
       userId,
       mode: learningMode,
+      overstudy,
     });
 
     const result = learningSessionDataSchema.safeParse(response);
@@ -117,13 +116,46 @@ export async function getLearningSessionForUnitDataController(
   const unitNumber = req.unitNumber;
   const userId = req.auth.id;
   const learningMode = req.learningMode;
+  const overstudy = req.overstudy;
 
   try {
-    const response = await LearningSessionDataService({
+    const response = await LearningSessionDataServiceForListOrUnit({
       listNumber,
       userId,
       mode: learningMode,
       unitNumber,
+      overstudy,
+    });
+
+    const result = learningSessionDataSchema.safeParse(response);
+    if (!result.success)
+      return errorResponse(res, 500, formatZodErrors(result.error));
+
+    return successResponse(res, 200, result.data);
+  } catch (err) {
+    return errorResponse(
+      res,
+      500,
+      (err as Error).message || "Unknown error occurred"
+    );
+  }
+}
+
+export async function getLearningSessionForLanguageDataController(
+  req: AuthenticatedLearningSessionRequestForLanguage,
+  res: Response
+) {
+  const langCode = req.langCode;
+  const userId = req.auth.id;
+  const learningMode = req.learningMode;
+  const overstudy = req.overstudy;
+
+  try {
+    const response = await LearningSessionDataServiceForLanguage({
+      userId,
+      mode: learningMode,
+      overstudy,
+      langCode,
     });
 
     const result = learningSessionDataSchema.safeParse(response);
@@ -144,4 +176,5 @@ export async function getLearningSessionForUnitDataController(
 
 export async function getProfileDataController(req: Request, res: Response) {
   console.log("profile", req.query);
+  return errorResponse(res, 500, "Implement me");
 }

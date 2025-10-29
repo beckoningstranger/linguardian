@@ -2,7 +2,11 @@ import { Request } from "express";
 import { ParsedQs } from "qs";
 import { z, ZodSchema } from "zod";
 
-import { AuthTokenPayload, LearningMode } from "@/lib/contracts";
+import {
+  AuthTokenPayload,
+  LearningMode,
+  SupportedLanguage,
+} from "@/lib/contracts";
 
 /** ------------------------- Miscellaneous -------------------------*/
 
@@ -70,6 +74,7 @@ export type AuthenticatedLearningSessionRequestForList<
   auth: AuthTokenPayload;
   learningMode: LearningMode;
   listNumber: number;
+  overstudy: boolean;
 };
 
 export type AuthenticatedLearningSessionRequestForUnit<
@@ -82,4 +87,17 @@ export type AuthenticatedLearningSessionRequestForUnit<
   learningMode: LearningMode;
   listNumber: number;
   unitNumber: number;
+  overstudy: boolean;
+};
+
+export type AuthenticatedLearningSessionRequestForLanguage<
+  P = Record<string, any>, // route params
+  ResBody = any,
+  ReqBody = any,
+  ReqQuery = ParsedQs
+> = Request<P, ResBody, ReqBody, ReqQuery> & {
+  auth: AuthTokenPayload;
+  learningMode: LearningMode;
+  langCode: SupportedLanguage;
+  overstudy: boolean;
 };

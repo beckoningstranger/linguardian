@@ -12,7 +12,7 @@ export default function IconSidebar({
   children,
   position,
 }: IconSidebarProps) {
-  const show =
+  const visibility =
     showOn === "tablet"
       ? "tablet:flex"
       : showOn === "desktop"
@@ -24,7 +24,7 @@ export default function IconSidebar({
       id={`IconSidebar-` + position}
       className={cn(
         "hidden flex-col z-20 rounded-lg gap-2 m-2",
-        show,
+        visibility,
         position === "left" ? "items-start w-[80px]" : "items-end w-[90px]"
       )}
     >

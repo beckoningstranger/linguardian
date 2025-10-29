@@ -259,3 +259,14 @@ export function replaceObjectIdsWithStrings<T>(input: T): T {
 export function assertNever(x: never): never {
   throw new Error(`Unhandled case: ${JSON.stringify(x)}`);
 }
+
+/**
+ * Shuffles an array in place using the Durstenfeld algorithm (optimized Fisher-Yates).
+ */
+export function shuffleArray<T>(array: T[]) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}

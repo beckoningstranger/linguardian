@@ -5,7 +5,12 @@ import {
 } from "@/lib/contracts";
 import paths from "@/lib/paths";
 import { allLanguageFeatures } from "@/lib/siteSettings";
-import { getUserOnServer, isSupportedLanguage } from "@/lib/utils";
+import { getUserOnServer } from "@/lib/utils";
+import {
+  parseLanguageCode,
+  parseListNumber,
+  parseUnitNumber,
+} from "@/lib/utils/pages";
 
 interface NewItemPageProps {
   searchParams: {
@@ -20,31 +25,21 @@ interface NewItemPageProps {
 export default async function NewItemPage({
   searchParams: { initialName, addToList, addToUnit, language, unitName },
 }: NewItemPageProps) {
-  const listNumber = parseInt(addToList);
-  const unitNumber = parseInt(addToUnit);
+  const listNumber = parseListNumber(addToList);
+  const unitNumber = parseUnitNumber(addToUnit);
+  const langCode = parseLanguageCode(language);
 
   const user = await getUserOnServer();
   if (!user) throw new Error("Could not get user");
 
-  let addToUnitInfo:
+  const addToUnitInfo:
     | { listNumber: number; unitName: string; unitNumber: number }
-    | undefined;
-  let itemLanguageFeatures: LanguageFeatures | undefined;
-  if (!isNaN(listNumber) || !isNaN(unitNumber)) {
-    addToUnitInfo = { listNumber, unitName, unitNumber };
-  }
-  if (isSupportedLanguage(language)) {
-    const foundFeatures = allLanguageFeatures.find(
-      (lang) => lang.langCode === language
-    );
+    | undefined = { listNumber, unitName, unitNumber };
 
-    itemLanguageFeatures = foundFeatures;
-  }
+  const itemLanguageFeatures: LanguageFeatures | undefined =
+    allLanguageFeatures.find((lang) => lang.langCode === langCode);
 
-  const comingFrom =
-    listNumber && unitNumber
-      ? paths.editUnitPath(listNumber, unitNumber)
-      : undefined;
+  const comingFrom = paths.editUnitPath(listNumber, unitNumber);
 
   const item: ItemWithPopulatedTranslations = {
     id: "newItem",

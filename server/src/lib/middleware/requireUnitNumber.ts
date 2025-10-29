@@ -10,7 +10,7 @@ export function requireUnitNumber(
   const unitNumber = Number(req.params.unitNumber);
 
   if (!Number.isInteger(unitNumber) || unitNumber <= 0) {
-    return errorResponse(res, 400, "Invalid list number in route parameter");
+    return errorResponse(res, 400, "Invalid unit number in route parameter");
   }
   req.unitNumber = unitNumber;
   next();

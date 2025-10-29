@@ -1,106 +1,134 @@
 import {
-  FetchLearningSessionParams,
-  ItemToLearn,
-  ItemWithPopulatedTranslations,
+  FetchLearningSessionForLanguageParams,
+  FetchLearningSessionForListOrUnitParams,
   LearningSessionData,
-  SRSettings,
 } from "@/lib/contracts";
+import { shuffleArray } from "@/lib/utils";
+import {
+  assertUser,
+  buildBuckets,
+  collectItemsFromList,
+  computeLearnable,
+  dedupeById,
+  dueIdsFor,
+  filterIgnored,
+  getLanguageFeatures,
+  getSrsSettings,
+  ignoredIdsFor,
+  itemsToProcessPool,
+  learnedIdsFor,
+  pickSessionItems,
+  possibleAnswers,
+} from "@/lib/utils/learningSessions";
 import { getFullyPopulatedListByListNumber } from "@/models/lists.model";
 import { getUser } from "@/models/users.model";
-import { allLanguageFeatures, defaultSRSettings } from "../siteSettings";
 
-export async function LearningSessionDataService({
+export async function LearningSessionDataServiceForListOrUnit({
   listNumber,
   mode,
   unitNumber,
   userId,
-}: FetchLearningSessionParams & {
+  overstudy,
+}: FetchLearningSessionForListOrUnitParams & {
   userId: string;
 }): Promise<LearningSessionData> {
-  const userResponse = await getUser({ method: "_id", query: userId });
-  if (!userResponse.success) throw new Error("Could not find user");
-  const user = userResponse.data;
-  const listResponse = await getFullyPopulatedListByListNumber(listNumber);
-  if (!listResponse.success) throw new Error("Could not find list");
-  const list = listResponse.data;
-  const sSRSettings: SRSettings =
-    user.customSRSettings?.[list.language.code] || defaultSRSettings;
-  const targetLanguageFeatures = allLanguageFeatures.find(
-    (lf) => lf.langCode === list.language.code
-  )!;
+  // User
+  const user = assertUser(await getUser({ method: "_id", query: userId }));
 
-  // This is for creating wrong answers in learning sessions
-  const allItemStringsInList = list.units.map((unitItem) => unitItem.item.name);
+  // List
+  const listResp = await getFullyPopulatedListByListNumber(listNumber);
+  if (!listResp.success) throw new Error("Could not find list");
+  const list = listResp.data;
+  const langCode = list.language.code;
 
-  const sortedItemsInList = [...list.units].sort(
-    (a, b) =>
-      list.unitOrder.indexOf(a.unitName) - list.unitOrder.indexOf(b.unitName)
+  // Settings
+  const srs = getSrsSettings(user, langCode);
+  const features = getLanguageFeatures(langCode);
+
+  // Items (list or unit)
+  const allItems = collectItemsFromList(list, unitNumber);
+
+  // User state
+  const ignored = ignoredIdsFor(user, langCode);
+  const learned = learnedIdsFor(user, langCode);
+  const dueIds = dueIdsFor(user, langCode);
+
+  // Pools
+  const inScope = allItems;
+  const processPool = itemsToProcessPool(inScope, dueIds, overstudy);
+
+  // Buckets
+  const learnable = computeLearnable(inScope, user, ignored, learned, mode);
+  const buckets = buildBuckets(
+    processPool,
+    mode,
+    user,
+    ignored,
+    learned,
+    overstudy
   );
 
-  const allItemsDueForReview = user?.learnedItems?.[list.language.code]?.filter(
-    (learnedItem) => learnedItem.nextReview < Date.now()
-  );
-
-  const allItemsDueForReviewIncludedInListAndUnit =
-    allItemsDueForReview?.filter((dueItem) =>
-      sortedItemsInList.some((sortedItem) => {
-        return sortedItem.item.id === dueItem.id;
-      })
-    ) ?? [];
-
-  const allLearnedItemIds =
-    user?.learnedItems?.[list.language.code]?.map(
-      (learnedItem) => learnedItem.id
-    ) ?? [];
-
-  const allLearnedItemIdsOfDueItems =
-    allItemsDueForReviewIncludedInListAndUnit.map(
-      (learnedItem) => learnedItem.id
-    );
-
-  const filteredUnits = unitNumber
-    ? sortedItemsInList.filter(
-        (sortedItem) =>
-          list.unitOrder.indexOf(sortedItem.unitName) === unitNumber - 1
-      )
-    : sortedItemsInList;
-
-  const processedItems: ItemWithPopulatedTranslations[] = filteredUnits.map(
-    (unitItem) => unitItem.item
-  );
-
-  const allLearnableItems: ItemToLearn[] = [];
-  const allReviewableItems: ItemToLearn[] = [];
-  processedItems.forEach((item) => {
-    if (
-      mode === "learn" &&
-      !allLearnedItemIds.includes(item.id) &&
-      Object.keys(item.translations[user.native.code] ?? {}).length > 0 // filter items with no translations (for this user)
-    ) {
-      allLearnableItems.push({ ...item, increaseLevel: true, learningStep: 0 });
-    }
-    if (
-      mode === "translation" &&
-      allLearnedItemIdsOfDueItems.includes(item.id) &&
-      Object.keys(item.translations[user.native.code] ?? {}).length > 0
-    ) {
-      allReviewableItems.push({
-        ...item,
-        increaseLevel: true,
-        learningStep: 3,
-      });
-    }
-  });
-
-  const items =
-    mode === "learn"
-      ? allLearnableItems.slice(0, sSRSettings.itemsPerSession.learning)
-      : allReviewableItems.slice(0, sSRSettings.itemsPerSession.reviewing);
+  // Selection
+  const items = pickSessionItems(mode, srs, overstudy, buckets, learnable);
 
   return {
-    targetLanguageFeatures,
+    targetLanguageFeatures: features,
     listName: list.name,
-    allItemStringsInList,
+    possibleAnswers: possibleAnswers(inScope),
+    items,
+  };
+}
+
+export async function LearningSessionDataServiceForLanguage({
+  mode,
+  langCode,
+  userId,
+  overstudy,
+}: FetchLearningSessionForLanguageParams & {
+  userId: string;
+}): Promise<LearningSessionData> {
+  // User
+  const user = assertUser(await getUser({ method: "_id", query: userId }));
+  const learnedListsForLanguage = user.learnedLists[langCode] ?? [];
+
+  // Load all lists in parallel
+  const lists = await Promise.all(
+    learnedListsForLanguage.map(async (listNumber) => {
+      const res = await getFullyPopulatedListByListNumber(listNumber);
+      if (!res.success) throw new Error(`List ${listNumber} not found`);
+      return res.data;
+    })
+  );
+
+  // Flatten + dedupe + shuffle
+  const allItemsRaw = lists.flatMap((l) => l.units.map((u) => u.item));
+  const allItems = shuffleArray(dedupeById(allItemsRaw));
+
+  // User state
+  const srs = getSrsSettings(user, langCode);
+  const features = getLanguageFeatures(langCode);
+  const ignored = ignoredIdsFor(user, langCode);
+  const learned = learnedIdsFor(user, langCode);
+  const dueIds = dueIdsFor(user, langCode);
+
+  const inScope = filterIgnored(allItems, ignored);
+  const processPool = itemsToProcessPool(inScope, dueIds, overstudy);
+
+  const buckets = buildBuckets(
+    processPool,
+    mode,
+    user,
+    ignored,
+    learned,
+    overstudy
+  );
+  // Global “language” scope does not support learn-mode here (as in your code)
+  const items = pickSessionItems(mode, srs, overstudy, buckets);
+
+  return {
+    targetLanguageFeatures: features,
+    listName: "",
+    possibleAnswers: possibleAnswers(allItems),
     items,
   };
 }

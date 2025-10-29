@@ -3,6 +3,7 @@ import {
   FullyPopulatedList,
   LearningMode,
   PopulatedList,
+  SupportedLanguage,
 } from "@/lib/contracts";
 
 declare global {
@@ -13,6 +14,8 @@ declare global {
       unitNumber?: number;
       itemId?: string;
       learningMode?: LearningMode;
+      overstudy?: boolean;
+      langCode?: SupportedLanguage;
     }
   }
 }

@@ -23,7 +23,10 @@ export default function ListBarChart({ stats }: ListBarChartProps) {
       },
       title: {
         text: `Items Total: ${
-          stats.learned + stats.learning + stats.readyToReview + stats.unlearned
+          stats.learned +
+          stats.learning +
+          stats.readyForReview +
+          stats.readyToLearn
         }`,
       },
       plotOptions: { bar: { horizontal: true } },
@@ -43,7 +46,7 @@ export default function ListBarChart({ stats }: ListBarChartProps) {
     series: [
       {
         name: "Ready to water",
-        data: [stats.readyToReview],
+        data: [stats.readyForReview],
       },
       {
         name: "Mature",
@@ -55,7 +58,7 @@ export default function ListBarChart({ stats }: ListBarChartProps) {
       },
       {
         name: "Seeds left",
-        data: [stats.unlearned],
+        data: [stats.readyToLearn],
       },
     ],
   };

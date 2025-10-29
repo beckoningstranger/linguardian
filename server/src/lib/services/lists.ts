@@ -36,9 +36,6 @@ export async function ListOverviewDataService(
     (lang) => lang.code === list.language.code
   );
 
-  const unlockedLearningModesForUser =
-    list.unlockedReviewModes[user.native.code] ?? [];
-
   const learnedItems = user.learnedItems[list.language.code] ?? [];
   const ignoredItems = user.ignoredItems[list.language.code] ?? [];
 
@@ -72,7 +69,6 @@ export async function ListOverviewDataService(
     listDescription: list.description,
     listName: list.name,
     learningStats,
-    unlockedLearningModesForUser,
     userIsAuthor,
     userIsLearningThisList,
     userIsLearningListLanguage,

@@ -34,7 +34,7 @@ export default function LearningHeader({
     case "dictionary":
       modeName = "Definition Mode";
       break;
-    case "spellingBee":
+    case "spelling":
       modeName = "Spelling Bee Mode";
       break;
     case "visual":

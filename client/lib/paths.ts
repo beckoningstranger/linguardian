@@ -26,6 +26,8 @@ const paths = {
   learnNewLanguagePath: () => `/newLanguage`,
   learnUnitPath: (mode: LearningMode, listId: number, unitNumber: number) =>
     `/learningSession/${mode}/${listId}/${unitNumber}`,
+  reviewLanguagePath: (mode: LearningMode, langCode: SupportedLanguage) =>
+    `/learningSession/${mode}/all/${langCode}`,
   listStorePath: (language: SupportedLanguage) => `/listStore/${language}`,
   listDetailsPath: (listNumber: number) => `/lists/${listNumber}`,
   newListPath: (language: SupportedLanguage) => `/listStore/${language}/new`,

@@ -1,10 +1,13 @@
 import express from "express";
 
 import { requireAuth } from "@/lib/middleware/requireAuth";
+import { requireLangCode } from "@/lib/middleware/requireLangCode";
 import { requireLearningMode } from "@/lib/middleware/requireLearningMode";
 import { requireListNumber } from "@/lib/middleware/requireListNumber";
+import { requireOverstudyParam } from "@/lib/middleware/requireOverstudyParam";
 import { requireUnitNumber } from "@/lib/middleware/requireUnitNumber";
 import {
+  asAuthenticatedLearningSessionRequestForLanguage,
   asAuthenticatedLearningSessionRequestForList,
   asAuthenticatedLearningSessionRequestForUnit,
   asAuthenticatedRequest,
@@ -13,6 +16,7 @@ import {
   getDashboardDataController,
   getEditListDataController,
   getEditUnitDataController,
+  getLearningSessionForLanguageDataController,
   getLearningSessionForListDataController,
   getLearningSessionForUnitDataController,
   getListOverviewDataController,
@@ -64,8 +68,9 @@ bffRouter.get(
 bffRouter.get(
   "/learningSession/:mode/:listNumber",
   requireAuth,
-  requireListNumber,
   requireLearningMode,
+  requireListNumber,
+  requireOverstudyParam,
   asAuthenticatedLearningSessionRequestForList(
     getLearningSessionForListDataController
   )
@@ -74,10 +79,22 @@ bffRouter.get(
 bffRouter.get(
   "/learningSession/:mode/:listNumber/unit/:unitNumber",
   requireAuth,
-  requireListNumber,
   requireLearningMode,
+  requireListNumber,
   requireUnitNumber,
+  requireOverstudyParam,
   asAuthenticatedLearningSessionRequestForUnit(
     getLearningSessionForUnitDataController
+  )
+);
+
+bffRouter.get(
+  "/learningSession/language/:mode/:langCode",
+  requireAuth,
+  requireLearningMode,
+  requireLangCode,
+  requireOverstudyParam,
+  asAuthenticatedLearningSessionRequestForLanguage(
+    getLearningSessionForLanguageDataController
   )
 );

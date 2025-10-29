@@ -60,7 +60,6 @@ export default async function ListPage({
     listLanguage,
     listName,
     learningStats,
-    unlockedLearningModesForUser,
     userIsAuthor,
     userIsLearningThisList,
     userIsLearningListLanguage,
@@ -79,7 +78,6 @@ export default async function ListPage({
       listImage={listImage}
       listName={listName}
       learningStats={learningStats}
-      unlockedLearningModesForUser={unlockedLearningModesForUser}
       userIsAuthor={userIsAuthor}
       userIsLearningListLanguage={userIsLearningListLanguage}
       userIsLearningThisList={userIsLearningThisList || false}

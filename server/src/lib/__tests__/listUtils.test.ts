@@ -1,5 +1,5 @@
-import { generateLearningStats } from "@/lib/utils/lists";
-import { PartOfSpeech, SupportedLanguage } from "../contracts";
+import { generateLearningStats, nextReviewMessage } from "@/lib/utils/lists";
+import { PartOfSpeech, SupportedLanguage } from "@/lib/contracts";
 
 describe("generateLearningStats", () => {
   const mockItems = [
@@ -66,11 +66,21 @@ describe("generateLearningStats", () => {
       userNativeCode
     );
     expect(result).toEqual({
-      unlearned: 3,
-      readyToReview: 0,
+      readyToLearn: 3,
+      readyForReview: 0,
+      availableModesWithInfo: [
+        { info: "3", mode: "learn", number: 3, overstudy: false },
+      ],
       learned: 0,
       learning: 0,
       ignored: 0,
+      recommendedModeWithInfo: {
+        mode: "learn",
+        number: 3,
+        info: "3",
+        overstudy: false,
+      },
+      nextReviewDueMessage: "",
     });
   });
 
@@ -82,10 +92,10 @@ describe("generateLearningStats", () => {
       userNativeCode
     );
     expect(result.ignored).toBe(2);
-    expect(result.unlearned).toBe(1); // one item2 as item4 has no translations
+    expect(result.readyToLearn).toBe(1); // one item2 as item4 has no translations
   });
 
-  it("counts readyToReview correctly", () => {
+  it("counts readyForReview correctly", () => {
     const now = Date.now();
     const result = generateLearningStats(
       mockItems,
@@ -93,8 +103,8 @@ describe("generateLearningStats", () => {
       [],
       userNativeCode
     );
-    expect(result.readyToReview).toBe(1);
-    expect(result.unlearned).toBe(2); // items 2 + 3 (item4 excluded)
+    expect(result.readyForReview).toBe(1);
+    expect(result.readyToLearn).toBe(2); // items 2 + 3 (item4 excluded)
   });
 
   it("counts learned correctly (level >= 8, not ready)", () => {
@@ -106,7 +116,7 @@ describe("generateLearningStats", () => {
       userNativeCode
     );
     expect(result.learned).toBe(1);
-    expect(result.unlearned).toBe(2); // items 2 + 3 (item4 excluded)
+    expect(result.readyToLearn).toBe(2); // items 2 + 3 (item4 excluded)
   });
 
   it("counts learning correctly (level < 8, not ready)", () => {
@@ -118,6 +128,6 @@ describe("generateLearningStats", () => {
       userNativeCode
     );
     expect(result.learning).toBe(1);
-    expect(result.unlearned).toBe(2); // items 1 + 3 (item4 excluded)
+    expect(result.readyToLearn).toBe(2); // items 1 + 3 (item4 excluded)
   });
 });

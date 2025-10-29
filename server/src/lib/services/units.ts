@@ -26,9 +26,6 @@ export async function UnitOverviewDataService(
   const userIsLearningThisList =
     Array.isArray(learnedLists) && learnedLists.includes(list.listNumber);
 
-  const unlockedLearningModesForUser =
-    list.unlockedReviewModes[user.native.code] ?? [];
-
   const learnedItems = user.learnedItems[list.language.code] ?? [];
   const ignoredItems = user.ignoredItems[list.language.code] ?? [];
   const ignoredItemIds = [...ignoredItems];
@@ -80,7 +77,6 @@ export async function UnitOverviewDataService(
     learnedItems,
     ignoredItemIds,
     learningStats,
-    unlockedLearningModesForUser,
     unitOrder: list.unitOrder,
   };
   // logObjectPropertySizes(returnPackage);

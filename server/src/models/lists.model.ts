@@ -111,7 +111,6 @@ export async function createList(
     listNumber: newListNumber,
     units: [],
     unitOrder: [],
-    unlockedReviewModes: {},
     learners: [],
   };
 
@@ -319,82 +318,4 @@ export async function removeItemFromList(
         { $pull: { units: { item: itemId } } }
       ),
   });
-}
-
-/** ------------------------------------- Below: Need to refine ------------------------------ */
-
-export async function unlockReviewMode(
-  listNumber: number,
-  language: SupportedLanguage,
-  reviewMode: LearningMode
-): Promise<ApiResponse<UpdateResult>> {
-  return await safeDbWrite({
-    dbWriteQuery: () =>
-      Lists.updateOne(
-        { listNumber },
-        {
-          $addToSet: { ["unlockedReviewModes." + language]: reviewMode },
-        }
-      ),
-    schemaForValidation: z.void(),
-    input: null,
-  });
-}
-
-/** ------------------------------------- Potential Rubbish Line ------------------------------ */
-
-export async function updateUnlockedReviewModes(newListNumber: number) {
-  const response = await getPopulatedListByListNumber(newListNumber);
-  if (!response.success)
-    throw new Error("updateUnlockedReviewModes: Could not get new list");
-
-  const { units } = response.data;
-  // This part checks for translation mode
-  const allTranslationsExist: Partial<Record<SupportedLanguage, boolean>> = {};
-
-  allSupportedLanguages.forEach((language) => {
-    // Let's assume it can be unlocked
-    let languageCanBeUnlocked = true;
-    // Check every item for whether it has a translation and part of speech in this language
-    units.forEach((unitItem) => {
-      if (unitItem.item.translations) {
-        const translations = unitItem.item.translations[language] ?? [];
-
-        // It it doesn't, we can't unlock translation mode
-        if (translations.length === 0 || !unitItem.item.partOfSpeech)
-          languageCanBeUnlocked = false;
-      }
-    });
-    Object.assign(allTranslationsExist, {
-      [language]: languageCanBeUnlocked,
-    });
-  });
-  Object.entries(allTranslationsExist).map(async (language) => {
-    const [lang, canBeUnlocked] = language;
-    if (canBeUnlocked) {
-      const result = await unlockReviewMode(
-        newListNumber,
-        lang as SupportedLanguage,
-        "translation"
-      );
-      if (!result.success) console.warn("Error unlocking a review mode");
-      if (result.success)
-        console.log(`Translation mode for ${language} has been unlocked!`);
-    }
-  });
-  // Need to check for more review modes
-}
-
-export async function removeUnitFromList(listNumber: number, unitName: string) {
-  const removeFromUnitOrder = await Lists.findOneAndUpdate(
-    { listNumber: listNumber },
-    { $pull: { unitOrder: unitName } },
-    { new: true }
-  );
-  const removeUnitItems = await Lists.updateOne(
-    { listNumber: listNumber },
-    { $pull: { units: { unitName: unitName } } },
-    { new: true }
-  );
-  if (removeFromUnitOrder && removeUnitItems) return removeUnitItems;
 }

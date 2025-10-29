@@ -87,6 +87,7 @@ export default function SolutionInput({
         reviewStatus === "correct" && "bg-green-300",
         reviewStatus === "incorrect" && "bg-red-500"
       )}
+      autoComplete="off"
     >
       <Input
         type="text"
@@ -102,6 +103,14 @@ export default function SolutionInput({
         readOnly={reviewStatus !== "neutral"}
         disabled={disable}
         spellCheck={false}
+        autoComplete="off"
+        name={`solution-${item.id}`}
+        id={`solution-${item.id}`}
+        autoCapitalize="off"
+        autoCorrect="off"
+        inputMode="text"
+        data-lpignore="true"
+        data-1p-ignore="true"
       />
     </form>
   );

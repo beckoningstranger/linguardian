@@ -1,6 +1,8 @@
 import {
   Item,
   ItemWithPopulatedTranslations,
+  LearningMode,
+  LearningModeWithInfo,
   LearningStats,
   List,
   SupportedLanguage,
@@ -12,60 +14,264 @@ export function generateLearningStats(
   ignoredItemIds: string[],
   userNativeCode: SupportedLanguage
 ): LearningStats {
-  const noTranslationsSet = new Set(
-    items
-      .filter((item) => {
-        return (
-          Object.keys(item.translations[userNativeCode] ?? {}).length === 0
-        );
-      })
-      .map((item) => item.id)
+  // ---------- tiny helpers ----------
+  const now = () => Date.now();
+
+  const firstDue = (arr: { nextReview: number }[]) => {
+    let min: number | undefined;
+    for (const it of arr)
+      if (min === undefined || it.nextReview < min) min = it.nextReview;
+    return min;
+  };
+
+  const toSet = <T>(xs: T[]) => new Set(xs);
+  const countIf = <T>(xs: T[], pred: (x: T) => boolean) => {
+    let c = 0;
+    for (const x of xs) if (pred(x)) c++;
+    return c;
+  };
+
+  // ---------- precomputed sets ----------
+  const itemIdsSet = toSet(items.map((i) => i.id));
+  const ignoredSet = toSet(ignoredItemIds);
+  const learnedSet = toSet(learnedItems.map((i) => i.id));
+
+  // ready for review (learned + due now + in this items scope + not ignored)
+  const readyForReviewItems = learnedItems.filter(
+    (li) =>
+      itemIdsSet.has(li.id) && !ignoredSet.has(li.id) && li.nextReview < now()
+  );
+  const readySet = toSet(readyForReviewItems.map((i) => i.id));
+
+  // learned/learning tallies (learned in scope, not ignored, not currently due)
+  const learned = countIf(
+    learnedItems,
+    (li) =>
+      itemIdsSet.has(li.id) &&
+      !ignoredSet.has(li.id) &&
+      !readySet.has(li.id) &&
+      li.level >= 8
+  );
+  const learning = countIf(
+    learnedItems,
+    (li) =>
+      itemIdsSet.has(li.id) &&
+      !ignoredSet.has(li.id) &&
+      !readySet.has(li.id) &&
+      li.level < 8
   );
 
-  const itemIdsSet = new Set(items.map((item) => item.id));
-  const ignoredSet = new Set(ignoredItemIds);
-  const learnedSet = new Set(learnedItems.map((i) => i.id));
+  const ignoredItemsInList = countIf(ignoredItemIds, (id) =>
+    itemIdsSet.has(id)
+  );
 
+  // items with NO translation to user's native
+  const noTranslationsSet = toSet(
+    items
+      .filter((it) => (it.translations?.[userNativeCode] ?? []).length === 0)
+      .map((it) => it.id)
+  );
+
+  // unlearned candidates
   const unlearned = [...itemIdsSet].filter(
     (id) =>
       !ignoredSet.has(id) && !learnedSet.has(id) && !noTranslationsSet.has(id)
   ).length;
 
-  const readyToReview = learnedItems.filter(
-    (item) =>
-      itemIdsSet.has(item.id) &&
-      !ignoredSet.has(item.id) &&
-      item.nextReview < Date.now()
+  // ---------- next review message ----------
+  const nextDue = firstDue(learnedItems);
+  const nextReviewDueMessage =
+    nextDue !== undefined ? nextReviewMessage(nextDue) : "";
+
+  // ---------- capability feature sets ----------
+  const hasTranslationsSet = toSet(
+    items
+      .filter((it) => (it.translations?.[userNativeCode] ?? []).length > 0)
+      .map((it) => it.id)
+  );
+  const hasDefinitionSet = toSet(
+    items.filter((it) => (it.definition ?? "").length > 1).map((it) => it.id)
+  );
+  const hasPicsOrVidsSet = toSet(
+    items
+      .filter((it) => (it.pics ?? []).length > 1 || (it.vids ?? []).length > 1)
+      .map((it) => it.id)
+  );
+  const hasIpaOrAudioSet = toSet(
+    items
+      .filter((it) => (it.IPA ?? []).length > 1 || (it.audio ?? []).length > 1)
+      .map((it) => it.id)
+  );
+  const hasContextSet = toSet(
+    items.filter((it) => (it.context ?? []).length > 1).map((it) => it.id)
   );
 
-  const readySet = new Set(readyToReview.map((i) => i.id));
+  // helpers to count “ready for <mode>” among DUE learned items
+  const readyFor = {
+    translation: countIf(
+      learnedItems,
+      (li) =>
+        itemIdsSet.has(li.id) &&
+        !ignoredSet.has(li.id) &&
+        readySet.has(li.id) &&
+        hasTranslationsSet.has(li.id)
+    ),
+    dictionary: countIf(
+      learnedItems,
+      (li) =>
+        itemIdsSet.has(li.id) &&
+        !ignoredSet.has(li.id) &&
+        readySet.has(li.id) &&
+        hasDefinitionSet.has(li.id)
+    ),
+    spelling: countIf(
+      learnedItems,
+      (li) =>
+        itemIdsSet.has(li.id) &&
+        !ignoredSet.has(li.id) &&
+        readySet.has(li.id) &&
+        hasIpaOrAudioSet.has(li.id)
+    ),
+    visual: countIf(
+      learnedItems,
+      (li) =>
+        itemIdsSet.has(li.id) &&
+        !ignoredSet.has(li.id) &&
+        readySet.has(li.id) &&
+        hasPicsOrVidsSet.has(li.id)
+    ),
+    context: countIf(
+      learnedItems,
+      (li) =>
+        itemIdsSet.has(li.id) &&
+        !ignoredSet.has(li.id) &&
+        readySet.has(li.id) &&
+        hasContextSet.has(li.id)
+    ),
+  };
 
-  const learned = learnedItems.filter(
-    (item) =>
-      itemIdsSet.has(item.id) &&
-      !ignoredSet.has(item.id) &&
-      !readySet.has(item.id) &&
-      item.level >= 8
-  );
+  // helpers to count “available for <mode>” regardless of due state (for overstudy)
+  const availableFor = {
+    translation: countIf(
+      learnedItems,
+      (li) =>
+        itemIdsSet.has(li.id) &&
+        !ignoredSet.has(li.id) &&
+        hasTranslationsSet.has(li.id)
+    ),
+    dictionary: countIf(
+      learnedItems,
+      (li) =>
+        itemIdsSet.has(li.id) &&
+        !ignoredSet.has(li.id) &&
+        hasDefinitionSet.has(li.id)
+    ),
+    spelling: countIf(
+      learnedItems,
+      (li) =>
+        itemIdsSet.has(li.id) &&
+        !ignoredSet.has(li.id) &&
+        hasIpaOrAudioSet.has(li.id)
+    ),
+    visual: countIf(
+      learnedItems,
+      (li) =>
+        itemIdsSet.has(li.id) &&
+        !ignoredSet.has(li.id) &&
+        hasPicsOrVidsSet.has(li.id)
+    ),
+    context: countIf(
+      learnedItems,
+      (li) =>
+        itemIdsSet.has(li.id) &&
+        !ignoredSet.has(li.id) &&
+        hasContextSet.has(li.id)
+    ),
+  };
 
-  const learning = learnedItems.filter(
-    (item) =>
-      itemIdsSet.has(item.id) &&
-      !ignoredSet.has(item.id) &&
-      !readySet.has(item.id) &&
-      item.level < 8
-  );
+  // ---------- recommended + available ----------
+  const mk = (
+    mode: LearningMode,
+    number: number,
+    overstudy: boolean,
+    info?: string
+  ): LearningModeWithInfo => ({
+    mode,
+    number,
+    overstudy,
+    info: info ?? String(number),
+  });
 
-  const ignoredItemsInListCount = ignoredItemIds.filter((id) =>
-    itemIdsSet.has(id)
-  ).length;
+  const availableModesWithInfo: LearningModeWithInfo[] = [];
+  let recommended: LearningModeWithInfo;
+
+  // default: learn
+  recommended = mk("learn", unlearned, false);
+
+  // if nothing to learn or review: overstudy
+  if (unlearned === 0 && readyForReviewItems.length === 0) {
+    // include overstudy placeholder
+    availableModesWithInfo.push(mk("overstudy", 0, true, ""));
+    if (availableFor.translation > 0)
+      availableModesWithInfo.push(
+        mk("translation", availableFor.translation, true)
+      );
+    if (availableFor.dictionary > 0)
+      availableModesWithInfo.push(
+        mk("dictionary", availableFor.dictionary, true)
+      );
+    if (availableFor.visual > 0)
+      availableModesWithInfo.push(mk("visual", availableFor.visual, true));
+    if (availableFor.spelling > 0)
+      availableModesWithInfo.push(mk("spelling", availableFor.spelling, true));
+    if (availableFor.context > 0)
+      availableModesWithInfo.push(mk("context", availableFor.context, true));
+
+    recommended = {
+      mode: "overstudy",
+      info: nextReviewDueMessage,
+      number: 0,
+      overstudy: true,
+    };
+  } else {
+    // normal case: learning + ready buckets
+    if (unlearned > 0)
+      availableModesWithInfo.push(mk("learn", unlearned, false));
+    if (readyFor.translation > 0)
+      availableModesWithInfo.push(
+        mk("translation", readyFor.translation, false)
+      );
+    if (readyFor.dictionary > 0)
+      availableModesWithInfo.push(mk("dictionary", readyFor.dictionary, false));
+    if (readyFor.visual > 0)
+      availableModesWithInfo.push(mk("visual", readyFor.visual, false));
+    if (readyFor.spelling > 0)
+      availableModesWithInfo.push(mk("spelling", readyFor.spelling, false));
+    if (readyFor.context > 0)
+      availableModesWithInfo.push(mk("context", readyFor.context, false));
+
+    // pick the largest bucket as recommendation
+    let best: LearningModeWithInfo | undefined;
+    for (const m of availableModesWithInfo) {
+      if (!best || m.number > best.number) best = m;
+    }
+    if (best) recommended = { ...best, overstudy: false };
+
+    // final rule: if there is any due review at all, prefer translation recommendation
+    if (readyForReviewItems.length > 0) {
+      recommended = mk("translation", readyFor.translation, false);
+    }
+  }
 
   return {
-    unlearned,
-    readyToReview: readyToReview.length,
-    learned: learned.length,
-    learning: learning.length,
-    ignored: ignoredItemsInListCount,
+    readyToLearn: unlearned,
+    readyForReview: readyForReviewItems.length,
+    availableModesWithInfo,
+    learned,
+    learning,
+    ignored: ignoredItemsInList,
+    recommendedModeWithInfo: recommended,
+    nextReviewDueMessage,
   };
 }
 
@@ -150,4 +356,43 @@ export function normalizeCreateListBody(
     private: JSON.parse(rawBody.private),
     csvfile: file ?? null,
   };
+}
+
+export function nextReviewMessage(nextReview: number): string {
+  const now = Date.now();
+  const diff = nextReview - now;
+  if (diff < 0) return "";
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+
+  if (hours === 0 && minutes < 1) return "due in less than a minute";
+
+  if (hours < 2 && minutes < 100) {
+    return `due in ${minutes} minute${minutes !== 1 && "s"}`;
+  }
+
+  if (diff < 86400000) {
+    // 86400000 = 24 hours
+    return `due in ${hours} hour${hours !== 1 ? "s" : ""}`;
+  }
+
+  const date = new Date(nextReview);
+  const formatter = new Intl.DateTimeFormat(undefined, {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  const day = date.getDate();
+  function getOrdinal(n: number): string {
+    const suffix =
+      n % 100 >= 11 && n % 100 <= 13
+        ? "th"
+        : ["st", "nd", "rd"][(n % 10) - 1] ?? "th";
+    return n + suffix;
+  }
+
+  const formattedDate = formatter.format(date).replace(/\d+/, getOrdinal(day));
+
+  return `due on ${formattedDate}`;
 }

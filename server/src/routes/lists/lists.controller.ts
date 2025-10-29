@@ -30,7 +30,6 @@ import {
   removeItemFromList,
   renameUnitName,
   updateList,
-  updateUnlockedReviewModes,
 } from "@/models/lists.model";
 
 // POST
@@ -70,8 +69,6 @@ export async function createListController(
                 failedCount === 1 ? "item" : "items"
               } could not be imported`
             : "List created! 🎉";
-
-        await updateUnlockedReviewModes(newList.listNumber);
       } catch (err) {
         parsedListResponse.message = `List created, but critical error during import:\n ${err}.`;
       }

@@ -18,7 +18,6 @@ type ListContext = {
   listLanguage: LanguageWithFlagAndName;
   listName: string;
   learningStats: LearningStats;
-  unlockedLearningModesForUser: LearningMode[];
   userIsAuthor: boolean;
   userIsLearningThisList: boolean;
   userIsLearningListLanguage: boolean;
@@ -46,7 +45,6 @@ export const ListContextProvider = ({
   listDescription = "",
   listName = "",
   learningStats = {} as LearningStats,
-  unlockedLearningModesForUser = [],
   userIsAuthor = false,
   userIsLearningThisList = false,
   userIsLearningListLanguage = false,
@@ -71,7 +69,6 @@ export const ListContextProvider = ({
         listDescription,
         listName,
         learningStats,
-        unlockedLearningModesForUser,
         userIsAuthor,
         userIsLearningThisList,
         userIsLearningListLanguage,

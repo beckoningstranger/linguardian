@@ -1,61 +1,52 @@
-import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 
-import { BackgroundPicture, LearnAndReview } from "@/components";
-import { fetchLearningSessionData } from "@/lib/api/bff-api";
-import { LearningMode } from "@/lib/contracts";
+import {
+  revalidate,
+  dynamic,
+  fetchCache,
+  generateUnitMetadata,
+  renderUnitPage,
+} from "@/app/(loggedIn)/learningSession/[mode]/[listNumberString]/learningSessionPages";
+import type { LearningMode } from "@/lib/contracts";
+import type { SearchParams } from "@/lib/types";
+import {
+  parseLearningMode,
+  parseListNumber,
+  parseUnitNumber,
+} from "@/lib/utils/pages";
 
-export async function generateMetadata({
-  params: { listNumberString, mode, unitNumberString },
-}: ReviewPageProps) {
-  const listNumber = parseInt(listNumberString);
-  const unitNumber = parseInt(unitNumberString);
-  const response = await fetchLearningSessionData({ listNumber, mode });
+export { revalidate, dynamic, fetchCache };
 
-  if (!response.success) throw new Error("Could not get learning session data");
-  const { listName } = response.data;
-  const learningVerb = mode === "learn" ? "New words from" : "Reviewing";
-  return { title: `${learningVerb} ${listName}` };
-}
-
-interface ReviewPageProps {
+interface Props {
   params: {
     mode: LearningMode;
     listNumberString: string;
     unitNumberString: string;
   };
-  searchParams: { from: "dashboard" | number };
+  searchParams: SearchParams;
 }
 
-export default async function LearnAndReviewPage({
-  params: { mode, listNumberString, unitNumberString },
-  searchParams: { from },
-}: ReviewPageProps) {
-  const listNumber = parseInt(listNumberString);
-  const unitNumber = parseInt(unitNumberString);
-
-  const response = await fetchLearningSessionData({
-    listNumber,
-    mode,
-    unitNumber,
+export async function generateMetadata({
+  params,
+  searchParams,
+}: Props): Promise<Metadata> {
+  const list = Number(params.listNumberString);
+  const unit = Number(params.unitNumberString);
+  if (!Number.isFinite(list) || !Number.isFinite(unit))
+    return { title: "Learning session" };
+  return generateUnitMetadata({
+    mode: params.mode,
+    listNumber: parseListNumber(params.listNumberString),
+    unitNumber: parseUnitNumber(params.unitNumberString),
+    searchParams,
   });
-  if (!response.success) notFound();
+}
 
-  const { targetLanguageFeatures, listName, allItemStringsInList, items } =
-    response.data;
-
-  return (
-    <div className="flex min-h-screen flex-col">
-      <BackgroundPicture bgPicture="/backgrounds/DictionaryBackground.webp" />
-      <div className="flex grow flex-col overflow-y-auto">
-        <LearnAndReview
-          targetLanguageFeatures={targetLanguageFeatures}
-          items={items}
-          listName={listName}
-          allItemStringsInList={allItemStringsInList}
-          mode={mode}
-          from={from}
-        />
-      </div>
-    </div>
-  );
+export default async function Page({ params, searchParams }: Props) {
+  return renderUnitPage({
+    mode: parseLearningMode(params.mode),
+    listNumber: parseListNumber(params.listNumberString),
+    unitNumber: parseUnitNumber(params.unitNumberString),
+    searchParams,
+  });
 }

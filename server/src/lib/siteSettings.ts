@@ -14,9 +14,10 @@ export const allLearningModes = [
   "learn",
   "translation",
   "context",
-  "spellingBee",
+  "spelling",
   "dictionary",
   "visual",
+  "overstudy",
 ] as const;
 
 export const allTags = [

@@ -2,6 +2,7 @@ import {
   DashboardData,
   DashboardDataParams,
   LearnedItem,
+  LearningModeWithInfo,
   ListForDashboard,
   SupportedLanguage,
   User,
@@ -31,8 +32,56 @@ export async function DashboardDataService(
       )
     : [];
 
+  const modesAvailableForAllLists: LearningModeWithInfo[] = [];
+  // First do a round for items that are actually due
+  listsForDashboard.forEach((list) =>
+    list.learningStatsForUser.availableModesWithInfo.forEach(
+      (currModeWithInfo) => {
+        const exists = modesAvailableForAllLists.find(
+          (modeWithInfo) => modeWithInfo.mode === currModeWithInfo.mode
+        );
+        if (
+          !exists &&
+          currModeWithInfo.mode !== "learn" &&
+          !currModeWithInfo.overstudy
+        )
+          modesAvailableForAllLists.push(currModeWithInfo);
+        if (exists && exists.mode !== "overstudy" && !exists.overstudy) {
+          exists.number += currModeWithInfo.number;
+          // For all modes that are not overstudy, info is a stringified number
+          exists.info = (
+            parseInt(exists.info) + currModeWithInfo.number
+          ).toString();
+        }
+      }
+    )
+  );
+
+  // Then, if nothing needs reviewing, we can do the same but for overstudy
+  if (modesAvailableForAllLists.length === 0) {
+    listsForDashboard.forEach((list) =>
+      list.learningStatsForUser.availableModesWithInfo.forEach(
+        (currModeWithInfo) => {
+          const exists = modesAvailableForAllLists.find(
+            (modeWithInfo) => modeWithInfo.mode === currModeWithInfo.mode
+          );
+          if (!exists && currModeWithInfo.mode !== "learn")
+            modesAvailableForAllLists.push(currModeWithInfo);
+          if (exists && exists.mode !== "overstudy") {
+            exists.number += currModeWithInfo.number;
+            // For all modes that are not overstudy, info is a stringified number
+            exists.info = (
+              parseInt(exists.info) + currModeWithInfo.number
+            ).toString();
+          }
+        }
+      )
+    );
+  }
+
   return {
     listsForDashboard,
+    modesAvailableForAllLists,
   };
 }
 
@@ -57,13 +106,10 @@ async function generateListsForDashboard(
         ignoredItemIds,
         userNative
       );
-      const unlockedReviewModesForUser =
-        list.unlockedReviewModes[userNative] ?? [];
 
       return {
         ...listResponse.data,
         learningStatsForUser,
-        unlockedReviewModesForUser,
       };
     }
   );

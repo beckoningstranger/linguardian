@@ -57,10 +57,10 @@ export default function ListPieChart({
       legend: { show: false },
     },
     series: [
-      stats.readyToReview,
+      stats.readyForReview,
       stats.learned,
       stats.learning,
-      stats.unlearned,
+      stats.readyToLearn,
     ],
     chartOptions: {},
   };

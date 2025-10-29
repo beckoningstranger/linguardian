@@ -49,12 +49,6 @@ const mongooseListSchema = new Schema<List>(
       },
     ],
     unitOrder: [{ type: String }],
-    unlockedReviewModes: {
-      DE: { type: [String] },
-      EN: { type: [String] },
-      FR: { type: [String] },
-      CN: { type: [String] },
-    },
     learners: [
       {
         type: Schema.Types.ObjectId,

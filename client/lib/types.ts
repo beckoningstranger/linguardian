@@ -15,5 +15,7 @@ export type executeActionParams<T> = {
   onSuccess?: OnSuccessfulApiCall<T>;
 };
 
+export type SearchParams = Record<string, string | string[] | undefined>;
+
 /** ------------------------- Miscellaneous -------------------------*/
 /** Remember that types.ts on backend and frontend are de-coupled */

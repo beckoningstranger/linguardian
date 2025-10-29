@@ -65,7 +65,6 @@ export default async function UnitDetailPage({
     ignoredItemIds,
     unitOrder,
     learningStats,
-    unlockedLearningModesForUser,
   } = response.data;
 
   const noOfItemsInUnit = unitItems.length;

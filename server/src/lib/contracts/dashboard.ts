@@ -1,7 +1,10 @@
 import { z } from "zod";
 
 import { supportedLanguageSchema } from "@/lib/contracts/common";
-import { listForDashboardSchema } from "@/lib/contracts/lists";
+import {
+  learningModeWithInfoSchema,
+  listForDashboardSchema,
+} from "@/lib/contracts/lists";
 
 /** ----------- Dashboard ----------- */
 export const dashboardDataParamsSchema = z.object({
@@ -10,6 +13,7 @@ export const dashboardDataParamsSchema = z.object({
 
 export const dashboardDataSchema = z.object({
   listsForDashboard: z.array(listForDashboardSchema),
+  modesAvailableForAllLists: z.array(learningModeWithInfoSchema),
 });
 
 /** ----------- Types ----------- */

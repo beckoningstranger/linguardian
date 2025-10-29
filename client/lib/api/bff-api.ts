@@ -9,7 +9,8 @@ import {
   editListPageDataSchema,
   EditUnitData,
   editUnitDataSchema,
-  FetchLearningSessionParams,
+  FetchLearningSessionForLanguageParams,
+  FetchLearningSessionForListOrUnitParams,
   LearningSessionData,
   learningSessionDataSchema,
   ListOverviewData,
@@ -127,12 +128,43 @@ export async function fetchLearningSessionData({
   listNumber,
   unitNumber,
   mode,
-}: FetchLearningSessionParams): Promise<ApiResponse<LearningSessionData>> {
-  const url = unitNumber
+  overstudy,
+}: FetchLearningSessionForListOrUnitParams): Promise<
+  ApiResponse<LearningSessionData>
+> {
+  const base = unitNumber
     ? new URL(
-        `${SERVER}/bff/learningSession/${mode}/${listNumber}/unit/${unitNumber}`
+        `${SERVER}/bff/learningSession/${mode}/${listNumber}/unit/${unitNumber}?overstudy=${overstudy}`
       )
-    : new URL(`${SERVER}/bff/learningSession/${mode}/${listNumber}`);
+    : new URL(
+        `${SERVER}/bff/learningSession/${mode}/${listNumber}?overstudy=${overstudy}`
+      );
+
+  const url = new URL(base);
+  url.searchParams.set("overstudy", String(overstudy));
+
+  return handleApiCallWithAuth(
+    (headers) =>
+      fetch(url, {
+        headers,
+        cache: "no-store",
+      }),
+    learningSessionDataSchema
+  );
+}
+
+export async function fetchLearningSessionForLanguageData({
+  langCode,
+  mode,
+  overstudy,
+}: FetchLearningSessionForLanguageParams): Promise<
+  ApiResponse<LearningSessionData>
+> {
+  const url = new URL(
+    `${SERVER}/bff/learningSession/language/${mode}/${langCode}?overstudy=${overstudy}`
+  );
+
+  url.searchParams.set("overstudy", String(overstudy));
 
   return handleApiCallWithAuth(
     (headers) =>

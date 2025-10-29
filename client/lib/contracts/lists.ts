@@ -34,12 +34,22 @@ export const authorDataSchema = z.object({
   usernameSlug: z.string(),
 });
 
+export const learningModeWithInfoSchema = z.object({
+  mode: learningModeSchema,
+  info: z.string(),
+  overstudy: z.boolean(),
+  number: z.number(),
+});
+
 export const learningStatsSchema = z.object({
-  unlearned: z.number(),
-  readyToReview: z.number(),
+  readyToLearn: z.number(),
+  readyForReview: z.number(), // due items
   learned: z.number(),
   learning: z.number(),
   ignored: z.number(),
+  availableModesWithInfo: z.array(learningModeWithInfoSchema),
+  recommendedModeWithInfo: learningModeWithInfoSchema,
+  nextReviewDueMessage: z.string(),
 });
 
 export const unitItemSchema = z.object({
@@ -76,10 +86,6 @@ export const listSchema = z.object({
   private: z.boolean(),
   units: z.array(unitItemSchema),
   unitOrder: z.array(unitNameSchema), // Array of unit names
-  unlockedReviewModes: z.record(
-    supportedLanguageSchema,
-    z.array(learningModeSchema).optional()
-  ),
   learners: z.array(z.string()), // Array of user ids
   flags: z.array(flagSchema).optional(),
 });
@@ -93,7 +99,6 @@ export const fullyPopulatedListSchema = listSchema.extend({
 });
 
 export const listForDashboardSchema = populatedListSchema.extend({
-  unlockedReviewModesForUser: z.array(learningModeSchema),
   learningStatsForUser: learningStatsSchema,
 });
 
@@ -171,7 +176,6 @@ export const listOverviewDataSchema = z.object({
   listDescription: listDescriptionSchema,
   listName: listNameSchema,
   learningStats: learningStatsSchema,
-  unlockedLearningModesForUser: z.array(learningModeSchema),
   userIsAuthor: z.boolean(),
   userIsLearningThisList: z.boolean(),
   userIsLearningListLanguage: z.boolean(),
@@ -216,7 +220,6 @@ export const unitOverviewDataSchema = z.object({
   learnedItems: z.array(learnedItemSchema),
   ignoredItemIds: z.array(z.string()),
   learningStats: learningStatsSchema,
-  unlockedLearningModesForUser: z.array(learningModeSchema),
   unitOrder: z.array(z.string()),
 });
 
@@ -279,6 +282,7 @@ export type List = z.infer<typeof listSchema>;
 export type PopulatedList = z.infer<typeof populatedListSchema>;
 export type FullyPopulatedList = z.infer<typeof fullyPopulatedListSchema>;
 export type CreateNewListForm = z.infer<typeof createNewListFormSchema>;
+export type LearningModeWithInfo = z.infer<typeof learningModeWithInfoSchema>;
 export type LearningStats = z.infer<typeof learningStatsSchema>; // used for charts and learning buttons
 export type ListStatus = z.infer<typeof listStatusSchema>; // for recommending learning modes to users
 export type AuthorData = z.infer<typeof authorDataSchema>; // one author's username and usernameSlug
