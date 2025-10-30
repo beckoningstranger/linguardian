@@ -175,6 +175,13 @@ export async function updateLearningDataController(
     return errorResponse(res, 400, "Could not validate learning update");
   const { language, mode, items } = result.data;
 
+  if (mode === "overstudy")
+    return successMessageResponse(
+      res,
+      200,
+      "Great work! Overstudy session don't affect your learning progress. 🎉"
+    );
+
   const response =
     mode === "learn"
       ? await addNewlyLearnedItems(items, userId, language)

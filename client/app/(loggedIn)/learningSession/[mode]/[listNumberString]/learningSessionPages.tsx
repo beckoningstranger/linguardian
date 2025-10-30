@@ -1,10 +1,10 @@
 // app/(learn)/learn/_server/learningSession.shared.ts
-import { cache } from "react";
-import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { cache } from "react";
 
-import { fetchLearningSessionData } from "@/lib/api/bff-api";
 import { BackgroundPicture, LearnAndReview } from "@/components";
+import { fetchLearningSessionData } from "@/lib/api/bff-api";
 import type { LearningMode } from "@/lib/contracts";
 import type { SearchParams } from "@/lib/types";
 import { parseFrom, parseOverstudy } from "@/lib/utils/pages";
@@ -102,6 +102,7 @@ export async function renderListPage(args: {
           allItemStringsInList={possibleAnswers}
           mode={args.mode}
           from={from}
+          overstudy={overstudy}
         />
       </div>
     </div>
@@ -139,6 +140,7 @@ export async function renderUnitPage(args: {
           allItemStringsInList={possibleAnswers}
           mode={args.mode}
           from={from}
+          overstudy={overstudy}
         />
       </div>
     </div>

@@ -21,6 +21,7 @@ interface LearnAndReviewProps {
   allItemStringsInList: string[];
   mode: LearningMode;
   from: "dashboard" | number;
+  overstudy: boolean;
 }
 
 export type ReviewStatus = "neutral" | "correct" | "incorrect";
@@ -32,6 +33,7 @@ export default function LearnAndReview({
   allItemStringsInList,
   mode,
   from,
+  overstudy,
 }: LearnAndReviewProps) {
   const [itemsToLearn, setItemsToLearn] = useState<ItemToLearn[]>(items);
   const [activeItem, setActiveItem] = useState<ItemToLearn>(items[0]);
@@ -70,7 +72,11 @@ export default function LearnAndReview({
             activeItem,
           ];
           (async () => {
-            await sendSessionData(finalLearnedItems, activeItem.language, mode);
+            await sendSessionData(
+              finalLearnedItems,
+              activeItem.language,
+              overstudy ? "overstudy" : mode
+            );
           })();
           return;
         }
@@ -104,7 +110,7 @@ export default function LearnAndReview({
         );
       }
     },
-    [activeItem, mode, learnedItems, itemsToLearn, sendSessionData]
+    [activeItem, mode, learnedItems, itemsToLearn, sendSessionData, overstudy]
   );
 
   return (
