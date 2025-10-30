@@ -61,6 +61,7 @@ export default async function Page({ params, searchParams }: Props) {
           allItemStringsInList={possibleAnswers}
           mode={mode}
           from={from}
+          overstudy={overstudy}
         />
       </div>
     </div>
