@@ -18,6 +18,7 @@ export async function UnitOverviewDataService(
 
   const listResponse = await getFullyPopulatedListByListNumber(listNumber);
   if (!listResponse.success) throw new Error("Could not get list");
+
   const list = listResponse.data;
 
   const userIsAuthor = list.authors.includes(user.id);

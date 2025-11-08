@@ -8,7 +8,9 @@ import {
   useState,
 } from "react";
 
-import { StyledInput } from "@/components";
+import { IPAKeyboard, StyledInput } from "@/components";
+import { useKeyboard } from "@/context/KeyboardContext";
+import { IPA } from "@/lib/contracts";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 
 interface EnterIPAFieldProps {
@@ -19,6 +21,7 @@ interface EnterIPAFieldProps {
   hasErrors: boolean;
   activeField: number | null;
   setActiveField: Dispatch<SetStateAction<number | null>>;
+  IPA: IPA;
 }
 
 export default function EnterIPAField({
@@ -29,16 +32,21 @@ export default function EnterIPAField({
   hasErrors,
   activeField,
   setActiveField,
+  IPA,
 }: EnterIPAFieldProps) {
   const ref = useOutsideClick(handleBlur, true, [
     ".IPAKeyboard",
     ".IPAInputField",
     ".IPAPlusButton",
   ]);
+
   const [value, setValue] = useState(array[index]);
+  const { openKeyboard, closeKeyboard } = useKeyboard();
 
   useEffect(() => {
-    if (activeField && index === activeField) ref.current?.focus();
+    if (activeField !== null && index === activeField) {
+      ref.current?.focus();
+    }
   });
 
   function handleBlur() {
@@ -50,6 +58,7 @@ export default function EnterIPAField({
         (item, i) => newArray.indexOf(item) === i && item.trim() !== ""
       );
       setArray(filteredArray);
+      closeKeyboard();
     }, 0);
   }
 
@@ -63,8 +72,8 @@ export default function EnterIPAField({
       <StyledInput
         ref={ref as RefObject<HTMLInputElement>}
         minusButtonAction={deleteValue}
-        id={"IPA-" + value}
-        name={"IPA-" + value}
+        id={"IPA-" + index}
+        name={"IPA-" + index}
         label={placeholder}
         noFloatingLabel
         hasErrors={hasErrors}
@@ -74,8 +83,18 @@ export default function EnterIPAField({
         className="IPAInputField"
         onChange={(e) => setValue(e.target.value)}
         value={value}
-        autoFocus={value === ""}
-        onFocus={() => setActiveField(index)}
+        autoFocus={array[index] === ""}
+        onFocus={() => {
+          setActiveField(index);
+          openKeyboard(
+            <IPAKeyboard
+              IPA={IPA}
+              array={array}
+              setArray={setArray}
+              activeField={index}
+            />
+          );
+        }}
         onKeyDown={(e) => {
           switch (e.key) {
             case "Escape":

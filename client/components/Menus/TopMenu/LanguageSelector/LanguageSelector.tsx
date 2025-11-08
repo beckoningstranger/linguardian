@@ -62,7 +62,6 @@ export default function LanguageSelector() {
               <LanguageSelectorLink
                 setShowAllLanguageOptions={setShowAllLanguageOptions}
                 language={lang}
-                currentPath={currentPath}
                 key={lang.flag}
               />
             );

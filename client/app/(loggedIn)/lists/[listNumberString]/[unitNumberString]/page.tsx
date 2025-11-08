@@ -12,8 +12,6 @@ import {
   UnitHeader,
   UnitItems,
 } from "@/components";
-import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
-import { TopContextMenuContextProvider } from "@/context/TopContextMenuContext";
 import { UnitContextProvider } from "@/context/UnitContext";
 import { fetchUnitOverviewPageData } from "@/lib/api/bff-api";
 import paths from "@/lib/paths";
@@ -120,28 +118,24 @@ export default async function UnitDetailPage({
             pathToUnit={paths.unitDetailsPath(listNumber, unitNumber)}
           />
         </div>
-        {userIsLearningThisList && (
+        {userIsLearningThisList && unitItems.length > 0 && (
           <ListOverviewLearningButtons
             learningStats={learningStats}
             listNumber={listNumber}
             unitNumber={unitNumber}
           />
         )}
-        <MobileMenuContextProvider>
-          <TopContextMenuContextProvider>
-            <TopContextMenu>
-              <TopContextMenuButton
-                mode="back"
-                link={paths.listDetailsPath(listNumber)}
-              />
-              <TopContextMenuButton
-                mode="edit"
-                target="unit"
-                link={paths.editUnitPath(listNumber, unitNumber)}
-              />
-            </TopContextMenu>
-          </TopContextMenuContextProvider>
-        </MobileMenuContextProvider>
+        <TopContextMenu>
+          <TopContextMenuButton
+            mode="back"
+            link={paths.listDetailsPath(listNumber)}
+          />
+          <TopContextMenuButton
+            mode="edit"
+            target="unit"
+            link={paths.editUnitPath(listNumber, unitNumber)}
+          />
+        </TopContextMenu>
       </div>
     </UnitContextProvider>
   );

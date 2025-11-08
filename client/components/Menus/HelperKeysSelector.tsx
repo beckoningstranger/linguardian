@@ -1,21 +1,23 @@
+"use client";
+
 import { LanguageFeatures, SupportedLanguage } from "@/lib/contracts";
 import { cn } from "@/lib/utils";
 import Button from "@/components/ui/Button";
+import { useMobileMenu } from "@/context/MobileMenuContext";
 
 interface HelperKeysSelectorProps {
   targetLanguageFeatures: LanguageFeatures;
   handleHelperKeyClick: Function;
   target: SupportedLanguage;
-  toggleMobileMenu?: Function;
   mobile: boolean;
 }
 
 export default function HelperKeysSelector({
   targetLanguageFeatures,
   handleHelperKeyClick,
-  toggleMobileMenu,
   mobile,
 }: HelperKeysSelectorProps) {
+  const { closeMobileMenu } = useMobileMenu();
   return (
     <div
       className={cn("flex justify-center gap-2 p-4 w-full", mobile && "mt-20")}
@@ -38,7 +40,7 @@ export default function HelperKeysSelector({
             )}
             onClick={(e) => {
               handleHelperKeyClick(e);
-              if (mobile) toggleMobileMenu!();
+              if (mobile) closeMobileMenu();
             }}
           >
             {key}

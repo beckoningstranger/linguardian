@@ -12,6 +12,7 @@ import {
   updateListDetails,
   updateUnitName,
   updateUnitOrder,
+  uploadCSVFile,
 } from "@/lib/api/list-api";
 import {
   AddItemToUnitUpdate,
@@ -32,6 +33,20 @@ export async function createListAction(
     apiCall: () => createList(formData),
     onSuccess: () => {
       revalidateTag(listStoreTag(listLanguage));
+    },
+  });
+}
+
+export async function uploadCSVFileAction(
+  listNumber: number,
+  listLanguageCode: SupportedLanguage,
+  formData: FormData
+): Promise<CreateListSuccessResponse> {
+  return await executeAuthenticatedAction({
+    apiCall: () => uploadCSVFile(formData, listNumber),
+    onSuccess: () => {
+      revalidateTag(listTag(listNumber));
+      revalidateTag(listStoreTag(listLanguageCode));
     },
   });
 }

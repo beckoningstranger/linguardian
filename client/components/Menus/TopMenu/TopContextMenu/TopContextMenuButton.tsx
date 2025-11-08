@@ -10,10 +10,11 @@ import { TbPencil, TbTrash } from "react-icons/tb";
 import { useTopContextMenu } from "@/context/TopContextMenuContext";
 import { cn } from "@/lib/utils";
 import { TiDocumentAdd } from "react-icons/ti";
+import { GrChapterAdd } from "react-icons/gr";
 
 interface NewTopContextMenuButtonProps {
   onClick?: MouseEventHandler;
-  mode: "delete" | "back" | "edit" | "stop" | "addItems";
+  mode: "delete" | "back" | "edit" | "stop" | "addItems" | "uploadCSV";
   target?: "list" | "unit" | "item";
   link?: string;
   disabled?: boolean;
@@ -25,7 +26,8 @@ export default function TopContextMenuButton({
   link,
   target = "list",
   disabled,
-}: NewTopContextMenuButtonProps) {
+}: React.ButtonHTMLAttributes<HTMLButtonElement> &
+  NewTopContextMenuButtonProps) {
   const { setShowTopContextMenu } = useTopContextMenu();
 
   const handleClick: MouseEventHandler = (e) => {
@@ -68,12 +70,17 @@ export default function TopContextMenuButton({
       label: "Add more items to this unit",
       styles: "bg-orange-500 hover:bg-orange-600",
     },
+    uploadCSV: {
+      icon: <GrChapterAdd className="size-16" />,
+      label: "Upload a CSV File",
+      styles: "bg-orange-500 hover:bg-orange-600",
+    },
   };
 
   const button = (
     <Button
       className={cn(
-        "relative flex h-20 w-full items-center rounded-lg px-2 text-white tablet:hidden transition-all duration-500",
+        "relative flex size-20 w-full items-center rounded-lg px-2 text-white tablet:hidden transition-all duration-500",
         config[mode].styles,
         disabled && "bg-grey-500 pointer-events-none cursor-not-allowed"
       )}
@@ -81,7 +88,7 @@ export default function TopContextMenuButton({
       disabled={disabled}
     >
       {config[mode].icon}
-      <div className="absolute left-0 flex w-full justify-center text-clgb">
+      <div className="flex w-full justify-center text-clgb">
         {config[mode].label}
       </div>
     </Button>

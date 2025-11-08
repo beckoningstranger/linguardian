@@ -5,13 +5,12 @@ import {
   EditListHeader,
   IconSidebar,
   IconSidebarButton,
+  ReorderableListUnits,
   TopContextMenu,
   TopContextMenuButton,
-  ReorderableListUnits,
 } from "@/components";
+import ExpandListWithCSV from "@/components/Lists/EditList/ExpandListWithCSV";
 import { ListContextProvider } from "@/context/ListContext";
-import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
-import { TopContextMenuContextProvider } from "@/context/TopContextMenuContext";
 import { fetchEditListPageData } from "@/lib/api/bff-api";
 import paths from "@/lib/paths";
 
@@ -55,36 +54,34 @@ export default async function ListEditPage({
       initialUnitOrder={unitOrder}
       unitInformation={unitInformation}
     >
-      <MobileMenuContextProvider>
-        <div className="flex justify-center desktop:mb-0">
-          <IconSidebar position="left" showOn="tablet">
-            <IconSidebarButton
-              mode="back"
-              link={paths.listDetailsPath(listNumber)}
-            />
-            <DeleteListButton mode="desktop" />
-          </IconSidebar>
-          <div
-            className={`grid w-full grid-cols-1 tablet:my-2 tablet:w-auto tablet:grid-cols-[310px_310px] tablet:grid-rows-[182px_340px] tablet:gap-2 desktop:grid-cols-[400px_400px] desktop:grid-rows-[182px_400px] desktopxl:grid-rows-[182px_200px]`}
-            id="listOverviewMain"
-          >
-            <EditListHeader />
-            <ReorderableListUnits />
-          </div>
-          <div className="desktop:m-2 desktop:w-[90px]" />
+      <div className="flex justify-center desktop:mb-0">
+        <IconSidebar position="left" showOn="tablet">
+          <IconSidebarButton
+            mode="back"
+            link={paths.listDetailsPath(listNumber)}
+          />
+          <ExpandListWithCSV mode="desktop" />
+          <DeleteListButton mode="desktop" />
+        </IconSidebar>
+        <div
+          className={`grid w-full grid-cols-1 tablet:my-2 tablet:w-auto tablet:grid-cols-[310px_310px] tablet:grid-rows-[182px_340px] tablet:gap-2 desktop:grid-cols-[400px_400px] desktop:grid-rows-[182px_400px] desktopxl:grid-rows-[182px_200px]`}
+          id="listOverviewMain"
+        >
+          <EditListHeader />
+          <ReorderableListUnits />
         </div>
+        <div className="desktop:m-2 desktop:w-[90px]" />
+      </div>
 
-        <TopContextMenuContextProvider>
-          <TopContextMenu>
-            <TopContextMenuButton
-              mode="back"
-              target="list"
-              link={paths.listDetailsPath(listNumber)}
-            />
-            <DeleteListButton mode="mobile" />
-          </TopContextMenu>
-        </TopContextMenuContextProvider>
-      </MobileMenuContextProvider>
+      <TopContextMenu>
+        <TopContextMenuButton
+          mode="back"
+          target="list"
+          link={paths.listDetailsPath(listNumber)}
+        />
+        <ExpandListWithCSV mode="mobile" />
+        <DeleteListButton mode="mobile" />
+      </TopContextMenu>
     </ListContextProvider>
   );
 }

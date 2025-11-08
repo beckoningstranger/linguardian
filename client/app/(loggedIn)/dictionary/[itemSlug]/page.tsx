@@ -7,8 +7,6 @@ import {
   TopContextMenu,
   TopContextMenuButton,
 } from "@/components";
-import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
-import { TopContextMenuContextProvider } from "@/context/TopContextMenuContext";
 import { fetchItemBySlug } from "@/lib/api/item-api";
 import { SupportedLanguage } from "@/lib/contracts";
 import paths from "@/lib/paths";
@@ -94,22 +92,18 @@ export default async function ItemPage({
         item={filteredItem}
         allUserLanguageCodes={allUserLanguageCodes}
       />
-      <MobileMenuContextProvider>
-        <TopContextMenuContextProvider>
-          <TopContextMenu>
-            <TopContextMenuButton
-              mode="back"
-              target="item"
-              link={comingFrom || paths.dictionaryPath()}
-            />
-            <TopContextMenuButton
-              mode="edit"
-              target="item"
-              link={paths.editDictionaryItemPath(itemSlug)}
-            />
-          </TopContextMenu>
-        </TopContextMenuContextProvider>
-      </MobileMenuContextProvider>
+      <TopContextMenu>
+        <TopContextMenuButton
+          mode="back"
+          target="item"
+          link={comingFrom || paths.dictionaryPath()}
+        />
+        <TopContextMenuButton
+          mode="edit"
+          target="item"
+          link={paths.editDictionaryItemPath(itemSlug)}
+        />
+      </TopContextMenu>
     </div>
   );
 }

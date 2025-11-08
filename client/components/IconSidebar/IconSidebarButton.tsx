@@ -1,9 +1,12 @@
+"use client";
+
 import { Button } from "@headlessui/react";
 import Link from "next/link";
 import React, { MouseEventHandler } from "react";
 import { BsMortarboard } from "react-icons/bs";
 import { FaArrowLeft } from "react-icons/fa6";
 import { GiSaveArrow } from "react-icons/gi";
+import { GrChapterAdd } from "react-icons/gr";
 import { ImStop } from "react-icons/im";
 import { TbPencil, TbTrash } from "react-icons/tb";
 import { TiDocumentAdd } from "react-icons/ti";
@@ -12,7 +15,15 @@ import { Spinner } from "@/components";
 import { cn } from "@/lib/utils";
 
 type IconSidebarButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  mode: "start" | "stop" | "delete" | "edit" | "back" | "save" | "addItems";
+  mode:
+    | "start"
+    | "stop"
+    | "delete"
+    | "edit"
+    | "back"
+    | "save"
+    | "addItems"
+    | "uploadCSV";
   onClick?: MouseEventHandler;
   link?: string;
   label?: string;
@@ -63,6 +74,11 @@ export default function IconSidebarButton({
     addItems: {
       icon: <TiDocumentAdd className="size-14" />,
       label: "Add more items",
+      styles: "hover:bg-orange-500",
+    },
+    uploadCSV: {
+      icon: <GrChapterAdd className="size-14" />,
+      label: "Upload a CSV File",
       styles: "hover:bg-orange-500",
     },
   };

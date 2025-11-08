@@ -4,6 +4,7 @@ import ActivityChart from "@/components/Profile/ActivityChart";
 import LearnedLanguageInfo from "@/components/Profile/LearnedLanguageInfo";
 import UserOverview from "@/components/Profile/UserOverview";
 import { getUserOnServer } from "@/lib/utils/server";
+import { useMobileMenu } from "@/context/MobileMenuContext";
 
 interface ProfilePageProps {
   params: { usernameSlug: string };
@@ -35,7 +36,7 @@ export default async function ProfilePage({
 
   return (
     <div
-      className="relative flex justify-center px-1 py-8 phone:px-2 tablet:px-4 tablet:py-12"
+      className="relative flex flex-col items-center px-1 py-8 phone:px-2 tablet:px-4 tablet:py-12"
       id="ProfileMain"
     >
       Not ready for production, but working on it...

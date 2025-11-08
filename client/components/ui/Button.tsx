@@ -1,3 +1,5 @@
+"use client";
+
 import { Button as HeadlessUiButton } from "@headlessui/react";
 import { ReactNode } from "react";
 

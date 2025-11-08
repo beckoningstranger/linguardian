@@ -35,10 +35,7 @@ export const itemSchemaWithTranslationsAndLemmas = coreItemSchema.extend({
 export const parsedItemSpecificSchema = z.object({
   lemmas: objectIdArraySchema.optional(),
   translations: parsedTranslationsSchema,
-  unit: z
-    .string()
-    .max(50, "Unit names cannot be longer than 50 characters")
-    .optional(),
+  unit: z.string().max(50, "Unit names cannot be longer than 50 characters"),
 });
 
 export const parsedItemSchema = coreItemSchema

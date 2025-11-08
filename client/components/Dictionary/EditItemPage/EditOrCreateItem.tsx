@@ -12,8 +12,6 @@ import {
   TopContextMenuButton,
 } from "@/components";
 
-import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
-import { TopContextMenuContextProvider } from "@/context/TopContextMenuContext";
 import { EDIT_OR_CREATE_ITEM_FORM_ID } from "@/lib/constants";
 import {
   itemSchemaWithPopulatedTranslations,
@@ -67,17 +65,13 @@ export default function EditOrCreateItem({
           />
         </IconSidebar>
         <EditOrCreateItemForm item={item} addToUnit={addToUnit} />
-        <MobileMenuContextProvider>
-          <TopContextMenuContextProvider>
-            <TopContextMenu>
-              <TopContextMenuButton
-                mode="back"
-                target="item"
-                link={comingFrom || paths.dictionaryPath()}
-              />
-            </TopContextMenu>
-          </TopContextMenuContextProvider>
-        </MobileMenuContextProvider>
+        <TopContextMenu>
+          <TopContextMenuButton
+            mode="back"
+            target="item"
+            link={comingFrom || paths.dictionaryPath()}
+          />
+        </TopContextMenu>
         {!isSubmitting && isDirty && isValid && (
           <Button
             form={EDIT_OR_CREATE_ITEM_FORM_ID}

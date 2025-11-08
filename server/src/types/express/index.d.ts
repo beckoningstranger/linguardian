@@ -16,6 +16,7 @@ declare global {
       learningMode?: LearningMode;
       overstudy?: boolean;
       langCode?: SupportedLanguage;
+      fileName?: string;
     }
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { DeleteUnitButton, UnitNameInput } from "@/components";
+import { DeleteUnitButtonList, UnitNameInput } from "@/components";
 import { useListContext } from "@/context/ListContext";
 
 interface EditUnitButtonProps {
@@ -25,12 +25,9 @@ export default function EditUnitButton({
         setUnitOrder={setUnitOrder}
       />
 
-      <div className="flex h-full w-[80px] cursor-pointer items-center justify-center rounded-r-lg text-red-500 hover:bg-red-500 hover:text-white">
-        <DeleteUnitButton
+      <div className="flex h-full w-[80px] items-center justify-center rounded-r-lg text-red-500 hover:bg-red-500 hover:text-white">
+        <DeleteUnitButtonList
           unitName={unitName}
-          listNumber={listNumber}
-          mode="inCard"
-          listLanguageCode={listLanguage.code}
           noOfItemsInUnit={noOfItemsInUnit}
         />
       </div>

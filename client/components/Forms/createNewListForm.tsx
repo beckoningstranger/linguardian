@@ -107,7 +107,7 @@ export default function CreateNewListForm({
             formValue="difficulty"
             label="Select list difficulty"
           />
-          <SubmitCSVFile />
+          <SubmitCSVFile optional={true} />
           <Button
             type="submit"
             disabled={isSubmitting || !isValid || !isDirty}

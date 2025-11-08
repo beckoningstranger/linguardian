@@ -1,5 +1,4 @@
 import { QuitLearningSessionButton } from "@/components";
-import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { LearningMode, SupportedLanguage } from "@/lib/contracts";
 
 interface LearningHeaderProps {
@@ -47,9 +46,7 @@ export default function LearningHeader({
       id="LearningHeader"
       className="relative flex h-[112px] w-full items-center justify-between bg-white/95"
     >
-      <MobileMenuContextProvider>
-        <QuitLearningSessionButton listLanguage={listLanguage} from={from} />
-      </MobileMenuContextProvider>
+      <QuitLearningSessionButton listLanguage={listLanguage} from={from} />
       <div
         id="LearningHeaderTitle"
         className="grid w-full gap-1 text-center text-cmdr"

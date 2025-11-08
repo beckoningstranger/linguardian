@@ -36,7 +36,7 @@ export const csvUploadMiddleware = (
   upload.single("csvfile")(req, res, (err) => {
     if (err instanceof multer.MulterError) {
       if (err.code === "LIMIT_FIELD_VALUE") {
-        console.error("LIMIT_FIELD_VALUE");
+        console.error("LIMIT_FIELD_VALUE: File too large. Max 500KB allowed.");
         return res
           .status(400)
           .json({ error: "File too large. Max 500KB allowed." });
@@ -47,9 +47,11 @@ export const csvUploadMiddleware = (
 
     if (err) {
       if (err.message === "Only CSV files are allowed!") {
+        console.error("Only CSV files are allowed!");
         return res.status(400).json({ error: err.message });
       }
 
+      console.error("Unexpected error during csv upload: " + err.message);
       return res
         .status(500)
         .json({ error: "Unexpected error: " + err.message });

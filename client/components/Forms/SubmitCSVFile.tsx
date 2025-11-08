@@ -4,7 +4,11 @@ import Button from "@/components/ui/Button";
 import { Input } from "@headlessui/react";
 import { useFormContext } from "react-hook-form";
 
-export default function SubmitCSVFile() {
+interface SubmitCSVFileProps {
+  optional?: boolean;
+}
+
+export default function SubmitCSVFile({ optional = true }: SubmitCSVFileProps) {
   const {
     watch,
     register,
@@ -26,7 +30,7 @@ export default function SubmitCSVFile() {
           />
           {filePicked
             ? `Your file: ${watch().csvfile[0].name}`
-            : "Upload a CSV file (optional)"}
+            : `Upload a CSV file ${optional ? "(optional)" : ""}`}
         </label>
       </Button>
       {errors.csvfile && (

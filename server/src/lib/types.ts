@@ -45,6 +45,17 @@ export type AuthenticatedRequest<
   auth: AuthTokenPayload;
 };
 
+export type AuthenticatedExpandListRequest<
+  P = Record<string, any>, // route params
+  ResBody = any,
+  ReqBody = any,
+  ReqQuery = ParsedQs
+> = Request<P, ResBody, ReqBody, ReqQuery> & {
+  auth: AuthTokenPayload;
+  listNumber: number;
+  fileName: string;
+};
+
 export type AuthenticatedListRequest<
   P = Record<string, any>, // route params
   ResBody = any,

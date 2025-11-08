@@ -6,9 +6,7 @@ import { useUnitContext } from "@/context/UnitContext";
 interface EditUnitHeaderProps {}
 
 export default function EditUnitHeader({}: EditUnitHeaderProps) {
-  const context = useUnitContext();
-  if (!context) throw new Error("Could not get unit context");
-  const { unitName, listLanguage, listNumber } = context;
+  const { unitName, listLanguage, listNumber } = useUnitContext();
 
   return (
     <div className="flex w-full justify-between bg-white/90 text-center tablet:min-w-[620px] tablet:rounded-lg">

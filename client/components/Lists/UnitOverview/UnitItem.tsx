@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { DeleteItemButton, UnitItemText } from "@/components";
-import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { updateRecentSearchesAction } from "@/lib/actions/user-actions";
 import { ItemPlusLearningInfo } from "@/lib/contracts";
 import paths from "@/lib/paths";
@@ -32,14 +31,10 @@ export default function UnitItem({
     <div
       className={cn(
         `relative pr-4 flex w-full overflow-hidden rounded-lg h-[86px]`,
-        bgColor(item.nextReview, item.level)
+        editMode ? "bg-white" : bgColor(item.nextReview, item.level)
       )}
     >
-      {editMode && (
-        <MobileMenuContextProvider>
-          <DeleteItemButton itemId={item.id} itemName={item.name} />
-        </MobileMenuContextProvider>
-      )}
+      {editMode && <DeleteItemButton itemId={item.id} itemName={item.name} />}
       {translations ? (
         <Image
           alt="Translation Icon"
@@ -75,9 +70,10 @@ export default function UnitItem({
               showItemTranslation={showItemTranslation}
             />
             <div
-              className={`text-left absolute top-4 text-csmb text-grey-900 ${
-                editMode ? "right-20" : "right-4"
-              }`}
+              className={`
+                text-left absolute top-4 text-csmb text-grey-900 ${
+                  editMode ? "right-20" : "right-4"
+                }`}
             >
               {item.partOfSpeech === "noun" &&
                 item.gender &&
@@ -92,7 +88,11 @@ export default function UnitItem({
                 Level {item.level}:{" "}
                 {currentItemStatus(item.nextReview, item.level)}
               </div>
-              <div className="absolute bottom-2 right-4 text-cxsb text-grey-900 phone:text-csmb">
+              <div
+                className={`absolute bottom-2 text-cxsb text-grey-900 phone:text-csmb ${
+                  editMode ? "right-20" : "right-4"
+                }`}
+              >
                 {nextReviewMessage(item.nextReview, item.level)}
               </div>
             </>

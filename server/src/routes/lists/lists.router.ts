@@ -2,9 +2,12 @@ import express from "express";
 
 import { csvUploadMiddleware } from "@/lib/middleware/csvUpload";
 import { requireAuth } from "@/lib/middleware/requireAuth";
+import { requireFileName } from "@/lib/middleware/requireFileName";
+import { requireLangCode } from "@/lib/middleware/requireLangCode";
 import { requireListAuthor } from "@/lib/middleware/requireListAuthor";
 import { requireListNumber } from "@/lib/middleware/requireListNumber";
 import {
+  asAuthenticatedExpandListRequest,
   asAuthenticatedListRequest,
   asAuthenticatedRequest,
 } from "@/lib/utils";
@@ -15,6 +18,7 @@ import {
   deleteListController,
   deleteListItemController,
   deleteUnitController,
+  expandListWithCSVController,
   renameUnitController,
   reorderUnitsController,
   updateListDetailsController,
@@ -28,6 +32,16 @@ listsRouter.post(
   requireAuth,
   csvUploadMiddleware,
   asAuthenticatedRequest(createListController)
+);
+
+listsRouter.post(
+  "/expandWithCSV/:listNumber/",
+  requireAuth,
+  csvUploadMiddleware,
+  requireListNumber,
+  requireListAuthor,
+  requireFileName,
+  asAuthenticatedExpandListRequest(expandListWithCSVController)
 );
 
 listsRouter.post(

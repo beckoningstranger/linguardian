@@ -5,8 +5,11 @@ import { ReactNode } from "react";
 import { Toaster } from "react-hot-toast";
 
 import AuthProvider from "@/components/AuthProvider";
+import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { UserContextProvider } from "@/context/UserContext";
 import { getUserOnServer } from "@/lib/utils/server";
+import { TopContextMenuContextProvider } from "@/context/TopContextMenuContext";
+import { KeyboardContextProvider } from "@/context/KeyboardContext";
 
 export const metadata: Metadata = {
   title: { template: "%s | Linguardian", default: "Linguardian" },
@@ -45,7 +48,11 @@ export default async function RootLayout({ children }: RootLayoutProps) {
       >
         <AuthProvider>
           <UserContextProvider initialUser={user}>
-            <main>{children}</main>
+            <TopContextMenuContextProvider>
+              <MobileMenuContextProvider>
+                <main>{children}</main>
+              </MobileMenuContextProvider>
+            </TopContextMenuContextProvider>
           </UserContextProvider>
         </AuthProvider>
         <Toaster position="top-center" reverseOrder={true} />

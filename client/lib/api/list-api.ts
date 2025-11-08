@@ -31,6 +31,23 @@ export async function createList(
   );
 }
 
+export async function uploadCSVFile(
+  formData: FormData,
+  listNumber: number
+): Promise<ApiResponse<CreateListSuccessResponse>> {
+  const url = `${SERVER}/lists/expandWithCSV/${listNumber}`;
+
+  return await handleApiCallWithAuth(
+    (headers) =>
+      fetch(url, {
+        headers,
+        method: "POST",
+        body: formData,
+      }),
+    createListSuccessResponseSchema
+  );
+}
+
 export async function createUnit(
   update: AddUnitUpdate,
   listNumber: number

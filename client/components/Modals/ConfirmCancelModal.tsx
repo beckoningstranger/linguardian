@@ -1,10 +1,11 @@
 "use client";
 
-import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, RefObject, SetStateAction } from "react";
+import { createPortal } from "react-dom";
 
 import Button from "@/components/ui/Button";
+import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 
 interface ConfirmCancelModalProps {
   children?: React.ReactNode;
@@ -24,9 +25,15 @@ export default function ConfirmCancelModal({
   children,
   title,
 }: ConfirmCancelModalProps) {
-  return (
-    <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
-      <div className="fixed z-50 flex items-center justify-center tablet:inset-x-32 tablet:inset-y-56">
+  const ref = useOutsideClick(() => setIsOpen(false));
+
+  if (!isOpen) return null;
+  return createPortal(
+    <>
+      <div
+        ref={ref as RefObject<HTMLDivElement>}
+        className="fixed inset-x-16 top-1/2 z-50 min-w-[300px] -translate-y-1/2 desktop:inset-x-32 desktopxl:inset-x-64"
+      >
         {closeButton && (
           <Button
             className="absolute right-8 top-8"
@@ -35,12 +42,8 @@ export default function ConfirmCancelModal({
             <XMarkIcon className="h-8 w-8" />
           </Button>
         )}
-        <DialogPanel className="relative flex w-full max-w-[calc(100%-2rem)] flex-col gap-2 rounded-md border border-grey-500 bg-white px-4 py-8 shadow-lg">
-          {title && (
-            <DialogTitle className="text-center text-2xl font-bold">
-              {title}
-            </DialogTitle>
-          )}
+        <div className="relative flex w-full max-w-[calc(100%-2rem)] flex-col gap-2 rounded-md border border-grey-500 bg-white px-4 py-8 shadow-lg">
+          {title && <p className="text-center text-2xl font-bold">{title}</p>}
           <div className="flex flex-col gap-5 text-lg">
             <div className="relative rounded-md text-center text-lg font-semibold">
               {children}
@@ -72,8 +75,9 @@ export default function ConfirmCancelModal({
               </Button>
             </div>
           </div>
-        </DialogPanel>
+        </div>
       </div>
-    </Dialog>
+    </>,
+    document.body
   );
 }

@@ -1,5 +1,6 @@
 import { AuthTokenPayload } from "@/lib/contracts";
 import {
+  AuthenticatedExpandListRequest,
   AuthenticatedItemRequest,
   AuthenticatedLearningSessionRequestForLanguage,
   AuthenticatedLearningSessionRequestForList,
@@ -27,6 +28,23 @@ export function asAuthenticatedRequest(
   return (req, res, next) => {
     if (!req.auth) return res.status(401).json({ error: "Unauthorized" });
     return handler(req as AuthenticatedRequest, res, next);
+  };
+}
+
+export function asAuthenticatedExpandListRequest(
+  handler: (
+    req: AuthenticatedExpandListRequest,
+    res: Response,
+    next?: NextFunction
+  ) => any
+): RequestHandler {
+  return (req, res, next) => {
+    if (!req.auth) return res.status(401).json({ error: "Unauthorized" });
+    if (!req.listNumber) return errorResponse(res, 400, "No list number found");
+    if (!req.fileName)
+      return errorResponse(res, 400, "No file attached to request");
+
+    return handler(req as AuthenticatedExpandListRequest, res, next);
   };
 }
 

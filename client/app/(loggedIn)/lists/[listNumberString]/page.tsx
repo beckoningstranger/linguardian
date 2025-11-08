@@ -15,8 +15,6 @@ import {
   TopContextMenuButton,
 } from "@/components";
 import { ListContextProvider } from "@/context/ListContext";
-import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
-import { TopContextMenuContextProvider } from "@/context/TopContextMenuContext";
 import { fetchListOverviewPageData } from "@/lib/api/bff-api";
 import paths from "@/lib/paths";
 import { getCurrentUserId } from "@/lib/utils/server";
@@ -130,21 +128,17 @@ export default async function ListPage({
           />
         )}
       </div>
-      <MobileMenuContextProvider>
-        <TopContextMenuContextProvider>
-          <TopContextMenu>
-            <StopLearningListButton mode="mobile" />
-            {userIsAuthor && (
-              <>
-                <TopContextMenuButton
-                  mode="edit"
-                  link={paths.editListPath(listNumber)}
-                />
-              </>
-            )}
-          </TopContextMenu>
-        </TopContextMenuContextProvider>
-      </MobileMenuContextProvider>
+      <TopContextMenu>
+        <StopLearningListButton mode="mobile" />
+        {userIsAuthor && (
+          <>
+            <TopContextMenuButton
+              mode="edit"
+              link={paths.editListPath(listNumber)}
+            />
+          </>
+        )}
+      </TopContextMenu>
     </ListContextProvider>
   );
 }

@@ -12,7 +12,11 @@ import {
 } from "@/lib/contracts";
 import { parseCSV } from "@/lib/parsecsv";
 import { createNewListApiSchema } from "@/lib/schemas";
-import { AuthenticatedListRequest, AuthenticatedRequest } from "@/lib/types";
+import {
+  AuthenticatedExpandListRequest,
+  AuthenticatedListRequest,
+  AuthenticatedRequest,
+} from "@/lib/types";
 import {
   composeListUpdateMessage,
   errorResponse,
@@ -27,10 +31,12 @@ import {
   createList,
   deleteList,
   deleteUnitFromList,
+  getListByListNumber,
   removeItemFromList,
   renameUnitName,
   updateList,
 } from "@/models/lists.model";
+import { formatResultMessage } from "@/lib/utils/parsecsv";
 
 // POST
 
@@ -60,7 +66,11 @@ export async function createListController(
 
     if (req.file && req.file.size > 0) {
       try {
-        const results = await parseCSV(req.file.filename, newList);
+        const results = await parseCSV(
+          req.file.filename,
+          newList.listNumber,
+          newList.language.code
+        );
         parsedListResponse.results = results;
         const failedCount = results.filter((r) => r.status === "error").length;
         parsedListResponse.message =
@@ -73,6 +83,38 @@ export async function createListController(
         parsedListResponse.message = `List created, but critical error during import:\n ${err}.`;
       }
     }
+
+    return successResponse(res, 201, parsedListResponse);
+  } catch (err) {
+    return errorResponse(
+      res,
+      500,
+      (err as Error).message || "Unknown error occurred"
+    );
+  }
+}
+
+export async function expandListWithCSVController(
+  req: AuthenticatedExpandListRequest,
+  res: Response
+) {
+  const listNumber = req.listNumber;
+  const fileName = req.fileName;
+
+  const response = await getListByListNumber(listNumber);
+  if (!response.success) return errorResponse(res, 400, "List not found");
+  const listLanguageCode = response.data.language.code;
+
+  try {
+    const results = await parseCSV(fileName, listNumber, listLanguageCode);
+    console.log("RESULTS", results);
+
+    const parsedListResponse: CreateListSuccessResponse = {
+      listNumber: listNumber,
+      listLanguage: listLanguageCode,
+      results,
+      message: formatResultMessage(results),
+    };
 
     return successResponse(res, 201, parsedListResponse);
   } catch (err) {

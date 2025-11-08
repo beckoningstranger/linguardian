@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { EditOrCreateItem } from "@/components";
 import { fetchItemBySlug } from "@/lib/api/item-api";
+import { KeyboardContextProvider } from "@/context/KeyboardContext";
 
 interface EditPageProps {
   params: { itemSlug: string };
@@ -32,5 +33,9 @@ export default async function EditPage({
 
   // Do not filter or translations may be lost!
 
-  return <EditOrCreateItem item={item} comingFrom={comingFrom} />;
+  return (
+    <KeyboardContextProvider>
+      <EditOrCreateItem item={item} comingFrom={comingFrom} />;
+    </KeyboardContextProvider>
+  );
 }

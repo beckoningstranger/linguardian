@@ -1,3 +1,5 @@
+"use client";
+
 import Button from "@/components/ui/Button";
 import { Dispatch, SetStateAction } from "react";
 
@@ -16,20 +18,22 @@ export default function IPAKeys({
 }: IPAKeysProps) {
   if (keys && keys.length > 0)
     return (
-      <div className="mt-2 grid w-full grid-cols-6 gap-2">
+      <div className="mx-auto mt-2 grid w-[400px] grid-cols-6 justify-center gap-2">
+        {/* <div className="mt-2 grid w-full grid-cols-6 justify-center gap-2 tablet:px-32 desktop:px-48"> */}
         {keys.map((key) => (
-          <Button
-            color="blue"
-            className="font-voces grid h-10 w-10 place-items-center font-light"
-            key={key}
-            onClick={() => {
-              const newArray = [...array];
-              newArray[arrayIndex] = array[arrayIndex] + key;
-              setArray(newArray);
-            }}
-          >
-            {key}
-          </Button>
+          <div key={key} className="flex justify-center">
+            <Button
+              color="blue"
+              className="IPAKeys font-voces grid h-10 w-10 place-items-center rounded-md font-light"
+              onClick={() => {
+                const newArray = [...array];
+                newArray[arrayIndex] = array[arrayIndex] + key;
+                setArray(newArray);
+              }}
+            >
+              {key}
+            </Button>
+          </div>
         ))}
       </div>
     );

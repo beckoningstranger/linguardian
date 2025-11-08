@@ -2,7 +2,7 @@
 
 import { Button } from "@headlessui/react";
 import { useRouter } from "next/navigation";
-import { MouseEventHandler, useState } from "react";
+import { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 
 import { ConfirmCancelMobileMenu, ConfirmCancelModal } from "@/components";
@@ -21,7 +21,7 @@ export default function QuitLearningSessionButton({
   from,
 }: QuitLearningSessionButtonProps) {
   const [showModal, setShowModal] = useState(false);
-  const { toggleMobileMenu } = useMobileMenu();
+  const { openMobileMenu } = useMobileMenu();
   const router = useRouter();
 
   const doOnConfirm = () =>
@@ -45,7 +45,13 @@ export default function QuitLearningSessionButton({
     <Button>
       <FaArrowLeft
         className={cn(buttonStyling, "tablet:hidden")}
-        onClick={toggleMobileMenu as MouseEventHandler}
+        onClick={() =>
+          openMobileMenu(
+            <ConfirmCancelMobileMenu doOnConfirm={doOnConfirm}>
+              {message}
+            </ConfirmCancelMobileMenu>
+          )
+        }
       />
       <FaArrowLeft
         className={cn(buttonStyling, "hidden tablet:block")}
@@ -59,9 +65,6 @@ export default function QuitLearningSessionButton({
       >
         {message}
       </ConfirmCancelModal>
-      <ConfirmCancelMobileMenu doOnConfirm={doOnConfirm}>
-        {message}
-      </ConfirmCancelMobileMenu>
     </Button>
   );
 }

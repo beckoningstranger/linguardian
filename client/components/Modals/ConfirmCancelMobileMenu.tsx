@@ -1,8 +1,9 @@
+"use client";
+
 import React from "react";
 
-import { useMobileMenu } from "@/context/MobileMenuContext";
-import MobileMenu from "@/components/Menus/MobileMenu/MobileMenu";
 import Button from "@/components/ui/Button";
+import { useMobileMenu } from "@/context/MobileMenuContext";
 
 interface ConfirmCancelMobileMenuProps {
   children?: React.ReactNode;
@@ -17,10 +18,10 @@ export default function ConfirmCancelMobileMenu({
   message,
   doOnConfirm,
 }: ConfirmCancelMobileMenuProps) {
-  const { toggleMobileMenu } = useMobileMenu();
+  const { closeMobileMenu } = useMobileMenu();
 
   return (
-    <MobileMenu mode="fullscreen" fromDirection="animate-from-top">
+    <>
       <div className="mx-4 text-center">
         {title && <div className="text-cxlb leading-tight">{title}</div>}
         <div>{children}</div>
@@ -40,7 +41,7 @@ export default function ConfirmCancelMobileMenu({
           rounded
           onClick={(e) => {
             e.stopPropagation();
-            if (toggleMobileMenu) toggleMobileMenu();
+            closeMobileMenu();
           }}
         >
           Cancel
@@ -52,12 +53,12 @@ export default function ConfirmCancelMobileMenu({
           onClick={(e) => {
             e.stopPropagation();
             doOnConfirm();
-            if (toggleMobileMenu) toggleMobileMenu();
+            closeMobileMenu();
           }}
         >
           Confirm
         </Button>
       </div>
-    </MobileMenu>
+    </>
   );
 }

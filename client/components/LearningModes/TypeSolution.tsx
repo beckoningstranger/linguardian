@@ -9,7 +9,6 @@ import {
   SolutionInput,
 } from "@/components";
 
-import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import {
   ItemToLearn,
   LanguageFeatures,
@@ -67,14 +66,12 @@ export default function TypeSolution({
         />
       )}
       {!moreReviews && targetLanguageFeatures.requiresHelperKeys && (
-        <MobileMenuContextProvider>
-          <HelperKeys
-            targetLanguageFeatures={targetLanguageFeatures}
-            solution={solution}
-            setSolution={setSolution}
-            inputRef={solutionInputRef}
-          />
-        </MobileMenuContextProvider>
+        <HelperKeys
+          targetLanguageFeatures={targetLanguageFeatures}
+          solution={solution}
+          setSolution={setSolution}
+          inputRef={solutionInputRef}
+        />
       )}
     </>
   );

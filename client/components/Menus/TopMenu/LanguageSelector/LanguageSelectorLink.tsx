@@ -5,24 +5,24 @@ import Flag from "react-world-flags";
 
 import { useUser } from "@/context/UserContext";
 import { LanguageWithFlagAndName } from "@/lib/contracts";
-import paths from "@/lib/paths";
+import { usePathname } from "next/navigation";
 
 interface LanguageSelectorLinkProps {
   setShowAllLanguageOptions: Function;
   language: LanguageWithFlagAndName;
-  currentPath: string;
 }
 
 export default function LanguageSelectorLink({
   setShowAllLanguageOptions,
   language,
-  currentPath,
 }: LanguageSelectorLinkProps) {
   const { setActiveLanguage } = useUser();
+  const currentPath = usePathname();
+  const href = currentPath.slice(0, -2) + language.code;
 
   return (
     <Link
-      href={paths.dashboardLanguagePath(language.code)}
+      href={href}
       onClick={() => {
         setShowAllLanguageOptions(false);
         setActiveLanguage(language);

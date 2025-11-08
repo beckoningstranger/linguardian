@@ -1,13 +1,12 @@
 "use client";
 
 import { Button } from "@headlessui/react";
-import { RefObject, useContext, useState } from "react";
+import { RefObject, useState } from "react";
 
 import HelperKeysSelector from "@/components/Menus/HelperKeysSelector";
-import MobileMenu from "@/components/Menus/MobileMenu/MobileMenu";
-import { MobileMenuContext } from "@/context/MobileMenuContext";
-import { cn } from "@/lib/utils";
+import { useMobileMenu } from "@/context/MobileMenuContext";
 import { LanguageFeatures } from "@/lib/contracts";
+import { cn } from "@/lib/utils";
 
 interface HelperKeysProps {
   targetLanguageFeatures: LanguageFeatures;
@@ -22,7 +21,7 @@ export default function HelperKeys({
   setSolution,
   inputRef,
 }: HelperKeysProps) {
-  const { toggleMobileMenu } = useContext(MobileMenuContext);
+  const { openMobileMenu } = useMobileMenu();
 
   const [showHelperKeys, setShowHelperKeys] = useState<boolean>(false);
 
@@ -38,15 +37,7 @@ export default function HelperKeys({
     "w-full bg-white/95 mt-1 tablet:text-cxlm text-clgm py-8";
   return (
     <>
-      <MobileMenu fromDirection="animate-from-top">
-        <HelperKeysSelector
-          target={targetLanguageFeatures.langCode}
-          handleHelperKeyClick={handleHelperKeyClick}
-          toggleMobileMenu={toggleMobileMenu!}
-          targetLanguageFeatures={targetLanguageFeatures}
-          mobile={true}
-        />
-      </MobileMenu>
+      {/* </MobileMenu> */}
       {showHelperKeys && (
         <HelperKeysSelector
           target={targetLanguageFeatures.langCode}
@@ -65,7 +56,16 @@ export default function HelperKeys({
           </Button>
           <Button
             className={cn(needHelpButtonStyling, "tablet:hidden text-cmdm")}
-            onClick={() => toggleMobileMenu!()}
+            onClick={() => {
+              openMobileMenu(
+                <HelperKeysSelector
+                  target={targetLanguageFeatures.langCode}
+                  handleHelperKeyClick={handleHelperKeyClick}
+                  targetLanguageFeatures={targetLanguageFeatures}
+                  mobile={true}
+                />
+              );
+            }}
           >
             Need help entering special characters?
           </Button>

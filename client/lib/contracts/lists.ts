@@ -146,6 +146,21 @@ export const createNewListFormSchema = listSchema
       .optional(),
   });
 
+export const expandListFormSchema = z
+  .object({ listNumber: z.number() })
+  .extend({
+    csvfile: z
+      .any()
+      .refine(
+        (files) =>
+          !files ||
+          files.length === 0 ||
+          (files[0] instanceof File && files[0].type === "text/csv"),
+        "Please upload a valid CSV file"
+      )
+      .optional(),
+  });
+
 export const listStatusSchema = z.enum(allListStatuses);
 
 export const unitInformationSchema = z.array(
@@ -248,7 +263,12 @@ export const listStoreDataSchema = z.object({
 export const parseResultSchema = z.object({
   row: z.number(),
   name: z.string(),
-  status: z.union([z.literal("success"), z.literal("error")]),
+  status: z.union([
+    z.literal("success"),
+    z.literal("error"),
+    z.literal("duplicate"),
+    z.literal("addedExisting"),
+  ]),
   message: z.string(),
 });
 
@@ -282,6 +302,7 @@ export type List = z.infer<typeof listSchema>;
 export type PopulatedList = z.infer<typeof populatedListSchema>;
 export type FullyPopulatedList = z.infer<typeof fullyPopulatedListSchema>;
 export type CreateNewListForm = z.infer<typeof createNewListFormSchema>;
+export type ExpandListForm = z.infer<typeof expandListFormSchema>;
 export type LearningModeWithInfo = z.infer<typeof learningModeWithInfoSchema>;
 export type LearningStats = z.infer<typeof learningStatsSchema>; // used for charts and learning buttons
 export type ListStatus = z.infer<typeof listStatusSchema>; // for recommending learning modes to users

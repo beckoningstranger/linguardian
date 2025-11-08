@@ -10,7 +10,6 @@ import toast from "react-hot-toast";
 
 import { EditUnitButton, NewUnitButton } from "@/components";
 import { useListContext } from "@/context/ListContext";
-import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { updateUnitOrderAction } from "@/lib/actions/list-actions";
 
 export default function ReorderableListUnits() {
@@ -65,16 +64,14 @@ export default function ReorderableListUnits() {
                       <div
                         ref={provided.innerRef}
                         key={index}
-                        className="flex w-full justify-center"
+                        className="flex w-full cursor-grab justify-center"
                         {...provided.dragHandleProps}
                         {...provided.draggableProps}
                       >
-                        <MobileMenuContextProvider>
-                          <EditUnitButton
-                            unitName={unitName}
-                            noOfItemsInUnit={unitInfo?.noOfItems ?? 0}
-                          />
-                        </MobileMenuContextProvider>
+                        <EditUnitButton
+                          unitName={unitName}
+                          noOfItemsInUnit={unitInfo?.noOfItems ?? 0}
+                        />
                       </div>
                     )}
                   </Draggable>

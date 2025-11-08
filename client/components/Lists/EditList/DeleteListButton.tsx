@@ -20,8 +20,8 @@ interface DeleteListButtonProps {
 }
 
 export default function DeleteListButton({ mode }: DeleteListButtonProps) {
-  const { toggleMobileMenu } = useMobileMenu();
-  if (!toggleMobileMenu) throw new Error("Could not use mobile menu");
+  const { openMobileMenu } = useMobileMenu();
+
   const [showConfirmDeleteModal, setShowConfirmDeleteModel] = useState(false);
   const router = useRouter();
   const { listName, listNumber, listLanguage, userIsAuthor } = useListContext();
@@ -67,17 +67,18 @@ export default function DeleteListButton({ mode }: DeleteListButtonProps) {
         <TopContextMenuButton
           mode="delete"
           onClick={() => {
-            if (toggleMobileMenu) toggleMobileMenu();
+            openMobileMenu(
+              <ConfirmCancelMobileMenu doOnConfirm={handleDeleteList}>
+                <div className="text-2xl">
+                  Careful! This will delete the entire list!
+                </div>
+                <div className="mt-8 text-xl">
+                  Are you sure you want to delete it?
+                </div>
+              </ConfirmCancelMobileMenu>
+            );
           }}
         />
-        <ConfirmCancelMobileMenu doOnConfirm={handleDeleteList}>
-          <div className="text-2xl">
-            Careful! This will delete the entire list!
-          </div>
-          <div className="mt-8 text-xl">
-            Are you sure you want to delete it?
-          </div>
-        </ConfirmCancelMobileMenu>
       </>
     );
 }

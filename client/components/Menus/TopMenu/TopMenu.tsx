@@ -5,7 +5,6 @@ import {
   TopMiddleNavigation,
 } from "@/components";
 import HamburgerMenu from "@/components/Menus/TopMenu/HamburgerMenu";
-import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { cn } from "@/lib/utils";
 
 interface TopMenuProps {
@@ -31,9 +30,7 @@ export default async function TopMenu({ opacity }: TopMenuProps) {
           <TopMenuLogo />
         </div>
         <TopMiddleNavigation />
-        <MobileMenuContextProvider>
-          <LanguageSelectorAndProfileLink />
-        </MobileMenuContextProvider>
+        <LanguageSelectorAndProfileLink />
       </div>
     </header>
   );

@@ -7,7 +7,6 @@ import {
   ApiResponse,
   FullyPopulatedList,
   fullyPopulatedListSchema,
-  LearningMode,
   List,
   listSchema,
   ListUpdate,
@@ -18,10 +17,7 @@ import {
   UnitNameUpdate,
 } from "@/lib/contracts";
 import { CreateNewListData, objectIdSchema } from "@/lib/schemas";
-import {
-  allSupportedLanguages,
-  supportedLanguageCodes,
-} from "@/lib/siteSettings";
+import { supportedLanguageCodes } from "@/lib/siteSettings";
 import { safeDbRead, safeDbWrite } from "@/lib/utils";
 import Lists from "@/models/list.schema";
 
@@ -193,6 +189,8 @@ export async function renameUnitName(
 }
 
 export async function deleteUnitFromList(listNumber: number, unitName: string) {
+  unitName = unitName.trim();
+
   const listResponse = await getListByListNumber(listNumber);
   if (!listResponse.success) {
     return { success: false, error: listResponse.error };
@@ -205,10 +203,14 @@ export async function deleteUnitFromList(listNumber: number, unitName: string) {
   }
 
   const updatedUnitOrder = list.unitOrder.filter((unit) => unit !== unitName);
+  const updatedUnits = list.units.filter(
+    (unitItem) => unitItem.unitName !== unitName
+  );
 
   const updatedList = {
     ...list,
     unitOrder: updatedUnitOrder,
+    units: updatedUnits,
   };
 
   return updateList(updatedList, listNumber);
