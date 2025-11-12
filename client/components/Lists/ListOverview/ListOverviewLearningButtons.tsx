@@ -18,7 +18,7 @@ export default function ListOverviewLearningButtons({
   const { availableModesWithInfo } = learningStats;
   return (
     <div id="ListOverviewLearningButtons" className="z-20">
-      <div className="fixed bottom-0 left-0 w-full overflow-hidden rounded-t-lg tablet:left-1/2 tablet:ml-[44px] tablet:w-[632px] tablet:-translate-x-1/2 desktop:hidden">
+      <div className="fixed bottom-0 left-0 w-full tablet:left-1/2 tablet:ml-12 tablet:w-[630px] tablet:-translate-x-1/2 desktop:hidden">
         <LearningButtonWithExpand
           listNumber={listNumber}
           learningStats={learningStats}

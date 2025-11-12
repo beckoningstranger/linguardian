@@ -77,7 +77,7 @@ export default async function UnitDetailPage({
       listNumber={listNumber}
       unitOrder={unitOrder}
     >
-      <div className="mb-24 tablet:flex tablet:justify-center desktop:mb-0 desktopxl:grid desktopxl:grid-cols-[100px_minmax(0,1600px)_100px]">
+      <div className="mb-24 tablet:ml-2 tablet:flex tablet:justify-center desktop:mb-0 desktopxl:grid desktopxl:grid-cols-[100px_minmax(0,1600px)_100px]">
         <IconSidebar showOn="tablet" position="left">
           <IconSidebarButton
             mode="back"
