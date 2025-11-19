@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
 
-import { Lemma } from "@/lib/schemas/lemmas";
-import Item from "@/models/item.schema";
+import { Lemma } from "@/lib/schemas";
+import { ItemModel } from "@/models";
 
 const lemmaSchema = new Schema<Lemma>(
   {
@@ -13,7 +13,7 @@ const lemmaSchema = new Schema<Lemma>(
     items: [
       {
         type: Schema.Types.ObjectId,
-        ref: Item,
+        ref: ItemModel,
       },
     ],
   },
@@ -26,4 +26,4 @@ const lemmaSchema = new Schema<Lemma>(
   }
 );
 
-export default model<Lemma>("Lemma", lemmaSchema);
+export const LemmaModel = model<Lemma>("Lemma", lemmaSchema);

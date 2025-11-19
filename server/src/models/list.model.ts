@@ -19,13 +19,13 @@ import {
 import { CreateNewListData, objectIdSchema } from "@/lib/schemas";
 import { supportedLanguageCodes } from "@/lib/siteSettings";
 import { safeDbRead, safeDbWrite } from "@/lib/utils";
-import Lists from "@/models/list.schema";
+import { ListModel } from "@/models";
 
 export async function getListByListNumber(
   listNumber: number
 ): Promise<ApiResponse<List>> {
   return await safeDbRead<List>({
-    dbReadQuery: () => Lists.findOne({ listNumber }).lean(),
+    dbReadQuery: () => ListModel.findOne({ listNumber }).lean(),
     schemaForValidation: listSchema,
   });
 }
@@ -34,7 +34,8 @@ export async function getListAuthorsByListNumber(listNumber: number) {
   const listWithOnlyAuthorsSchema = listSchema.pick({ authors: true });
   type ListWithOnlyAuthors = z.infer<typeof listWithOnlyAuthorsSchema>;
   return await safeDbRead<ListWithOnlyAuthors>({
-    dbReadQuery: () => Lists.findOne({ listNumber }).select("authors").lean(),
+    dbReadQuery: () =>
+      ListModel.findOne({ listNumber }).select("authors").lean(),
     schemaForValidation: listWithOnlyAuthorsSchema,
   });
 }
@@ -44,7 +45,7 @@ export async function getPopulatedListByListNumber(
 ): Promise<ApiResponse<PopulatedList>> {
   return await safeDbRead<PopulatedList>({
     dbReadQuery: () =>
-      Lists.findOne({ listNumber })
+      ListModel.findOne({ listNumber })
         .populate({
           path: "units.item",
         })
@@ -58,7 +59,7 @@ export async function getFullyPopulatedListByListNumber(
 ): Promise<ApiResponse<FullyPopulatedList>> {
   return await safeDbRead<FullyPopulatedList>({
     dbReadQuery: () =>
-      Lists.findOne({ listNumber })
+      ListModel.findOne({ listNumber })
         .populate({
           path: "units.item",
           populate: supportedLanguageCodes.map((lang) => ({
@@ -74,14 +75,14 @@ export async function getAllListsForLanguage(
   language: SupportedLanguage
 ): Promise<ApiResponse<List[]>> {
   return await safeDbRead<List[]>({
-    dbReadQuery: () => Lists.find({ "language.code": language }).lean(),
+    dbReadQuery: () => ListModel.find({ "language.code": language }).lean(),
     schemaForValidation: z.array(listSchema),
   });
 }
 
 export async function getNextListNumber(): Promise<number> {
   const response = await safeDbRead<List>({
-    dbReadQuery: () => Lists.findOne().sort("-listNumber").lean(),
+    dbReadQuery: () => ListModel.findOne().sort("-listNumber").lean(),
     schemaForValidation: listSchema,
   });
 
@@ -114,7 +115,7 @@ export async function createList(
 
   return await safeDbWrite({
     input: newList,
-    dbWriteQuery: (validatedList) => Lists.create(validatedList),
+    dbWriteQuery: (validatedList) => ListModel.create(validatedList),
     schemaForValidation: listSchemaWith_id,
     errorMessage: "Failed to create list",
   });
@@ -223,7 +224,7 @@ export async function updateList(
   return await safeDbWrite({
     input: listUpdate,
     schemaForValidation: listUpdateSchema,
-    dbWriteQuery: () => Lists.updateOne({ listNumber }, listUpdate),
+    dbWriteQuery: () => ListModel.updateOne({ listNumber }, listUpdate),
     errorMessage: `Error updating list number ${listNumber}`,
   });
 }
@@ -235,7 +236,7 @@ export async function deleteList(
     input: undefined,
     schemaForValidation: z.void(),
     dbWriteQuery: async () => {
-      const result = await Lists.deleteOne({ listNumber });
+      const result = await ListModel.deleteOne({ listNumber });
       if (result.deletedCount === 0) {
         throw new Error(`List ${listNumber} not found`);
       }
@@ -274,14 +275,14 @@ export async function addItemToUnit(
 
       // If the item exists in a different unit → move it
       if (currentUnit && currentUnit.unitName !== unitName) {
-        await Lists.updateOne(
+        await ListModel.updateOne(
           { listNumber },
           {
             $pull: { units: { item: itemId } }, // remove from current unit
           }
         );
 
-        await Lists.updateOne(
+        await ListModel.updateOne(
           { listNumber },
           {
             $addToSet: { units: { unitName, item: itemId } }, // add to new unit
@@ -294,7 +295,7 @@ export async function addItemToUnit(
       }
 
       // If not in any unit → just add it
-      await Lists.updateOne(
+      await ListModel.updateOne(
         { listNumber },
         {
           $addToSet: { units: { unitName, item: itemId } },
@@ -315,7 +316,7 @@ export async function removeItemFromList(
     input: undefined,
     schemaForValidation: z.void(),
     dbWriteQuery: () =>
-      Lists.updateOne(
+      ListModel.updateOne(
         { listNumber: listNumber },
         { $pull: { units: { item: itemId } } }
       ),

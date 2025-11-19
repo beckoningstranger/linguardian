@@ -8,8 +8,8 @@ import {
   User,
 } from "@/lib/contracts";
 import { generateLearningStats, sanitizeUser } from "@/lib/utils";
-import { getPopulatedListByListNumber } from "@/models/lists.model";
-import { getUser } from "@/models/users.model";
+import { getPopulatedListByListNumber } from "@/models/list.model";
+import { getUser } from "@/models/user.model";
 
 export async function DashboardDataService(
   { language }: DashboardDataParams,

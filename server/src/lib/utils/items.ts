@@ -1,3 +1,6 @@
+import { ClientSession, startSession, Types } from "mongoose";
+import { z } from "zod";
+
 import {
   ApiResponse,
   Item,
@@ -19,10 +22,8 @@ import {
   supportedLanguageCodes,
 } from "@/lib/siteSettings";
 import { normalizeString, safeDbWrite, slugifyString } from "@/lib/utils";
-import Items from "@/models/item.schema";
-import { getPopulatedItemById } from "@/models/items.model";
-import { ClientSession, startSession, Types } from "mongoose";
-import { z } from "zod";
+import { ItemModel } from "@/models";
+import { getPopulatedItemById } from "@/models/item.model";
 
 export function sanitizeItem(item: ItemWithTranslationsAndLemmas): Item {
   const { lemmas, ...rest } = item;
@@ -162,7 +163,7 @@ export async function updateTranslations(id: string, diff: TranslationDiff) {
       pullOps[`translations.${lang}`] = { $in: objectIds };
 
       // 🔄 also remove this item from those translations
-      await Items.updateMany(
+      await ItemModel.updateMany(
         { _id: { $in: objectIds } },
         { $pull: { [`translations.${lang}`]: itemObjectId } }
       );
@@ -178,7 +179,7 @@ export async function updateTranslations(id: string, diff: TranslationDiff) {
       };
 
       // 🔄 also add this item to those translations
-      await Items.updateMany(
+      await ItemModel.updateMany(
         { _id: { $in: objectIds } },
         { $addToSet: { [`translations.${lang}`]: itemObjectId } }
       );
@@ -196,7 +197,7 @@ export async function updateTranslations(id: string, diff: TranslationDiff) {
   return await safeDbWrite({
     input: updateOps,
     schemaForValidation: z.any(),
-    dbWriteQuery: (validatedOps) => Items.updateOne({ id }, validatedOps),
+    dbWriteQuery: (validatedOps) => ItemModel.updateOne({ id }, validatedOps),
     errorMessage: `Failed to update translations for item with id ${id}`,
   });
 }
@@ -312,7 +313,7 @@ export async function updateAllAffectedItems(
 
     if (isNewItem) {
       // --- Step 1: Create the new item
-      mainItem = await Items.create([itemToSubmit], { session }).then(
+      mainItem = await ItemModel.create([itemToSubmit], { session }).then(
         (res) => res[0]
       );
       if (!mainItem?.id) throw new Error("Could not get new item id");
@@ -337,7 +338,7 @@ export async function updateAllAffectedItems(
         throw new Error("Failed to update related translations");
 
       // --- Step 2: Update the main item
-      mainItem = await Items.findOneAndUpdate(
+      mainItem = await ItemModel.findOneAndUpdate(
         { _id: new Types.ObjectId(itemToSubmit.id) },
         { $set: itemToSubmit },
         { new: true, session }
@@ -386,7 +387,7 @@ async function updateTranslationsWithSession(
       const ids = diff.removed[lang]!.map((id) => new Types.ObjectId(id));
       if (ids.length > 0) {
         pullOps[`translations.${lang}`] = { $in: ids };
-        await Items.updateMany(
+        await ItemModel.updateMany(
           { _id: { $in: ids } },
           { $pull: { [`translations.${lang}`]: itemObjectId } },
           { session }
@@ -399,7 +400,7 @@ async function updateTranslationsWithSession(
       const ids = diff.added[lang]!.map((id) => new Types.ObjectId(id));
       if (ids.length > 0) {
         addOps[`translations.${lang}`] = { $each: ids };
-        await Items.updateMany(
+        await ItemModel.updateMany(
           { _id: { $in: ids } },
           { $addToSet: { [`translations.${lang}`]: itemObjectId } },
           { session }
@@ -412,7 +413,7 @@ async function updateTranslationsWithSession(
     if (Object.keys(addOps).length > 0) updateOps.$addToSet = addOps;
 
     if (Object.keys(updateOps).length > 0) {
-      await Items.updateOne({ _id: itemObjectId }, updateOps, { session });
+      await ItemModel.updateOne({ _id: itemObjectId }, updateOps, { session });
     }
 
     return { success: true, data: true };

@@ -20,8 +20,8 @@ import {
   pickSessionItems,
   possibleAnswers,
 } from "@/lib/utils/learningSessions";
-import { getFullyPopulatedListByListNumber } from "@/models/lists.model";
-import { getUser } from "@/models/users.model";
+import { getFullyPopulatedListByListNumber } from "@/models/list.model";
+import { getUser } from "@/models/user.model";
 
 export async function LearningSessionDataServiceForListOrUnit({
   listNumber,

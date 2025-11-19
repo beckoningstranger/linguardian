@@ -1,9 +1,13 @@
 import * as listsService from "@/lib/services/lists";
-import * as listsModel from "@/models/lists.model";
-import * as usersModel from "@/models/users.model";
 
-jest.mock("@/models/users.model");
-jest.mock("@/models/lists.model");
+// Service-layer modules that expose getUser, getAuthors, getPopulatedListByListNumber
+
+import * as userModel from "@/models/user.model";
+import * as listModel from "@/models/list.model";
+
+// Tell Jest to mock those modules
+jest.mock("@/models/user.model");
+jest.mock("@/models/list.model");
 
 describe("ListOverviewDataService", () => {
   const mockUser = {
@@ -31,25 +35,23 @@ describe("ListOverviewDataService", () => {
   const mockAuthorData = [{ username: "jan", usernameSlug: "jan-eisen" }];
 
   it("returns correct list overview data", async () => {
-    (usersModel.getUser as jest.Mock).mockResolvedValue({
+    (userModel.getUser as jest.Mock).mockResolvedValue({
       success: true,
       data: mockUser,
     });
 
-    (listsModel.getPopulatedListByListNumber as jest.Mock).mockResolvedValue({
+    (listModel.getPopulatedListByListNumber as jest.Mock).mockResolvedValue({
       success: true,
       data: mockList,
     });
 
-    (usersModel.getAuthors as jest.Mock).mockResolvedValue({
+    (userModel.getAuthors as jest.Mock).mockResolvedValue({
       success: true,
       data: mockAuthorData,
     });
 
     const result = await listsService.ListOverviewDataService(
-      {
-        listNumber: 42,
-      },
+      { listNumber: 42 },
       "user123"
     );
 

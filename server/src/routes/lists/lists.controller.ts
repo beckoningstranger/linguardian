@@ -10,7 +10,7 @@ import {
   unitNameUpdateSchema,
   unitOrderUpdateSchema,
 } from "@/lib/contracts";
-import { parseCSV } from "@/lib/parsecsv";
+import { importCSV } from "@/lib/importCSV";
 import { createNewListApiSchema } from "@/lib/schemas";
 import {
   AuthenticatedExpandListRequest,
@@ -20,6 +20,7 @@ import {
 import {
   composeListUpdateMessage,
   errorResponse,
+  formatResultMessage,
   formatZodErrors,
   normalizeCreateListBody,
   successMessageResponse,
@@ -35,8 +36,7 @@ import {
   removeItemFromList,
   renameUnitName,
   updateList,
-} from "@/models/lists.model";
-import { formatResultMessage } from "@/lib/utils/parsecsv";
+} from "@/models/list.model";
 
 // POST
 
@@ -66,19 +66,13 @@ export async function createListController(
 
     if (req.file && req.file.size > 0) {
       try {
-        const results = await parseCSV(
+        const imported = await importCSV(
           req.file.filename,
           newList.listNumber,
           newList.language.code
         );
-        parsedListResponse.results = results;
-        const failedCount = results.filter((r) => r.status === "error").length;
-        parsedListResponse.message =
-          failedCount > 0
-            ? `List created 🎉, but ${failedCount} ${
-                failedCount === 1 ? "item" : "items"
-              } could not be imported`
-            : "List created! 🎉";
+        parsedListResponse.results = imported.results;
+        parsedListResponse.message = formatResultMessage(imported.results);
       } catch (err) {
         parsedListResponse.message = `List created, but critical error during import:\n ${err}.`;
       }
@@ -106,14 +100,17 @@ export async function expandListWithCSVController(
   const listLanguageCode = response.data.language.code;
 
   try {
-    const results = await parseCSV(fileName, listNumber, listLanguageCode);
-    console.log("RESULTS", results);
+    const imported = await importCSV(fileName, listNumber, listLanguageCode);
+    console.log(
+      "errors",
+      imported.results.filter((result) => result.status === "error")
+    );
 
     const parsedListResponse: CreateListSuccessResponse = {
       listNumber: listNumber,
       listLanguage: listLanguageCode,
-      results,
-      message: formatResultMessage(results),
+      results: imported.results,
+      message: formatResultMessage(imported.results),
     };
 
     return successResponse(res, 201, parsedListResponse);

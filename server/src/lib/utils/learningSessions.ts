@@ -7,7 +7,7 @@ import {
   User,
 } from "@/lib/contracts";
 import { allLanguageFeatures, defaultSRSettings } from "@/lib/siteSettings";
-import { getUser } from "@/models/users.model";
+import { getUser } from "@/models/user.model";
 
 /* -------------------------------------------------------
  * Shared helpers

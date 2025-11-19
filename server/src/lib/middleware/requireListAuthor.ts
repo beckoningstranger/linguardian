@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { ListAuthors } from "@/lib/contracts";
 import { errorResponse } from "@/lib/utils";
-import { getListAuthorsByListNumber } from "@/models/lists.model";
+import { getListAuthorsByListNumber } from "@/models/list.model";
 
 export async function requireListAuthor(
   req: Request,

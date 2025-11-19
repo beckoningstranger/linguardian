@@ -20,8 +20,8 @@ import {
   getPopulatedItemById,
   searchDictionary,
   updateExistingItem,
-} from "@/models/items.model.js";
-import { addItemToUnit } from "@/models/lists.model";
+} from "@/models/item.model.js";
+import { addItemToUnit } from "@/models/list.model";
 
 export async function getItemIdBySlugController(req: Request, res: Response) {
   const result = fetchItemIdBySlugParamsSchema.safeParse(req.params);

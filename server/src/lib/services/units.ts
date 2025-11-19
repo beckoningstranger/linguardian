@@ -5,8 +5,8 @@ import {
   UnitOverviewData,
 } from "@/lib/contracts";
 import { generateLearningStats, logObjectPropertySizes } from "@/lib/utils";
-import { getFullyPopulatedListByListNumber } from "@/models/lists.model";
-import { getAuthors, getUser } from "@/models/users.model";
+import { getFullyPopulatedListByListNumber } from "@/models/list.model";
+import { getAuthors, getUser } from "@/models/user.model";
 
 export async function UnitOverviewDataService(
   { listNumber, unitNumber }: UnitDataParams,

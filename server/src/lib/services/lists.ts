@@ -9,8 +9,8 @@ import {
   getAllUnitInformation,
   logObjectPropertySizes,
 } from "@/lib/utils";
-import { getPopulatedListByListNumber } from "@/models/lists.model";
-import { getAuthors, getUser } from "@/models/users.model";
+import { getPopulatedListByListNumber } from "@/models/list.model";
+import { getAuthors, getUser } from "@/models/user.model";
 
 export async function ListOverviewDataService(
   { listNumber }: ListOverviewDataParams,

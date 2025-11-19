@@ -3,8 +3,8 @@ import {
   ListStoreData,
   ListStoreDataParams,
 } from "@/lib/contracts";
-import { getAllListsForLanguage } from "@/models/lists.model";
-import { getAuthors } from "@/models/users.model";
+import { getAllListsForLanguage } from "@/models/list.model";
+import { getAuthors } from "@/models/user.model";
 
 export async function ListStoreDataService({
   language,

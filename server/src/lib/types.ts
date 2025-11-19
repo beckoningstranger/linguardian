@@ -5,8 +5,44 @@ import { z, ZodSchema } from "zod";
 import {
   AuthTokenPayload,
   LearningMode,
+  ParseResult,
   SupportedLanguage,
 } from "@/lib/contracts";
+import { ParsedItem } from "@/lib/schemas";
+import { Types } from "mongoose";
+
+/** ------------------------- Parsing CSV Files -------------------------*/
+
+export type ParsedCSVRow = {
+  rowNumber: number;
+  item: ParsedItem;
+  rawName: string | undefined;
+};
+
+export type CSVParseResult = {
+  rows: ParsedCSVRow[];
+  results: ParseResult[];
+};
+
+export type ExistingItemInfo = {
+  _id: Types.ObjectId;
+  name: string;
+  language: SupportedLanguage;
+  partOfSpeech: string;
+};
+
+export type UnitToAdd = {
+  unitName: string;
+  itemId: Types.ObjectId;
+  rowNumber: number;
+  name: string;
+};
+
+export type ImportPlan = {
+  existingUnitsToAdd: UnitToAdd[];
+  newItems: ParsedCSVRow[];
+  results: ParseResult[];
+};
 
 /** ------------------------- Miscellaneous -------------------------*/
 

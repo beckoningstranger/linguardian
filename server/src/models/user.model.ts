@@ -1,3 +1,4 @@
+import { Types, UpdateResult } from "mongoose";
 import { z } from "zod";
 
 import {
@@ -24,8 +25,7 @@ import {
   safeDbRead,
   safeDbWrite,
 } from "@/lib/utils";
-import Users from "@/models/user.schema";
-import { Types, UpdateResult } from "mongoose";
+import { UserModel } from "./user.schema";
 
 export async function createUser(
   registrationData: RegistrationData
@@ -38,7 +38,7 @@ export async function createUser(
 
   return await safeDbWrite({
     input: newUser,
-    dbWriteQuery: (validatedUser) => Users.create(validatedUser),
+    dbWriteQuery: (validatedUser) => UserModel.create(validatedUser),
     schemaForValidation: extendedSensitiveUserSchema,
     errorMessage: `Failed to create user ${newUser.username}`,
   });
@@ -51,7 +51,7 @@ export async function updateUser(
   return await safeDbWrite({
     input: updateFields,
     dbWriteQuery: () =>
-      Users.updateOne({ id }, updateFields, {
+      UserModel.updateOne({ id }, updateFields, {
         runValidators: true,
       }),
     schemaForValidation: sensitiveUserSchema.partial(),
@@ -69,7 +69,7 @@ export async function getUser({
 
   return await safeDbRead({
     dbReadQuery: () =>
-      Users.findOne(dbQuery)
+      UserModel.findOne(dbQuery)
         .populate({
           path: "recentDictionarySearches",
           select: "name partOfSpeech IPA gender language definition slug",
@@ -84,7 +84,7 @@ export async function getAuthors(
 ): Promise<ApiResponse<AuthorData[]>> {
   return await safeDbRead({
     dbReadQuery: () =>
-      Users.find(
+      UserModel.find(
         { _id: { $in: userIds } },
         { username: 1, usernameSlug: 1, _id: 0 }
       ).lean(),
@@ -97,7 +97,7 @@ export async function isTaken(
   field: "username" | "email" | "usernameSlug",
   value: string
 ): Promise<boolean> {
-  const exists = await Users.exists({
+  const exists = await UserModel.exists({
     [field]: { $regex: `^${value}$`, $options: "i" },
   });
   return !!exists;
@@ -134,7 +134,7 @@ export async function updateReviewedItems(
     passedItemsAndFetchedItems.forEach(async (itemPair) => {
       if (!itemPair || !itemPair.passedItem)
         throw new Error("This item was not reviewed, please report this");
-      await Users.updateOne<User>(
+      await UserModel.updateOne<User>(
         { id: userId },
         {
           $pull: {
@@ -149,7 +149,7 @@ export async function updateReviewedItems(
         ? Math.min(itemPair.fetchedItem.level + 1, 10)
         : 1;
 
-      await Users.updateOne<User>(
+      await UserModel.updateOne<User>(
         { id: userId },
         {
           $push: {
@@ -182,7 +182,7 @@ export async function addNewlyLearnedItems(
   language: SupportedLanguage
 ) {
   try {
-    const user = await Users.findOne({ id: userId });
+    const user = await UserModel.findOne({ id: userId });
     if (!user) throw new Error("User not found");
     const learnedItemsForLanguage = user.learnedItems?.[language] || [];
     const sRSettings = user.customSRSettings?.[language] || defaultSRSettings;
@@ -200,7 +200,7 @@ export async function addNewlyLearnedItems(
     }));
     const updatedItems = [...filteredItems, ...newLearnedItems];
 
-    return await Users.updateOne<User>(
+    return await UserModel.updateOne<User>(
       { id: userId },
       {
         $set: {

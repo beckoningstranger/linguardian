@@ -12,8 +12,7 @@ import {
   SupportedLanguage,
 } from "@/lib/contracts";
 import { SafeDbReadOptions, SafeDbWriteOptions } from "@/lib/types";
-import Items from "@/models/item.schema";
-import Users from "@/models/user.schema";
+import { ItemModel, UserModel } from "@/models";
 
 export async function slugifyString(
   string: string,
@@ -35,7 +34,7 @@ export async function slugifyString(
 
   // Fetch all slugs that start with baseSlug
   const regex = new RegExp(`^${baseSlug}(-\\d+)?$`);
-  const existingSlugs = await Items.find({ slug: regex }).distinct("slug");
+  const existingSlugs = await ItemModel.find({ slug: regex }).distinct("slug");
 
   if (!existingSlugs.includes(baseSlug)) {
     return baseSlug;
@@ -58,7 +57,7 @@ export async function generateUniqueUsernameSlug(
 
   // Fetch all existing username slugs that start with the baseSlug
   const regex = new RegExp(`^${baseSlug}(-\\d+)?$`);
-  const existingSlugs = await Users.find({ usernameSlug: regex }).distinct(
+  const existingSlugs = await UserModel.find({ usernameSlug: regex }).distinct(
     "usernameSlug"
   );
 

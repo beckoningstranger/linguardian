@@ -4,7 +4,7 @@ import { placeholders } from "@/lib/constants";
 import { SupportedLanguage } from "@/lib/contracts";
 import { Lemma, lemmaSchema, ParsedItem } from "@/lib/schemas";
 import { safeDbWrite } from "@/lib/utils";
-import Lemmas from "@/models/lemma.schema";
+import { LemmaModel } from "@/models";
 
 export async function getLemmasFromEachParsedItemAndUpload(
   item: ParsedItem
@@ -38,7 +38,7 @@ export async function uploadLemmas(lemmaArray: Lemma[]): Promise<string[]> {
     safeDbWrite({
       input: lemmaItem,
       dbWriteQuery: () =>
-        Lemmas.findOneAndUpdate(
+        LemmaModel.findOneAndUpdate(
           { name: lemmaItem.name, language: lemmaItem.language },
           {
             $setOnInsert: lemmaItem,
@@ -67,7 +67,7 @@ export async function getAllLemmaObjectIdsForItem(
     .filter((word) => !placeholders.includes(word));
 
   // Look up ObjectIds for found lemmas up in Mongodb
-  const allFoundLemmaObjects = await Lemmas.find(
+  const allFoundLemmaObjects = await LemmaModel.find(
     { name: { $in: lemmasForCurrentItem }, language: itemLanguage },
     { _id: 1 }
   );

@@ -64,4 +64,4 @@ const mongooseListSchema = new Schema<List>(
   }
 );
 
-export default model<List>("List", mongooseListSchema);
+export const ListModel = model<List>("List", mongooseListSchema);

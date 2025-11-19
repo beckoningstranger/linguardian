@@ -1,5 +1,5 @@
-import { generateLearningStats, nextReviewMessage } from "@/lib/utils/lists";
 import { PartOfSpeech, SupportedLanguage } from "@/lib/contracts";
+import { generateLearningStats } from "@/lib/utils/lists";
 
 describe("generateLearningStats", () => {
   const mockItems = [

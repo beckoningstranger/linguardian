@@ -93,4 +93,7 @@ const mongooseItemSchema = new Schema<ItemWithTranslationsAndLemmas>(
   }
 );
 
-export default model<ItemWithTranslationsAndLemmas>("Item", mongooseItemSchema);
+export const ItemModel = model<ItemWithTranslationsAndLemmas>(
+  "Item",
+  mongooseItemSchema
+);

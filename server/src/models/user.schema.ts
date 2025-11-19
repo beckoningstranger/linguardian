@@ -141,4 +141,4 @@ const mongooseUserSchema = new Schema<SensitiveUser>(
   }
 );
 
-export default model<SensitiveUser>("User", mongooseUserSchema);
+export const UserModel = model<SensitiveUser>("User", mongooseUserSchema);

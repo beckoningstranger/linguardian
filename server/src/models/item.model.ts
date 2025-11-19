@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import {
   ApiResponse,
   coreItemSchema,
@@ -21,12 +23,11 @@ import {
   translationsAreEqual,
   updateAllAffectedItems,
 } from "@/lib/utils";
-import Items from "@/models/item.schema";
-import { z } from "zod";
+import { ItemModel } from "@/models";
 
 export async function getItemIdBySlug(slug: string) {
   return await safeDbRead({
-    dbReadQuery: () => Items.findOne({ slug }).select({ id: true }).lean(),
+    dbReadQuery: () => ItemModel.findOne({ slug }).select({ id: true }).lean(),
     schemaForValidation: coreItemSchema.pick({ id: true }),
   });
 }
@@ -37,7 +38,7 @@ export async function getPopulatedItemById(id: string) {
   }));
 
   return await safeDbRead({
-    dbReadQuery: () => Items.findOne({ _id: id }).populate(paths).lean(),
+    dbReadQuery: () => ItemModel.findOne({ _id: id }).populate(paths).lean(),
     schemaForValidation: itemSchemaWithPopulatedTranslations,
   });
 }
@@ -50,7 +51,7 @@ export async function searchDictionary(
 
   return await safeDbRead({
     dbReadQuery: () =>
-      Items.find({
+      ItemModel.find({
         normalizedName: { $regex: normalizedLowerCaseQuery, $options: "i" },
         language: { $in: languages },
       }).lean(),
@@ -69,7 +70,7 @@ export async function createNewItem(
 
   const existingItemResponse = await safeDbRead({
     dbReadQuery: () =>
-      Items.findOne({
+      ItemModel.findOne({
         name: item.name,
         language: item.language,
         partOfSpeech: item.partOfSpeech,
@@ -142,7 +143,7 @@ export async function updateExistingItem(
       input: itemToSubmit,
       schemaForValidation: itemToSubmitSchema,
       dbWriteQuery: () =>
-        Items.findOneAndUpdate(
+        ItemModel.findOneAndUpdate(
           { id: itemToSubmit.id },
           { $set: itemToSubmit },
           { new: true }

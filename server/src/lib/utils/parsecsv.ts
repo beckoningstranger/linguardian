@@ -1,12 +1,14 @@
 import { ParseResult } from "@/lib/contracts";
 
-export function trimPotentiallyUndefinedString(value: unknown) {
+export function trimPotentiallyUndefinedString(
+  value: unknown
+): string | undefined {
   return typeof value === "string" && value.length > 0
     ? value.trim()
     : undefined;
 }
 
-export function arrayFromPotentiallyUndefinedString(value: unknown) {
+export function arrayFromPotentiallyUndefinedString(value: unknown): string[] {
   return typeof value === "string" && value.length > 0
     ? value
         .split(", ")

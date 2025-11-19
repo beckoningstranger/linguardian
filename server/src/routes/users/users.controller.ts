@@ -8,7 +8,7 @@ import {
   isTaken,
   updateReviewedItems,
   updateUser,
-} from "@/models/users.model";
+} from "@/models/user.model";
 
 import {
   errorResponse,
