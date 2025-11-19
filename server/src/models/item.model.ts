@@ -8,10 +8,9 @@ import {
   ItemWithPopulatedTranslations,
   MessageWithItemInfoResponse,
   MessageWithSlugResponse,
-  NewItem,
   SupportedLanguage,
 } from "@/lib/contracts";
-import { itemToSubmitSchema } from "@/lib/schemas";
+import { dbItemSchema, NewItem } from "@/lib/schemas";
 import { allSupportedLanguages } from "@/lib/siteSettings";
 import {
   isNoResultError,
@@ -60,13 +59,14 @@ export async function searchDictionary(
 }
 
 export async function createNewItem(
-  item: NewItem
+  item: NewItem,
+  batchTag?: string
 ): Promise<ApiResponse<MessageWithItemInfoResponse | MessageWithSlugResponse>> {
   /* We call this function when users believe this is a new item (POST endpoint)
    and from parseCSV. We make sure we don't overwrite an existing item or create
    duplicates by looking existing items up first*/
 
-  const itemToSubmit = await prepareNewItemToSave(item);
+  const dbItem = await prepareNewItemToSave(item, batchTag);
 
   const existingItemResponse = await safeDbRead({
     dbReadQuery: () =>
@@ -98,7 +98,7 @@ export async function createNewItem(
   }
 
   const created = await updateAllAffectedItems(
-    itemToSubmit,
+    dbItem,
     {},
     item.translations,
     true
@@ -123,7 +123,7 @@ export async function createNewItem(
 export async function updateExistingItem(
   item: ItemWithPopulatedTranslations
 ): Promise<ApiResponse<MessageWithItemInfoResponse>> {
-  const itemToSubmit = await prepareExistingItemToSave(item);
+  const dbItem = await prepareExistingItemToSave(item);
 
   const oldItemResponse = await getPopulatedItemById(item.id);
   if (!oldItemResponse.success) {
@@ -140,15 +140,15 @@ export async function updateExistingItem(
 
   if (!changed) {
     const updated = await safeDbWrite({
-      input: itemToSubmit,
-      schemaForValidation: itemToSubmitSchema,
+      input: dbItem,
+      schemaForValidation: dbItemSchema,
       dbWriteQuery: () =>
         ItemModel.findOneAndUpdate(
-          { id: itemToSubmit.id },
-          { $set: itemToSubmit },
+          { id: dbItem.id },
+          { $set: dbItem },
           { new: true }
         ),
-      errorMessage: `Error updating item with slug: ${itemToSubmit.slug}`,
+      errorMessage: `Error updating item with slug: ${dbItem.slug}`,
     });
 
     if (!updated.success) return { success: false, error: updated.error };
@@ -170,7 +170,7 @@ export async function updateExistingItem(
   }
 
   const updated = await updateAllAffectedItems(
-    itemToSubmit,
+    dbItem,
     oldTranslations,
     newTranslations,
     false

@@ -16,7 +16,8 @@ function keyOf(name: string, lang: SupportedLanguage, pos: string): string {
 }
 
 export async function processNewItemsForLemmasAndTranslations(
-  newItems: ParsedCSVRow[]
+  newItems: ParsedCSVRow[],
+  batchTag: string
 ): Promise<{ newUnitsToAdd: UnitToAdd[]; results: ParseResult[] }> {
   const results: ParseResult[] = [];
   const allHarvestedItems: ParsedItem[] = [];
@@ -33,7 +34,8 @@ export async function processNewItemsForLemmasAndTranslations(
       const harvested = await harvestItemsWithoutTranslations(mainItem);
 
       const uploadIssues = await uploadParsedItemsWithoutTranslations(
-        harvested
+        harvested,
+        batchTag
       );
 
       if (lemmaIssues.length > 0 || uploadIssues.length > 0) {
@@ -188,7 +190,8 @@ async function harvestItemsWithoutTranslations(
 }
 
 async function uploadParsedItemsWithoutTranslations(
-  items: ParsedItem[]
+  items: ParsedItem[],
+  batchTag: string
 ): Promise<string[]> {
   const issues: string[] = [];
 
@@ -197,10 +200,13 @@ async function uploadParsedItemsWithoutTranslations(
       `Error uploading item ${item.name}. Part of speech: ${item.partOfSpeech}. Error was: ${error}`;
 
     try {
-      const response = await createNewItem({
-        ...item,
-        translations: {}, // translations linked later
-      });
+      const response = await createNewItem(
+        {
+          ...item,
+          translations: {}, // translations linked later
+        },
+        batchTag
+      );
 
       if (!response.success) {
         issues.push(errorString(response.error));

@@ -14,7 +14,7 @@ const paths = {
     listLanguage?: SupportedLanguage
   ) => {
     return listNumber && unitNumber && listLanguage && unitName
-      ? `/dictionary/new?initialName=${initialName}&addToList=${listNumber}&addToUnit=${unitNumber}&unitName=${unitName}&listLanguage=${listLanguage}`
+      ? `/dictionary/addNewItemToList?initialName=${initialName}&addToList=${listNumber}&addToUnit=${unitNumber}&unitName=${unitName}&listLanguage=${listLanguage}`
       : `/dictionary/new?initialName=${initialName}`;
   },
   editDictionaryItemPath: (slug: string) => `/dictionary/edit/${slug}`,

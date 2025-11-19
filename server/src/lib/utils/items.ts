@@ -4,19 +4,13 @@ import { z } from "zod";
 import {
   ApiResponse,
   Item,
-  itemSchemaWithTranslations,
   ItemWithPopulatedTranslations,
-  NewItem,
   PartOfSpeech,
   PopulatedTranslations,
   SupportedLanguage,
   Tag,
 } from "@/lib/contracts";
-import {
-  ItemToSubmit,
-  ItemWithTranslationsAndLemmas,
-  TranslationsAsObjectIds,
-} from "@/lib/schemas";
+import { DbItem, NewItem, TranslationsAsObjectIds } from "@/lib/schemas";
 import {
   allLanguageFeatures,
   supportedLanguageCodes,
@@ -24,14 +18,6 @@ import {
 import { normalizeString, safeDbWrite, slugifyString } from "@/lib/utils";
 import { ItemModel } from "@/models";
 import { getPopulatedItemById } from "@/models/item.model";
-
-export function sanitizeItem(item: ItemWithTranslationsAndLemmas): Item {
-  const { lemmas, ...rest } = item;
-
-  const result = itemSchemaWithTranslations.safeParse(rest);
-  if (!result.success) throw Error("Sanitizing item failed!");
-  return result.data;
-}
 
 export function filterOutInvalidTags(
   partOfSpeech: PartOfSpeech,
@@ -71,9 +57,10 @@ export function generateIds(): { _id: Types.ObjectId; id: string } {
 }
 
 export async function prepareNewItemToSave(
-  item: NewItem
-): Promise<ItemToSubmit> {
-  const itemToSubmit: ItemToSubmit = {
+  item: NewItem,
+  batchTag?: string
+): Promise<DbItem> {
+  const dbItem: DbItem = {
     ...item,
     ...generateIds(),
     lemmas: [],
@@ -82,34 +69,31 @@ export async function prepareNewItemToSave(
     translations: item.translations
       ? convertTranslationsToIds(item.translations)
       : {},
+    importBatch: batchTag,
   };
 
   if (item.tags)
-    itemToSubmit.tags = filterOutInvalidTags(
+    dbItem.tags = filterOutInvalidTags(
       item.partOfSpeech,
       item.language,
       item.tags
     );
 
-  deleteIf(itemToSubmit, "gender", item.partOfSpeech !== "noun");
+  deleteIf(dbItem, "gender", item.partOfSpeech !== "noun");
+  deleteIf(dbItem, "grammaticalCase", item.partOfSpeech !== "preposition");
   deleteIf(
-    itemToSubmit,
-    "grammaticalCase",
-    item.partOfSpeech !== "preposition"
-  );
-  deleteIf(
-    itemToSubmit,
+    dbItem,
     "pluralForm",
     item.partOfSpeech !== "noun" && item.partOfSpeech !== "adjective"
   );
 
-  return itemToSubmit;
+  return dbItem;
 }
 
 export async function prepareExistingItemToSave(
   item: ItemWithPopulatedTranslations
-): Promise<ItemToSubmit> {
-  const itemToSubmit: ItemToSubmit = {
+): Promise<DbItem> {
+  const dbItem: DbItem = {
     ...item,
     _id: new Types.ObjectId(item.id),
     lemmas: [],
@@ -117,32 +101,28 @@ export async function prepareExistingItemToSave(
   };
 
   if (item.tags)
-    itemToSubmit.tags = filterOutInvalidTags(
+    dbItem.tags = filterOutInvalidTags(
       item.partOfSpeech,
       item.language,
       item.tags
     );
 
-  itemToSubmit.slug = await slugifyString(
+  dbItem.slug = await slugifyString(
     item.name,
     item.language,
     item.partOfSpeech
   );
-  itemToSubmit.normalizedName = normalizeString(item.name);
+  dbItem.normalizedName = normalizeString(item.name);
 
-  deleteIf(itemToSubmit, "gender", item.partOfSpeech !== "noun");
+  deleteIf(dbItem, "gender", item.partOfSpeech !== "noun");
+  deleteIf(dbItem, "grammaticalCase", item.partOfSpeech !== "preposition");
   deleteIf(
-    itemToSubmit,
-    "grammaticalCase",
-    item.partOfSpeech !== "preposition"
-  );
-  deleteIf(
-    itemToSubmit,
+    dbItem,
     "pluralForm",
     item.partOfSpeech !== "noun" && item.partOfSpeech !== "adjective"
   );
 
-  return itemToSubmit;
+  return dbItem;
 }
 
 export async function updateTranslations(id: string, diff: TranslationDiff) {
@@ -296,26 +276,44 @@ export function translationsAreEqual(
   return true;
 }
 
+export function convertMongoItemToApiItem(doc: any): Item {
+  return {
+    ...doc,
+    id: doc.id.toString(),
+
+    lemmas: (doc.lemmas || []).map((id: Types.ObjectId) => id.toString()),
+
+    translations: Object.fromEntries(
+      supportedLanguageCodes.map((lang) => [
+        lang,
+        (doc.translations?.[lang] || []).map((id: Types.ObjectId) =>
+          id.toString()
+        ),
+      ])
+    ),
+  };
+}
+
 export async function updateAllAffectedItems(
-  itemToSubmit: ItemToSubmit,
+  dbItem: DbItem,
   oldTranslations: PopulatedTranslations,
   newTranslations: PopulatedTranslations,
   isNewItem: boolean
-): Promise<ApiResponse<ItemWithTranslationsAndLemmas>> {
+): Promise<ApiResponse<Item>> {
   const session = await startSession();
   session.startTransaction();
 
   try {
-    let mainItem: ItemWithTranslationsAndLemmas | null = null;
+    let mainItem: Item | null = null;
 
     // 🧮 Compute translation diff
     const diff = translationObjectsDiff(oldTranslations, newTranslations);
 
     if (isNewItem) {
       // --- Step 1: Create the new item
-      mainItem = await ItemModel.create([itemToSubmit], { session }).then(
-        (res) => res[0]
-      );
+      const [newItemDoc] = await ItemModel.create([dbItem], { session });
+
+      mainItem = convertMongoItemToApiItem(newItemDoc.toObject());
       if (!mainItem?.id) throw new Error("Could not get new item id");
 
       // --- Step 2: Treat all translations as newly added
@@ -330,7 +328,7 @@ export async function updateAllAffectedItems(
     } else {
       // --- Step 1: Update related translations bidirectionally
       const relatedUpdate = await updateTranslationsWithSession(
-        itemToSubmit.id,
+        dbItem.id,
         diff,
         session
       );
@@ -339,13 +337,13 @@ export async function updateAllAffectedItems(
 
       // --- Step 2: Update the main item
       mainItem = await ItemModel.findOneAndUpdate(
-        { _id: new Types.ObjectId(itemToSubmit.id) },
-        { $set: itemToSubmit },
+        { _id: new Types.ObjectId(dbItem.id) },
+        { $set: dbItem },
         { new: true, session }
       );
 
       if (!mainItem)
-        throw new Error(`Item not found during update: ${itemToSubmit.id}`);
+        throw new Error(`Item not found during update: ${dbItem.id}`);
     }
 
     // ✅ Commit all DB changes atomically

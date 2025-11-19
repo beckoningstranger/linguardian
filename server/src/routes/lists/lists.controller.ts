@@ -37,6 +37,7 @@ import {
   renameUnitName,
   updateList,
 } from "@/models/list.model";
+import { getUser } from "@/models/user.model";
 
 // POST
 
@@ -45,6 +46,10 @@ export async function createListController(
   res: Response
 ) {
   const normalizedBody = normalizeCreateListBody(req.body, req.file);
+  const userId = req.auth.id;
+  const userResponse = await getUser({ method: "_id", query: userId });
+  if (!userResponse.success) return errorResponse(res, 500, "User not found");
+  const user = userResponse.data;
 
   try {
     const result = createNewListApiSchema.safeParse(normalizedBody);
@@ -66,13 +71,14 @@ export async function createListController(
 
     if (req.file && req.file.size > 0) {
       try {
-        const imported = await importCSV(
+        const results = await importCSV(
           req.file.filename,
           newList.listNumber,
-          newList.language.code
+          newList.language.code,
+          user.username
         );
-        parsedListResponse.results = imported.results;
-        parsedListResponse.message = formatResultMessage(imported.results);
+        parsedListResponse.results = results;
+        parsedListResponse.message = formatResultMessage(results);
       } catch (err) {
         parsedListResponse.message = `List created, but critical error during import:\n ${err}.`;
       }
@@ -94,23 +100,28 @@ export async function expandListWithCSVController(
 ) {
   const listNumber = req.listNumber;
   const fileName = req.fileName;
+  const userId = req.auth.id;
+  const userResponse = await getUser({ method: "_id", query: userId });
+  if (!userResponse.success) return errorResponse(res, 500, "User not found");
+  const user = userResponse.data;
 
   const response = await getListByListNumber(listNumber);
   if (!response.success) return errorResponse(res, 400, "List not found");
   const listLanguageCode = response.data.language.code;
 
   try {
-    const imported = await importCSV(fileName, listNumber, listLanguageCode);
-    console.log(
-      "errors",
-      imported.results.filter((result) => result.status === "error")
+    const results = await importCSV(
+      fileName,
+      listNumber,
+      listLanguageCode,
+      user.username
     );
 
     const parsedListResponse: CreateListSuccessResponse = {
       listNumber: listNumber,
       listLanguage: listLanguageCode,
-      results: imported.results,
-      message: formatResultMessage(imported.results),
+      results,
+      message: formatResultMessage(results),
     };
 
     return successResponse(res, 201, parsedListResponse);

@@ -31,7 +31,7 @@ export function bgColor(nextReview?: number, itemLevel?: number) {
   if (!nextReview || !itemLevel) return "bg-white/90 hover:bg-white"; // not learned yet
 
   const itemIsDue = nextReview < Date.now();
-  const itemIsMature = itemLevel > 8;
+  const itemIsMature = itemLevel >= 8;
 
   if (itemIsDue) return "bg-blue-400 hover:bg-blue-500"; // due for review
   if (itemIsMature) return "bg-green-400 hover:bg-green-500"; // mature

@@ -17,6 +17,7 @@ export const objectIdArraySchema = z.array(objectIdSchema);
 export const unitItemWithObjectIdSchema = z.object({
   unitName: z.string(),
   item: objectIdSchema,
+  importBatch: z.string().nullable().optional(),
 });
 
 export type ObjectId = z.infer<typeof objectIdSchema>;

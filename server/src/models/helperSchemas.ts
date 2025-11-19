@@ -17,6 +17,7 @@ export const mongooseUnitItemSchema = new Schema<UnitItemWithObjectId>(
   {
     unitName: { type: String },
     item: { type: Schema.Types.ObjectId, ref: "Item" },
+    importBatch: { type: String, default: null },
   },
   { _id: false }
 );

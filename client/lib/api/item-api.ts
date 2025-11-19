@@ -3,9 +3,8 @@ import {
   ApiResponse,
   CreateItemParams,
   FetchItemIdBySlugParams,
-  ItemData,
-  itemDataSchema,
   itemIdResponseSchema,
+  itemSchemaWithPopulatedTranslations,
   ItemWithPopulatedTranslations,
   MessageWithItemInfoResponse,
   messageWithItemInfoResponseSchema,
@@ -20,7 +19,9 @@ import z from "zod";
 
 export async function fetchItemBySlug({
   itemSlug,
-}: FetchItemIdBySlugParams): Promise<ApiResponse<ItemData>> {
+}: FetchItemIdBySlugParams): Promise<
+  ApiResponse<ItemWithPopulatedTranslations>
+> {
   const response = await handleApiCall(
     () => fetch(`${SERVER}/items/id/${itemSlug}`),
     itemIdResponseSchema
@@ -56,7 +57,7 @@ export async function fetchItemById(itemId: string) {
           tags: [itemTag(itemId)],
         },
       }),
-    itemDataSchema
+    itemSchemaWithPopulatedTranslations
   );
 }
 

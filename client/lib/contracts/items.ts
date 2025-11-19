@@ -128,19 +128,12 @@ export const itemSchemaWithPopulatedTranslations = coreItemSchema.extend({
   translations: populatedTranslationsSchema,
 });
 
-export const newItemSchema = itemSchemaWithPopulatedTranslations.omit({
-  id: true,
-  normalizedName: true,
-  slug: true,
-});
-
 /** ----------- Fetching Items ----------- */
 
 export const fetchItemIdBySlugParamsSchema = z.object({ itemSlug: z.string() });
 export const fetchItemByIdParamsSchema = z.object({ id: objectIdStringSchema });
 
 export const itemIdResponseSchema = z.string();
-export const itemDataSchema = itemSchemaWithPopulatedTranslations;
 
 /** ----------- Creating and Editing Items ----------- */
 export const createItemParamsSchema = z.object({
@@ -174,7 +167,6 @@ export type Item = z.infer<typeof itemSchemaWithTranslations>;
 export type ItemWithPopulatedTranslations = z.infer<
   typeof itemSchemaWithPopulatedTranslations
 >;
-export type ItemData = z.infer<typeof itemDataSchema>;
 export type ItemIdResponse = z.infer<typeof itemIdResponseSchema>;
 
 export type FetchItemIdBySlugParams = z.infer<
@@ -190,4 +182,3 @@ export type Translations = z.infer<typeof translationsSchema>;
 export type SearchDictionaryParams = z.infer<
   typeof searchDictionaryParamsSchema
 >;
-export type NewItem = z.infer<typeof newItemSchema>;

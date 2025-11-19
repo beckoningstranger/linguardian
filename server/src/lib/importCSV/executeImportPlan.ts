@@ -6,7 +6,8 @@ import { ParseResult } from "@/lib/contracts";
 export async function executeImportPlan(
   existingUnitsToAdd: UnitToAdd[],
   newUnitsToAdd: UnitToAdd[],
-  listNumber: number
+  listNumber: number,
+  batchTag: string
 ): Promise<{ success: boolean; results: ParseResult[] }> {
   const results: ParseResult[] = [];
 
@@ -56,6 +57,7 @@ export async function executeImportPlan(
     const units = newUnitsToAdd.map(({ unitName, itemId }) => ({
       unitName,
       item: itemId,
+      importbatch: batchTag,
     }));
 
     const updateResult = await ListModel.updateOne(

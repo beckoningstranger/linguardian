@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 
-import { ItemWithTranslationsAndLemmas } from "@/lib/schemas";
+import { DbItem } from "@/lib/schemas";
 import { supportedLanguageCodes } from "@/lib/siteSettings";
 
 const translationFields = supportedLanguageCodes.reduce((acc, lang) => {
@@ -13,7 +13,7 @@ const translationFields = supportedLanguageCodes.reduce((acc, lang) => {
   return acc;
 }, {} as Record<string, any>);
 
-const mongooseItemSchema = new Schema<ItemWithTranslationsAndLemmas>(
+const mongooseItemSchema = new Schema<DbItem>(
   {
     id: { type: String, required: true, unique: true },
     name: {
@@ -85,6 +85,7 @@ const mongooseItemSchema = new Schema<ItemWithTranslationsAndLemmas>(
       type: [String],
     },
     flags: { type: [String] },
+    importBatch: { type: String, index: true, default: null },
   },
   {
     timestamps: true,
@@ -93,7 +94,4 @@ const mongooseItemSchema = new Schema<ItemWithTranslationsAndLemmas>(
   }
 );
 
-export const ItemModel = model<ItemWithTranslationsAndLemmas>(
-  "Item",
-  mongooseItemSchema
-);
+export const ItemModel = model<DbItem>("Item", mongooseItemSchema);
