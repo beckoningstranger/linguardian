@@ -27,7 +27,8 @@ export async function UnitOverviewDataService(
   const userIsLearningThisList =
     Array.isArray(learnedLists) && learnedLists.includes(list.listNumber);
 
-  const learnedItems = user.learnedItems[list.language.code] ?? [];
+  const learnedItemsForListLanguage =
+    user.learnedItems[list.language.code] ?? [];
   const ignoredItems = user.ignoredItems[list.language.code] ?? [];
   const ignoredItemIds = [...ignoredItems];
 
@@ -38,20 +39,21 @@ export async function UnitOverviewDataService(
   }
 
   const unitName = list.unitOrder[unitNumber - 1];
-  const itemIdsInUnit = list.units
+  const unitItems = list.units
     .filter((unit) => unit.unitName === unitName)
-    .map(({ item }) => item);
+    .map((unitItem) => unitItem.item);
+  const unitItemIdSet = new Set(unitItems.map((item) => item.id));
+  const learnedItems = learnedItemsForListLanguage.filter(({ id }) =>
+    unitItemIdSet.has(id)
+  );
+
   const learningStats = generateLearningStats(
-    itemIdsInUnit,
+    unitItems,
     learnedItems,
     ignoredItemIds,
     user.native.code
   );
-  const unitItems = list.units
-    .filter((unit) => unit.unitName === unitName)
-    .map((unitItem) => unitItem.item);
 
-  const learnedItemsForListLanguage = user.learnedItems[list.language.code];
   const itemsPlusLearningInfo = unitItems.map((item) => {
     const foundLearnedItem = learnedItemsForListLanguage?.find(
       (learnedItem) => learnedItem.id === item.id

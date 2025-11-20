@@ -67,8 +67,14 @@ export function nextReviewMessage(
   }
 
   if (diff < 86400000) {
+    const msIntoHour = diff % 3600000;
+    const msToNextHour = 3600000 - msIntoHour;
+    // If we're within the last 30 minutes of the hour, round the message up.
+    if (msToNextHour <= 30 * 60000) {
+      return `due in <${hours + 1} hours`;
+    }
     // 86400000 = 24 hours
-    return `Due in ${hours} hour${hours !== 1 ? "s" : ""}`;
+    return `due in >${hours} hour${hours !== 1 ? "s" : ""}`;
   }
 
   const date = new Date(nextReview);

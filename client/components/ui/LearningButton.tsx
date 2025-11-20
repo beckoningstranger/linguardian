@@ -155,9 +155,10 @@ export default function LearningButton({
         )}
         {showLabel && (
           <div
-            className={`flex flex-1 flex-col text-hsm ${
-              !showIcon && usedWithExpandButton ? "pl-6" : ""
-            }`}
+            className={cn(
+              "flex flex-1 flex-col text-hsm",
+              !showIcon && usedWithExpandButton && "pl-6"
+            )}
           >
             {buttonLabel}
           </div>
