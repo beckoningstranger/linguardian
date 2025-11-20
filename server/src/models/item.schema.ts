@@ -13,6 +13,22 @@ const translationFields = supportedLanguageCodes.reduce((acc, lang) => {
   return acc;
 }, {} as Record<string, any>);
 
+const promptHelpers = supportedLanguageCodes.reduce((acc, lang) => {
+  acc[lang] = {
+    type: String,
+  };
+  return acc;
+}, {} as Record<string, any>);
+
+const alternativeAnswers = supportedLanguageCodes.reduce((acc, lang) => {
+  acc[lang] = [
+    {
+      type: String,
+    },
+  ];
+  return acc;
+}, {} as Record<string, any>);
+
 const mongooseItemSchema = new Schema<DbItem>(
   {
     id: { type: String, required: true, unique: true },
@@ -86,6 +102,8 @@ const mongooseItemSchema = new Schema<DbItem>(
     },
     flags: { type: [String] },
     importBatch: { type: String, index: true, default: null },
+    promptHelpers: promptHelpers,
+    alternativeAnswers: alternativeAnswers,
   },
   {
     timestamps: true,

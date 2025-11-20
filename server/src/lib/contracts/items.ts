@@ -46,6 +46,14 @@ export const translationsSchema = z.record(
   objectIdStringArraySchema
 );
 
+export const promptHelpersSchema = z
+  .record(supportedLanguageSchema, z.string())
+  .optional();
+
+export const alternativeAnswersSchema = z
+  .record(supportedLanguageSchema, z.array(z.string()))
+  .optional();
+
 export const coreItemSchema = z.object({
   id: z.union([objectIdStringSchema, z.literal("newItem")]),
   name: z
@@ -113,6 +121,8 @@ export const coreItemSchema = z.object({
     .optional(),
   context: z.array(contextItemSchema).optional(),
   flags: z.array(flagSchema).optional(),
+  promptHelpers: promptHelpersSchema,
+  alternativeAnswers: alternativeAnswersSchema,
 });
 
 export const itemSchemaWithTranslations = coreItemSchema.extend({
