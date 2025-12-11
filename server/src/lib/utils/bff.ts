@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import logger from "@/lib/logger";
 
 import {
   AuthenticatedRequest,
@@ -16,7 +17,7 @@ export function createAuthenticatedRequestHandler<TParams, TData>({
     try {
       const parsed = parseParams.safeParse(req.params);
       if (!parsed.success) {
-        console.error("validation failed in createHandlerAuthenticatedRequest");
+        logger.error("Validation failed in createHandlerAuthenticatedRequest");
         return errorResponse(res, 400, formatZodErrors(parsed.error));
       }
 
@@ -31,10 +32,10 @@ export function createAuthenticatedRequestHandler<TParams, TData>({
 
       return successResponse(res, 200, validated.data);
     } catch (err) {
-      console.error("Unexpected error processing query:", {
+      logger.error("Unexpected error processing query", { 
         query: req.query,
         error: err,
-      });
+       });
       return errorResponse(res, 500, "Internal server error");
     }
   };
@@ -60,10 +61,10 @@ export function createUnauthenticatedRequestHandler<TParams, TData>({
 
       return successResponse(res, 200, validated.data);
     } catch (err) {
-      console.error("Unexpected error processing query:", {
+      logger.error("Unexpected error processing query", { 
         query: req.query,
         error: err,
-      });
+       });
       return errorResponse(res, 500, "Internal server error");
     }
   };
@@ -80,10 +81,10 @@ export function logObjectPropertySizes(obj: Record<string, unknown>) {
     if (value !== undefined) {
       const size = getSizeInKB(value);
       totalSize += size;
-      console.log(`${key}: ${size.toFixed(2)} KB`);
+      logger.debug("Object size", { key, sizeKB: size.toFixed(2) });
     } else {
-      console.log(`${key}: undefined`);
+      logger.debug("Object size undefined", { key });
     }
   }
-  console.log(`Total: ${totalSize.toFixed(2)} KB`);
+  logger.debug("Total object size", { totalSizeKB: totalSize.toFixed(2) });
 }

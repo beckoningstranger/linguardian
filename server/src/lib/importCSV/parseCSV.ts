@@ -1,102 +1,127 @@
+import { createReadStream } from "fs";
+import { unlink } from "fs";
 import { parse } from "csv-parse";
-import { createReadStream, unlink } from "fs";
-import { join } from "path";
 
-import { SupportedLanguage } from "@/lib/contracts";
-import { parsedItemSchema } from "@/lib/schemas";
+import logger from "@/lib/logger";
+import { ParseResult, SupportedLanguage } from "@/lib/contracts";
+import { CSVParseResult, ParsedCSVRow } from "@/lib/types";
 import {
-  allLanguageFeatures,
-  supportedLanguageCodes,
+    arrayFromPotentiallyUndefinedString,
+    trimPotentiallyUndefinedString,
+} from "@/lib/utils/parsecsv";
+import {
+    allLanguageFeatures,
+    supportedLanguageCodes,
 } from "@/lib/siteSettings";
-import {
-  arrayFromPotentiallyUndefinedString,
-  trimPotentiallyUndefinedString,
-} from "@/lib/utils";
-import { CSVParseResult } from "@/lib/types";
+import { parsedItemSchema } from "@/lib/schemas";
 
-export async function parseCSV(
-  filename: string,
-  listLanguageCode: SupportedLanguage
+export function parseCSV(
+    file: string,
+    listLanguageCode: SupportedLanguage
 ): Promise<CSVParseResult> {
-  const results: CSVParseResult = {
-    rows: [],
-    results: [],
-  };
+    const rows: ParsedCSVRow[] = [];
+    const results: ParseResult[] = [];
+    let rowNumber = 1;
 
-  const file = join(process.cwd(), "data", "csvUploads", filename);
+    return new Promise((resolve, reject) => {
+        createReadStream(file)
+            .pipe(parse({ columns: true, skip_empty_lines: true }))
+            .on("data", (row: Record<string, string>) => {
+                rowNumber++;
 
-  let rowNumber = 2; // header = row 1
+                // Skip rows with no name
+                const name = trimPotentiallyUndefinedString(row.name);
+                if (!name) return;
 
-  const langFeatures = allLanguageFeatures.find(
-    (l) => l.langCode === listLanguageCode
-  );
-  if (!langFeatures) {
-    throw new Error(`Could not find language features for ${listLanguageCode}`);
-  }
+                try {
+                    // Always use the list language code (CSV doesn't have a language column)
+                    const languageCode = listLanguageCode;
 
-  return new Promise((resolve, reject) => {
-    createReadStream(file)
-      .pipe(parse({ columns: true, comment: "#" }))
-      .on("data", (data) => {
-        // skip blank rows
-        const isEmpty = Object.values(data).every(
-          (v) => typeof v === "string" && v.trim() === ""
-        );
-        if (isEmpty) return;
+                    // Build translations dynamically from supported languages
+                    const translations: Record<string, string[]> = {};
+                    for (const langCode of supportedLanguageCodes) {
+                        translations[langCode] =
+                            arrayFromPotentiallyUndefinedString(row[langCode]);
+                    }
 
-        const parsedItem = {
-          name: trimPotentiallyUndefinedString(data.name),
-          language: listLanguageCode,
-          languageName: langFeatures.langName,
-          flagCode: langFeatures.flagCode,
-          partOfSpeech: trimPotentiallyUndefinedString(data.partOfSpeech),
-          grammaticalCase: trimPotentiallyUndefinedString(data.case),
-          gender: trimPotentiallyUndefinedString(data.gender),
-          pluralForm:
-            data.partOfSpeech === "noun"
-              ? arrayFromPotentiallyUndefinedString(data.pluralForm)
-              : undefined,
-          tags: arrayFromPotentiallyUndefinedString(data.tags),
-          unit: trimPotentiallyUndefinedString(data.unit),
-          translations: {} as Partial<Record<SupportedLanguage, string[]>>,
-        };
+                    // Build alternativeAnswers dynamically from supported languages
+                    const alternativeAnswers: Record<string, string[]> = {};
+                    for (const langCode of supportedLanguageCodes) {
+                        alternativeAnswers[langCode] =
+                            arrayFromPotentiallyUndefinedString(
+                                row[`alternativeAnswers.${langCode}`]
+                            );
+                    }
 
-        for (const code of supportedLanguageCodes) {
-          const value = data[`t${code}`];
-          if (typeof value === "string" && value.trim().length > 0) {
-            parsedItem.translations[code] =
-              arrayFromPotentiallyUndefinedString(value);
-          }
-        }
+                    // Build promptHelpers dynamically from supported languages
+                    const promptHelpers: Record<string, string | undefined> =
+                        {};
+                    for (const langCode of supportedLanguageCodes) {
+                        promptHelpers[langCode] =
+                            trimPotentiallyUndefinedString(
+                                row[`promptHelpers.${langCode}`]
+                            );
+                    }
 
-        const parsed = parsedItemSchema.safeParse(parsedItem);
-        if (!parsed.success) {
-          results.results.push({
-            row: rowNumber,
-            name: data.name,
-            status: "error",
-            message: parsed.error.issues
-              .map((i) => `${i.path.join(".")}: ${i.message}`)
-              .join("; "),
-          });
-        } else {
-          results.rows.push({
-            rowNumber,
-            item: parsed.data,
-            rawName: data.name,
-          });
-        }
+                    const itemData = {
+                        name: name,
+                        language: languageCode,
+                        partOfSpeech: trimPotentiallyUndefinedString(
+                            row.partOfSpeech
+                        ),
+                        unit: trimPotentiallyUndefinedString(row.unit) || "",
+                        translations,
+                        tags: arrayFromPotentiallyUndefinedString(row.tags),
+                        alternativeAnswers,
+                        promptHelpers,
+                    };
 
-        rowNumber++;
-      })
-      .on("end", () => {
-        unlink(file, () =>
-          console.log("Temporary CSV file deleted:", filename)
-        );
-        resolve(results);
-      })
-      .on("error", (err) => {
-        reject(err);
-      });
-  });
+                    // Validate with Zod schema - this will ensure everything is formatted correctly
+                    const validationResult =
+                        parsedItemSchema.safeParse(itemData);
+
+                    if (!validationResult.success) {
+                        const errorMessages = validationResult.error.errors
+                            .map(
+                                (err) => `${err.path.join(".")}: ${err.message}`
+                            )
+                            .join("; ");
+                        results.push({
+                            row: rowNumber,
+                            name: name,
+                            status: "error" as const,
+                            message: `Validation error: ${errorMessages}`,
+                        });
+                        return;
+                    }
+
+                    const parsedRow: ParsedCSVRow = {
+                        rowNumber,
+                        item: validationResult.data,
+                        rawName: name,
+                    };
+                    rows.push(parsedRow);
+                } catch (err) {
+                    results.push({
+                        row: rowNumber,
+                        name: name || "unknown",
+                        status: "error" as const,
+                        message: `Parse error: ${
+                            err instanceof Error ? err.message : String(err)
+                        }`,
+                    });
+                }
+            })
+            .on("end", () => {
+                unlink(file, () => {
+                    logger.debug("Temporary CSV file deleted", {
+                        filename: file,
+                    });
+                });
+                resolve({ rows, results });
+            })
+            .on("error", (err) => {
+                reject(err);
+            });
+    });
 }

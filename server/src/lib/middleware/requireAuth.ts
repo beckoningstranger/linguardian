@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { jwtDecrypt } from "jose";
 
 import { jwtPayLoadSchema } from "../contracts";
+import { env } from "@/lib/env";
+import logger from "@/lib/logger";
 import { errorResponse } from "../utils";
 
 export async function requireAuth(
@@ -9,10 +11,6 @@ export async function requireAuth(
   res: Response,
   next: NextFunction
 ) {
-  const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
-  if (!NEXTAUTH_SECRET)
-    throw new Error("NEXTAUTH_SECRET not found in environment");
-
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith("Bearer ")) {
     return errorResponse(res, 401, "Unauthorized");
@@ -20,7 +18,7 @@ export async function requireAuth(
 
   const token = authHeader.split(" ")[1];
   try {
-    const key = Buffer.from(NEXTAUTH_SECRET, "base64");
+    const key = Buffer.from(env.NEXTAUTH_SECRET, "base64");
     const { payload } = await jwtDecrypt(token, key);
 
     const result = jwtPayLoadSchema.safeParse(payload);
@@ -30,7 +28,7 @@ export async function requireAuth(
     req.auth = result.data;
     next();
   } catch (err) {
-    console.error("requireAuth catch block", err);
+    logger.error("requireAuth catch block", { error: err });
     return errorResponse(res, 403, "Invalid or expired token");
   }
 }

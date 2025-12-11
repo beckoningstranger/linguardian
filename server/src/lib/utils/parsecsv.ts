@@ -1,4 +1,5 @@
 import { randomUUID } from "crypto";
+import logger from "@/lib/logger";
 import { mkdir, readFile, writeFile } from "fs/promises";
 import { join } from "path";
 
@@ -75,7 +76,7 @@ export async function saveImportLog(
 ): Promise<string | null> {
   const errorsOnly = results.filter((r) => r.status === "error");
   if (errorsOnly.length === 0) {
-    console.log("✅ No import errors — no log created.");
+    logger.info("No import errors — no log created");
     return null;
   }
 
@@ -105,12 +106,10 @@ export async function saveImportLog(
     const updatedLogs = [...existingLogs, ...newEntries];
     await writeFile(filePath, JSON.stringify(updatedLogs, null, 2), "utf-8");
 
-    console.log(
-      `⚠️  Appended ${newEntries.length} import errors to ${filePath}`
-    );
+    logger.info("Appended import errors to log file", { count: newEntries.length, filePath });
     return filePath;
   } catch (err) {
-    console.error("❌ Failed to write import error log:", err);
+    logger.error("Failed to write import error log", { error: err });
     throw err;
   }
 }
@@ -131,15 +130,15 @@ export async function deleteImportLogEntry(id: string): Promise<boolean> {
     const updatedLogs = logs.filter((entry: any) => entry.id !== id);
 
     if (updatedLogs.length === logs.length) {
-      console.warn("⚠️  No matching log entry found.");
+      logger.warn("No matching log entry found");
       return false;
     }
 
     await writeFile(filePath, JSON.stringify(updatedLogs, null, 2), "utf-8");
-    console.log(`🗑️  Deleted log entry with id ${id}`);
+    logger.info("Deleted log entry", { id });
     return true;
   } catch (err) {
-    console.error("❌ Failed to delete log entry:", err);
+    logger.error("Failed to delete log entry", { error: err });
     return false;
   }
 }

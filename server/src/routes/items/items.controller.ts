@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import logger from "@/lib/logger";
 
 import {
   createItemParamsSchema,
@@ -185,7 +186,7 @@ export async function searchDictionaryController(req: Request, res: Response) {
       result.data.query
     );
     if (!response.success) {
-      console.error(`Search failed for query ${query}: ${response.error}`);
+      logger.error("Search failed", { query, error: response.error });
       return successResponse(res, 200, []);
     }
     return successResponse(res, 200, response.data);

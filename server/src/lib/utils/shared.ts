@@ -1,4 +1,5 @@
 import { Response } from "express";
+import logger from "@/lib/logger";
 import { Types } from "mongoose";
 import { z, ZodError } from "zod";
 
@@ -186,7 +187,7 @@ export async function safeDbRead<T>(
       data: parsed.data,
     };
   } catch (err) {
-    console.error("safeDbRead error:", err);
+    logger.error("safeDbRead error", { error: err });
     return {
       success: false,
       error: (err as Error).message ?? errorMessage,

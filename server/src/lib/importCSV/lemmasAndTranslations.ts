@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import logger from "@/lib/logger";
 
 import { ParsedItem } from "@/lib/schemas";
 import { ParseResult, SupportedLanguage } from "@/lib/contracts";
@@ -214,7 +215,7 @@ async function uploadParsedItemsWithoutTranslations(
     } catch (err) {
       const error = (err as Error).message || "Unknown error occurred";
       issues.push(errorString(error));
-      console.error(errorString(error));
+      logger.error("Error processing lemma", { error: errorString(error) });
     }
   });
 
@@ -292,9 +293,7 @@ async function linkItemsToTheirLemmas(
           },
         });
       } catch (err) {
-        console.error(
-          `Error linking item ${item.name} to lemma with ObjectId ${lemmaObjectId}: ${err}`
-        );
+        logger.error("Error linking item to lemma", { itemName: item.name, lemmaObjectId, error: err });
       }
     });
   });

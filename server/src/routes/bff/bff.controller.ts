@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import logger from "@/lib/logger";
 
 import {
   dashboardDataParamsSchema,
@@ -175,6 +176,6 @@ export async function getLearningSessionForLanguageDataController(
 // TO DO
 
 export async function getProfileDataController(req: Request, res: Response) {
-  console.log("profile", req.query);
+  logger.debug("Profile request", { query: req.query });
   return errorResponse(res, 500, "Implement me");
 }

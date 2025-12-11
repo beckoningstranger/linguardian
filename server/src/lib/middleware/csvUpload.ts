@@ -1,4 +1,5 @@
 import multer from "multer";
+import logger from "@/lib/logger";
 import fs from "fs";
 import path from "path";
 import { Request, Response, NextFunction } from "express";
@@ -36,22 +37,22 @@ export const csvUploadMiddleware = (
   upload.single("csvfile")(req, res, (err) => {
     if (err instanceof multer.MulterError) {
       if (err.code === "LIMIT_FIELD_VALUE") {
-        console.error("LIMIT_FIELD_VALUE: File too large. Max 500KB allowed.");
+        logger.error("File upload rejected: file too large", { maxSize: "500KB" });
         return res
           .status(400)
           .json({ error: "File too large. Max 500KB allowed." });
       }
-      console.error(err.message);
+      logger.error("CSV upload error", { error: err.message });
       return res.status(400).json({ error: err.message });
     }
 
     if (err) {
       if (err.message === "Only CSV files are allowed!") {
-        console.error("Only CSV files are allowed!");
+        logger.error("File upload rejected: invalid file type", { allowedType: "CSV" });
         return res.status(400).json({ error: err.message });
       }
 
-      console.error("Unexpected error during csv upload: " + err.message);
+      logger.error("Unexpected error during CSV upload", { error: err.message });
       return res
         .status(500)
         .json({ error: "Unexpected error: " + err.message });

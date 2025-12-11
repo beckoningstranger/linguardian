@@ -1,19 +1,18 @@
 import { MongooseError } from "mongoose";
 import mongoose from "mongoose";
 
-const MONGO_URL = process.env.MONGO_URL;
+import { env } from "@/lib/env";
+import logger from "@/lib/logger";
 
 async function mongoConnect() {
   mongoose.connection.once("open", () =>
-    console.log("MongoDB connection ready!")
+    logger.info("MongoDB connection ready")
   );
   mongoose.connection.on("error", (err: MongooseError) => {
-    console.error("MongoDB connection error:", err);
+    logger.error("MongoDB connection error", { error: err.message, stack: err.stack });
   });
 
-  MONGO_URL
-    ? await mongoose.connect(MONGO_URL)
-    : console.error("No MONGO_URL set!");
+  await mongoose.connect(env.MONGO_URL);
 }
 
 async function mongoDisconnect() {

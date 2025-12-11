@@ -1,4 +1,5 @@
 import { ClientSession, startSession, Types } from "mongoose";
+import logger from "@/lib/logger";
 import { z } from "zod";
 
 import {
@@ -225,7 +226,7 @@ export async function updateRelatedItems(
   if (!isNewItem) {
     const response = await getPopulatedItemById(item.id);
     if (!response.success) {
-      console.warn("Could not find old item in updateRelatedItems");
+      logger.warn("Could not find old item in updateRelatedItems");
       return false;
     }
     oldTranslations = response.data.translations;
@@ -355,7 +356,7 @@ export async function updateAllAffectedItems(
     // ❌ Roll back everything if anything fails
     await session.abortTransaction();
     session.endSession();
-    console.error("Transaction aborted:", err);
+    logger.error("Transaction aborted", { error: err });
     return {
       success: false,
       error:
@@ -416,7 +417,7 @@ async function updateTranslationsWithSession(
 
     return { success: true, data: true };
   } catch (err) {
-    console.error("Failed during translation update:", err);
+    logger.error("Failed during translation update", { error: err });
     throw err;
   }
 }

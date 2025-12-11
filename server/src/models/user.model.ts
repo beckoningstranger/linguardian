@@ -1,4 +1,5 @@
 import { Types, UpdateResult } from "mongoose";
+import logger from "@/lib/logger";
 import { z } from "zod";
 
 import {
@@ -168,11 +169,7 @@ export async function updateReviewedItems(
     });
     return true;
   } catch (err) {
-    console.error(
-      `Error updating reviewed items. Received these ${JSON.stringify(
-        items
-      )}, user ${userId}, language ${language}. ${err}`
-    );
+    logger.error("Error updating reviewed items", { items, userId, language, error: err });
   }
 }
 
@@ -209,10 +206,7 @@ export async function addNewlyLearnedItems(
       }
     );
   } catch (err) {
-    console.error(
-      `Error adding newly learned items. Received these ${JSON.stringify(
-        items
-      )}, user ${userId}, language ${language}. ${err}`
-    );
+    logger.error("Error adding newly learned items", { items, userId, language, error: err });
+    throw err;
   }
 }
