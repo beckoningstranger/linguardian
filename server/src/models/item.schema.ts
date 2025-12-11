@@ -21,11 +21,9 @@ const promptHelpers = supportedLanguageCodes.reduce((acc, lang) => {
 }, {} as Record<string, any>);
 
 const alternativeAnswers = supportedLanguageCodes.reduce((acc, lang) => {
-  acc[lang] = [
-    {
-      type: String,
-    },
-  ];
+  acc[lang] = {
+    type: [String],
+  };
   return acc;
 }, {} as Record<string, any>);
 

@@ -60,6 +60,8 @@ export { default as PickMultipleOptions } from "./Dictionary/EditItemPage/PickMu
 export * from "./Dictionary/EditItemPage/PickMultipleOptions";
 export { default as PickMultipleTags } from "./Dictionary/EditItemPage/PickMultipleTags";
 export * from "./Dictionary/EditItemPage/PickMultipleTags";
+export { default as TinyLanguagePicker } from "./Dictionary/EditItemPage/TinyLanguagePicker";
+export * from "./Dictionary/EditItemPage/TinyLanguagePicker";
 export { default as EnterIPA } from "./Dictionary/EditItemPage/IPA/EnterIPA";
 export * from "./Dictionary/EditItemPage/IPA/EnterIPA";
 export { default as EnterIPAField } from "./Dictionary/EditItemPage/IPA/EnterIPAField";
@@ -70,6 +72,8 @@ export { default as IPAKeys } from "./Dictionary/EditItemPage/IPA/IPAKeys";
 export * from "./Dictionary/EditItemPage/IPA/IPAKeys";
 export { default as StyledIPATab } from "./Dictionary/EditItemPage/IPA/StyledIPATab";
 export * from "./Dictionary/EditItemPage/IPA/StyledIPATab";
+export { default as ItemAlternativeAnswers } from "./Dictionary/ItemPage/ItemAlternativeAnswers";
+export * from "./Dictionary/ItemPage/ItemAlternativeAnswers";
 export { default as ItemContext } from "./Dictionary/ItemPage/ItemContext";
 export * from "./Dictionary/ItemPage/ItemContext";
 export { default as ItemDetails } from "./Dictionary/ItemPage/ItemDetails";
