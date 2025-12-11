@@ -1,6 +1,6 @@
 "use client";
 
-import { Logo } from "@/components";
+import Logo from "@/components/Logo";
 import { Button } from "@headlessui/react";
 import {
   PropsWithChildren,

@@ -1,17 +1,15 @@
 import { notFound } from "next/navigation";
 
-import {
-  IconSidebar,
-  IconSidebarButton,
-  Leaderboard,
-  ListBarChart,
-  ListOverviewLearningButtons,
-  ListPieChart,
-  TopContextMenu,
-  TopContextMenuButton,
-  UnitHeader,
-  UnitItems,
-} from "@/components";
+import IconSidebar from "@/components/IconSidebar/IconSidebar";
+import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
+import Leaderboard from "@/components/Lists/ListOverview/Leaderboard";
+import ListBarChart from "@/components/Charts/ListBarChart";
+import ListOverviewLearningButtons from "@/components/Lists/ListOverview/ListOverviewLearningButtons";
+import ListPieChart from "@/components/Charts/ListPieChart";
+import TopContextMenu from "@/components/Menus/TopMenu/TopContextMenu/TopContextMenu";
+import TopContextMenuButton from "@/components/Menus/TopMenu/TopContextMenu/TopContextMenuButton";
+import UnitHeader from "@/components/Lists/UnitOverview/UnitHeader";
+import UnitItems from "@/components/Lists/UnitOverview/UnitItems";
 import { UnitContextProvider } from "@/context/UnitContext";
 import { fetchUnitOverviewPageData } from "@/lib/api/bff-api";
 import paths from "@/lib/paths";

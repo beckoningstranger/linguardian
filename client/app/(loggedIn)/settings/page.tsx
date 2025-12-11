@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { StopLearningLanguageButton } from "@/components";
+import StopLearningLanguageButton from "@/components/StopLearningLanguageButton";
 import paths from "@/lib/paths";
 import { getUserOnServer } from "@/lib/utils/server";
 

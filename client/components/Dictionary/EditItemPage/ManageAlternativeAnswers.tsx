@@ -5,7 +5,7 @@ import { PlusCircleIcon } from "@heroicons/react/16/solid";
 import { useEffect, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 
-import { FormErrors } from "@/components";
+import FormErrors from "@/components/Forms/FormErrors";
 import { useMobileMenu } from "@/context/MobileMenuContext";
 import { useUser } from "@/context/UserContext";
 import {

@@ -1,6 +1,7 @@
 "use client";
 
-import { UnitHeaderArrowButton, UnitNameInput } from "@/components";
+import UnitHeaderArrowButton from "@/components/Lists/UnitOverview/UnitHeaderArrowButton";
+import UnitNameInput from "@/components/Lists/EditUnit/UnitNameInput";
 import { useUnitContext } from "@/context/UnitContext";
 
 interface EditUnitHeaderProps {}

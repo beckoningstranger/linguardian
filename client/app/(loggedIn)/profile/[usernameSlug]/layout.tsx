@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-import { LayoutWithTopMenu } from "@/components";
+import LayoutWithTopMenu from "@/components/Layout/LayoutWithTopMenu";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 
 interface LayoutProps {

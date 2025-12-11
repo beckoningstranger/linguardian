@@ -1,12 +1,10 @@
 import { notFound } from "next/navigation";
 
-import {
-  IconSidebar,
-  IconSidebarButton,
-  ItemDetails,
-  TopContextMenu,
-  TopContextMenuButton,
-} from "@/components";
+import IconSidebar from "@/components/IconSidebar/IconSidebar";
+import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
+import ItemDetails from "@/components/Dictionary/ItemPage/ItemDetails";
+import TopContextMenu from "@/components/Menus/TopMenu/TopContextMenu/TopContextMenu";
+import TopContextMenuButton from "@/components/Menus/TopMenu/TopContextMenu/TopContextMenuButton";
 import { fetchItemBySlug } from "@/lib/api/item-api";
 import { SupportedLanguage } from "@/lib/contracts";
 import paths from "@/lib/paths";

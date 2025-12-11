@@ -4,7 +4,8 @@ import { ListboxOption } from "@headlessui/react";
 import { MouseEventHandler, useState } from "react";
 import Flag from "react-world-flags";
 
-import { LanguagePicker, OnboardingSubmitButton } from "@/components";
+import LanguagePicker from "@/components/Onboarding/LanguagePicker";
+import OnboardingSubmitButton from "@/components/Onboarding/OnboardingSubmitButton";
 import { LanguageWithFlagAndName } from "@/lib/contracts";
 import { allLanguageFeatures } from "@/lib/siteSettings";
 

@@ -1,8 +1,6 @@
-import {
-  BackgroundGradient,
-  BackgroundPicture,
-  LandingPageMenu,
-} from "@/components";
+import BackgroundGradient from "@/components/Menus/LandingPageMenu/BackgroundGradient";
+import BackgroundPicture from "@/components/Layout/BackgroundPicture";
+import LandingPageMenu from "@/components/Menus/LandingPageMenu/LandingPageMenu";
 import { ReactNode } from "react";
 
 interface RootLayoutProps {

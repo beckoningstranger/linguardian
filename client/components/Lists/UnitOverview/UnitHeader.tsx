@@ -1,4 +1,4 @@
-import { UnitHeaderArrowButton } from "@/components";
+import UnitHeaderArrowButton from "@/components/Lists/UnitOverview/UnitHeaderArrowButton";
 
 interface UnitHeaderProps {
   unitName?: string;

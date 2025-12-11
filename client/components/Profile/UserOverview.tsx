@@ -1,8 +1,6 @@
-import {
-  BasicUserInfo,
-  CompetencyBadge,
-  ProfilePicWithBadges,
-} from "@/components";
+import BasicUserInfo from "@/components/Profile/BasicUserInfo";
+import CompetencyBadge from "@/components/Profile/CompetencyBadge";
+import ProfilePicWithBadges from "@/components/Profile/ProfilePicWithBadges";
 import { User } from "@/lib/contracts";
 
 interface UserOverviewProps {

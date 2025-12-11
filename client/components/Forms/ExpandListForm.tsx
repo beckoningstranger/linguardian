@@ -13,7 +13,7 @@ import {
 } from "@/lib/contracts";
 import paths from "@/lib/paths";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components";
+import Button from "@/components/ui/Button";
 import SubmitCSVFile from "./SubmitCSVFile";
 
 interface ExpandListWithCsvFormProps {

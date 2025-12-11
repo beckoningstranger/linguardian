@@ -5,7 +5,8 @@ import { PlusCircleIcon } from "@heroicons/react/16/solid";
 import { RefObject, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 
-import { FormErrors, StyledTextArea } from "@/components";
+import FormErrors from "@/components/Forms/FormErrors";
+import StyledTextArea from "@/components/Forms/StyledTextArea";
 import { ItemWithPopulatedTranslations } from "@/lib/contracts";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 

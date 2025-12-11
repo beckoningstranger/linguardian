@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { FormErrors, StyledInput, StyledTextArea } from "@/components";
+import FormErrors from "@/components/Forms/FormErrors";
+import StyledInput from "@/components/Forms/StyledInput";
+import StyledTextArea from "@/components/Forms/StyledTextArea";
 import { updateListDetailsAction } from "@/lib/actions/list-actions";
 import {
   ListDetailsUpdate,

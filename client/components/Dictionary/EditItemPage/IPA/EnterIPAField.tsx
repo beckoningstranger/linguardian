@@ -8,7 +8,8 @@ import {
   useState,
 } from "react";
 
-import { IPAKeyboard, StyledInput } from "@/components";
+import IPAKeyboard from "@/components/Dictionary/EditItemPage/IPA/IPAKeyboard";
+import StyledInput from "@/components/Forms/StyledInput";
 import { useKeyboard } from "@/context/KeyboardContext";
 import { IPA } from "@/lib/contracts";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";

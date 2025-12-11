@@ -1,14 +1,12 @@
 import { notFound } from "next/navigation";
 
-import {
-  DeleteListButton,
-  EditListHeader,
-  IconSidebar,
-  IconSidebarButton,
-  ReorderableListUnits,
-  TopContextMenu,
-  TopContextMenuButton,
-} from "@/components";
+import DeleteListButton from "@/components/Lists/EditList/DeleteListButton";
+import EditListHeader from "@/components/Lists/EditList/EditListHeader";
+import IconSidebar from "@/components/IconSidebar/IconSidebar";
+import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
+import ReorderableListUnits from "@/components/Lists/EditList/ReorderableListUnits";
+import TopContextMenu from "@/components/Menus/TopMenu/TopContextMenu/TopContextMenu";
+import TopContextMenuButton from "@/components/Menus/TopMenu/TopContextMenu/TopContextMenuButton";
 import ExpandListWithCSV from "@/components/Lists/EditList/ExpandListWithCSV";
 import { ListContextProvider } from "@/context/ListContext";
 import { fetchEditListPageData } from "@/lib/api/bff-api";

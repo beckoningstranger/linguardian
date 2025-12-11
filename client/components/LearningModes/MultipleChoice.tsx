@@ -2,7 +2,7 @@
 import { Button } from "@headlessui/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { ReviewStatus } from "@/components";
+import type { ReviewStatus } from "@/components/LearningModes/LearnAndReview";
 import { ItemToLearn } from "@/lib/contracts";
 import { cn, shuffleArray } from "@/lib/utils";
 

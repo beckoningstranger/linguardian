@@ -1,6 +1,6 @@
 import { Button } from "@headlessui/react";
 
-import { ItemDetails } from "@/components";
+import ItemDetails from "@/components/Dictionary/ItemPage/ItemDetails";
 import { ItemToLearn, User } from "@/lib/contracts";
 
 interface ItemPresentationProps {

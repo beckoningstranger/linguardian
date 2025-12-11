@@ -3,7 +3,7 @@
 import { Input } from "@headlessui/react";
 import { RefObject, useEffect } from "react";
 
-import { ReviewStatus } from "@/components";
+import type { ReviewStatus } from "@/components/LearningModes/LearnAndReview";
 import { TIME_BETWEEN_REVIEWS } from "@/lib/constants";
 import {
   ItemWithPopulatedTranslations,

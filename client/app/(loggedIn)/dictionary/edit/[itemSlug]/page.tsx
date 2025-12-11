@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { EditOrCreateItem } from "@/components";
+import EditOrCreateItem from "@/components/Dictionary/EditItemPage/EditOrCreateItem";
 import { fetchItemBySlug } from "@/lib/api/item-api";
 import { KeyboardContextProvider } from "@/context/KeyboardContext";
 

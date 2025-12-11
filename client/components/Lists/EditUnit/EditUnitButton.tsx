@@ -1,6 +1,7 @@
 "use client";
 
-import { DeleteUnitButtonList, UnitNameInput } from "@/components";
+import DeleteUnitButtonList from "@/components/Lists/EditList/DeleteUnitButtonList";
+import UnitNameInput from "@/components/Lists/EditUnit/UnitNameInput";
 import { useListContext } from "@/context/ListContext";
 
 interface EditUnitButtonProps {

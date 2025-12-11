@@ -1,8 +1,6 @@
-import {
-  IconSidebar,
-  LearningButton,
-  LearningButtonWithExpand,
-} from "@/components";
+import IconSidebar from "@/components/IconSidebar/IconSidebar";
+import LearningButton from "@/components/ui/LearningButton";
+import LearningButtonWithExpand from "@/components/ui/LearningButtonWithExpand";
 import { LearningStats } from "@/lib/contracts";
 
 interface ListOverviewLearningButtonsProps {

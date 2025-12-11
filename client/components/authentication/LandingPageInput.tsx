@@ -3,7 +3,8 @@
 import { forwardRef } from "react";
 import { useFormContext } from "react-hook-form";
 
-import { FormErrors, StyledInput } from "@/components";
+import FormErrors from "@/components/Forms/FormErrors";
+import StyledInput from "@/components/Forms/StyledInput";
 
 type LandingPageInputProps = {
   type: string;

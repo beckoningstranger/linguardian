@@ -2,7 +2,8 @@
 
 import { RefObject, useState } from "react";
 
-import { IconSidebarButton, TopContextMenuButton } from "@/components";
+import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
+import TopContextMenuButton from "@/components/Menus/TopMenu/TopContextMenu/TopContextMenuButton";
 import ExpandListWithCsvForm from "@/components/Forms/ExpandListForm";
 import { useListContext } from "@/context/ListContext";
 import { useMobileMenu } from "@/context/MobileMenuContext";

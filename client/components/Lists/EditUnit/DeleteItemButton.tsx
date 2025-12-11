@@ -1,6 +1,7 @@
 "use client";
 
-import { ConfirmCancelMobileMenu, ConfirmCancelModal } from "@/components";
+import ConfirmCancelMobileMenu from "@/components/Modals/ConfirmCancelMobileMenu";
+import ConfirmCancelModal from "@/components/Modals/ConfirmCancelModal";
 import { useMobileMenu } from "@/context/MobileMenuContext";
 import { useUnitContext } from "@/context/UnitContext";
 import { deleteItemFromListAction } from "@/lib/actions/list-actions";

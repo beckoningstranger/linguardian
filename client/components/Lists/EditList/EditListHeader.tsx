@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 
-import { ChangeListNameOrDescription } from "@/components";
+import ChangeListNameOrDescription from "@/components/Lists/EditList/ChangeListNameOrDescription";
 import { useListContext } from "@/context/ListContext";
 
 interface EditListHeaderProps {}

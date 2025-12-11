@@ -3,7 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FaPlus } from "react-icons/fa";
 
-import { Button, ListSearch, ListStoreCard } from "@/components";
+import Button from "@/components/ui/Button";
+import ListSearch from "@/components/Lists/ListStore/ListSearch";
+import ListStoreCard from "@/components/Lists/ListStore/ListStoreCard";
 import { fetchListStoreDataForLanguage } from "@/lib/api/bff-api";
 import { SupportedLanguage } from "@/lib/contracts";
 import paths from "@/lib/paths";

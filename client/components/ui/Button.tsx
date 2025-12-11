@@ -3,7 +3,7 @@
 import { Button as HeadlessUiButton } from "@headlessui/react";
 import { ReactNode } from "react";
 
-import { Spinner } from "@/components";
+import Spinner from "@/components/Spinner";
 import { cn } from "@/lib/utils";
 
 type ButtonProps = {

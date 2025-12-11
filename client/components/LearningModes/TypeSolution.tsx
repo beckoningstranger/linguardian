@@ -2,12 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import {
-  GenderCaseReview,
-  HelperKeys,
-  ReviewStatus,
-  SolutionInput,
-} from "@/components";
+import type { ReviewStatus } from "@/components/LearningModes/LearnAndReview";
+import GenderCaseReview from "@/components/LearningModes/GenderCaseReview";
+import HelperKeys from "@/components/LearningModes/HelperKeys";
+import SolutionInput from "@/components/LearningModes/SolutionInput";
 
 import {
   ItemToLearn,

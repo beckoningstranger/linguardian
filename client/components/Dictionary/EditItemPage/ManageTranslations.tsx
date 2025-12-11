@@ -6,7 +6,9 @@ import { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import Flag from "react-world-flags";
 
-import { AddItemDialog, FormErrors, MinusIcon } from "@/components";
+import AddItemDialog from "@/components/Dictionary/EditItemPage/AddItemDialog";
+import FormErrors from "@/components/Forms/FormErrors";
+import MinusIcon from "@/components/Dictionary/EditItemPage/MinusIcon";
 import { useUser } from "@/context/UserContext";
 import {
   Item,

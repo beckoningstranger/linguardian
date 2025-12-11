@@ -1,4 +1,4 @@
-import { QuitLearningSessionButton } from "@/components";
+import QuitLearningSessionButton from "@/components/LearningModes/QuitLearningSessionButton";
 import { LearningMode, SupportedLanguage } from "@/lib/contracts";
 
 interface LearningHeaderProps {

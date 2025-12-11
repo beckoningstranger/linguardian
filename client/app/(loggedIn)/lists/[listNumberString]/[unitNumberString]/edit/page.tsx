@@ -1,13 +1,11 @@
-import {
-  AddItemsToUnitButton,
-  DeleteUnitButton,
-  EditUnitHeader,
-  IconSidebar,
-  IconSidebarButton,
-  TopContextMenu,
-  TopContextMenuButton,
-  UnitItems,
-} from "@/components";
+import AddItemsToUnitButton from "@/components/Lists/EditUnit/AddItemsToUnitButton";
+import DeleteUnitButton from "@/components/Lists/EditUnit/DeleteUnitButton";
+import EditUnitHeader from "@/components/Lists/EditUnit/EditUnitHeader";
+import IconSidebar from "@/components/IconSidebar/IconSidebar";
+import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
+import TopContextMenu from "@/components/Menus/TopMenu/TopContextMenu/TopContextMenu";
+import TopContextMenuButton from "@/components/Menus/TopMenu/TopContextMenu/TopContextMenuButton";
+import UnitItems from "@/components/Lists/UnitOverview/UnitItems";
 import { UnitContextProvider } from "@/context/UnitContext";
 import { fetchEditUnitPageData } from "@/lib/api/bff-api";
 import paths from "@/lib/paths";

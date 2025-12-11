@@ -4,7 +4,7 @@ import { Button } from "@headlessui/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { IoMdRefresh } from "react-icons/io";
 
-import { ReviewStatus } from "@/components";
+import type { ReviewStatus } from "@/components/LearningModes/LearnAndReview";
 import { PuzzlePieceObject } from "@/lib/contracts";
 import { cn, shuffleArray } from "@/lib/utils";
 

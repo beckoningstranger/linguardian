@@ -1,4 +1,6 @@
-import { IconSidebar, LearningButton, ListDashboardCard } from "@/components";
+import IconSidebar from "@/components/IconSidebar/IconSidebar";
+import LearningButton from "@/components/ui/LearningButton";
+import ListDashboardCard from "@/components/Dashboard/ListDashboardCard";
 import {
   LearningModeWithInfo,
   ListForDashboard,

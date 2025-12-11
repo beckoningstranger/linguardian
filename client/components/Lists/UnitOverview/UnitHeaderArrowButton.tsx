@@ -5,7 +5,7 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 import paths from "@/lib/paths";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components";
+import Button from "@/components/ui/Button";
 import { useUnitContext } from "@/context/UnitContext";
 
 interface UnitHeaderArrowButtonProps {

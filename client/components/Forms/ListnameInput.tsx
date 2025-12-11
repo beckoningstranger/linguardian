@@ -2,7 +2,7 @@
 
 import { useFormContext } from "react-hook-form";
 
-import { FormErrors } from "@/components";
+import FormErrors from "@/components/Forms/FormErrors";
 import StyledInput from "@/components/Forms/StyledInput";
 
 interface ListnameInputProps {

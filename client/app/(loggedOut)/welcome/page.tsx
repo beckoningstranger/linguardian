@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import { Onboarding } from "@/components";
+import Onboarding from "@/components/Onboarding/Onboarding";
 import paths from "@/lib/paths";
 import { getUserOnServer } from "@/lib/utils/server";
 

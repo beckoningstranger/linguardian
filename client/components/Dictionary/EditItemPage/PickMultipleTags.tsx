@@ -5,7 +5,8 @@ import { PlusCircleIcon } from "@heroicons/react/16/solid";
 import { RefObject, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 
-import { FormErrors, PickMultipleOptions } from "@/components";
+import FormErrors from "@/components/Forms/FormErrors";
+import PickMultipleOptions from "@/components/Dictionary/EditItemPage/PickMultipleOptions";
 import { ItemWithPopulatedTranslations, Tag } from "@/lib/contracts";
 import { Label } from "@/lib/types";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";

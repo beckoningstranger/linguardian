@@ -4,7 +4,7 @@ import { Button, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { Dispatch, SetStateAction } from "react";
 
-import { Search } from "@/components";
+import Search from "@/components/Dictionary/Search/Search";
 import { Item, SupportedLanguage } from "@/lib/contracts";
 import { SearchMode } from "@/lib/types";
 

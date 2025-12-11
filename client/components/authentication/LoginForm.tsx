@@ -8,14 +8,12 @@ import { FieldValues, FormProvider, useForm } from "react-hook-form";
 import { FaFacebook } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 
-import {
-  Button,
-  FormErrors,
-  LandingPageFormContainer,
-  LandingPageFormHeader,
-  LandingPageInput,
-  Spinner,
-} from "@/components";
+import Button from "@/components/ui/Button";
+import FormErrors from "@/components/Forms/FormErrors";
+import LandingPageFormContainer from "@/components/authentication/LandingPageFormContainer";
+import LandingPageFormHeader from "@/components/authentication/LandingPageFormHeader";
+import LandingPageInput from "@/components/authentication/LandingPageInput";
+import Spinner from "@/components/Spinner";
 import paths from "@/lib/paths";
 import { SignInWithEmailSchema, signinWithEmailSchema } from "@/lib/contracts";
 

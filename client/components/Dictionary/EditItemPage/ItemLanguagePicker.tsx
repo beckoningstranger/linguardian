@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import Flag from "react-world-flags";
 
-import { ConfirmLanguageChange, FormErrors } from "@/components";
+import ConfirmLanguageChange from "@/components/Dictionary/EditItemPage/ConfirmLanguageChange";
+import FormErrors from "@/components/Forms/FormErrors";
 import { useUser } from "@/context/UserContext";
 import {
   ItemWithPopulatedTranslations,

@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { TbTrash } from "react-icons/tb";
 
-import { ConfirmCancelMobileMenu, ConfirmCancelModal } from "@/components";
+import ConfirmCancelMobileMenu from "@/components/Modals/ConfirmCancelMobileMenu";
+import ConfirmCancelModal from "@/components/Modals/ConfirmCancelModal";
 import { useListContext } from "@/context/ListContext";
 import { useMobileMenu } from "@/context/MobileMenuContext";
 import paths from "@/lib/paths";

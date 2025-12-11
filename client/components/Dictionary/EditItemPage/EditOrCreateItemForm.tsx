@@ -4,18 +4,16 @@ import { useRouter } from "next/navigation";
 import { useFormContext } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import {
-    EditItemName,
-    EditPartOfSpeechGenderAndCase,
-    EnterContextItems,
-    EnterDefinition,
-    EnterIPA,
-    EnterMultipleStrings,
-    ManageTranslations,
-    PickMultipleTags,
-} from "@/components";
+import EditItemName from "@/components/Dictionary/EditItemPage/EditItemName";
+import EditPartOfSpeechGenderAndCase from "@/components/Dictionary/EditItemPage/EditPartOfSpeechGenderAndCase";
+import EnterContextItems from "@/components/Dictionary/EditItemPage/EnterContextItems";
+import EnterDefinition from "@/components/Dictionary/EditItemPage/EnterDefinition";
+import EnterIPA from "@/components/Dictionary/EditItemPage/IPA/EnterIPA";
+import EnterMultipleStrings from "@/components/Dictionary/EditItemPage/EnterMultipleStrings";
+import ManageTranslations from "@/components/Dictionary/EditItemPage/ManageTranslations";
+import PickMultipleTags from "@/components/Dictionary/EditItemPage/PickMultipleTags";
 
-import { ItemLanguagePicker } from "@/components";
+import ItemLanguagePicker from "@/components/Dictionary/EditItemPage/ItemLanguagePicker";
 import { useUser } from "@/context/UserContext";
 import { createItemAction, updateItemAction } from "@/lib/actions/item-actions";
 import { EDIT_OR_CREATE_ITEM_FORM_ID } from "@/lib/constants";

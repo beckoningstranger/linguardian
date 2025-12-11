@@ -5,7 +5,7 @@ import { PlusCircleIcon } from "@heroicons/react/16/solid";
 import { useEffect, useState } from "react";
 import { FieldErrors, FieldValues } from "react-hook-form";
 
-import { FormErrors } from "@/components";
+import FormErrors from "@/components/Forms/FormErrors";
 import { Label } from "@/lib/types";
 import EnterMultipleStringsField from "@/components/Dictionary/EditItemPage/EnterMultipleStringsField";
 

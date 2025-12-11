@@ -2,7 +2,8 @@
 
 import { Control, Controller, FieldErrors, FieldValues } from "react-hook-form";
 
-import { FormErrors, StyledInput } from "@/components";
+import FormErrors from "@/components/Forms/FormErrors";
+import StyledInput from "@/components/Forms/StyledInput";
 import { ItemWithPopulatedTranslations } from "@/lib/contracts";
 
 interface EditItemNameProps {

@@ -5,7 +5,8 @@ import { PlusCircleIcon } from "@heroicons/react/16/solid";
 import { useMemo, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 
-import { EnterIPAField, FormErrors } from "@/components";
+import EnterIPAField from "@/components/Dictionary/EditItemPage/IPA/EnterIPAField";
+import FormErrors from "@/components/Forms/FormErrors";
 import { IPA, ItemWithPopulatedTranslations } from "@/lib/contracts";
 import { Label } from "@/lib/types";
 

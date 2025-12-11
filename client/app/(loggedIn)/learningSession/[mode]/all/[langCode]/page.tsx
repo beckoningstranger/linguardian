@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { BackgroundPicture, LearnAndReview } from "@/components";
+import BackgroundPicture from "@/components/Layout/BackgroundPicture";
+import LearnAndReview from "@/components/LearningModes/LearnAndReview";
 import { fetchLearningSessionForLanguageData } from "@/lib/api/bff-api";
 import type { LearningMode } from "@/lib/contracts";
 import { allLanguageFeatures } from "@/lib/siteSettings";

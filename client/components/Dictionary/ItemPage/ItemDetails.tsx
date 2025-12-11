@@ -1,15 +1,13 @@
 import Flag from "react-world-flags";
 
-import {
-    ItemAlternativeAnswers,
-    ItemContext,
-    ItemIPA,
-    ItemPartOfSpeech,
-    ItemPluralForms,
-    ItemSection,
-    ItemTags,
-    ItemTranslations,
-} from "@/components";
+import ItemAlternativeAnswers from "@/components/Dictionary/ItemPage/ItemAlternativeAnswers";
+import ItemContext from "@/components/Dictionary/ItemPage/ItemContext";
+import ItemIPA from "@/components/Dictionary/ItemPage/ItemIPA";
+import ItemPartOfSpeech from "@/components/Dictionary/ItemPage/ItemPartOfSpeech";
+import ItemPluralForms from "@/components/Dictionary/ItemPage/ItemPluralForms";
+import ItemSection from "@/components/Dictionary/ItemPage/ItemSection";
+import ItemTags from "@/components/Dictionary/ItemPage/ItemTags";
+import ItemTranslations from "@/components/Dictionary/ItemPage/ItemTranslations";
 import {
     ItemWithPopulatedTranslations,
     SupportedLanguage,
@@ -41,7 +39,7 @@ export default function ItemDetails({
         translations,
         alternativeAnswers,
     } = item;
-    console.log("AA", alternativeAnswers);
+
     return (
         <div
             id="ItemDetails"

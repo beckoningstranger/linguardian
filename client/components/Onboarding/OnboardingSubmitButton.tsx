@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import { Button, Spinner } from "@/components";
+import Button from "@/components/ui/Button";
+import Spinner from "@/components/Spinner";
 import { useUser } from "@/context/UserContext";
 import { LanguageWithFlagAndName, updateUserSchema } from "@/lib/contracts";
 import { useUserUpdater } from "@/lib/hooks/useUserUpdater";

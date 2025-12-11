@@ -1,4 +1,4 @@
-import { SearchResults } from "@/components";
+import SearchResults from "@/components/Dictionary/Search/SearchResults";
 import { Item } from "@/lib/contracts";
 
 interface RecentSearchesProps {

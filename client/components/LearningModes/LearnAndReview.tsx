@@ -2,14 +2,12 @@
 
 import { useCallback, useState } from "react";
 
-import {
-  ItemPresentation,
-  ItemPrompt,
-  LearningHeader,
-  MultipleChoice,
-  PuzzleMode,
-  TypeSolution,
-} from "@/components";
+import ItemPresentation from "@/components/LearningModes/ItemPresentation";
+import ItemPrompt from "@/components/LearningModes/ItemPrompt";
+import LearningHeader from "@/components/LearningModes/LearningHeader";
+import MultipleChoice from "@/components/LearningModes/MultipleChoice";
+import PuzzleMode from "@/components/LearningModes/PuzzleMode";
+import TypeSolution from "@/components/LearningModes/TypeSolution";
 import { useUser } from "@/context/UserContext";
 import { ItemToLearn, LanguageFeatures, LearningMode } from "@/lib/contracts";
 import { useLearningSessionSync } from "@/lib/hooks/useLearningSessionSync";

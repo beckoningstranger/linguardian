@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { CreatedByLine } from "@/components";
+import CreatedByLine from "@/components/Lists/ListOverview/CreatedByLine";
 
 interface ListHeaderProps {
   name: string;

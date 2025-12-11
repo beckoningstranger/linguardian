@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { FieldErrors, FieldValues } from "react-hook-form";
 
 import EnterContextItemsField from "@/components/Dictionary/EditItemPage/EnterContextItemField";
-import { FormErrors } from "@/components";
+import FormErrors from "@/components/Forms/FormErrors";
 import { ContextItem } from "@/lib/contracts";
 
 interface EnterContextItemsProps {

@@ -6,7 +6,8 @@ import { CheckmarkIcon } from "react-hot-toast";
 import { BiSolidErrorAlt } from "react-icons/bi";
 import { useDebounce } from "use-debounce";
 
-import { LandingPageInput, Spinner } from "@/components";
+import LandingPageInput from "@/components/authentication/LandingPageInput";
+import Spinner from "@/components/Spinner";
 import { isTakenAction } from "@/lib/actions/user-actions";
 import { IsTakenMode } from "@/lib/contracts";
 import { regexRules } from "@/lib/regexRules";

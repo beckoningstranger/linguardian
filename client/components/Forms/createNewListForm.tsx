@@ -6,14 +6,12 @@ import { useState } from "react";
 import { FieldValues, FormProvider, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import {
-  Button,
-  ListnameInput,
-  Spinner,
-  Dropdown,
-  SubmitCSVFile,
-  CheckboxField,
-} from "@/components";
+import Button from "@/components/ui/Button";
+import ListnameInput from "@/components/Forms/ListnameInput";
+import Spinner from "@/components/Spinner";
+import Dropdown from "@/components/Forms/Dropdown";
+import SubmitCSVFile from "@/components/Forms/SubmitCSVFile";
+import CheckboxField from "@/components/Forms/CheckboxField";
 import { useUser } from "@/context/UserContext";
 
 import {

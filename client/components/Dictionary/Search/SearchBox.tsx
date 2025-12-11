@@ -2,7 +2,7 @@
 
 import { Dispatch, SetStateAction, useEffect } from "react";
 
-import { SearchInput } from "@/components";
+import SearchInput from "@/components/Forms/SearchInput";
 import { searchDictionaryAction } from "@/lib/actions/dictionary-actions";
 import { Item, SupportedLanguage } from "@/lib/contracts";
 

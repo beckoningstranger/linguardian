@@ -2,7 +2,7 @@
 
 import { useFormContext } from "react-hook-form";
 
-import { StyledTextArea } from "@/components";
+import StyledTextArea from "@/components/Forms/StyledTextArea";
 
 export default function ListDescriptionTextarea() {
   const {

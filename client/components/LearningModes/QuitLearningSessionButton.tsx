@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 
-import { ConfirmCancelMobileMenu, ConfirmCancelModal } from "@/components";
+import ConfirmCancelMobileMenu from "@/components/Modals/ConfirmCancelMobileMenu";
+import ConfirmCancelModal from "@/components/Modals/ConfirmCancelModal";
 import { useMobileMenu } from "@/context/MobileMenuContext";
 import { SupportedLanguage } from "@/lib/contracts";
 import paths from "@/lib/paths";

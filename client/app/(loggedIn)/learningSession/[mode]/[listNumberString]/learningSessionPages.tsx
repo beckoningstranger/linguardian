@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 
-import { BackgroundPicture, LearnAndReview } from "@/components";
+import BackgroundPicture from "@/components/Layout/BackgroundPicture";
+import LearnAndReview from "@/components/LearningModes/LearnAndReview";
 import { fetchLearningSessionData } from "@/lib/api/bff-api";
 import type { LearningMode } from "@/lib/contracts";
 import type { SearchParams } from "@/lib/types";

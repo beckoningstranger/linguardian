@@ -12,7 +12,7 @@ import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Fragment, useState } from "react";
 import { FieldErrors, FieldValues } from "react-hook-form";
 
-import { FormErrors } from "@/components";
+import FormErrors from "@/components/Forms/FormErrors";
 import { Gender, GrammaticalCase, PartOfSpeech } from "@/lib/contracts";
 
 interface ComboBoxWrapperProps {

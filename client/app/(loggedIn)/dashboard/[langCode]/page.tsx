@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { Dashboard } from "@/components";
+import Dashboard from "@/components/Dashboard/Dashboard";
 import { fetchDashboardDataForUser } from "@/lib/api/bff-api";
 import { parseLanguageCode } from "@/lib/utils/pages";
 import { getUserOnServer } from "@/lib/utils/server";

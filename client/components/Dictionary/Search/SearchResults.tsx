@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 
-import { SearchResultItem } from "@/components";
+import SearchResultItem from "@/components/Dictionary/Search/SearchResultItem";
 import { updateRecentSearchesAction } from "@/lib/actions/user-actions";
 import { Item } from "@/lib/contracts";
 import paths from "@/lib/paths";

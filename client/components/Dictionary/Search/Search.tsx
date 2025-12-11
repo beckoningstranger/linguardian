@@ -5,7 +5,10 @@ import { useMemo, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useDebounce } from "use-debounce";
 
-import { RecentSearches, SearchBox, SearchResults, Button } from "@/components";
+import RecentSearches from "@/components/Dictionary/Search/RecentSearches";
+import SearchBox from "@/components/Dictionary/Search/SearchBox";
+import SearchResults from "@/components/Dictionary/Search/SearchResults";
+import Button from "@/components/ui/Button";
 import { useUser } from "@/context/UserContext";
 import { Item, SupportedLanguage } from "@/lib/contracts";
 import paths from "@/lib/paths";

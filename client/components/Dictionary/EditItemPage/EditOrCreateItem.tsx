@@ -3,14 +3,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 
-import {
-  Button,
-  EditOrCreateItemForm,
-  IconSidebar,
-  IconSidebarButton,
-  TopContextMenu,
-  TopContextMenuButton,
-} from "@/components";
+import Button from "@/components/ui/Button";
+import EditOrCreateItemForm from "@/components/Dictionary/EditItemPage/EditOrCreateItemForm";
+import IconSidebar from "@/components/IconSidebar/IconSidebar";
+import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
+import TopContextMenu from "@/components/Menus/TopMenu/TopContextMenu/TopContextMenu";
+import TopContextMenuButton from "@/components/Menus/TopMenu/TopContextMenu/TopContextMenuButton";
 
 import { EDIT_OR_CREATE_ITEM_FORM_ID } from "@/lib/constants";
 import {

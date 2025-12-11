@@ -5,15 +5,13 @@ import { signIn } from "next-auth/react";
 import { FormProvider, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import {
-  Button,
-  FormErrors,
-  InputWithAvailabilityCheck,
-  LandingPageFormContainer,
-  LandingPageFormHeader,
-  LandingPageInput,
-  Spinner,
-} from "@/components";
+import Button from "@/components/ui/Button";
+import FormErrors from "@/components/Forms/FormErrors";
+import InputWithAvailabilityCheck from "@/components/authentication/InputWithAvailabilityCheck";
+import LandingPageFormContainer from "@/components/authentication/LandingPageFormContainer";
+import LandingPageFormHeader from "@/components/authentication/LandingPageFormHeader";
+import LandingPageInput from "@/components/authentication/LandingPageInput";
+import Spinner from "@/components/Spinner";
 
 import { createUserAction } from "@/lib/actions/user-actions";
 

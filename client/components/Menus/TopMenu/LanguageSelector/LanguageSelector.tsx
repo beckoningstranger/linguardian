@@ -4,7 +4,8 @@ import { usePathname } from "next/navigation";
 import { RefObject, useState } from "react";
 import Flag from "react-world-flags";
 
-import { AddNewLanguageOption, LanguageSelectorLink } from "@/components";
+import AddNewLanguageOption from "@/components/Menus/TopMenu/LanguageSelector/AddNewLanguageOption";
+import LanguageSelectorLink from "@/components/Menus/TopMenu/LanguageSelector/LanguageSelectorLink";
 import { useUser } from "@/context/UserContext";
 import { MAX_NUMBER_OF_LANGUAGES_ALLOWED } from "@/lib/constants";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";

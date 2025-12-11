@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Flag from "react-world-flags";
 
-import { AddNewLanguageOption } from "@/components";
+import AddNewLanguageOption from "@/components/Menus/TopMenu/LanguageSelector/AddNewLanguageOption";
 import { useMobileMenu } from "@/context/MobileMenuContext";
 import { useUser } from "@/context/UserContext";
 import { allSupportedLanguages } from "@/lib/siteSettings";

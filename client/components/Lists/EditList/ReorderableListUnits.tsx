@@ -8,7 +8,8 @@ import {
 } from "@hello-pangea/dnd";
 import toast from "react-hot-toast";
 
-import { EditUnitButton, NewUnitButton } from "@/components";
+import EditUnitButton from "@/components/Lists/EditUnit/EditUnitButton";
+import NewUnitButton from "@/components/Lists/EditList/NewUnitButton";
 import { useListContext } from "@/context/ListContext";
 import { updateUnitOrderAction } from "@/lib/actions/list-actions";
 

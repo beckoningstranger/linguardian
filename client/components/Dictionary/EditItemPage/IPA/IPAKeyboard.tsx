@@ -3,7 +3,8 @@
 import { TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { Dispatch, SetStateAction } from "react";
 
-import { IPAKeys, StyledIPATab } from "@/components";
+import IPAKeys from "@/components/Dictionary/EditItemPage/IPA/IPAKeys";
+import StyledIPATab from "@/components/Dictionary/EditItemPage/IPA/StyledIPATab";
 import { IPA } from "@/lib/contracts";
 
 interface IPAKeyboardProps {

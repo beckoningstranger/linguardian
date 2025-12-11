@@ -1,9 +1,7 @@
-import {
-  LanguageSelectorAndProfileLink,
-  SideBarNavigation,
-  TopMenuLogo,
-  TopMiddleNavigation,
-} from "@/components";
+import LanguageSelectorAndProfileLink from "@/components/Menus/TopMenu/LanguageSelectorAndProfileLink";
+import SideBarNavigation from "@/components/Menus/TopMenu/Sidebar/SideBarNavigation";
+import TopMenuLogo from "@/components/Menus/TopMenu/TopMenuLogo";
+import TopMiddleNavigation from "@/components/Menus/TopMenu/TopMiddleNavigation";
 import HamburgerMenu from "@/components/Menus/TopMenu/HamburgerMenu";
 import { cn } from "@/lib/utils";
 

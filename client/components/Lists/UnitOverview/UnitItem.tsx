@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
-import { DeleteItemButton, UnitItemText } from "@/components";
+import DeleteItemButton from "@/components/Lists/EditUnit/DeleteItemButton";
+import UnitItemText from "@/components/Lists/UnitOverview/UnitItemText";
 import { updateRecentSearchesAction } from "@/lib/actions/user-actions";
 import { ItemPlusLearningInfo } from "@/lib/contracts";
 import paths from "@/lib/paths";

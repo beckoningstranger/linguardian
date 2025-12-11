@@ -11,7 +11,7 @@ import { ImStop } from "react-icons/im";
 import { TbPencil, TbTrash } from "react-icons/tb";
 import { TiDocumentAdd } from "react-icons/ti";
 
-import { Spinner } from "@/components";
+import Spinner from "@/components/Spinner";
 import { cn } from "@/lib/utils";
 
 type IconSidebarButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {

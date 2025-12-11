@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 
-import { NoMoreLanguagesToLearn, PickNewLanguage } from "@/components";
+import NoMoreLanguagesToLearn from "@/components/NoMoreLanguagesToLearn";
+import PickNewLanguage from "@/components/PickNewLanguage";
 import { allLanguageFeatures } from "@/lib/siteSettings";
 import { getUserOnServer } from "@/lib/utils/server";
 
