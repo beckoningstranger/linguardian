@@ -18,8 +18,7 @@ export default function IPAKeys({
 }: IPAKeysProps) {
   if (keys && keys.length > 0)
     return (
-      <div className="mx-auto mt-2 grid w-[400px] grid-cols-6 justify-center gap-2">
-        {/* <div className="mt-2 grid w-full grid-cols-6 justify-center gap-2 tablet:px-32 desktop:px-48"> */}
+      <div className="mx-auto mt-2 grid min-h-[160px] w-full grid-cols-5 gap-2 tablet:w-[400px] tablet:grid-cols-6">
         {keys.map((key) => (
           <div key={key} className="flex justify-center">
             <Button

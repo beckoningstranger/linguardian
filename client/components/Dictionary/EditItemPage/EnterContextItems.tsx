@@ -51,10 +51,10 @@ export default function EnterContextItems({
 
   return (
     userId && (
-      <div id="context" className="flex flex-col gap-2 text-sm sm:gap-x-1">
+      <div id="context" className="flex flex-col gap-x-1 phone:gap-2">
         <>
           <Button
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 text-cmdb"
             onClick={(e) => {
               e.preventDefault();
               const indexOfEmptyItem = contextItems.findIndex(

@@ -27,7 +27,7 @@ export default async function Dashboard({
     >
       <div
         id="Dashboard-Lists"
-        className="m-4 grid min-h-[calc(100vh-112px-32px)] w-full items-start justify-center tablet:m-8 tablet:min-h-[calc(100vh-112px-64px)]"
+        className="grid min-h-[calc(100vh-112px-32px)] w-full items-start justify-center py-2 tablet:m-8 tablet:min-h-[calc(100vh-112px-64px)]"
         // This calculation is full height - top menu height -  margin
       >
         <div

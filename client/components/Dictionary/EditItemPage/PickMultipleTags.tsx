@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@headlessui/react";
-import { PlusCircleIcon } from "@heroicons/react/20/solid";
+import { PlusCircleIcon } from "@heroicons/react/16/solid";
 import { RefObject, useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 

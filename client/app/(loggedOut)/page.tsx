@@ -14,7 +14,7 @@ export default async function LandingPage() {
   if (!user) {
     return (
       <div className="flex grow flex-col justify-end">
-        <div className="px-4 pb-24 text-center font-script text-h2xl tracking-tight text-white tablet:px-12">
+        <div className="px-4 pb-8 text-center font-script text-hxl tracking-tight text-white phone:pb-24 phone:text-h2xl tablet:px-12">
           <p className="text-pretty">
             Learning a language is like planting seeds
           </p>

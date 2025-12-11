@@ -22,7 +22,7 @@ interface SideBarNavigationProps {}
 export default function SideBarNavigation({}: SideBarNavigationProps) {
   const { toggleSidebar, showSidebar } = useSidebar();
   const { activeLanguage, user } = useUser();
-  const ref = useOutsideClick(toggleSidebar, showSidebar);
+  const ref = useOutsideClick(toggleSidebar, showSidebar, [".sidebar-open"]);
 
   if (!user || !activeLanguage) return null;
 

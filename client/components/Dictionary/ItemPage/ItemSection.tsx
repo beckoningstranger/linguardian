@@ -10,7 +10,7 @@ export default function ItemSection({ title, children }: ItemSectionProps) {
     return (
       <div className="flex flex-col gap-y-2 px-2">
         <h3 className="font-serif text-hmd font-bold text-grey-900">{title}</h3>
-        <div className="px-2 text-clgr">{children}</div>
+        <div className="p-2 text-clgr">{children}</div>
       </div>
     );
 }

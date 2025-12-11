@@ -10,7 +10,7 @@ import {
 } from "zod";
 
 import { SupportedLanguage } from "@/lib/contracts";
-import { allSupportedLanguages } from "@/lib/siteSettings";
+import { allLanguageFeatures, allSupportedLanguages } from "@/lib/siteSettings";
 import { formatZodErrors } from "@/lib/utils/shared";
 
 /**
@@ -88,4 +88,15 @@ export function showLanguageSelector(currentPathname: string): boolean {
   return showLanguageSelectorOnlyOn.some((path) =>
     currentPathname.includes(path)
   );
+}
+
+export function getFlagCodeFromLangCode(langCode: SupportedLanguage): string {
+  const languageFeaturesForLanguageCode = allLanguageFeatures.find(
+    (lang) => lang.langCode === langCode
+  );
+
+  if (!languageFeaturesForLanguageCode)
+    throw new Error("Language not found in getFlagCodeFromLangCode");
+
+  return languageFeaturesForLanguageCode.flagCode;
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@headlessui/react";
-import { PlusCircleIcon } from "@heroicons/react/20/solid";
+import { PlusCircleIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 import Flag from "react-world-flags";
@@ -60,7 +60,7 @@ export default function ManageTranslations({ item }: ManageTranslationsProps) {
       language.map((translation) => (
         <div
           key={translation.slug}
-          className="relative flex w-[200px] items-center gap-2 rounded-md border bg-white py-2 pl-3 shadow-md"
+          className="relative flex w-[320px] items-center gap-2 rounded-md border bg-white py-2 pl-3 shadow-md"
         >
           <Flag
             code={translation.language}
@@ -111,7 +111,7 @@ export default function ManageTranslations({ item }: ManageTranslationsProps) {
 
   return (
     <div id="translations">
-      <div className="flex flex-col gap-2 text-sm">
+      <div className="flex flex-col gap-2">
         <Button
           className="flex w-32 items-center gap-1"
           onClick={(e) => {

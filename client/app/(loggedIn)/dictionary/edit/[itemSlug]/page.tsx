@@ -35,7 +35,7 @@ export default async function EditPage({
 
   return (
     <KeyboardContextProvider>
-      <EditOrCreateItem item={item} comingFrom={comingFrom} />;
+      <EditOrCreateItem item={item} comingFrom={comingFrom} />
     </KeyboardContextProvider>
   );
 }

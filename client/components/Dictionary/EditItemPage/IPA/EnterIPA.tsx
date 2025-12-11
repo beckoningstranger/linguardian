@@ -56,7 +56,7 @@ export default function EnterIPA({ initialValue, label, IPA }: EnterIPAProps) {
 
   return (
     <div id="IPA">
-      <div className="flex flex-col gap-2 text-sm sm:gap-x-1">
+      <div className="flex flex-col phone:gap-2">
         <Button
           className="IPAPlusButton flex w-32 items-center gap-1 text-cmdb"
           onClick={(e) => {
@@ -66,7 +66,7 @@ export default function EnterIPA({ initialValue, label, IPA }: EnterIPAProps) {
         >
           <>
             IPA
-            <PlusCircleIcon className="flex size-5 items-center text-green-400" />
+            <PlusCircleIcon className="size-5 text-green-400" />
           </>
         </Button>
         <div className="flex w-full flex-col flex-wrap gap-2 sm:flex-row sm:items-center">

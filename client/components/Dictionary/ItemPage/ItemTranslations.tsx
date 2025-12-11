@@ -23,7 +23,7 @@ export default function ItemTranslations({
       {allUserLanguageCodes.map((lang) => (
         <div
           key={lang}
-          className="grid grid-cols-1 gap-2 pt-2 tablet:grid-cols-2 desktop:grid-cols-3"
+          className="grid grid-cols-1 gap-2 tablet:grid-cols-2 desktop:grid-cols-3"
         >
           {translations[lang] &&
             translations[lang].map((translation) => (

@@ -48,7 +48,7 @@ export default function EnterDefinition({
   const definitionRef = useOutsideClick(handleOutSideClick);
 
   return (
-    <div id="definition" className="flex flex-col gap-2 text-sm sm:gap-x-1">
+    <div id="definition" className="flex flex-col gap-x-1 phone:gap-2">
       <>
         <Button
           className="flex w-32 items-center gap-1"
@@ -60,7 +60,7 @@ export default function EnterDefinition({
           }}
         >
           <>
-            <p className="flex h-full items-center font-semibold capitalize">
+            <p className="flex h-full items-center text-cmdb font-semibold capitalize">
               Definition
             </p>
             <PlusCircleIcon className="flex h-full w-5 items-center text-green-400" />

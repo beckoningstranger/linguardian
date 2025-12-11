@@ -46,7 +46,7 @@ export default function ItemLanguagePicker({
     return (
       <Flag
         code={activeFlag}
-        className="my-2 size-12 rounded-full border-2 border-slate-300 object-cover"
+        className="size-12 rounded-full border-2 border-slate-300 object-cover"
       />
     );
 
@@ -57,7 +57,7 @@ export default function ItemLanguagePicker({
           <Flag
             code={lang.flag}
             key={lang.code}
-            className={`my-2 size-12 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-110  hover:grayscale-0 ${
+            className={`my-2 size-12 rounded-full border-2 border-slate-300 object-cover transition-all hover:scale-110 hover:grayscale-0 ${
               languageCode === lang.code ? "scale-110" : "scale-90 grayscale"
             }`}
             onClick={() => {

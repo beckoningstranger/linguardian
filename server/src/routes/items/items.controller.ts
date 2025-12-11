@@ -29,7 +29,8 @@ export async function getItemIdBySlugController(req: Request, res: Response) {
 
   const itemSlug = result.data.itemSlug;
   const response = await getItemIdBySlug(itemSlug);
-  if (!response.success) return errorResponse(res, 404, "Item not found");
+  if (!response.success)
+    return errorResponse(res, 404, `Item with slug ${itemSlug} not found`);
 
   return successResponse(res, 200, response.data.id);
 }
@@ -41,7 +42,8 @@ export async function getItemController(req: Request, res: Response) {
   const itemId = result.data.id;
 
   const response = await getPopulatedItemById(itemId);
-  if (!response.success) return errorResponse(res, 404, "Item not found");
+  if (!response.success)
+    return errorResponse(res, 404, `Item with id ${itemId} not found`);
 
   const item = response.data;
 

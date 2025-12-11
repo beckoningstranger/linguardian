@@ -16,6 +16,8 @@ app.use(
   })
 );
 app.use(morgan("combined"));
+
+// Do not JSON parse multipart/form-data
 app.use((req, res, next) => {
   const contentType = req.headers["content-type"] || "";
   if (contentType.startsWith("multipart/form-data")) {
