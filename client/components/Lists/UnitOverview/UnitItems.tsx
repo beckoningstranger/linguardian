@@ -1,3 +1,4 @@
+import { ReactElement } from "react";
 import UnitItem from "@/components/Lists/UnitOverview/UnitItem";
 import { ItemPlusLearningInfo, SupportedLanguage } from "@/lib/contracts";
 import { cn } from "@/lib/utils";
@@ -19,8 +20,8 @@ export default function UnitItems({
   userIsLearningThisList,
   editMode,
 }: UnitItemsProps) {
-  let learnedItems: JSX.Element[] = [];
-  let unlearnedItems: JSX.Element[] = [];
+  let learnedItems: ReactElement[] = [];
+  let unlearnedItems: ReactElement[] = [];
 
   itemsPlusLearningInfo.forEach((item, index) => {
     const translations = item.translations?.[userNative]

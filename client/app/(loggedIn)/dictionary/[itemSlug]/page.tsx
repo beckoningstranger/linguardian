@@ -35,9 +35,13 @@ import { filterItemDataForUserLanguages, getUserOnServer } from "@/lib/utils";
 //   }
 // }
 
-export async function generateMetadata({
-  params: { itemSlug },
-}: ItemPageProps) {
+export async function generateMetadata(props: ItemPageProps) {
+  const params = await props.params;
+
+  const {
+    itemSlug
+  } = params;
+
   const response = await fetchItemBySlug({ itemSlug });
   if (!response.success) notFound();
 
@@ -49,14 +53,23 @@ export async function generateMetadata({
 }
 
 interface ItemPageProps {
-  params: { itemSlug: string };
-  searchParams: { comingFrom: string };
+  params: Promise<{ itemSlug: string }>;
+  searchParams: Promise<{ comingFrom: string }>;
 }
 
-export default async function ItemPage({
-  params: { itemSlug },
-  searchParams: { comingFrom },
-}: ItemPageProps) {
+export default async function ItemPage(props: ItemPageProps) {
+  const searchParams = await props.searchParams;
+
+  const {
+    comingFrom
+  } = searchParams;
+
+  const params = await props.params;
+
+  const {
+    itemSlug
+  } = params;
+
   const user = await getUserOnServer();
   const response = await fetchItemBySlug({ itemSlug });
   if (!response.success) notFound();

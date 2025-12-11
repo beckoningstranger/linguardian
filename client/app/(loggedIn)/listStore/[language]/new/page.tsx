@@ -4,19 +4,23 @@ import { notFound } from "next/navigation";
 import CreateNewListForm from "@/components/Forms/createNewListForm";
 import { SupportedLanguage } from "@/lib/contracts";
 import { allLanguageFeatures } from "@/lib/siteSettings";
-import { Button } from "@/components/index";
+import Button from "@/components/ui/Button";
 
 export const metadata: Metadata = {
   title: "Upload a new list",
 };
 
 interface CreateListProps {
-  params: { language: SupportedLanguage };
+  params: Promise<{ language: SupportedLanguage }>;
 }
 
-export default async function CreateList({
-  params: { language },
-}: CreateListProps) {
+export default async function CreateList(props: CreateListProps) {
+  const params = await props.params;
+
+  const {
+    language
+  } = params;
+
   const languageFeaturesForLanguage = allLanguageFeatures.find(
     (lang) => lang.langCode === language
   );

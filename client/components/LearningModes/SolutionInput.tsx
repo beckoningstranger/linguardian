@@ -15,7 +15,7 @@ interface SolutionInputProps {
   targetLanguageFeatures: LanguageFeatures;
   solution: string;
   setSolution: Function;
-  inputRef: RefObject<HTMLInputElement>;
+  inputRef: RefObject<HTMLInputElement | null>;
   reviewStatus: ReviewStatus;
   setReviewStatus: Function;
   disable: boolean | undefined;

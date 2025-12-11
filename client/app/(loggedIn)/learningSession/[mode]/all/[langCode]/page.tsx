@@ -15,15 +15,16 @@ import {
 } from "@/lib/utils/pages";
 
 export const revalidate = 0;
-export const dynamic = "force-dynamic" as const;
-export const fetchCache = "default-no-store" as const;
+export const dynamic = "force-dynamic";
+export const fetchCache = "default-no-store";
 
 interface Props {
-  params: { mode: LearningMode; langCode: string };
-  searchParams: SearchParams;
+  params: Promise<{ mode: LearningMode; langCode: string }>;
+  searchParams: Promise<SearchParams>;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const languageFeatures = allLanguageFeatures.find(
     (lang) => lang.langCode === params.langCode
   );
@@ -32,7 +33,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: `Reviewing ${languageFeatures.langName}` };
 }
 
-export default async function Page({ params, searchParams }: Props) {
+export default async function Page(props: Props) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const overstudy = parseOverstudy(searchParams);
   const from = parseFrom(searchParams);
   const mode = parseLearningMode(params.mode);

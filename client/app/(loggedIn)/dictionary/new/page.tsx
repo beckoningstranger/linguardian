@@ -3,18 +3,22 @@ import { ItemWithPopulatedTranslations } from "@/lib/contracts";
 import { getUserOnServer } from "@/lib/utils";
 
 interface NewItemPageProps {
-  searchParams: {
+  searchParams: Promise<{
     initialName: string;
     addToList: string;
     addToUnit: string;
     unitName: string;
     language: string;
-  };
+  }>;
 }
 
-export default async function NewItemPage({
-  searchParams: { initialName },
-}: NewItemPageProps) {
+export default async function NewItemPage(props: NewItemPageProps) {
+  const searchParams = await props.searchParams;
+
+  const {
+    initialName
+  } = searchParams;
+
   const user = await getUserOnServer();
   if (!user) throw new Error("Could not get user");
 

@@ -7,7 +7,7 @@ import { getUserOnServer } from "@/lib/utils/server";
 import { useMobileMenu } from "@/context/MobileMenuContext";
 
 interface ProfilePageProps {
-  params: { usernameSlug: string };
+  params: Promise<{ usernameSlug: string }>;
 }
 
 // export async function generateMetadata({
@@ -21,9 +21,13 @@ interface ProfilePageProps {
 //   return await getAllUsernameSlugs();
 // }
 
-export default async function ProfilePage({
-  params: { usernameSlug },
-}: ProfilePageProps) {
+export default async function ProfilePage(props: ProfilePageProps) {
+  const params = await props.params;
+
+  const {
+    usernameSlug
+  } = params;
+
   // Get user id via resolveUserId
   // Get user with user id
   // Render the profile

@@ -6,9 +6,10 @@ import { parseLanguageCode } from "@/lib/utils/pages";
 import { getUserOnServer } from "@/lib/utils/server";
 
 interface DashboardPageProps {
-  params: { langCode: string };
+  params: Promise<{ langCode: string }>;
 }
-export default async function DashboardPage({ params }: DashboardPageProps) {
+export default async function DashboardPage(props: DashboardPageProps) {
+  const params = await props.params;
   const user = await getUserOnServer();
   if (!user) throw new Error("Could not get user, you need to be logged in");
 

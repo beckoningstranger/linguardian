@@ -29,15 +29,20 @@ import { getCurrentUserId } from "@/lib/utils/server";
 // }
 
 interface UnitDetailPageProps {
-  params: {
+  params: Promise<{
     listNumberString: string;
     unitNumberString: string;
-  };
+  }>;
 }
 
-export default async function UnitDetailPage({
-  params: { listNumberString, unitNumberString },
-}: UnitDetailPageProps) {
+export default async function UnitDetailPage(props: UnitDetailPageProps) {
+  const params = await props.params;
+
+  const {
+    listNumberString,
+    unitNumberString
+  } = params;
+
   const listNumber = parseInt(listNumberString);
   const unitNumber = parseInt(unitNumberString);
   const userId = await getCurrentUserId();

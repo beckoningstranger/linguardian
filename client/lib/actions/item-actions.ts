@@ -35,7 +35,7 @@ export async function updateItemAction(
   return await executeAuthenticatedAction({
     apiCall: () => updateItem(item),
     onSuccess: (res) => {
-      if (res.type === "itemInfo") revalidateTag(itemTag(item.id));
+      if (res.type === "itemInfo") revalidateTag(itemTag(item.id), 'max');
     },
   });
 }

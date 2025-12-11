@@ -12,7 +12,7 @@ interface HelperKeysProps {
   targetLanguageFeatures: LanguageFeatures;
   solution: string;
   setSolution: Function;
-  inputRef: RefObject<HTMLInputElement>;
+  inputRef: RefObject<HTMLInputElement | null>;
 }
 
 export default function HelperKeys({

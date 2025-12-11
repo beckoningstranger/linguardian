@@ -15,7 +15,7 @@ import {
 
 interface MoreReviewsProps {
   mode: SecondaryReviewMode;
-  moreReviewsInputRef: RefObject<HTMLInputElement>;
+  moreReviewsInputRef: RefObject<HTMLInputElement | null>;
   item: ItemWithPopulatedTranslations;
   target: SupportedLanguage;
   targetLanguageFeatures: LanguageFeatures;

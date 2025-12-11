@@ -11,8 +11,8 @@ import type { SearchParams } from "@/lib/types";
 import { parseFrom, parseOverstudy } from "@/lib/utils/pages";
 
 export const revalidate = 0;
-export const dynamic = "force-dynamic" as const;
-export const fetchCache = "default-no-store" as const;
+export const dynamic = "force-dynamic";
+export const fetchCache = "default-no-store";
 
 const getLearningSession = cache(fetchLearningSessionData);
 

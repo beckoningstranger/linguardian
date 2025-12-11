@@ -13,18 +13,26 @@ import {
 } from "@/lib/utils/pages";
 
 interface NewItemPageProps {
-  searchParams: {
+  searchParams: Promise<{
     initialName: string;
     addToList: string;
     addToUnit: string;
     unitName: string;
     listLanguage: string;
-  };
+  }>;
 }
 
-export default async function NewItemPage({
-  searchParams: { initialName, addToList, addToUnit, listLanguage, unitName },
-}: NewItemPageProps) {
+export default async function NewItemPage(props: NewItemPageProps) {
+  const searchParams = await props.searchParams;
+
+  const {
+    initialName,
+    addToList,
+    addToUnit,
+    listLanguage,
+    unitName
+  } = searchParams;
+
   const listNumber = parseListNumber(addToList);
   const unitNumber = parseUnitNumber(addToUnit);
   const langCode = parseLanguageCode(listLanguage);

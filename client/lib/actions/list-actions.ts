@@ -32,7 +32,7 @@ export async function createListAction(
   return await executeAuthenticatedAction({
     apiCall: () => createList(formData),
     onSuccess: () => {
-      revalidateTag(listStoreTag(listLanguage));
+      revalidateTag(listStoreTag(listLanguage), 'max');
     },
   });
 }
@@ -45,8 +45,8 @@ export async function uploadCSVFileAction(
   return await executeAuthenticatedAction({
     apiCall: () => uploadCSVFile(formData, listNumber),
     onSuccess: () => {
-      revalidateTag(listTag(listNumber));
-      revalidateTag(listStoreTag(listLanguageCode));
+      revalidateTag(listTag(listNumber), 'max');
+      revalidateTag(listStoreTag(listLanguageCode), 'max');
     },
   });
 }
@@ -59,8 +59,8 @@ export async function createUnitAction(
   return await executeAuthenticatedAction({
     apiCall: () => createUnit({ unitName }, listNumber),
     onSuccess: () => {
-      revalidateTag(listTag(listNumber));
-      revalidateTag(listStoreTag(listLanguage));
+      revalidateTag(listTag(listNumber), 'max');
+      revalidateTag(listStoreTag(listLanguage), 'max');
     },
   });
 }
@@ -73,8 +73,8 @@ export async function updateListDetailsAction(
   return await executeAuthenticatedAction({
     apiCall: () => updateListDetails(updates, listNumber),
     onSuccess: () => {
-      revalidateTag(listTag(listNumber));
-      revalidateTag(listStoreTag(listLanguage));
+      revalidateTag(listTag(listNumber), 'max');
+      revalidateTag(listStoreTag(listLanguage), 'max');
     },
   });
 }
@@ -88,8 +88,8 @@ export async function updateUnitOrderAction(
   return await executeAuthenticatedAction({
     apiCall: () => updateUnitOrder(update, listNumber),
     onSuccess: () => {
-      revalidateTag(listTag(listNumber));
-      revalidateTag(listStoreTag(listLanguageCode));
+      revalidateTag(listTag(listNumber), 'max');
+      revalidateTag(listStoreTag(listLanguageCode), 'max');
     },
   });
 }
@@ -108,8 +108,8 @@ export async function updateUnitNameAction(
   return await executeAuthenticatedAction({
     apiCall: () => updateUnitName(update, listNumber),
     onSuccess: () => {
-      revalidateTag(listTag(listNumber));
-      revalidateTag(listStoreTag(listLanguageCode));
+      revalidateTag(listTag(listNumber), 'max');
+      revalidateTag(listStoreTag(listLanguageCode), 'max');
     },
   });
 }
@@ -125,8 +125,8 @@ export async function addItemToUnitAction(
   return await executeAuthenticatedAction({
     apiCall: () => addItemToUnit(listNumber, update),
     onSuccess: () => {
-      revalidateTag(listTag(listNumber));
-      revalidateTag(listStoreTag(listLanguage));
+      revalidateTag(listTag(listNumber), 'max');
+      revalidateTag(listStoreTag(listLanguage), 'max');
     },
   });
 }
@@ -138,8 +138,8 @@ export async function deleteListAction(
   return await executeAuthenticatedAction({
     apiCall: () => deleteList(listNumber),
     onSuccess: () => {
-      revalidateTag(listTag(listNumber));
-      revalidateTag(listStoreTag(listLanguage));
+      revalidateTag(listTag(listNumber), 'max');
+      revalidateTag(listStoreTag(listLanguage), 'max');
     },
   });
 }
@@ -152,8 +152,8 @@ export async function deleteUnitAction(
   return await executeAuthenticatedAction({
     apiCall: () => deleteUnit(unitName, listNumber),
     onSuccess: () => {
-      revalidateTag(listTag(listNumber));
-      revalidateTag(listStoreTag(listLanguage));
+      revalidateTag(listTag(listNumber), 'max');
+      revalidateTag(listStoreTag(listLanguage), 'max');
     },
   });
 }
@@ -166,8 +166,8 @@ export async function deleteItemFromListAction(
   return await executeAuthenticatedAction({
     apiCall: () => deleteItemFromList(itemId, listNumber),
     onSuccess: () => {
-      revalidateTag(listTag(listNumber));
-      revalidateTag(listStoreTag(listLanguage));
+      revalidateTag(listTag(listNumber), 'max');
+      revalidateTag(listStoreTag(listLanguage), 'max');
     },
   });
 }

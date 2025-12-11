@@ -13,14 +13,18 @@ import { fetchEditListPageData } from "@/lib/api/bff-api";
 import paths from "@/lib/paths";
 
 interface ListEditPageProps {
-  params: {
+  params: Promise<{
     listNumberString: string;
-  };
+  }>;
 }
 
-export default async function ListEditPage({
-  params: { listNumberString },
-}: ListEditPageProps) {
+export default async function ListEditPage(props: ListEditPageProps) {
+  const params = await props.params;
+
+  const {
+    listNumberString
+  } = params;
+
   const listNumber = Number(listNumberString);
   if (!listNumber) notFound();
 

@@ -12,15 +12,20 @@ import paths from "@/lib/paths";
 import { notFound, redirect } from "next/navigation";
 
 interface UnitEditPageProps {
-  params: {
+  params: Promise<{
     listNumberString: string;
     unitNumberString: string;
-  };
+  }>;
 }
 
-export default async function UnitEditPage({
-  params: { listNumberString, unitNumberString },
-}: UnitEditPageProps) {
+export default async function UnitEditPage(props: UnitEditPageProps) {
+  const params = await props.params;
+
+  const {
+    listNumberString,
+    unitNumberString
+  } = params;
+
   const listNumber = Number(listNumberString);
   const unitNumber = Number(unitNumberString);
 

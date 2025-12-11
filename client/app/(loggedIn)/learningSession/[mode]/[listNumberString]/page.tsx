@@ -1,27 +1,25 @@
 import type { Metadata } from "next";
 
 import {
-  dynamic,
-  fetchCache,
   generateListMetadata,
   renderListPage,
-  revalidate,
 } from "@/app/(loggedIn)/learningSession/[mode]/[listNumberString]/learningSessionPages";
 import type { LearningMode } from "@/lib/contracts";
 import type { SearchParams } from "@/lib/types";
 import { parseLearningMode, parseListNumber } from "@/lib/utils/pages";
 
-export { dynamic, fetchCache, revalidate };
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
+export const fetchCache = "default-no-store";
 
 interface Props {
-  params: { mode: LearningMode; listNumberString: string };
-  searchParams: SearchParams;
+  params: Promise<{ mode: LearningMode; listNumberString: string }>;
+  searchParams: Promise<SearchParams>;
 }
 
-export async function generateMetadata({
-  params,
-  searchParams,
-}: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const listNumber = Number(params.listNumberString);
   if (!Number.isFinite(listNumber)) return { title: "Learning session" };
   return generateListMetadata({
@@ -31,7 +29,9 @@ export async function generateMetadata({
   });
 }
 
-export default async function Page({ params, searchParams }: Props) {
+export default async function Page(props: Props) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   return renderListPage({
     mode: parseLearningMode(params.mode),
     listNumber: parseListNumber(params.listNumberString),

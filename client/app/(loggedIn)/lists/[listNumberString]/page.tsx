@@ -33,14 +33,18 @@ import { getCurrentUserId } from "@/lib/utils/server";
 // }
 
 interface ListPageProps {
-  params: {
+  params: Promise<{
     listNumberString: string;
-  };
+  }>;
 }
 
-export default async function ListPage({
-  params: { listNumberString },
-}: ListPageProps) {
+export default async function ListPage(props: ListPageProps) {
+  const params = await props.params;
+
+  const {
+    listNumberString
+  } = params;
+
   const listNumber = parseInt(listNumberString);
   if (!listNumber) notFound();
 

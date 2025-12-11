@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 
 import {
-  revalidate,
-  dynamic,
-  fetchCache,
   generateUnitMetadata,
   renderUnitPage,
 } from "@/app/(loggedIn)/learningSession/[mode]/[listNumberString]/learningSessionPages";
@@ -15,21 +12,22 @@ import {
   parseUnitNumber,
 } from "@/lib/utils/pages";
 
-export { revalidate, dynamic, fetchCache };
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
+export const fetchCache = "default-no-store";
 
 interface Props {
-  params: {
+  params: Promise<{
     mode: LearningMode;
     listNumberString: string;
     unitNumberString: string;
-  };
-  searchParams: SearchParams;
+  }>;
+  searchParams: Promise<SearchParams>;
 }
 
-export async function generateMetadata({
-  params,
-  searchParams,
-}: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const list = Number(params.listNumberString);
   const unit = Number(params.unitNumberString);
   if (!Number.isFinite(list) || !Number.isFinite(unit))
@@ -42,7 +40,9 @@ export async function generateMetadata({
   });
 }
 
-export default async function Page({ params, searchParams }: Props) {
+export default async function Page(props: Props) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   return renderUnitPage({
     mode: parseLearningMode(params.mode),
     listNumber: parseListNumber(params.listNumberString),

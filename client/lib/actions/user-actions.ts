@@ -31,7 +31,7 @@ export async function updateUserAction(
 ): Promise<MessageResponse> {
   return await executeAuthenticatedAction({
     apiCall: () => updateUser(updates),
-    onSuccess: () => revalidateTag(userTag(updates.id)),
+    onSuccess: () => revalidateTag(userTag(updates.id), 'max'),
   });
 }
 
@@ -82,7 +82,7 @@ export async function updateRecentSearchesAction(itemId: string) {
         id: user.id,
         recentDictionarySearches: sliced,
       }),
-    onSuccess: () => revalidateTag(userTag(user.id)),
+    onSuccess: () => revalidateTag(userTag(user.id), 'max'),
   });
 }
 
@@ -95,7 +95,7 @@ export async function updateLearnedItemsAction(
   return await executeAuthenticatedAction({
     apiCall: () => updateLearnedItems({ items, language, mode }, userId),
     onSuccess: () => {
-      revalidateTag(userTag(userId));
+      revalidateTag((userTag(userId)), 'max');
     },
   });
 }

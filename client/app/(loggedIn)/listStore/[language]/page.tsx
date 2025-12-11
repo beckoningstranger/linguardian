@@ -16,14 +16,15 @@ export const metadata: Metadata = {
 };
 
 interface ListStoreProps {
-  params?: { language: string };
+  params?: Promise<{ language: string }>;
 }
 
 export async function generateStaticParams() {
   return allSupportedLanguages.map((lang) => ({ language: lang }));
 }
 
-export default async function ListStore({ params }: ListStoreProps) {
+export default async function ListStore(props: ListStoreProps) {
+  const params = await props.params;
   const listStoreLanguage = params?.language as SupportedLanguage;
   if (!allSupportedLanguages.includes(listStoreLanguage))
     throw new Error(
