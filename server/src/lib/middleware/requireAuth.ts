@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { jwtDecrypt } from "jose";
 
 import { jwtPayLoadSchema } from "../contracts";
+import { AppError } from "@/lib/app-error";
 import { env } from "@/lib/env";
 import logger from "@/lib/logger";
 import { errorResponse } from "../utils";
@@ -29,6 +30,6 @@ export async function requireAuth(
     next();
   } catch (err) {
     logger.error("requireAuth catch block", { error: err });
-    return errorResponse(res, 403, "Invalid or expired token");
+    next(new AppError(403, "Invalid or expired token"));
   }
 }

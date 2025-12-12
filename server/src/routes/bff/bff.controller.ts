@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import logger from "@/lib/logger";
 
 import {
@@ -80,7 +80,8 @@ export const getEditUnitDataController = createAuthenticatedRequestHandler({
 
 export async function getLearningSessionForListDataController(
   req: AuthenticatedLearningSessionRequestForList,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) {
   const listNumber = req.listNumber;
   const userId = req.auth.id;
@@ -101,17 +102,14 @@ export async function getLearningSessionForListDataController(
 
     return successResponse(res, 200, result.data);
   } catch (err) {
-    return errorResponse(
-      res,
-      500,
-      (err as Error).message || "Unknown error occurred"
-    );
+    next(err);
   }
 }
 
 export async function getLearningSessionForUnitDataController(
   req: AuthenticatedLearningSessionRequestForUnit,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) {
   const listNumber = req.listNumber;
   const unitNumber = req.unitNumber;
@@ -134,17 +132,14 @@ export async function getLearningSessionForUnitDataController(
 
     return successResponse(res, 200, result.data);
   } catch (err) {
-    return errorResponse(
-      res,
-      500,
-      (err as Error).message || "Unknown error occurred"
-    );
+    next(err);
   }
 }
 
 export async function getLearningSessionForLanguageDataController(
   req: AuthenticatedLearningSessionRequestForLanguage,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) {
   const langCode = req.langCode;
   const userId = req.auth.id;
@@ -165,11 +160,7 @@ export async function getLearningSessionForLanguageDataController(
 
     return successResponse(res, 200, result.data);
   } catch (err) {
-    return errorResponse(
-      res,
-      500,
-      (err as Error).message || "Unknown error occurred"
-    );
+    next(err);
   }
 }
 

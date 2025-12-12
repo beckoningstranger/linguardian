@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Response, NextFunction } from "express";
 
 import {
   addItemToUnitUpdateSchema,
@@ -43,8 +43,7 @@ import { getUser } from "@/models/user.model";
 
 export async function createListController(
   req: AuthenticatedRequest,
-  res: Response
-) {
+  res: Response, next: NextFunction) {
   const normalizedBody = normalizeCreateListBody(req.body, req.file);
   const userId = req.auth.id;
   const userResponse = await getUser({ method: "_id", query: userId });
@@ -86,18 +85,13 @@ export async function createListController(
 
     return successResponse(res, 201, parsedListResponse);
   } catch (err) {
-    return errorResponse(
-      res,
-      500,
-      (err as Error).message || "Unknown error occurred"
-    );
+    next(err);
   }
 }
 
 export async function expandListWithCSVController(
   req: AuthenticatedExpandListRequest,
-  res: Response
-) {
+  res: Response, next: NextFunction) {
   const listNumber = req.listNumber;
   const fileName = req.fileName;
   const userId = req.auth.id;
@@ -126,18 +120,13 @@ export async function expandListWithCSVController(
 
     return successResponse(res, 201, parsedListResponse);
   } catch (err) {
-    return errorResponse(
-      res,
-      500,
-      (err as Error).message || "Unknown error occurred"
-    );
+    next(err);
   }
 }
 
 export async function createUnitController(
   req: AuthenticatedListRequest,
-  res: Response
-) {
+  res: Response, next: NextFunction) {
   const listNumber = req.listNumber;
   const body = req.body as unknown;
   const result = addUnitUpdateSchema.safeParse(body);
@@ -154,11 +143,7 @@ export async function createUnitController(
 
     return successMessageResponse(res, 201, "Unit created successfully 🎉");
   } catch (err) {
-    return errorResponse(
-      res,
-      500,
-      (err as Error).message || "Unknown error occurred"
-    );
+    next(err);
   }
 }
 
@@ -166,8 +151,7 @@ export async function createUnitController(
 
 export async function updateListDetailsController(
   req: AuthenticatedListRequest,
-  res: Response
-) {
+  res: Response, next: NextFunction) {
   const listNumber = req.listNumber;
   const body = req.body as unknown;
   const result = listDetailsUpdateSchema.safeParse(body);
@@ -184,18 +168,13 @@ export async function updateListDetailsController(
     const message = composeListUpdateMessage(result.data);
     return successMessageResponse(res, 200, message);
   } catch (err) {
-    return errorResponse(
-      res,
-      500,
-      (err as Error).message || "Unknown error occurred"
-    );
+    next(err);
   }
 }
 
 export async function renameUnitController(
   req: AuthenticatedListRequest,
-  res: Response
-) {
+  res: Response, next: NextFunction) {
   const listNumber = req.listNumber;
   try {
     const body = req.body as unknown;
@@ -209,18 +188,13 @@ export async function renameUnitController(
     if (!response.success) return errorResponse(res, 404, response.error);
     return successMessageResponse(res, 200, "Updated unit name 🎉");
   } catch (err) {
-    return errorResponse(
-      res,
-      500,
-      (err as Error).message || "Unknown error occurred"
-    );
+    next(err);
   }
 }
 
 export async function reorderUnitsController(
   req: AuthenticatedListRequest,
-  res: Response
-) {
+  res: Response, next: NextFunction) {
   const listNumber = req.listNumber;
   try {
     const body = req.body as unknown;
@@ -234,18 +208,13 @@ export async function reorderUnitsController(
     if (!response.success) return errorResponse(res, 404, response.error);
     return successMessageResponse(res, 200, "Updated unit order 🎉");
   } catch (err) {
-    return errorResponse(
-      res,
-      500,
-      (err as Error).message || "Unknown error occurred"
-    );
+    next(err);
   }
 }
 
 export async function addItemToUnitController(
   req: AuthenticatedListRequest,
-  res: Response
-) {
+  res: Response, next: NextFunction) {
   try {
     const listNumber = req.listNumber;
 
@@ -261,11 +230,7 @@ export async function addItemToUnitController(
 
     return successMessageResponse(res, 200, message);
   } catch (err) {
-    return errorResponse(
-      res,
-      500,
-      (err as Error).message || "Unknown error occurred"
-    );
+    next(err);
   }
 }
 
@@ -273,8 +238,7 @@ export async function addItemToUnitController(
 
 export async function deleteListController(
   req: AuthenticatedListRequest,
-  res: Response
-) {
+  res: Response, next: NextFunction) {
   const listNumber = req.listNumber;
 
   try {
@@ -283,18 +247,13 @@ export async function deleteListController(
 
     return successMessageResponse(res, 200, "List was deleted 🎉");
   } catch (err) {
-    return errorResponse(
-      res,
-      500,
-      (err as Error).message || "Unknown error occurred"
-    );
+    next(err);
   }
 }
 
 export async function deleteUnitController(
   req: AuthenticatedListRequest,
-  res: Response
-) {
+  res: Response, next: NextFunction) {
   const listNumber = req.listNumber;
 
   const result = unitNameSchema.safeParse(req.params.unitName);
@@ -310,18 +269,13 @@ export async function deleteUnitController(
 
     return successMessageResponse(res, 200, "Unit deleted successfully 🎉");
   } catch (err) {
-    return errorResponse(
-      res,
-      500,
-      (err as Error).message || "Unknown error occurred"
-    );
+    next(err);
   }
 }
 
 export async function deleteListItemController(
   req: AuthenticatedListRequest,
-  res: Response
-) {
+  res: Response, next: NextFunction) {
   const listNumber = req.listNumber;
   const result = objectIdStringSchema.safeParse(req.params.itemId);
   if (!result.success)
@@ -337,10 +291,6 @@ export async function deleteListItemController(
 
     return successMessageResponse(res, 200, "Item deleted successfully 🎉");
   } catch (err) {
-    return errorResponse(
-      res,
-      500,
-      (err as Error).message || "Unknown error occurred"
-    );
+    next(err);
   }
 }

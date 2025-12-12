@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import logger from "@/lib/logger";
 
 import {
@@ -13,7 +13,7 @@ export function createAuthenticatedRequestHandler<TParams, TData>({
   service,
   validateOutput,
 }: HandlerOptionsAuthenticatedRequest<TParams, TData>) {
-  return async (req: AuthenticatedRequest, res: Response) => {
+  return async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
       const parsed = parseParams.safeParse(req.params);
       if (!parsed.success) {
@@ -36,7 +36,7 @@ export function createAuthenticatedRequestHandler<TParams, TData>({
         query: req.query,
         error: err,
        });
-      return errorResponse(res, 500, "Internal server error");
+      next(err);
     }
   };
 }
@@ -46,7 +46,7 @@ export function createUnauthenticatedRequestHandler<TParams, TData>({
   service,
   validateOutput,
 }: HandlerOptions<TParams, TData>) {
-  return async (req: Request, res: Response) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const parsed = parseParams.safeParse(req.params);
       if (!parsed.success)
@@ -65,7 +65,7 @@ export function createUnauthenticatedRequestHandler<TParams, TData>({
         query: req.query,
         error: err,
        });
-      return errorResponse(res, 500, "Internal server error");
+      next(err);
     }
   };
 }

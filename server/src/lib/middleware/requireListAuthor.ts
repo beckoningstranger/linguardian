@@ -32,6 +32,6 @@ export async function requireListAuthor(
 
     next();
   } catch (err) {
-    return errorResponse(res, 500, (err as Error).message);
+    next(err);
   }
 }
