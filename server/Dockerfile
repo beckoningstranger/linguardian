@@ -1,24 +1,27 @@
 FROM node:20-alpine
 
+# Install pnpm
+RUN npm install -g pnpm
+
 WORKDIR /app
 
-# Copy root and workspace manifests for caching
-COPY package.json package-lock.json ./
+# Copy workspace config and package files
+COPY pnpm-workspace.yaml ./
 COPY packages/shared/package.json ./packages/shared/
-COPY server/package.json ./server/package.json
+COPY server/package.json ./server/
 
-# Copy shared sources early so its build/prepare can run during install
+# Copy shared sources
 COPY packages/shared ./packages/shared
 
-# Install only the workspaces we need (shared + backend)
-RUN --mount=type=cache,target=/root/.npm \
-    npm ci --workspaces --include-workspace-root=false
+# Install dependencies
+RUN --mount=type=cache,target=/root/.local/share/pnpm \
+    pnpm install --frozen-lockfile
 
-# Copy backend sources after deps
+# Copy server sources
 COPY server ./server
 
 WORKDIR /app/server
 
-RUN npm run build
+RUN pnpm build
 
-CMD ["npm", "run", "start"]
+CMD ["pnpm", "start"]

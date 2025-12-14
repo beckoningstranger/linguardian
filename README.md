@@ -96,6 +96,11 @@ As of now:
 
 ## 🧪 Local Development Setup
 
+### Prerequisites
+
+- Node.js 20+
+- [pnpm](https://pnpm.io/) package manager (`npm install -g pnpm`)
+
 ### 1. Clone the repository
 
 ```bash
@@ -103,18 +108,28 @@ git clone https://github.com/your-username/linguardian.git
 cd linguardian
 ```
 
-### 2. Set up environment variables
+### 2. Install dependencies
+
+```bash
+pnpm install
+```
+
+### 3. Set up environment variables
 
 ```bash
 cp client/.env.example client/.env.local
-cp server/.env.example server/.env
+cp server/.env.example server/.env.local
 ```
 
 💡 Never commit `.env` files. Only commit `.env.example` templates.
 
-### 3. Start the dev environment
+### 4. Start the dev environment
 
 ```bash
+# Option 1: Using pnpm workspaces
+pnpm dev
+
+# Option 2: Using Docker (recommended for full environment)
 docker-compose -f docker-compose.dev.yml up --build
 ```
 

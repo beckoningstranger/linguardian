@@ -1,21 +1,24 @@
 FROM node:20-alpine3.19
 
+# Install pnpm
+RUN npm install -g pnpm
+
 WORKDIR /app
 
-# Copy package files first for better layer caching
-COPY package.json package-lock.json ./
+# Copy workspace config and package files
+COPY pnpm-workspace.yaml ./
 COPY packages/shared/package.json ./packages/shared/
-COPY client/package.json client/package-lock.json ./client/
+COPY client/package.json ./client/
 
-# Copy shared sources early so its build/prepare can run during install
-COPY packages/shared ./packages/shared
+# Copy shared sources for build
+COPY packages/shared/ ./packages/shared/
 
-# Install dependencies with cache mount for faster installs
+# Install dependencies with pnpm
 WORKDIR /app/client
-RUN --mount=type=cache,target=/root/.npm \
-    npm install --legacy-peer-deps
+RUN --mount=type=cache,target=/root/.local/share/pnpm \
+    pnpm install --frozen-lockfile
 
 # Copy client source
 COPY client/ .
 
-CMD ["npm", "run", "dev"]
+CMD ["pnpm", "dev"]
