@@ -10,7 +10,7 @@ import { useUser } from "@/context/UserContext";
 import {
   ItemWithPopulatedTranslations,
   SupportedLanguage,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 
 interface ItemLanguagePickerProps {
   isNewItem: boolean;

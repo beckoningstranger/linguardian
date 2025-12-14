@@ -10,9 +10,9 @@ import SearchBox from "@/components/Dictionary/Search/SearchBox";
 import SearchResults from "@/components/Dictionary/Search/SearchResults";
 import Button from "@/components/ui/Button";
 import { useUser } from "@/context/UserContext";
-import { Item, SupportedLanguage } from "@/lib/contracts";
+import { Item, SupportedLanguage } from "@linguardian/shared/contracts";
 import paths from "@/lib/paths";
-import { allSupportedLanguages } from "@/lib/siteSettings";
+import { allSupportedLanguages } from "@linguardian/shared/constants";
 import { SearchMode } from "@/lib/types";
 
 interface SearchProps {

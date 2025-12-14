@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import ListPieChart from "@/components/Charts/ListPieChart";
 import LearningButtonWithExpand from "@/components/ui/LearningButtonWithExpand";
-import { ListForDashboard } from "@/lib/contracts";
+import { ListForDashboard } from "@linguardian/shared/contracts";
 import paths from "@/lib/paths";
 
 interface ListDashboardCardProps {

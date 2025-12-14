@@ -1,5 +1,5 @@
 import SearchResults from "@/components/Dictionary/Search/SearchResults";
-import { Item } from "@/lib/contracts";
+import { Item } from "@linguardian/shared/contracts";
 
 interface RecentSearchesProps {
   recentSearches: Item[];

@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import LearningButton from "@/components/ui/LearningButton";
-import { LearningStats } from "@/lib/contracts";
+import { LearningStats } from "@linguardian/shared/contracts";
 import learningButtonConfig from "@/lib/learningButtonConfig";
 import { cn } from "@/lib/utils";
 

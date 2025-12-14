@@ -3,7 +3,11 @@ import toast from "react-hot-toast";
 
 import { useUser } from "@/context/UserContext";
 import { updateLearnedItemsAction } from "@/lib/actions/user-actions";
-import { ItemToLearn, LearningMode, SupportedLanguage } from "@/lib/contracts";
+import {
+  ItemToLearn,
+  LearningMode,
+  SupportedLanguage,
+} from "@linguardian/shared/contracts";
 import { useRouter } from "next/navigation";
 import paths from "../paths";
 

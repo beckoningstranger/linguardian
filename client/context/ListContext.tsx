@@ -5,11 +5,10 @@ import { ReactNode, createContext, useContext, useState } from "react";
 import {
   AuthorData,
   LanguageWithFlagAndName,
-  LearningMode,
   LearningStats,
   ListStatus,
   UnitInformation,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 
 type ListContext = {
   listImage: string;

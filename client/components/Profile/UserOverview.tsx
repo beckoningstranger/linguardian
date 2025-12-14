@@ -1,7 +1,7 @@
 import BasicUserInfo from "@/components/Profile/BasicUserInfo";
 import CompetencyBadge from "@/components/Profile/CompetencyBadge";
 import ProfilePicWithBadges from "@/components/Profile/ProfilePicWithBadges";
-import { User } from "@/lib/contracts";
+import { User } from "@linguardian/shared/contracts";
 
 interface UserOverviewProps {
   user: User;

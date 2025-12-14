@@ -1,6 +1,6 @@
 import EditOrCreateItem from "@/components/Dictionary/EditItemPage/EditOrCreateItem";
-import { ItemWithPopulatedTranslations } from "@/lib/contracts";
-import { getUserOnServer } from "@/lib/utils";
+import { ItemWithPopulatedTranslations } from "@linguardian/shared/contracts";
+import { getUserOnServer } from "@/lib/utils/server";
 
 interface NewItemPageProps {
   searchParams: Promise<{

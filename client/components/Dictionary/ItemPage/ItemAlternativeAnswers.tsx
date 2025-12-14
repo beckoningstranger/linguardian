@@ -1,4 +1,7 @@
-import { AlternativeAnswers, SupportedLanguage } from "@/lib/contracts";
+import {
+  AlternativeAnswers,
+  SupportedLanguage,
+} from "@linguardian/shared/contracts";
 import ItemSection from "./ItemSection";
 import Flag from "react-world-flags";
 import { getFlagCodeFromLangCode } from "@/lib/utils";

@@ -5,7 +5,7 @@ import IconSidebarButton from "@/components/IconSidebar/IconSidebarButton";
 import TopContextMenuButton from "@/components/Menus/TopMenu/TopContextMenu/TopContextMenuButton";
 import { useUnitContext } from "@/context/UnitContext";
 import { addItemToUnitAction } from "@/lib/actions/list-actions";
-import { Item } from "@/lib/contracts";
+import { Item } from "@linguardian/shared/contracts";
 import toast from "react-hot-toast";
 
 interface AddItemsToUnitButtonProps {

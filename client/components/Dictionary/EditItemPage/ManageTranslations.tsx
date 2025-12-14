@@ -15,7 +15,7 @@ import {
   ItemWithPopulatedTranslations,
   PopulatedTranslations,
   SupportedLanguage,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 import toast from "react-hot-toast";
 
 interface ManageTranslationsProps {

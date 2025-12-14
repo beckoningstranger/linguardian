@@ -5,7 +5,7 @@ import {
   LearningModeWithInfo,
   ListForDashboard,
   SupportedLanguage,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 import { cn } from "@/lib/utils";
 import AddListsToDashboardButton from "./AddListsToDashboardButton";
 

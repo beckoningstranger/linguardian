@@ -1,7 +1,7 @@
 "use server";
 
 import { executeAction } from "@/lib/utils";
-import { Item, SupportedLanguage } from "@/lib/contracts";
+import { Item, SupportedLanguage } from "@linguardian/shared/contracts";
 import { searchDictionary } from "@/lib/api/dictionary-api";
 
 export async function searchDictionaryAction(

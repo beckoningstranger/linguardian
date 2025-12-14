@@ -12,9 +12,9 @@ import TopContextMenuButton from "@/components/Menus/TopMenu/TopContextMenu/TopC
 
 import { EDIT_OR_CREATE_ITEM_FORM_ID } from "@/lib/constants";
 import {
-  itemSchemaWithPopulatedTranslations,
   ItemWithPopulatedTranslations,
-} from "@/lib/contracts";
+  itemSchemaWithPopulatedTranslations,
+} from "@linguardian/shared/contracts";
 import paths from "@/lib/paths";
 import { normalizeWithSchema } from "@/lib/utils";
 import { GiSaveArrow } from "react-icons/gi";

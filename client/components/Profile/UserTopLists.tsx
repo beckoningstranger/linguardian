@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { LanguageWithFlagAndName, User } from "@/lib/contracts";
+import { LanguageWithFlagAndName, User } from "@linguardian/shared/contracts";
 
 interface UserTopListsProps {
   language: LanguageWithFlagAndName;

@@ -1,9 +1,9 @@
-import "@/lib/env"; // Load and validate environment variables first
+import "@/config/env"; // Load and validate environment variables first
 import { createServer } from "http";
 
-import { mongoConnect } from "@/lib/mongo";
-import logger from "@/lib/logger";
-import { env } from "@/lib/env";
+import { mongoConnect } from "@/config/mongo";
+import logger from "@/utils/logger";
+import { env } from "@/config/env";
 import app from "@/app";
 
 const server = createServer(app);

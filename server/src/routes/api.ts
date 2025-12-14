@@ -1,9 +1,9 @@
 import express from "express";
 
-import { bffRouter } from "@/routes/bff/bff.router";
-import { itemsRouter } from "@/routes/items/items.router";
-import { listsRouter } from "@/routes/lists/lists.router";
-import { usersRouter } from "@/routes/users/users.router";
+import { bffRouter } from "@/routes/bff.router";
+import { itemsRouter } from "@/routes/items.router";
+import { listsRouter } from "@/routes/lists.router";
+import { usersRouter } from "@/routes/users.router";
 
 const api = express.Router();
 

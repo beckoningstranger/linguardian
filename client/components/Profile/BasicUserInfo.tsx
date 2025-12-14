@@ -1,6 +1,6 @@
 import Flag from "react-world-flags";
 
-import { User } from "@/lib/contracts";
+import { User } from "@linguardian/shared/contracts";
 
 interface BasicUserInfoProps {
   user: User;

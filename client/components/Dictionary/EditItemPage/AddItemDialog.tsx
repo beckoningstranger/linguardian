@@ -5,7 +5,7 @@ import { XMarkIcon } from "@heroicons/react/20/solid";
 import { Dispatch, SetStateAction } from "react";
 
 import Search from "@/components/Dictionary/Search/Search";
-import { Item, SupportedLanguage } from "@/lib/contracts";
+import { Item, SupportedLanguage } from "@linguardian/shared/contracts";
 import { SearchMode } from "@/lib/types";
 
 interface AddItemDialogProps {

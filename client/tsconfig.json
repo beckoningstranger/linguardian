@@ -37,6 +37,9 @@
       ],
       "@/*": [
         "./*"
+      ],
+      "@linguardian/shared/*": [
+        "../packages/shared/src/*"
       ]
     }
   },

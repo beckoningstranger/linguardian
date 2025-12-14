@@ -2,7 +2,20 @@ FROM node:20-alpine3.19
 
 WORKDIR /app
 
-COPY ./package.json ./package-lock.json ./
-RUN npm install --legacy-peer-deps
+# Copy package files first for better layer caching
+COPY package.json package-lock.json ./
+COPY packages/shared/package.json ./packages/shared/
+COPY client/package.json client/package-lock.json ./client/
+
+# Copy shared sources early so its build/prepare can run during install
+COPY packages/shared ./packages/shared
+
+# Install dependencies with cache mount for faster installs
+WORKDIR /app/client
+RUN --mount=type=cache,target=/root/.npm \
+    npm install --legacy-peer-deps
+
+# Copy client source
+COPY client/ .
 
 CMD ["npm", "run", "dev"]

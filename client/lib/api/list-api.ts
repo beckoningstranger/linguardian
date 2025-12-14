@@ -10,7 +10,7 @@ import {
   messageResponseSchema,
   UnitNameUpdate,
   UnitOrderUpdate,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 import { handleApiCallWithAuth } from "@/lib/utils";
 
 // POST

@@ -4,7 +4,10 @@ import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import Flag from "react-world-flags";
 
 import { useUser } from "@/context/UserContext";
-import { PromptHelpers, SupportedLanguage } from "@/lib/contracts";
+import {
+  PromptHelpers,
+  SupportedLanguage,
+} from "@linguardian/shared/contracts";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 import MinusIcon from "./MinusIcon";
 import TinyLanguagePicker from "./TinyLanguagePicker";

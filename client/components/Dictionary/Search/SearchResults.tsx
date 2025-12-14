@@ -5,7 +5,7 @@ import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 
 import SearchResultItem from "@/components/Dictionary/Search/SearchResultItem";
 import { updateRecentSearchesAction } from "@/lib/actions/user-actions";
-import { Item } from "@/lib/contracts";
+import { Item } from "@linguardian/shared/contracts";
 import paths from "@/lib/paths";
 
 interface SearchResultsProps {

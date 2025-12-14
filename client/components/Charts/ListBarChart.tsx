@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 
-import { LearningStats } from "@/lib/contracts";
+import { LearningStats } from "@linguardian/shared/contracts";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,

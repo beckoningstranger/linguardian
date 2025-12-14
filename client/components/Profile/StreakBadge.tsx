@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { LanguageWithFlagAndName } from "@/lib/contracts";
+import { LanguageWithFlagAndName } from "@linguardian/shared/contracts";
 import { cn } from "@/lib/utils";
 
 interface StreakBadgeProps {

@@ -1,4 +1,4 @@
-import { Tag } from "@/lib/contracts";
+import { Tag } from "@linguardian/shared/contracts";
 
 interface ItemTagsProps {
   tags?: Tag[];

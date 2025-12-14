@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 
 import RegisterForm from "@/components/authentication/RegisterForm";
 import paths from "@/lib/paths";
-import { getUserOnServer } from "@/lib/utils";
+import { getUserOnServer } from "@/lib/utils/server";
 
 export const metadata = {
     title: "Create an account",

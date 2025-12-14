@@ -14,13 +14,10 @@ import SubmitCSVFile from "@/components/Forms/SubmitCSVFile";
 import CheckboxField from "@/components/Forms/CheckboxField";
 import { useUser } from "@/context/UserContext";
 
-import {
-  createNewListFormSchema,
-  CreateNewListForm as CreateNewListFormType,
-  LanguageWithFlagAndName,
-} from "@/lib/contracts";
+import type { CreateNewListForm, LanguageWithFlagAndName } from "@linguardian/shared/contracts";
+import { createNewListFormSchema } from "@linguardian/shared/contracts";
 import paths from "@/lib/paths";
-import { allListDifficulties } from "@/lib/siteSettings";
+import { allListDifficulties } from "@linguardian/shared/constants";
 import ListDescriptionTextarea from "./ListDescriptionTextarea";
 import { createListAction } from "@/lib/actions/list-actions";
 
@@ -34,7 +31,7 @@ export default function CreateNewListForm({
   const [loading, setLoading] = useState(false);
   const { user } = useUser();
   const router = useRouter();
-  const methods = useForm<CreateNewListFormType>({
+  const methods = useForm<CreateNewListForm>({
     resolver: zodResolver(createNewListFormSchema),
     mode: "onBlur",
     defaultValues: {

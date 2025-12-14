@@ -16,7 +16,10 @@ import Spinner from "@/components/Spinner";
 import { createUserAction } from "@/lib/actions/user-actions";
 
 import paths from "@/lib/paths";
-import { RegistrationData, registrationDataSchema } from "@/lib/contracts";
+import {
+  RegistrationData,
+  registrationDataSchema,
+} from "@linguardian/shared/contracts";
 
 export default function RegisterForm() {
   const methods = useForm<RegistrationData>({

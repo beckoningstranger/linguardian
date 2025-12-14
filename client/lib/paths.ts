@@ -1,4 +1,4 @@
-import { LearningMode, SupportedLanguage } from "@/lib/contracts";
+import { LearningMode, SupportedLanguage } from "@linguardian/shared/contracts";
 
 const paths = {
   aboutPath: () => `/about`,

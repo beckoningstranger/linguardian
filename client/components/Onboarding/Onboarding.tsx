@@ -6,8 +6,8 @@ import Flag from "react-world-flags";
 
 import LanguagePicker from "@/components/Onboarding/LanguagePicker";
 import OnboardingSubmitButton from "@/components/Onboarding/OnboardingSubmitButton";
-import { LanguageWithFlagAndName } from "@/lib/contracts";
-import { allLanguageFeatures } from "@/lib/siteSettings";
+import { LanguageWithFlagAndName } from "@linguardian/shared/contracts";
+import { allLanguageFeatures } from "@linguardian/shared/constants";
 
 export default function Onboarding() {
   const [userNative, setUserNative] = useState<LanguageWithFlagAndName | null>(

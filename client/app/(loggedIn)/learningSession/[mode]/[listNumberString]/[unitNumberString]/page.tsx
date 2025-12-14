@@ -4,7 +4,7 @@ import {
   generateUnitMetadata,
   renderUnitPage,
 } from "@/app/(loggedIn)/learningSession/[mode]/[listNumberString]/learningSessionPages";
-import type { LearningMode } from "@/lib/contracts";
+import type { LearningMode } from "@linguardian/shared/contracts";
 import type { SearchParams } from "@/lib/types";
 import {
   parseLearningMode,

@@ -1,7 +1,7 @@
 import { Button } from "@headlessui/react";
 
 import ItemDetails from "@/components/Dictionary/ItemPage/ItemDetails";
-import { ItemToLearn, User } from "@/lib/contracts";
+import { ItemToLearn, User } from "@linguardian/shared/contracts";
 
 interface ItemPresentationProps {
   item: ItemToLearn;

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 
 import LoginForm from "@/components/authentication/LoginForm";
 import paths from "@/lib/paths";
-import { getUserOnServer } from "@/lib/utils";
+import { getUserOnServer } from "@/lib/utils/server";
 
 export const metadata = { title: "Sign in" };
 

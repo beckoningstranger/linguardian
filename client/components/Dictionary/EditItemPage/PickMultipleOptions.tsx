@@ -4,7 +4,7 @@ import { Button } from "@headlessui/react";
 import { Dispatch, SetStateAction } from "react";
 
 import MinusIcon from "@/components/Dictionary/EditItemPage/MinusIcon";
-import { Tag } from "@/lib/contracts";
+import { Tag } from "@linguardian/shared/contracts";
 import { cn } from "@/lib/utils";
 
 interface PickMultipleOptionsProps {

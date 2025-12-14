@@ -2,7 +2,10 @@ import { Button as HeadLessUiButton } from "@headlessui/react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { LearningModeWithInfo, SupportedLanguage } from "@/lib/contracts";
+import {
+  LearningModeWithInfo,
+  SupportedLanguage,
+} from "@linguardian/shared/contracts";
 import learningButtonConfig from "@/lib/learningButtonConfig";
 import paths from "@/lib/paths";
 import { cn } from "@/lib/utils";

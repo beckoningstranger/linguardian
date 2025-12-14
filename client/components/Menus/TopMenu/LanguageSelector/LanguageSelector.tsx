@@ -9,7 +9,7 @@ import LanguageSelectorLink from "@/components/Menus/TopMenu/LanguageSelector/La
 import { useUser } from "@/context/UserContext";
 import { MAX_NUMBER_OF_LANGUAGES_ALLOWED } from "@/lib/constants";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
-import { allSupportedLanguages } from "@/lib/siteSettings";
+import { allSupportedLanguages } from "@linguardian/shared/constants";
 import { moreLanguagesToLearn, showLanguageSelector } from "@/lib/utils";
 
 export default function LanguageSelector() {

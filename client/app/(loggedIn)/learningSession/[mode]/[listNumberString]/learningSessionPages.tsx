@@ -6,7 +6,7 @@ import { cache } from "react";
 import BackgroundPicture from "@/components/Layout/BackgroundPicture";
 import LearnAndReview from "@/components/LearningModes/LearnAndReview";
 import { fetchLearningSessionData } from "@/lib/api/bff-api";
-import type { LearningMode } from "@/lib/contracts";
+import type { LearningMode } from "@linguardian/shared/contracts";
 import type { SearchParams } from "@/lib/types";
 import { parseFrom, parseOverstudy } from "@/lib/utils/pages";
 

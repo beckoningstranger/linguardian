@@ -3,15 +3,15 @@ import { z } from "zod";
 import {
   ApiResponse,
   coreItemSchema,
+  ItemWithPopulatedTranslations,
   itemSchemaWithPopulatedTranslations,
   itemSchemaWithTranslations,
-  ItemWithPopulatedTranslations,
   MessageWithItemInfoResponse,
   MessageWithSlugResponse,
   SupportedLanguage,
-} from "@/lib/contracts";
-import { dbItemSchema, NewItem } from "@/lib/schemas";
-import { allSupportedLanguages } from "@/lib/siteSettings";
+} from "@linguardian/shared/contracts";
+import { dbItemSchema, NewItem } from "@/schemas";
+import { allSupportedLanguages } from "@linguardian/shared/constants";
 import {
   isNoResultError,
   normalizeString,
@@ -21,7 +21,7 @@ import {
   safeDbWrite,
   translationsAreEqual,
   updateAllAffectedItems,
-} from "@/lib/utils";
+} from "@/utils";
 import { ItemModel } from "@/models";
 
 export async function getItemIdBySlug(slug: string) {

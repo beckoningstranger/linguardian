@@ -3,14 +3,15 @@ import {
   ApiResponse,
   CreateItemParams,
   FetchItemIdBySlugParams,
-  itemIdResponseSchema,
-  itemSchemaWithPopulatedTranslations,
+  ItemIdResponse,
   ItemWithPopulatedTranslations,
   MessageWithItemInfoResponse,
-  messageWithItemInfoResponseSchema,
   MessageWithSlugResponse,
+  messageWithItemInfoResponseSchema,
   messageWithSlugResponseSchema,
-} from "@/lib/contracts";
+  itemIdResponseSchema,
+  itemSchemaWithPopulatedTranslations,
+} from "@linguardian/shared/contracts";
 import { itemTag } from "@/lib/utils";
 import { handleApiCall, handleApiCallWithAuth } from "@/lib/utils/api";
 import z from "zod";
@@ -69,9 +70,11 @@ export async function fetchMultipleItemsById(
   const response = await Promise.all(itemPromises);
   const items: ItemWithPopulatedTranslations[] = [];
 
-  response.forEach((response) => {
-    if (response.success) items.push(response.data);
-  });
+  response.forEach(
+    (response: ApiResponse<ItemWithPopulatedTranslations>) => {
+      if (response.success) items.push(response.data);
+    }
+  );
 
   return items;
 }

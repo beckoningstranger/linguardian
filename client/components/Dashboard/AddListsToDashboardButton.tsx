@@ -2,7 +2,7 @@ import { Button } from "@headlessui/react";
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 
-import { SupportedLanguage } from "@/lib/contracts";
+import { SupportedLanguage } from "@linguardian/shared/contracts";
 import paths from "@/lib/paths";
 import { cn } from "@/lib/utils";
 

@@ -5,7 +5,7 @@ import CompetencyBadge from "@/components/Profile//CompetencyBadge";
 import UserTopLists from "@/components/Profile//UserTopLists";
 import StreakBadge from "@/components/Profile/StreakBadge";
 import { cn } from "@/lib/utils";
-import { LanguageWithFlagAndName, User } from "@/lib/contracts";
+import { LanguageWithFlagAndName, User } from "@linguardian/shared/contracts";
 
 interface LearnedLanguageInfoCardProps {
   user: User;

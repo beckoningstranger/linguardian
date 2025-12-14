@@ -3,7 +3,7 @@ import { Button } from "@headlessui/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { ReviewStatus } from "@/components/LearningModes/LearnAndReview";
-import { ItemToLearn } from "@/lib/contracts";
+import { ItemToLearn } from "@linguardian/shared/contracts";
 import { cn, shuffleArray } from "@/lib/utils";
 
 interface MultipleChoiceProps {

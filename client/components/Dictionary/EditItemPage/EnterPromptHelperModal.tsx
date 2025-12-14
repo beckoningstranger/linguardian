@@ -5,7 +5,10 @@ import { Dispatch, RefObject, SetStateAction, useRef, useState, useEffect } from
 import StyledInput from "@/components/Forms/StyledInput";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 import { createPortal } from "react-dom";
-import { PromptHelpers, SupportedLanguage } from "@/lib/contracts";
+import {
+  PromptHelpers,
+  SupportedLanguage,
+} from "@linguardian/shared/contracts";
 import Flag from "react-world-flags";
 import { cn, getFlagCodeFromLangCode } from "@/lib/utils";
 

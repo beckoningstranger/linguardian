@@ -2,9 +2,22 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY ./package.json ./package-lock.json ./
-RUN npm ci
-COPY . .
+# Copy root and workspace manifests for caching
+COPY package.json package-lock.json ./
+COPY packages/shared/package.json ./packages/shared/
+COPY server/package.json ./server/package.json
+
+# Copy shared sources early so its build/prepare can run during install
+COPY packages/shared ./packages/shared
+
+# Install only the workspaces we need (shared + backend)
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --workspaces --include-workspace-root=false
+
+# Copy backend sources after deps
+COPY server ./server
+
+WORKDIR /app/server
 
 RUN npm run build
 

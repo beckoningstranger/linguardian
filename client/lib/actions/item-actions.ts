@@ -8,7 +8,7 @@ import {
   ItemWithPopulatedTranslations,
   MessageWithItemInfoResponse,
   MessageWithSlugResponse,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 import { executeAuthenticatedAction, itemTag } from "@/lib/utils";
 import { addItemToUnitAction } from "./list-actions";
 

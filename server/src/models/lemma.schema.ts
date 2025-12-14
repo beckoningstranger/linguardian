@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 
-import { Lemma } from "@/lib/schemas";
+import { Lemma } from "@/schemas";
 import { ItemModel } from "@/models";
 
 const lemmaSchema = new Schema<Lemma>(

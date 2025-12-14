@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 import LearnedLanguageInfoCard from "@/components/Profile/LearnedLanguageInfoCard";
-import { User } from "@/lib/contracts";
+import { User } from "@linguardian/shared/contracts";
 
 interface LearnedLanguageInfoProps {
   user: User;

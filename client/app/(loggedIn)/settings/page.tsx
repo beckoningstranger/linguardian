@@ -3,6 +3,7 @@ import Link from "next/link";
 import StopLearningLanguageButton from "@/components/StopLearningLanguageButton";
 import paths from "@/lib/paths";
 import { getUserOnServer } from "@/lib/utils/server";
+import { LanguageWithFlagAndName } from "@linguardian/shared/contracts";
 
 export default async function SettingsPage() {
   const user = await getUserOnServer();
@@ -10,7 +11,7 @@ export default async function SettingsPage() {
   return (
     <div className="m-2 flex flex-col gap-2">
       {user?.learnedLanguages && user?.learnedLanguages.length > 1 ? (
-        user?.learnedLanguages?.map((lang) => (
+        user?.learnedLanguages?.map((lang: LanguageWithFlagAndName) => (
           <StopLearningLanguageButton language={lang} key={lang.code} />
         ))
       ) : (

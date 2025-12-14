@@ -1,6 +1,9 @@
 import { ReactElement } from "react";
 import UnitItem from "@/components/Lists/UnitOverview/UnitItem";
-import { ItemPlusLearningInfo, SupportedLanguage } from "@/lib/contracts";
+import {
+  ItemPlusLearningInfo,
+  SupportedLanguage,
+} from "@linguardian/shared/contracts";
 import { cn } from "@/lib/utils";
 
 interface UnitItemsProps {

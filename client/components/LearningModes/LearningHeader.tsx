@@ -1,5 +1,5 @@
 import QuitLearningSessionButton from "@/components/LearningModes/QuitLearningSessionButton";
-import { LearningMode, SupportedLanguage } from "@/lib/contracts";
+import { LearningMode, SupportedLanguage } from "@linguardian/shared/contracts";
 
 interface LearningHeaderProps {
   listName: string;

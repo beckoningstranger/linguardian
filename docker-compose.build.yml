@@ -2,7 +2,8 @@ services:
 
   backend:
     build:
-      context: ./server
+      context: .
+      dockerfile: ./server/Dockerfile
     environment:
       - PORT=8000
       - NODE_ENV=production
@@ -16,7 +17,8 @@ services:
 
   frontend:
     build:
-      context: ./client
+      context: .
+      dockerfile: ./client/Dockerfile
       args:
         GOOGLE_ID: ${GOOGLE_ID}
         GOOGLE_SECRET: ${GOOGLE_SECRET}

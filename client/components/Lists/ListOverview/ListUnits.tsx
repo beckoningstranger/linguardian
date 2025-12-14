@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import UnitButton from "@/components/Lists/ListOverview/UnitButton";
-import { UnitInformation } from "@/lib/contracts";
+import { UnitInformation } from "@linguardian/shared/contracts";
 import paths from "@/lib/paths";
 import { cn } from "@/lib/utils";
 

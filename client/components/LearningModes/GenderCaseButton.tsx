@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { Button } from "@headlessui/react";
 
 import { cn } from "@/lib/utils";
-import { Gender, GrammaticalCase } from "@/lib/contracts";
+import { Gender, GrammaticalCase } from "@linguardian/shared/contracts";
 
 type CaseGenderButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   mode: Gender | GrammaticalCase;

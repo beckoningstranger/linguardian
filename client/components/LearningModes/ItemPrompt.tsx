@@ -1,7 +1,7 @@
 import {
   ItemWithPopulatedTranslations,
   SupportedLanguage,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 
 interface ItemPromptProps {
   item: ItemWithPopulatedTranslations;

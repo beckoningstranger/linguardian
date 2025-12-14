@@ -2,10 +2,10 @@ import EditOrCreateItem from "@/components/Dictionary/EditItemPage/EditOrCreateI
 import {
   ItemWithPopulatedTranslations,
   LanguageFeatures,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 import paths from "@/lib/paths";
-import { allLanguageFeatures } from "@/lib/siteSettings";
-import { getUserOnServer } from "@/lib/utils";
+import { allLanguageFeatures } from "@linguardian/shared/constants";
+import { getUserOnServer } from "@/lib/utils/server";
 import {
   parseLanguageCode,
   parseListNumber,

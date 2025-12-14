@@ -9,21 +9,21 @@ import {
   updateUser,
 } from "@/lib/api/user-api";
 import {
-  IsTakenParams,
   ItemForServer,
+  IsTakenParams,
   LearningMode,
   MessageResponse,
   RecentDictionarySearch,
   RegistrationData,
   SupportedLanguage,
   UpdateUser,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 import {
   executeAction,
   executeAuthenticatedAction,
-  getUserOnServer,
   userTag,
 } from "@/lib/utils";
+import { getUserOnServer } from "@/lib/utils/server";
 import { NUMBER_OF_RECENT_SEARCHES } from "../constants";
 
 export async function updateUserAction(

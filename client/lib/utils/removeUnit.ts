@@ -3,7 +3,7 @@
 import toast from "react-hot-toast";
 
 import { deleteUnitAction } from "@/lib/actions/list-actions";
-import { SupportedLanguage } from "@/lib/contracts";
+import { SupportedLanguage } from "@linguardian/shared/contracts";
 
 export async function removeUnitFromList({
   listNumber,

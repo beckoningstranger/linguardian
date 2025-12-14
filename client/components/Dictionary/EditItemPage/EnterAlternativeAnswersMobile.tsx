@@ -3,7 +3,10 @@
 import { Dispatch, RefObject, SetStateAction, useRef, useState } from "react";
 
 import StyledInput from "@/components/Forms/StyledInput";
-import { AlternativeAnswers, SupportedLanguage } from "@/lib/contracts";
+import {
+  AlternativeAnswers,
+  SupportedLanguage,
+} from "@linguardian/shared/contracts";
 import { cn, getFlagCodeFromLangCode } from "@/lib/utils";
 import Flag from "react-world-flags";
 

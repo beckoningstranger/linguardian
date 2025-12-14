@@ -1,5 +1,10 @@
 export const MAX_NUMBER_OF_LANGUAGES_ALLOWED = 6;
-export const SERVER = process.env.SERVER_URL;
+export const SERVER =
+    process.env.NEXT_PUBLIC_SERVER_URL ||
+    process.env.SERVER_URL ||
+    (process.env.NODE_ENV === "development"
+        ? "http://localhost:8000"
+        : undefined);
 export const ENVIRONMENT = process.env.NODE_ENV;
 
 export const EDIT_OR_CREATE_ITEM_FORM_ID = "editOrCreateFormId";

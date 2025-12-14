@@ -8,7 +8,7 @@ import Flag from "react-world-flags";
 import { useUser } from "@/context/UserContext";
 import { useUserUpdater } from "@/lib/hooks/useUserUpdater";
 import paths from "@/lib/paths";
-import { LanguageWithFlagAndName } from "@/lib/contracts";
+import { LanguageWithFlagAndName } from "@linguardian/shared/contracts";
 import Button from "@/components/ui/Button";
 
 interface PickNewLanguageProps {

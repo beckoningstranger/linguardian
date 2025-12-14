@@ -1,25 +1,37 @@
+# Use Docker BuildKit for faster builds
+
 services:
-  
   frontend:
     build:
-      context: ./client
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: ./client/Dockerfile.dev
     env_file:
       - ./client/.env.local
     volumes:
-      - /app/node_modules
-      - ./client:/app
+      - /app/client/node_modules
+      - ./client:/app/client
+      - ./packages/shared:/app/packages/shared
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - npm-cache:/root/.npm
     ports:
       - "3000:3000"
 
   backend:
     build:
-      context: ./server
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: ./server/Dockerfile.dev
     volumes:
-      - /app/node_modules
-      - ./server:/app
+      - /app/server/node_modules
+      - ./server:/app/server
+      - ./packages/shared:/app/packages/shared
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - npm-cache:/root/.npm
     env_file:
       - ./server/.env.local
     ports:
       - "8000:8000"
+
+volumes:
+  npm-cache:

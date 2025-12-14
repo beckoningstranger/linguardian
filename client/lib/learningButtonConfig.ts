@@ -1,4 +1,4 @@
-import { LearningMode } from "@/lib/contracts";
+import { LearningMode } from "@linguardian/shared/contracts";
 
 const learningButtonConfig: {
   name: LearningMode;

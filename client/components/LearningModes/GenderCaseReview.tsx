@@ -10,8 +10,7 @@ import {
   ItemWithPopulatedTranslations,
   LanguageFeatures,
   SecondaryReviewMode,
-} from "@/lib/contracts";
-
+} from "@linguardian/shared/contracts";
 interface GenderCaseReviewProps {
   mode: SecondaryReviewMode;
   targetLanguageFeatures: LanguageFeatures;

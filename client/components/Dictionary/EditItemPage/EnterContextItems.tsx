@@ -8,7 +8,7 @@ import { FieldErrors, FieldValues } from "react-hook-form";
 
 import EnterContextItemsField from "@/components/Dictionary/EditItemPage/EnterContextItemField";
 import FormErrors from "@/components/Forms/FormErrors";
-import { ContextItem } from "@/lib/contracts";
+import { ContextItem } from "@linguardian/shared/contracts";
 
 interface EnterContextItemsProps {
   setValue: Function;

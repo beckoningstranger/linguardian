@@ -2,7 +2,7 @@ import Image from "next/image";
 import Flag from "react-world-flags";
 
 import StreakBadge from "@/components/Profile/StreakBadge";
-import { User } from "@/lib/contracts";
+import { User } from "@linguardian/shared/contracts";
 
 interface ProfilePicWithBadgesProps {
   user: User;

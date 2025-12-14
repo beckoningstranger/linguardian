@@ -5,13 +5,13 @@ import { RefObject, useCallback } from "react";
 
 import CaseGenderButton from "@/components/LearningModes/GenderCaseButton";
 import {
-  Gender,
-  GrammaticalCase,
   ItemWithPopulatedTranslations,
   LanguageFeatures,
+  Gender,
+  GrammaticalCase,
   SecondaryReviewMode,
   SupportedLanguage,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 
 interface MoreReviewsProps {
   mode: SecondaryReviewMode;

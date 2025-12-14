@@ -1,7 +1,7 @@
 "use client";
 
 import { createUnitAction } from "@/lib/actions/list-actions";
-import { SupportedLanguage } from "@/lib/contracts";
+import { SupportedLanguage } from "@linguardian/shared/contracts";
 import { Input } from "@headlessui/react";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import toast from "react-hot-toast";

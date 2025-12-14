@@ -4,9 +4,9 @@ import express, { Request, Response, NextFunction } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 
-import { env } from "@/lib/env";
-import { errorHandler } from "@/lib/middleware/error-handler.middleware";
-import { notFoundHandler } from "@/lib/middleware/not-found.middleware";
+import { env } from "@/config/env";
+import { errorHandler } from "@/middleware/error-handler.middleware";
+import { notFoundHandler } from "@/middleware/not-found.middleware";
 
 const app = express();
 

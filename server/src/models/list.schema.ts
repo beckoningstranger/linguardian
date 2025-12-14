@@ -1,67 +1,67 @@
 import { model, Schema } from "mongoose";
 
-import { List } from "@/lib/contracts";
+import { List } from "@linguardian/shared/contracts";
 import {
-  mongooseLanguageWithFlagAndNameSchema,
-  mongooseUnitItemSchema,
+    mongooseLanguageWithFlagAndNameSchema,
+    mongooseUnitItemSchema,
 } from "@/models/helperSchemas";
 
 const mongooseListSchema = new Schema<List>(
-  {
-    id: { type: String, required: true, unique: true },
-    name: {
-      type: String,
-      required: true,
+    {
+        id: { type: String, required: true, unique: true },
+        name: {
+            type: String,
+            required: true,
+        },
+        listNumber: {
+            type: Number,
+            required: true,
+            unique: true,
+        },
+        description: {
+            type: String,
+            maxlength: 190,
+        },
+        image: {
+            type: String,
+        },
+        language: {
+            type: mongooseLanguageWithFlagAndNameSchema,
+            required: true,
+            _id: false,
+        },
+        difficulty: {
+            type: String,
+        },
+        authors: [
+            {
+                type: String,
+                required: true,
+            },
+        ],
+        private: {
+            type: Boolean,
+        },
+        units: [
+            {
+                type: mongooseUnitItemSchema,
+                _id: false,
+            },
+        ],
+        unitOrder: [{ type: String }],
+        learners: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "User",
+            },
+        ],
+        flags: { type: [String] },
     },
-    listNumber: {
-      type: Number,
-      required: true,
-      unique: true,
-    },
-    description: {
-      type: String,
-      maxlength: 190,
-    },
-    image: {
-      type: String,
-    },
-    language: {
-      type: mongooseLanguageWithFlagAndNameSchema,
-      required: true,
-      _id: false,
-    },
-    difficulty: {
-      type: String,
-    },
-    authors: [
-      {
-        type: String,
-        required: true,
-      },
-    ],
-    private: {
-      type: Boolean,
-    },
-    units: [
-      {
-        type: mongooseUnitItemSchema,
-        _id: false,
-      },
-    ],
-    unitOrder: [{ type: String }],
-    learners: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    flags: { type: [String] },
-  },
-  {
-    timestamps: true,
-    strict: true,
-    versionKey: false,
-  }
+    {
+        timestamps: true,
+        strict: true,
+        versionKey: false,
+    }
 );
 
 export const ListModel = model<List>("List", mongooseListSchema);

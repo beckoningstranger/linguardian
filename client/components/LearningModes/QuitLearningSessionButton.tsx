@@ -8,7 +8,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import ConfirmCancelMobileMenu from "@/components/Modals/ConfirmCancelMobileMenu";
 import ConfirmCancelModal from "@/components/Modals/ConfirmCancelModal";
 import { useMobileMenu } from "@/context/MobileMenuContext";
-import { SupportedLanguage } from "@/lib/contracts";
+import { SupportedLanguage } from "@linguardian/shared/contracts";
 import paths from "@/lib/paths";
 import { cn } from "@/lib/utils";
 

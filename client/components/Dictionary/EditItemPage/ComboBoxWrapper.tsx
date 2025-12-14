@@ -13,7 +13,7 @@ import { Fragment, useState } from "react";
 import { FieldErrors, FieldValues } from "react-hook-form";
 
 import FormErrors from "@/components/Forms/FormErrors";
-import { Gender, GrammaticalCase, PartOfSpeech } from "@/lib/contracts";
+import { Gender, GrammaticalCase, PartOfSpeech } from "@linguardian/shared/contracts";
 
 interface ComboBoxWrapperProps {
   placeholder: string;

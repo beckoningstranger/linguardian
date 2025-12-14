@@ -7,7 +7,7 @@ import { useController, useFormContext } from "react-hook-form";
 
 import FormErrors from "@/components/Forms/FormErrors";
 import PickMultipleOptions from "@/components/Dictionary/EditItemPage/PickMultipleOptions";
-import { ItemWithPopulatedTranslations, Tag } from "@/lib/contracts";
+import { ItemWithPopulatedTranslations, Tag } from "@linguardian/shared/contracts";
 import { Label } from "@/lib/types";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 

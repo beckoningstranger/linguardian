@@ -4,14 +4,11 @@ import {
   ApiResponse,
   OAuthProvider,
   OAuthProviderSchema,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 import { executeActionParams } from "@/lib/types";
-import {
-  formatZodErrors,
-  getAccessToken,
-  getUserFriendlyErrorMessage,
-  userIsAuthenticated,
-} from "@/lib/utils";
+import { formatZodErrors } from "@/lib/utils";
+import { getAccessToken, userIsAuthenticated } from "@/lib/utils/server";
+import { getUserFriendlyErrorMessage } from "@/lib/utils/errors";
 
 /**
  * Executes an API call and validates the response using a provided Zod schema.

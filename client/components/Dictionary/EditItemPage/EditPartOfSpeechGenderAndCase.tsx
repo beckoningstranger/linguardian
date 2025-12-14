@@ -6,8 +6,8 @@ import ComboBoxWrapper from "@/components/Dictionary/EditItemPage/ComboBoxWrappe
 import {
   ItemWithPopulatedTranslations,
   SupportedLanguage,
-} from "@/lib/contracts";
-import { allLanguageFeatures } from "@/lib/siteSettings";
+} from "@linguardian/shared/contracts";
+import { allLanguageFeatures } from "@linguardian/shared/constants";
 
 interface EditPartOfSpeechGenderAndCaseProps {
   control: Control<

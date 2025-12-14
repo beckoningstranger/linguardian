@@ -2,7 +2,7 @@ import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { ZodError } from "zod";
 
-import { SupportedLanguage } from "@/lib/contracts";
+import { SupportedLanguage } from "@linguardian/shared/contracts";
 
 /**
  * Utility function to conditionally join class names with Tailwind merging.

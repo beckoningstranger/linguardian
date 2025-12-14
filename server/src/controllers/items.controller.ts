@@ -1,0 +1,194 @@
+import logger from "@/utils/logger";
+import { NextFunction, Request, Response } from "express";
+
+import {
+    itemSchemaWithPopulatedTranslations,
+    fetchItemIdBySlugParamsSchema,
+    fetchItemByIdParamsSchema,
+    createItemParamsSchema,
+    findItemsByQueryParamsSchema,
+} from "@linguardian/shared/contracts";
+import { AuthenticatedItemRequest, AuthenticatedRequest } from "@/types/types";
+import {
+    assertNever,
+    errorResponse,
+    formatZodErrors,
+    successResponse,
+} from "@/utils";
+import { createNewItem, updateExistingItem } from "@/models/item.model";
+import {
+    findItemIdBySlug,
+    findPopulatedItemById,
+    findItemsByQuery,
+} from "@/repositories/item.repo";
+import { addItemToUnit } from "@/repositories/list.repo";
+
+export async function findItemIdBySlugController(req: Request, res: Response) {
+    const result = fetchItemIdBySlugParamsSchema.safeParse(req.params);
+    if (!result.success) return errorResponse(res, 400, "Request invalid");
+
+    const itemSlug = result.data.itemSlug;
+    const response = await findItemIdBySlug(itemSlug);
+    if (!response.success)
+        return errorResponse(res, 404, `Item with slug ${itemSlug} not found`);
+
+    return successResponse(res, 200, response.data.id);
+}
+
+export async function getItemController(req: Request, res: Response) {
+    const result = fetchItemByIdParamsSchema.safeParse(req.params);
+    if (!result.success) return errorResponse(res, 400, "Request invalid");
+
+    const itemId = result.data.id;
+
+    const response = await findPopulatedItemById(itemId);
+    if (!response.success)
+        return errorResponse(res, 404, `Item with id ${itemId} not found`);
+
+    const item = response.data;
+
+    // logObjectPropertySizes(item);
+    return successResponse(res, 200, item);
+}
+
+export async function createItemController(
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+) {
+    const body = req.body as unknown;
+
+    const result = createItemParamsSchema.safeParse(body);
+    if (!result.success)
+        return errorResponse(
+            res,
+            400,
+            `Could not validate item:\n${formatZodErrors(result.error)}`
+        );
+
+    const { item, listNumber, unitName } = result.data;
+
+    try {
+        const response = await createNewItem(item);
+        if (!response.success) return errorResponse(res, 400, response.error);
+        const data = response.data;
+
+        switch (data.type) {
+            case "duplicate":
+                return successResponse(res, 200, {
+                    type: data.type,
+                    message: data.message,
+                    redirectSlug: data.redirectSlug,
+                });
+            case "itemInfo": {
+                if (listNumber && unitName) {
+                    const addToUnitResponse = await addItemToUnit(listNumber, {
+                        unitName,
+                        itemId: data.itemInfo.id,
+                    });
+                    if (!addToUnitResponse.success)
+                        return successResponse(res, 201, {
+                            message:
+                                "Item created successfully!  🎉\nbut could not add to unit! :-/",
+                            type: "itemInfo",
+                            itemInfo: data.itemInfo,
+                        });
+
+                    return successResponse(res, 201, {
+                        message: `Item successfully created and added to unit ${unitName}!  🎉`,
+                        type: "itemInfo",
+                        itemInfo: data.itemInfo,
+                    });
+                }
+
+                return successResponse(res, 201, {
+                    message: "Item created successfully! 🎉",
+                    type: "itemInfo",
+                    itemInfo: data.itemInfo,
+                });
+            }
+            default:
+                const _exhaustiveCheck: never = data;
+                return assertNever(_exhaustiveCheck);
+        }
+    } catch (err) {
+        next(err);
+    }
+}
+
+export async function updateItemController(
+    req: AuthenticatedItemRequest,
+    res: Response,
+    next: NextFunction
+) {
+    const body = req.body as unknown;
+
+    const result = itemSchemaWithPopulatedTranslations.safeParse(body);
+    if (!result.success)
+        return errorResponse(
+            res,
+            400,
+            `Could not validate item:\n${formatZodErrors(result.error)}`
+        );
+
+    try {
+        const response = await updateExistingItem(result.data);
+        if (!response.success) return errorResponse(res, 400, response.error);
+        if (response.data) {
+            return successResponse(res, 200, {
+                message: "Item updated successfully!  🎉",
+                type: "itemInfo",
+                itemInfo: response.data.itemInfo,
+            });
+        }
+    } catch (err) {
+        next(err);
+    }
+}
+
+export async function deleteItemController(
+    req: AuthenticatedItemRequest,
+    res: Response,
+    next: NextFunction
+) {
+    const itemId = req.itemId;
+    return errorResponse(res, 418, "Implement correctly");
+}
+
+export async function findItemsByQueryController(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    try {
+        const { languages, query } = req.query;
+        if (!query || !languages || typeof languages !== "string")
+            return errorResponse(res, 400, "Missing query or languages");
+
+        // languages comes as comma-separated string
+        const languageArray = languages.split(",");
+
+        const result = findItemsByQueryParamsSchema.safeParse({
+            query,
+            languages: languageArray,
+        });
+        if (!result.success)
+            return errorResponse(
+                res,
+                400,
+                "Search query or search languages invalid"
+            );
+
+        const response = await findItemsByQuery(
+            result.data.languages,
+            result.data.query
+        );
+        if (!response.success) {
+            logger.error("Search failed", { query, error: response.error });
+            return successResponse(res, 200, []);
+        }
+        return successResponse(res, 200, response.data);
+    } catch (err) {
+        next(err);
+    }
+}

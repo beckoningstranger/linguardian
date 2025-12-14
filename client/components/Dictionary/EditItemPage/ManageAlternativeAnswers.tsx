@@ -12,7 +12,7 @@ import {
     AlternativeAnswers,
     ItemWithPopulatedTranslations,
     SupportedLanguage,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 import { getFlagCodeFromLangCode } from "@/lib/utils";
 import AlternativeAnswerField from "./AlternativeAnswerField";
 import EnterAlternativeAnswerModal from "./EnterAlternativeAnswerModal";

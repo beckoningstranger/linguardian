@@ -7,7 +7,7 @@ import { useController, useFormContext } from "react-hook-form";
 
 import EnterIPAField from "@/components/Dictionary/EditItemPage/IPA/EnterIPAField";
 import FormErrors from "@/components/Forms/FormErrors";
-import { IPA, ItemWithPopulatedTranslations } from "@/lib/contracts";
+import { IPA, ItemWithPopulatedTranslations } from "@linguardian/shared/contracts";
 import { Label } from "@/lib/types";
 
 interface EnterIPAProps {

@@ -7,10 +7,13 @@ import toast from "react-hot-toast";
 import Button from "@/components/ui/Button";
 import Spinner from "@/components/Spinner";
 import { useUser } from "@/context/UserContext";
-import { LanguageWithFlagAndName, updateUserSchema } from "@/lib/contracts";
+import {
+  LanguageWithFlagAndName,
+  updateUserSchema,
+} from "@linguardian/shared/contracts";
 import { useUserUpdater } from "@/lib/hooks/useUserUpdater";
 import paths from "@/lib/paths";
-import { defaultSRSettings } from "@/lib/siteSettings";
+import { defaultSRSettings } from "@linguardian/shared/constants";
 
 interface OnboardingSubmitButtonProps {
   languageToLearn: LanguageWithFlagAndName;

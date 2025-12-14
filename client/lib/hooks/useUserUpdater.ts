@@ -2,7 +2,7 @@
 
 import { useUser } from "@/context/UserContext";
 import { updateUserAction } from "@/lib/actions/user-actions";
-import type { MessageResponse, UpdateUser, User } from "@/lib/contracts";
+import type { MessageResponse, UpdateUser, User } from "@linguardian/shared/contracts";
 
 /**
  * Hook to update user context and persist changes to the backend.

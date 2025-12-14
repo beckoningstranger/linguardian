@@ -1,0 +1,50 @@
+{
+    "name": "@linguardian/shared",
+    "version": "1.0.0",
+    "description": "Shared types, contracts, and constants for Linguardian",
+    "type": "module",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsc -p tsconfig.json",
+        "prepare": "npm run build",
+        "type-check": "tsc --noEmit"
+    },
+    "dependencies": {
+        "zod": "^3.23.8"
+    },
+    "devDependencies": {
+        "typescript": "^5.9.2"
+    },
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js"
+        },
+        "./contracts": {
+            "types": "./dist/contracts/index.d.ts",
+            "import": "./dist/contracts/index.js",
+            "default": "./dist/contracts/index.js"
+        },
+        "./constants": {
+            "types": "./dist/constants/index.d.ts",
+            "import": "./dist/constants/index.js",
+            "default": "./dist/constants/index.js"
+        },
+        "./contracts/*": {
+            "types": "./dist/contracts/*.d.ts",
+            "import": "./dist/contracts/*.js",
+            "default": "./dist/contracts/*.js"
+        },
+        "./constants/*": {
+            "types": "./dist/constants/*.d.ts",
+            "import": "./dist/constants/*.js",
+            "default": "./dist/constants/*.js"
+        },
+        "./package.json": "./package.json"
+    }
+}

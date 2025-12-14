@@ -2,7 +2,7 @@ import Link from "next/link";
 import Flag from "react-world-flags";
 
 import ItemSection from "@/components/Dictionary/ItemPage/ItemSection";
-import { Item, SupportedLanguage } from "@/lib/contracts";
+import { Item, SupportedLanguage } from "@linguardian/shared/contracts";
 import paths from "@/lib/paths";
 
 interface ItemTranslationsProps {

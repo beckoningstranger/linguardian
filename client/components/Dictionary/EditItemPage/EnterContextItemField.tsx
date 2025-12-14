@@ -7,7 +7,7 @@ import { Dispatch, RefObject, SetStateAction, useState } from "react";
 import StyledInput from "@/components/Forms/StyledInput";
 import StyledTextarea from "@/components/Forms/StyledTextArea";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
-import { ContextItem } from "@/lib/contracts";
+import { ContextItem } from "@linguardian/shared/contracts";
 
 interface EnterContextItemsFieldProps {
   contextItems: ContextItem[];

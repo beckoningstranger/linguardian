@@ -1,6 +1,6 @@
 import Search from "@/components/Dictionary/Search/Search";
 import { fetchMultipleItemsById } from "@/lib/api/item-api";
-import { Item } from "@/lib/contracts";
+import { Item, RecentDictionarySearch } from "@linguardian/shared/contracts";
 
 import { getUserOnServer } from "@/lib/utils/server";
 
@@ -12,7 +12,7 @@ export default async function DictionaryPage() {
     return <Search mode="searchResultIsLinkToItemPage" recentSearches={[]} />;
 
   const recentItemIds = user.recentDictionarySearches.map(
-    (item) => item.itemId
+    (item: RecentDictionarySearch) => item.itemId
   );
   const items = await fetchMultipleItemsById(recentItemIds);
   const itemsWithoutTranslations: Item[] = items.map((item) => ({

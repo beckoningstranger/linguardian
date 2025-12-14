@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { IoMdRefresh } from "react-icons/io";
 
 import type { ReviewStatus } from "@/components/LearningModes/LearnAndReview";
-import { PuzzlePieceObject } from "@/lib/contracts";
+import { PuzzlePieceObject } from "@linguardian/shared/contracts";
 import { cn, shuffleArray } from "@/lib/utils";
 
 interface PuzzleModeProps {

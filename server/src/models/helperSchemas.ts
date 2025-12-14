@@ -1,7 +1,7 @@
 import { Schema } from "mongoose";
 
-import { LanguageWithFlagAndName } from "@/lib/contracts";
-import { UnitItemWithObjectId } from "@/lib/schemas";
+import { LanguageWithFlagAndName } from "@linguardian/shared/contracts";
+import { UnitItemWithObjectId } from "@/schemas";
 
 export const mongooseLanguageWithFlagAndNameSchema =
   new Schema<LanguageWithFlagAndName>(

@@ -1,6 +1,6 @@
 "use client";
 
-import { LanguageWithFlagAndName } from "@/lib/contracts";
+import { LanguageWithFlagAndName } from "@linguardian/shared/contracts";
 import {
   Dispatch,
   ReactNode,

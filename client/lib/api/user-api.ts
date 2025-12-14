@@ -9,10 +9,10 @@ import {
   RegistrationData,
   SessionUser,
   sessionUserSchema,
-  UpdateUser,
   User,
+  UpdateUser,
   userSchema,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 import { userTag } from "@/lib/utils";
 import { handleApiCall, handleApiCallWithAuth } from "@/lib/utils/api";
 import { z } from "zod";

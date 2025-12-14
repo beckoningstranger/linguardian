@@ -7,9 +7,9 @@ import Button from "@/components/ui/Button";
 import ListSearch from "@/components/Lists/ListStore/ListSearch";
 import ListStoreCard from "@/components/Lists/ListStore/ListStoreCard";
 import { fetchListStoreDataForLanguage } from "@/lib/api/bff-api";
-import { SupportedLanguage } from "@/lib/contracts";
+import { ListForListStore, SupportedLanguage } from "@linguardian/shared/contracts";
 import paths from "@/lib/paths";
-import { allLanguageFeatures, allSupportedLanguages } from "@/lib/siteSettings";
+import { allLanguageFeatures, allSupportedLanguages } from "@linguardian/shared/constants";
 
 export const metadata: Metadata = {
   title: "Lists",
@@ -39,7 +39,8 @@ export default async function ListStore(props: ListStoreProps) {
   });
   if (!response.success) notFound();
 
-  const { allListsForLanguage } = response.data;
+  const { allListsForLanguage }: { allListsForLanguage: ListForListStore[] } =
+    response.data;
 
   return (
     <div className="relative flex flex-col">

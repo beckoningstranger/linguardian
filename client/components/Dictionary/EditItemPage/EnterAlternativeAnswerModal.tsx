@@ -5,7 +5,10 @@ import { Dispatch, RefObject, SetStateAction, useRef, useState } from "react";
 import StyledInput from "@/components/Forms/StyledInput";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 import { createPortal } from "react-dom";
-import { AlternativeAnswers, SupportedLanguage } from "@/lib/contracts";
+import {
+  AlternativeAnswers,
+  SupportedLanguage,
+} from "@linguardian/shared/contracts";
 import Flag from "react-world-flags";
 import { cn, getFlagCodeFromLangCode } from "@/lib/utils";
 

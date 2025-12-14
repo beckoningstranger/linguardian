@@ -1,6 +1,6 @@
 "use client";
 
-import { LanguageFeatures, SupportedLanguage } from "@/lib/contracts";
+import { LanguageFeatures, SupportedLanguage } from "@linguardian/shared/contracts";
 import { cn } from "@/lib/utils";
 import Button from "@/components/ui/Button";
 import { useMobileMenu } from "@/context/MobileMenuContext";

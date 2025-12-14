@@ -1,6 +1,6 @@
 "use client";
 
-import { SupportedLanguage } from "@/lib/contracts";
+import { SupportedLanguage } from "@linguardian/shared/contracts";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 import { getFlagCodeFromLangCode } from "@/lib/utils";
 import { Dispatch, RefObject, SetStateAction } from "react";

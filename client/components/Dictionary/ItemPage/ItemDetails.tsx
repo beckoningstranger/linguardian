@@ -11,7 +11,7 @@ import ItemTranslations from "@/components/Dictionary/ItemPage/ItemTranslations"
 import {
     ItemWithPopulatedTranslations,
     SupportedLanguage,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 import { cn } from "@/lib/utils";
 
 interface ItemDetailsProps {

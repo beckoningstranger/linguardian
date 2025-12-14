@@ -7,7 +7,7 @@ import { useState } from "react";
 import DeleteItemButton from "@/components/Lists/EditUnit/DeleteItemButton";
 import UnitItemText from "@/components/Lists/UnitOverview/UnitItemText";
 import { updateRecentSearchesAction } from "@/lib/actions/user-actions";
-import { ItemPlusLearningInfo } from "@/lib/contracts";
+import { ItemPlusLearningInfo } from "@linguardian/shared/contracts";
 import paths from "@/lib/paths";
 import { bgColor, cn, currentItemStatus, nextReviewMessage } from "@/lib/utils";
 import { AiOutlineExclamationCircle } from "react-icons/ai";

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import paths from "@/lib/paths";
-import { List } from "@/lib/contracts";
+import { List } from "@linguardian/shared/contracts";
 
 interface ListStoreCardProps {
   authorData: { username: string; usernameSlug: string }[];

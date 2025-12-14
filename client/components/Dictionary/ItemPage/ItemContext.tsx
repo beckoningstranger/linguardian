@@ -1,5 +1,5 @@
 import ItemSection from "@/components/Dictionary/ItemPage/ItemSection";
-import { ContextItem } from "@/lib/contracts";
+import { ContextItem } from "@linguardian/shared/contracts";
 
 interface ItemContextProps {
   context?: ContextItem[];

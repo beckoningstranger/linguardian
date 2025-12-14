@@ -1,4 +1,4 @@
-import { Item } from "@/lib/contracts";
+import { Item } from "@linguardian/shared/contracts";
 import Flag from "react-world-flags";
 
 interface SearchResultItemProps {

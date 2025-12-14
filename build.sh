@@ -3,8 +3,6 @@
 set -e
 set -o pipefail
 
-./share_files.sh
-
 echo "🐳 Building backend image..."
 docker compose -f docker-compose.build.yml build backend
 

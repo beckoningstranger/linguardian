@@ -5,7 +5,7 @@ import {
   Item,
   itemSchemaWithTranslations,
   SupportedLanguage,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 import { handleApiCall } from "@/lib/utils";
 import { z } from "zod";
 

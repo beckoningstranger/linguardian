@@ -1,5 +1,5 @@
 import ActivityRow from "@/components/Profile/ActivityRow";
-import { LanguageWithFlagAndName } from "@/lib/contracts";
+import { LanguageWithFlagAndName } from "@linguardian/shared/contracts";
 
 interface ActivityOverviewProps {
   language: LanguageWithFlagAndName;

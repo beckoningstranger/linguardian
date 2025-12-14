@@ -5,7 +5,7 @@ import { RefObject, useState } from "react";
 
 import HelperKeysSelector from "@/components/Menus/HelperKeysSelector";
 import { useMobileMenu } from "@/context/MobileMenuContext";
-import { LanguageFeatures } from "@/lib/contracts";
+import { LanguageFeatures } from "@linguardian/shared/contracts";
 import { cn } from "@/lib/utils";
 
 interface HelperKeysProps {

@@ -7,7 +7,7 @@ import Flag from "react-world-flags";
 import AddNewLanguageOption from "@/components/Menus/TopMenu/LanguageSelector/AddNewLanguageOption";
 import { useMobileMenu } from "@/context/MobileMenuContext";
 import { useUser } from "@/context/UserContext";
-import { allSupportedLanguages } from "@/lib/siteSettings";
+import { allSupportedLanguages } from "@linguardian/shared/constants";
 import { moreLanguagesToLearn, showLanguageSelector } from "@/lib/utils";
 
 export default function MobileLanguageSelector() {

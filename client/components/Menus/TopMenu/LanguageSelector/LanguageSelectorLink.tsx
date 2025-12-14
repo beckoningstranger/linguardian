@@ -4,7 +4,7 @@ import Link from "next/link";
 import Flag from "react-world-flags";
 
 import { useUser } from "@/context/UserContext";
-import { LanguageWithFlagAndName } from "@/lib/contracts";
+import { LanguageWithFlagAndName } from "@linguardian/shared/contracts";
 import { usePathname } from "next/navigation";
 
 interface LanguageSelectorLinkProps {

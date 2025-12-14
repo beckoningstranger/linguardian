@@ -9,10 +9,10 @@ import FormErrors from "@/components/Forms/FormErrors";
 import { useMobileMenu } from "@/context/MobileMenuContext";
 import { useUser } from "@/context/UserContext";
 import {
-    PromptHelpers,
     ItemWithPopulatedTranslations,
+    PromptHelpers,
     SupportedLanguage,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 import { getFlagCodeFromLangCode } from "@/lib/utils";
 import PromptHelperField from "./PromptHelperField";
 import EnterPromptHelperModal from "./EnterPromptHelperModal";

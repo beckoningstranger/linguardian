@@ -5,7 +5,10 @@ import toast from "react-hot-toast";
 
 import Button from "@/components/ui/Button";
 import { useUser } from "@/context/UserContext";
-import { LanguageWithFlagAndName, SupportedLanguage } from "@/lib/contracts";
+import {
+  LanguageWithFlagAndName,
+  SupportedLanguage,
+} from "@linguardian/shared/contracts";
 import { useUserUpdater } from "@/lib/hooks/useUserUpdater";
 
 interface StopLearningLanguageButtonProps {

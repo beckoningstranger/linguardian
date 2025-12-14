@@ -1,4 +1,4 @@
-import { Gender, PartOfSpeech } from "@/lib/contracts";
+import { Gender, PartOfSpeech } from "@linguardian/shared/contracts";
 
 interface ItemPartOfSpeechProps {
   gender?: Gender;

@@ -11,8 +11,7 @@ import {
   ItemToLearn,
   LanguageFeatures,
   SecondaryReviewMode,
-} from "@/lib/contracts";
-
+} from "@linguardian/shared/contracts";
 interface TypeSolutionProps {
   targetLanguageFeatures: LanguageFeatures;
   item: ItemToLearn;

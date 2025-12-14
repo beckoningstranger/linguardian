@@ -4,7 +4,7 @@ import {
   LearningMode,
   PopulatedList,
   SupportedLanguage,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 
 declare global {
   namespace Express {

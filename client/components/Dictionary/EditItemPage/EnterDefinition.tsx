@@ -7,7 +7,7 @@ import { useController, useFormContext } from "react-hook-form";
 
 import FormErrors from "@/components/Forms/FormErrors";
 import StyledTextArea from "@/components/Forms/StyledTextArea";
-import { ItemWithPopulatedTranslations } from "@/lib/contracts";
+import { ItemWithPopulatedTranslations } from "@linguardian/shared/contracts";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 
 interface EnterDefinitionProps {

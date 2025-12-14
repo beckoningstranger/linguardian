@@ -6,10 +6,14 @@ import ItemDetails from "@/components/Dictionary/ItemPage/ItemDetails";
 import TopContextMenu from "@/components/Menus/TopMenu/TopContextMenu/TopContextMenu";
 import TopContextMenuButton from "@/components/Menus/TopMenu/TopContextMenu/TopContextMenuButton";
 import { fetchItemBySlug } from "@/lib/api/item-api";
-import { SupportedLanguage } from "@/lib/contracts";
+import {
+  LanguageWithFlagAndName,
+  SupportedLanguage,
+} from "@linguardian/shared/contracts";
 import paths from "@/lib/paths";
-import { allSupportedLanguages } from "@/lib/siteSettings";
-import { filterItemDataForUserLanguages, getUserOnServer } from "@/lib/utils";
+import { allSupportedLanguages } from "@linguardian/shared/constants";
+import { filterItemDataForUserLanguages } from "@/lib/utils";
+import { getUserOnServer } from "@/lib/utils/server";
 
 // export async function generateStaticParams() {
 // If this is to work, we have to get data from the API at build time
@@ -77,7 +81,12 @@ export default async function ItemPage(props: ItemPageProps) {
   const item = response.data;
 
   const allUserLanguageCodes: SupportedLanguage[] = user
-    ? [user.native.code, ...user.learnedLanguages.map((lang) => lang.code)]
+    ? [
+        user.native.code,
+        ...user.learnedLanguages.map(
+          (lang: LanguageWithFlagAndName) => lang.code
+        ),
+      ]
     : allSupportedLanguages;
 
   const filteredItem = filterItemDataForUserLanguages(

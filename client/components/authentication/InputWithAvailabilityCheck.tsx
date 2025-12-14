@@ -9,8 +9,8 @@ import { useDebounce } from "use-debounce";
 import LandingPageInput from "@/components/authentication/LandingPageInput";
 import Spinner from "@/components/Spinner";
 import { isTakenAction } from "@/lib/actions/user-actions";
-import { IsTakenMode } from "@/lib/contracts";
-import { regexRules } from "@/lib/regexRules";
+import { IsTakenMode } from "@linguardian/shared/contracts";
+import { regexRules } from "@linguardian/shared/constants";
 
 type InputWithCheckProps = {
   checkMode: IsTakenMode;

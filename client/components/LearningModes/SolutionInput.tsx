@@ -8,7 +8,7 @@ import { TIME_BETWEEN_REVIEWS } from "@/lib/constants";
 import {
   ItemWithPopulatedTranslations,
   LanguageFeatures,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 import { cn } from "@/lib/utils";
 
 interface SolutionInputProps {

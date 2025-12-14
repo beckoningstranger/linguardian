@@ -9,8 +9,11 @@ import {
   z,
 } from "zod";
 
-import { SupportedLanguage } from "@/lib/contracts";
-import { allLanguageFeatures, allSupportedLanguages } from "@/lib/siteSettings";
+import { SupportedLanguage } from "@linguardian/shared/contracts";
+import {
+  allLanguageFeatures,
+  allSupportedLanguages,
+} from "@linguardian/shared/constants";
 import { formatZodErrors } from "@/lib/utils/shared";
 
 /**

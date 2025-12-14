@@ -1,4 +1,4 @@
-import { ApiResponse } from "@/lib/contracts";
+import { ApiResponse } from "@linguardian/shared/contracts";
 
 export type StringOrPickOne = string | "Pick one...";
 export type Label = { singular: string; plural: string };

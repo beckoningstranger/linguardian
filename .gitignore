@@ -16,6 +16,7 @@ out/
 # production
 build
 server/dist/
+packages/shared/dist/
 
 # misc
 .DS_Store

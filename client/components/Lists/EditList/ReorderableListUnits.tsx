@@ -12,6 +12,7 @@ import EditUnitButton from "@/components/Lists/EditUnit/EditUnitButton";
 import NewUnitButton from "@/components/Lists/EditList/NewUnitButton";
 import { useListContext } from "@/context/ListContext";
 import { updateUnitOrderAction } from "@/lib/actions/list-actions";
+import { UnitInformation } from "@linguardian/shared/contracts";
 
 export default function ReorderableListUnits() {
   const { listNumber, unitOrder, setUnitOrder, listLanguage, unitInformation } =
@@ -53,7 +54,8 @@ export default function ReorderableListUnits() {
             >
               {unitOrder?.map((unitName, index) => {
                 const unitInfo = unitInformation.find(
-                  (unit) => unit.unitName === unitName
+                  (unit: UnitInformation[number]) =>
+                    unit.unitName === unitName
                 );
                 return (
                   <Draggable

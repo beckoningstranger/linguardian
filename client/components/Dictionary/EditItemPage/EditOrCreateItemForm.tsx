@@ -17,9 +17,9 @@ import ItemLanguagePicker from "@/components/Dictionary/EditItemPage/ItemLanguag
 import { useUser } from "@/context/UserContext";
 import { createItemAction, updateItemAction } from "@/lib/actions/item-actions";
 import { EDIT_OR_CREATE_ITEM_FORM_ID } from "@/lib/constants";
-import { ItemWithPopulatedTranslations } from "@/lib/contracts";
+import { ItemWithPopulatedTranslations } from "@linguardian/shared/contracts";
 import paths from "@/lib/paths";
-import { allLanguageFeatures } from "@/lib/siteSettings";
+import { allLanguageFeatures } from "@linguardian/shared/constants";
 import ManagePromptHelpers from "./ManagePromptHelpers";
 import ManageAlternativeAnswers from "./ManageAlternativeAnswers";
 

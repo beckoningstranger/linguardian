@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import paths from "@/lib/paths";
-import { AuthorData } from "@/lib/contracts";
+import { AuthorData } from "@linguardian/shared/contracts";
 
 interface CreatedByLineProps {
   authorData: AuthorData[];

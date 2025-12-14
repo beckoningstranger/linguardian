@@ -10,7 +10,7 @@ import {
   ExpandListForm,
   expandListFormSchema,
   SupportedLanguage,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 import paths from "@/lib/paths";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";

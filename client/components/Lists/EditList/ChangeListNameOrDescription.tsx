@@ -13,9 +13,8 @@ import { updateListDetailsAction } from "@/lib/actions/list-actions";
 import {
   ListDetailsUpdate,
   listDetailsUpdateSchema,
-  listSchema,
   SupportedLanguage,
-} from "@/lib/contracts";
+} from "@linguardian/shared/contracts";
 import paths from "@/lib/paths";
 import { cn } from "@/lib/utils";
 

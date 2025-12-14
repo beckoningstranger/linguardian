@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 import NoMoreLanguagesToLearn from "@/components/NoMoreLanguagesToLearn";
 import PickNewLanguage from "@/components/PickNewLanguage";
-import { allLanguageFeatures } from "@/lib/siteSettings";
+import { allLanguageFeatures } from "@linguardian/shared/constants";
 import { getUserOnServer } from "@/lib/utils/server";
 
 export const metadata: Metadata = {

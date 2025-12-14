@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { useDebounce } from "use-debounce";
 
 import { updateUnitNameAction } from "@/lib/actions/list-actions";
-import { SupportedLanguage } from "@/lib/contracts";
+import { SupportedLanguage } from "@linguardian/shared/contracts";
 import { cn } from "@/lib/utils";
 
 interface UnitNameInputProps {
