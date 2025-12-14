@@ -16,7 +16,7 @@ COPY packages/shared/ ./packages/shared/
 # Install dependencies with pnpm
 WORKDIR /app/client
 RUN --mount=type=cache,target=/root/.local/share/pnpm \
-    pnpm install --frozen-lockfile
+    pnpm install
 
 # Copy client source
 COPY client/ .
