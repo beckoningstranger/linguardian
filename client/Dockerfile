@@ -17,6 +17,7 @@ ENV GOOGLE_ID=$GOOGLE_ID \
 
 # Copy workspace config and package files
 COPY pnpm-workspace.yaml ./
+COPY pnpm-lock.yaml ./
 COPY packages/shared/package.json ./packages/shared/
 COPY client/package.json ./client/
 
