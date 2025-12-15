@@ -7,19 +7,27 @@ WORKDIR /app
 
 # Copy workspace config and package files
 COPY pnpm-workspace.yaml ./
+COPY pnpm-lock.yaml ./
 COPY packages/shared/package.json ./packages/shared/
 COPY server/package.json ./server/
 
 # Copy shared sources
 COPY packages/shared ./packages/shared
 
-# Install dependencies
+# Install dependencies from workspace root
 RUN --mount=type=cache,target=/root/.local/share/pnpm \
-    pnpm install
+    pnpm install --frozen-lockfile
+
+# Build shared package
+RUN pnpm --filter @linguardian/shared build
+
+WORKDIR /app/server
 
 # Copy server sources
 COPY server ./server
 
+# Ensure we're in the server directory
 WORKDIR /app/server
 
-CMD ["pnpm", "dev"]
+# Use local tsx binary from server node_modules
+CMD ["./node_modules/.bin/tsx", "watch", "--clear-screen=false", "src/server.ts"]

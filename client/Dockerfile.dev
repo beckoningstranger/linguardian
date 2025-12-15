@@ -5,20 +5,28 @@ RUN npm install -g pnpm
 
 WORKDIR /app
 
-# Copy workspace config and package files
+# Copy workspace config and all package files
 COPY pnpm-workspace.yaml ./
+COPY pnpm-lock.yaml ./
 COPY packages/shared/package.json ./packages/shared/
 COPY client/package.json ./client/
 
-# Copy shared sources for build
+# Copy shared sources
 COPY packages/shared/ ./packages/shared/
 
-# Install dependencies with pnpm
-WORKDIR /app/client
+# Install dependencies from workspace root
 RUN --mount=type=cache,target=/root/.local/share/pnpm \
-    pnpm install
+    pnpm install --frozen-lockfile
+
+# Build shared package
+RUN pnpm --filter @linguardian/shared build
+
+WORKDIR /app/client
 
 # Copy client source
 COPY client/ .
 
-CMD ["pnpm", "dev"]
+# Ensure we're in the client directory
+WORKDIR /app/client
+
+CMD ["/app/node_modules/.bin/next", "dev", "--webpack"]

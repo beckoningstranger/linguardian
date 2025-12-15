@@ -1,37 +1,39 @@
-# Use Docker BuildKit for faster builds
+# Traditional Docker + PNPM Workspace Development
+# Container manages dependencies, volumes overlay source for live development
 
 services:
   frontend:
     build:
       context: .
-      dockerfile: ./client/Dockerfile.dev
+      dockerfile: ./Dockerfile
     env_file:
       - ./client/.env.local
+    environment:
+      - NEXT_PUBLIC_SERVER_URL=http://backend:8000
     volumes:
-      - /app/client/node_modules
+      # Traditional mounting - source overlays container for live development
       - ./client:/app/client
-      - ./packages/shared:/app/packages/shared
-      - ./package.json:/app/package.json
-      - ./package-lock.json:/app/package-lock.json
-      - npm-cache:/root/.npm
+      - ./packages:/app/packages
+    working_dir: /app/client
     ports:
       - "3000:3000"
+    command: pnpm dev
 
   backend:
     build:
       context: .
-      dockerfile: ./server/Dockerfile.dev
-    volumes:
-      - /app/server/node_modules
-      - ./server:/app/server
-      - ./packages/shared:/app/packages/shared
-      - ./package.json:/app/package.json
-      - ./package-lock.json:/app/package-lock.json
-      - npm-cache:/root/.npm
+      dockerfile: ./Dockerfile
     env_file:
       - ./server/.env.local
+    volumes:
+      # Traditional mounting - source overlays container for live development
+      - ./server/src:/app/server/src
+      - ./server/tsconfig.json:/app/server/tsconfig.json
+      - ./packages:/app/packages
+    working_dir: /app/server
     ports:
       - "8000:8000"
+    command: tsx --tsconfig tsconfig.json src/server.ts
 
 volumes:
-  npm-cache:
+  pnpm-cache:

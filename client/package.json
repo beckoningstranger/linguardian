@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "next dev --webpack",
+        "dev": "next dev --turbopack",
         "build": "next build",
         "start": "next start",
         "lint": "next lint"
@@ -13,7 +13,7 @@
         "@hello-pangea/dnd": "^18.0.0",
         "@heroicons/react": "^2.1.4",
         "@hookform/resolvers": "^5.2.2",
-        "@linguardian/shared": "*",
+        "@linguardian/shared": "workspace:*",
         "apexcharts": "^5.3.6",
         "autoprefixer": "^10.4.22",
         "bcryptjs": "^2.4.3",

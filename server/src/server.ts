@@ -9,15 +9,15 @@ import app from "@/app";
 const server = createServer(app);
 
 async function startServer() {
-  try {
-    await mongoConnect();
-    server.listen(env.PORT, () => {
-      logger.info(`Server started successfully`, { port: env.PORT });
-    });
-  } catch (error) {
-    logger.error("Failed to start server", { error });
-    process.exit(1);
-  }
+    try {
+        await mongoConnect();
+        server.listen(env.PORT, () => {
+            logger.info(`Server started successfully`, { port: env.PORT });
+        });
+    } catch (error) {
+        logger.error("Failed to start server", { error });
+        process.exit(1);
+    }
 }
 
 startServer();
