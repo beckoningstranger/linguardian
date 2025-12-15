@@ -1,4 +1,9 @@
 packages:
-    - "packages/*"
-    - "client"
-    - "server"
+    - packages/*
+    - client
+    - server
+
+onlyBuiltDependencies:
+    - esbuild
+    - sharp
+    - unrs-resolver
