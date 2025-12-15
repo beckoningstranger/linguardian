@@ -1,5 +1,7 @@
 import { createDefaultPreset, pathsToModuleNameMapper } from "ts-jest";
-import { compilerOptions } from "./tsconfig.json";
+import { readFileSync } from "fs";
+const tsconfig = JSON.parse(readFileSync("./tsconfig.json", "utf8"));
+const { compilerOptions } = tsconfig;
 
 const tsJestTransformCfg = createDefaultPreset().transform;
 
