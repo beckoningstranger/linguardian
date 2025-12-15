@@ -47,3 +47,7 @@ server/scripts*
 mongoScripts/
 build_locally.sh
 docker-compose.dev.yml
+
+# Infrastructure backups (may contain sensitive info)
+infrastructure/ec2-config-backup-*.tar.gz
+infrastructure/backup-*/
