@@ -39,8 +39,16 @@ USER nonroot
 COPY --from=builder --chown=nonroot:nonroot /app/client/.next/standalone .
 COPY --from=builder --chown=nonroot:nonroot /app/client/public ./public
 COPY --from=builder --chown=nonroot:nonroot /app/client/.next/static ./.next/static
+COPY --from=builder --chown=nonroot:nonroot /app/client/package.json ./
 
-# Next.js standalone expects to run from the output root
-WORKDIR /app/client
+# Clean package.json and install dependencies
+USER root
+RUN \
+    mv client/server.js ./server.js && \
+    sed '/"@linguardian\/shared": "workspace:\*"/d' package.json > package-temp.json && \
+    mv package-temp.json package.json && \
+    npm install -g pnpm && \
+    pnpm install --prod
+USER nonroot
 
 CMD ["node", "server.js"]
