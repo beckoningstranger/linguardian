@@ -39,16 +39,8 @@ USER nonroot
 COPY --from=builder --chown=nonroot:nonroot /app/client/.next/standalone .
 COPY --from=builder --chown=nonroot:nonroot /app/client/public ./public
 COPY --from=builder --chown=nonroot:nonroot /app/client/.next/static ./.next/static
-COPY --from=builder --chown=nonroot:nonroot /app/client/package.json ./
 
-# Clean package.json and install dependencies
-USER root
-RUN \
-    mv client/server.js ./server.js && \
-    sed '/"@linguardian\/shared": "workspace:\*"/d' package.json > package-temp.json && \
-    mv package-temp.json package.json && \
-    npm install -g pnpm && \
-    pnpm install --prod
-USER nonroot
+# Copy node_modules from builder to ensure all runtime dependencies are available
+COPY --from=builder --chown=nonroot:nonroot /app/client/node_modules ./node_modules
 
 CMD ["node", "server.js"]
