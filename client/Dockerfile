@@ -38,13 +38,16 @@ RUN addgroup -S nonroot && adduser -S nonroot -G nonroot
 COPY --from=builder --chown=nonroot:nonroot /app/client/.next/standalone .
 COPY --from=builder --chown=nonroot:nonroot /app/client/public ./public
 COPY --from=builder --chown=nonroot:nonroot /app/client/.next/static ./.next/static
+COPY --from=builder --chown=nonroot:nonroot /app/client/package.json ./
 
-# Copy node_modules from builder to ensure all runtime dependencies are available
-COPY --from=builder --chown=nonroot:nonroot /app/client/node_modules ./node_modules
-
-# Move server.js to the expected location (must be done as root)
-RUN mv client/server.js ./server.js
-
+# Clean package.json and install production dependencies (like local Dockerfile)
+USER root
+RUN \
+    mv client/server.js ./server.js && \
+    sed '/"@linguardian\/shared": "workspace:\*"/d' package.json > package-temp.json && \
+    mv package-temp.json package.json && \
+    npm install -g pnpm && \
+    pnpm install --prod
 USER nonroot
 
 CMD ["node", "server.js"]
