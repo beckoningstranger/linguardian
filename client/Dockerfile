@@ -36,7 +36,7 @@ RUN addgroup -S nonroot && adduser -S nonroot -G nonroot
 USER nonroot
 
 COPY --from=builder --chown=nonroot:nonroot /app/client/.next/standalone .
+COPY --from=builder --chown=nonroot:nonroot /app/client/.next ./.next
 COPY --from=builder --chown=nonroot:nonroot /app/client/public ./public
-COPY --from=builder --chown=nonroot:nonroot /app/client/.next/static ./.next/static
 
 CMD ["node", "server.js"]

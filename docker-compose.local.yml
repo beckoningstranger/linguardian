@@ -3,7 +3,7 @@ services:
   backend:
     build:
       context: .
-      dockerfile: ./server/Dockerfile.dev
+      dockerfile: ./server/Dockerfile.local
     env_file:
       - ./server/.env.local
     networks:
@@ -15,7 +15,7 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: ./client/Dockerfile.dev
+      dockerfile: ./client/Dockerfile.local
       args:
         NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
         GOOGLE_ID: ${GOOGLE_ID}

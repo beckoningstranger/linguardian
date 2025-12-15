@@ -1,10 +1,30 @@
 FROM node:20-alpine3.19 AS builder
 
+# Install pnpm
+RUN npm install -g pnpm
+
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm ci --legacy-peer-deps
-COPY . .
+# Copy workspace config and package files
+COPY pnpm-workspace.yaml ./
+COPY pnpm-lock.yaml ./
+COPY packages/shared/package.json ./packages/shared/
+COPY client/package.json ./client/
+
+# Copy shared sources
+COPY packages/shared ./packages/shared
+
+# Install dependencies from workspace root
+RUN --mount=type=cache,target=/root/.local/share/pnpm \
+    pnpm install --frozen-lockfile
+
+# Build shared package
+RUN pnpm --filter @linguardian/shared build
+
+WORKDIR /app/client
+
+# Copy client source
+COPY client/ .
 
 # Use build-time args so Next.js has access to env vars during build
 ARG NEXTAUTH_SECRET
@@ -23,7 +43,7 @@ ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET \
     FRONTEND_URL=$FRONTEND_URL \
     NODE_ENV=$NODE_ENV
 
-RUN npm run build
+RUN pnpm build
 
 FROM node:20-alpine3.19 AS runner
 
@@ -32,8 +52,19 @@ WORKDIR /app
 RUN addgroup -S nonroot && adduser -S nonroot -G nonroot
 USER nonroot
 
-COPY --from=builder --chown=nonroot:nonroot /app/.next/standalone .
-COPY --from=builder --chown=nonroot:nonroot /app/public ./public
-COPY --from=builder --chown=nonroot:nonroot /app/.next/static ./.next/static
+COPY --from=builder --chown=nonroot:nonroot /app/client/.next/standalone .
+COPY --from=builder --chown=nonroot:nonroot /app/client/.next ./.next
+COPY --from=builder --chown=nonroot:nonroot /app/client/public ./public
+COPY --from=builder --chown=nonroot:nonroot /app/client/package.json ./
+
+# Clean package.json and install dependencies
+USER root
+RUN \
+    mv client/server.js ./server.js && \
+    sed '/"@linguardian\/shared": "workspace:\*"/d' package.json > package-temp.json && \
+    mv package-temp.json package.json && \
+    npm install -g pnpm && \
+    pnpm install --prod
+USER nonroot
 
 CMD ["node", "server.js"]

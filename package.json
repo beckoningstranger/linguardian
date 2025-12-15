@@ -1,0 +1,13 @@
+{
+  "name": "linguardian",
+  "private": true,
+  "scripts": {
+    "build": "pnpm --recursive --parallel run build",
+    "dev": "pnpm --recursive --parallel run dev",
+    "lint": "pnpm --recursive run lint",
+    "clean": "pnpm --recursive run clean"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}

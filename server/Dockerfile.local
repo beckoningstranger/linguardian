@@ -1,0 +1,57 @@
+FROM node:20-alpine3.19 AS builder
+
+# Install pnpm
+RUN npm install -g pnpm
+
+WORKDIR /app
+
+# Copy workspace config and package files
+COPY pnpm-workspace.yaml ./
+COPY pnpm-lock.yaml ./
+COPY packages/shared/package.json ./packages/shared/
+COPY server/package.json ./server/
+
+# Copy shared sources
+COPY packages/shared ./packages/shared
+
+# Install dependencies from workspace root
+RUN --mount=type=cache,target=/root/.local/share/pnpm \
+    pnpm install --frozen-lockfile
+
+# Build shared package
+RUN pnpm --filter @linguardian/shared build
+
+# Copy server sources
+COPY server ./server
+
+WORKDIR /app/server
+
+# Build the server
+RUN pnpm build
+
+FROM node:20-alpine3.19 AS runner
+
+WORKDIR /app
+
+RUN addgroup -S nonroot && adduser -S nonroot -G nonroot
+USER nonroot
+
+# Copy built server from builder stage
+COPY --from=builder --chown=nonroot:nonroot /app/server/dist ./dist
+COPY --from=builder --chown=nonroot:nonroot /app/server/package.json ./
+
+# Copy built shared package and create a clean package.json for production
+COPY --from=builder --chown=nonroot:nonroot /app/packages/shared/dist ./node_modules/@linguardian/shared
+
+# Remove the shared workspace dependency and install production dependencies
+USER root
+RUN sed '/"@linguardian\/shared": "workspace:\*"/d' package.json > package-temp.json && \
+    mv package-temp.json package.json && \
+    npm install -g pnpm && \
+    pnpm install --prod && \
+    chown -R nonroot:nonroot .
+USER nonroot
+
+EXPOSE 8000
+
+CMD ["node", "dist/server.js"]
