@@ -8,6 +8,7 @@ WORKDIR /app
 # Copy workspace config and package files
 COPY pnpm-workspace.yaml ./
 COPY pnpm-lock.yaml ./
+COPY .pnpmrc ./
 COPY packages/shared/package.json ./packages/shared/
 COPY server/package.json ./server/
 
