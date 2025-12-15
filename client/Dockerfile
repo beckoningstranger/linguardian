@@ -40,4 +40,7 @@ COPY --from=builder --chown=nonroot:nonroot /app/client/.next/standalone .
 COPY --from=builder --chown=nonroot:nonroot /app/client/public ./public
 COPY --from=builder --chown=nonroot:nonroot /app/client/.next/static ./.next/static
 
+# Next.js standalone expects to run from the output root
+WORKDIR /app/client
+
 CMD ["node", "server.js"]

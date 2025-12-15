@@ -21,6 +21,7 @@ packages/shared/dist/
 # misc
 .DS_Store
 *.pem
+ssh-to-ec2.sh
 
 # debug
 npm-debug.log*
