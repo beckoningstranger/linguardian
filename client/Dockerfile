@@ -34,20 +34,16 @@ FROM node:20-alpine3.19 AS runner
 WORKDIR /app
 
 RUN addgroup -S nonroot && adduser -S nonroot -G nonroot
-
-COPY --from=builder --chown=nonroot:nonroot /app/client/.next/standalone .
-COPY --from=builder --chown=nonroot:nonroot /app/client/public ./public
-COPY --from=builder --chown=nonroot:nonroot /app/client/.next/static ./.next/static
-COPY --from=builder --chown=nonroot:nonroot /app/client/package.json ./
-
-# Clean package.json and install production dependencies (like local Dockerfile)
-USER root
-RUN \
-    mv client/server.js ./server.js && \
-    sed '/"@linguardian\/shared": "workspace:\*"/d' package.json > package-temp.json && \
-    mv package-temp.json package.json && \
-    npm install -g pnpm && \
-    pnpm install --prod
 USER nonroot
 
-CMD ["node", "server.js"]
+# Copy the standalone bundle produced by Next.js
+COPY --from=builder --chown=nonroot:nonroot /app/client/.next/standalone ./.next/standalone
+
+# Copy public assets into the standalone folder so server.js can serve them
+COPY --from=builder --chown=nonroot:nonroot /app/client/public ./.next/standalone/public
+
+# Copy static assets into the standalone .next tree
+COPY --from=builder --chown=nonroot:nonroot /app/client/.next/static ./.next/standalone/.next/static
+
+# Run the minimal Next.js server from the standalone folder, per Next.js docs
+CMD ["node", ".next/standalone/server.js"]
