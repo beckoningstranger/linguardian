@@ -34,7 +34,6 @@ FROM node:20-alpine3.19 AS runner
 WORKDIR /app
 
 RUN addgroup -S nonroot && adduser -S nonroot -G nonroot
-USER nonroot
 
 COPY --from=builder --chown=nonroot:nonroot /app/client/.next/standalone .
 COPY --from=builder --chown=nonroot:nonroot /app/client/public ./public
@@ -42,5 +41,10 @@ COPY --from=builder --chown=nonroot:nonroot /app/client/.next/static ./.next/sta
 
 # Copy node_modules from builder to ensure all runtime dependencies are available
 COPY --from=builder --chown=nonroot:nonroot /app/client/node_modules ./node_modules
+
+# Move server.js to the expected location (must be done as root)
+RUN mv client/server.js ./server.js
+
+USER nonroot
 
 CMD ["node", "server.js"]
