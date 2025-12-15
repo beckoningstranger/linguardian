@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
-        "lib": ["ES2020"],
-        "module": "Node16",
-        "moduleResolution": "node16",
+        "lib": ["ES2023"],
+        "module": "ESnext",
+        "moduleResolution": "bundler",
         "target": "ESNext",
         "esModuleInterop": true,
         "outDir": "dist",
