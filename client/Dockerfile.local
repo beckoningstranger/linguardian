@@ -52,19 +52,12 @@ WORKDIR /app
 RUN addgroup -S nonroot && adduser -S nonroot -G nonroot
 USER nonroot
 
-COPY --from=builder --chown=nonroot:nonroot /app/client/.next/standalone .
-COPY --from=builder --chown=nonroot:nonroot /app/client/public ./public
-COPY --from=builder --chown=nonroot:nonroot /app/client/.next/static ./.next/static
-COPY --from=builder --chown=nonroot:nonroot /app/client/package.json ./
+# Copy standalone app
+COPY --from=builder --chown=nonroot:nonroot /app/client/.next/standalone/. ./
 
-# Clean package.json and install dependencies
-USER root
-RUN \
-    mv client/server.js ./server.js && \
-    sed '/"@linguardian\/shared": "workspace:\*"/d' package.json > package-temp.json && \
-    mv package-temp.json package.json && \
-    npm install -g pnpm && \
-    pnpm install --prod
-USER nonroot
+# Copy public and static folders
+COPY --from=builder --chown=nonroot:nonroot /app/client/public/. ./client/public/
+COPY --from=builder --chown=nonroot:nonroot /app/client/.next/static/. ./client/.next/static/
 
-CMD ["node", "server.js"]
+
+CMD ["node", "client/server.js"]
