@@ -5,16 +5,6 @@ RUN npm install -g pnpm
 
 WORKDIR /app
 
-ARG GOOGLE_ID
-ARG GOOGLE_SECRET
-ARG NEXTAUTH_SECRET
-ARG NEXTAUTH_URL
-
-ENV GOOGLE_ID=$GOOGLE_ID \
-    GOOGLE_SECRET=$GOOGLE_SECRET \
-    NEXTAUTH_SECRET=$NEXTAUTH_SECRET \
-    NEXTAUTH_URL=$NEXTAUTH_URL
-
 # Copy workspace config and package files
 COPY pnpm-workspace.yaml ./
 COPY pnpm-lock.yaml ./
@@ -24,9 +14,35 @@ COPY client/package.json ./client/
 # Copy shared sources
 COPY packages/shared ./packages/shared
 
+# Install dependencies from workspace root
+RUN --mount=type=cache,target=/root/.local/share/pnpm \
+    pnpm install --frozen-lockfile
+
+# Build shared package
+RUN pnpm --filter @linguardian/shared build
+
+
 WORKDIR /app/client
-RUN pnpm install --frozen-lockfile
 COPY client/ .
+
+
+# Use build-time args so Next.js has access to env vars during build
+ARG NEXTAUTH_SECRET
+ARG GOOGLE_ID
+ARG GOOGLE_SECRET
+ARG NEXTAUTH_URL
+ARG SERVER_URL
+ARG FRONTEND_URL
+ARG NODE_ENV=production
+
+ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET \
+    GOOGLE_ID=$GOOGLE_ID \
+    GOOGLE_SECRET=$GOOGLE_SECRET \
+    NEXTAUTH_URL=$NEXTAUTH_URL \
+    SERVER_URL=$SERVER_URL \
+    FRONTEND_URL=$FRONTEND_URL \
+    NODE_ENV=$NODE_ENV
+
 RUN pnpm build
 
 FROM node:20-alpine3.19 AS runner
@@ -36,14 +52,12 @@ WORKDIR /app
 RUN addgroup -S nonroot && adduser -S nonroot -G nonroot
 USER nonroot
 
-# Copy the standalone bundle produced by Next.js
-COPY --from=builder --chown=nonroot:nonroot /app/client/.next/standalone ./.next/standalone
+# Copy standalone app
+COPY --from=builder --chown=nonroot:nonroot /app/client/.next/standalone/. ./
 
-# Copy public assets into the standalone folder so server.js can serve them
-COPY --from=builder --chown=nonroot:nonroot /app/client/public ./.next/standalone/public
+# Copy public and static folders
+COPY --from=builder --chown=nonroot:nonroot /app/client/public/. ./client/public/
+COPY --from=builder --chown=nonroot:nonroot /app/client/.next/static/. ./client/.next/static/
 
-# Copy static assets into the standalone .next tree
-COPY --from=builder --chown=nonroot:nonroot /app/client/.next/static ./.next/standalone/.next/static
 
-# Run the minimal Next.js server from the standalone folder, per Next.js docs
-CMD ["node", ".next/standalone/server.js"]
+CMD ["node", "client/server.js"]
