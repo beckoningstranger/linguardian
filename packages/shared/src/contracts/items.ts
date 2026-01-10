@@ -47,7 +47,7 @@ export const translationsSchema = z.record(
 );
 
 export const promptHelpersSchema = z
-    .record(supportedLanguageSchema, z.string())
+    .record(supportedLanguageSchema, z.string().optional())
     .optional();
 
 export const alternativeAnswersSchema = z

@@ -6,8 +6,6 @@ import { Toaster } from "react-hot-toast";
 import AuthProvider from "@/components/AuthProvider";
 import { MobileMenuContextProvider } from "@/context/MobileMenuContext";
 import { TopContextMenuContextProvider } from "@/context/TopContextMenuContext";
-import { UserContextProvider } from "@/context/UserContext";
-import { getUserOnServer } from "@/lib/utils/server";
 import { dancing, inter, playfair, voces } from "./fonts/fonts";
 
 export const metadata: Metadata = {
@@ -38,8 +36,6 @@ interface RootLayoutProps {
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
-    const user = await getUserOnServer();
-
     return (
         <html
             lang="en"
@@ -47,13 +43,11 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         >
             <body className="font-sans">
                 <AuthProvider>
-                    <UserContextProvider initialUser={user}>
-                        <TopContextMenuContextProvider>
-                            <MobileMenuContextProvider>
-                                <main>{children}</main>
-                            </MobileMenuContextProvider>
-                        </TopContextMenuContextProvider>
-                    </UserContextProvider>
+                    <TopContextMenuContextProvider>
+                        <MobileMenuContextProvider>
+                            <main>{children}</main>
+                        </MobileMenuContextProvider>
+                    </TopContextMenuContextProvider>
                 </AuthProvider>
                 <Toaster position="top-center" reverseOrder={true} />
             </body>

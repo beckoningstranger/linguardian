@@ -14,6 +14,9 @@ services:
       # Traditional mounting - source overlays container for live development
       - ./client:/app/client
       - ./packages:/app/packages
+      - /app/node_modules
+      - /app/client/node_modules
+      - pnpm-cache:/root/.local/share/pnpm
     working_dir: /app/client
     ports:
       - "3000:3000"
@@ -30,6 +33,7 @@ services:
       - ./server/src:/app/server/src
       - ./server/tsconfig.json:/app/server/tsconfig.json
       - ./packages:/app/packages
+      - pnpm-cache:/root/.local/share/pnpm
     working_dir: /app/server
     ports:
       - "8000:8000"

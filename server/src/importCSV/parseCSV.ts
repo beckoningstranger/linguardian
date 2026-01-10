@@ -9,7 +9,10 @@ import {
     arrayFromPotentiallyUndefinedString,
     trimPotentiallyUndefinedString,
 } from "@/utils/parsecsv";
-import { supportedLanguageCodes } from "@linguardian/shared/constants";
+import {
+    supportedLanguageCodes,
+    allLanguageFeatures,
+} from "@linguardian/shared/constants";
 import { parsedItemSchema } from "@/schemas";
 
 export function parseCSV(
@@ -19,6 +22,18 @@ export function parseCSV(
     const rows: ParsedCSVRow[] = [];
     const results: ParseResult[] = [];
     let rowNumber = 1;
+
+    // Get language features for the list language (needed for languageName and flagCode)
+    const langFeatures = allLanguageFeatures.find(
+        (l) => l.langCode === listLanguageCode
+    );
+    if (!langFeatures) {
+        return Promise.reject(
+            new Error(
+                `Language features not found for code: ${listLanguageCode}`
+            )
+        );
+    }
 
     return new Promise((resolve, reject) => {
         createReadStream(file)
@@ -38,7 +53,9 @@ export function parseCSV(
                     const translations: Record<string, string[]> = {};
                     for (const langCode of supportedLanguageCodes) {
                         translations[langCode] =
-                            arrayFromPotentiallyUndefinedString(row[langCode]);
+                            arrayFromPotentiallyUndefinedString(
+                                row[`t${langCode}`]
+                            );
                     }
 
                     // Build alternativeAnswers dynamically from supported languages
@@ -63,6 +80,8 @@ export function parseCSV(
                     const itemData = {
                         name: name,
                         language: languageCode,
+                        languageName: langFeatures.langName,
+                        flagCode: langFeatures.flagCode,
                         partOfSpeech: trimPotentiallyUndefinedString(
                             row.partOfSpeech
                         ),

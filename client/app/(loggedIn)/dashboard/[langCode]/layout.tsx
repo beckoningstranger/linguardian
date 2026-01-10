@@ -1,5 +1,6 @@
-import LayoutWithTopMenu from "@/components/Layout/LayoutWithTopMenu";
 import { ReactNode } from "react";
+
+import LayoutWithTopMenu from "@/components/Layout/LayoutWithTopMenu";
 
 interface LayoutProps {
   children: ReactNode;

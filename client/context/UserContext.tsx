@@ -13,8 +13,6 @@ import {
 
 import { LanguageWithFlagAndName } from "@linguardian/shared/contracts";
 import { User } from "@linguardian/shared/contracts";
-import { usePathname } from "next/navigation";
-import { allLanguageFeatures } from "@linguardian/shared/constants";
 
 interface UserContextProps {
     user: User | null;
@@ -28,24 +26,29 @@ const UserContext = createContext<UserContextProps | undefined>(undefined);
 type UserContextProviderProps = {
     children: ReactNode;
     initialUser?: User | null;
+    initialActiveLanguage?: LanguageWithFlagAndName | null;
 };
 
 export const UserContextProvider = ({
     children,
     initialUser = null,
+    initialActiveLanguage = null,
 }: UserContextProviderProps) => {
     const [user, setUser] = useState<User | null>(initialUser);
 
-    const pathName = usePathname();
-
     const [activeLanguage, setActiveLanguage] =
         useState<LanguageWithFlagAndName | null>(
-            user ? getActiveLanguage(user) : null
+            initialActiveLanguage ?? getDefaultActiveLanguage(initialUser)
         );
 
     useEffect(() => {
         setUser(initialUser ?? null);
     }, [initialUser]);
+
+    useEffect(() => {
+        if (!initialActiveLanguage) return;
+        setActiveLanguage(initialActiveLanguage);
+    }, [initialActiveLanguage]);
 
     const contextValue = useMemo(
         () => ({ user, setUser, activeLanguage, setActiveLanguage }),
@@ -58,17 +61,11 @@ export const UserContextProvider = ({
         </UserContext.Provider>
     );
 
-    function getActiveLanguage(user: User): LanguageWithFlagAndName {
-        const fromPathName = allLanguageFeatures.find(
-            (lang) => lang.langCode === pathName.slice(-2)
-        );
-        if (fromPathName)
-            return {
-                name: fromPathName.langName,
-                code: fromPathName.langCode,
-                flag: fromPathName.flagCode,
-            };
-        else return user.learnedLanguages[0];
+    function getDefaultActiveLanguage(
+        user: User | null
+    ): LanguageWithFlagAndName | null {
+        if (!user) return null;
+        return user.activeLanguageAndFlag ?? user.learnedLanguages[0] ?? null;
     }
 };
 
